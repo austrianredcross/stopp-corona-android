@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Fragen zur App
+    url: https://participate.roteskreuz.at/faq_stopp_corona_app/
+    about: Bei Fragen zur App schau zuerst zur FAQ
+  - name: Sicherheitslücke melden
+    url: https://www.roteskreuz.at/site/ueberblick-stopp-corona-app
+    about: Sicherheitslücken bitte per E-Mail melden.
