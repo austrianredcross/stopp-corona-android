@@ -1,6 +1,6 @@
 ---
-name: 🚀 Anregungen
-about: Feature requests und andere Anregungen.
+name: 🚀 Feature Requests
+about: Feature requests and recommendations.
 ---
 
-Beschreibe kurz was wir verbessern können an der App.
+Describe roughly your feature request and why you think it's a good idea.

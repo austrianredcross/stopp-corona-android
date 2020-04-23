@@ -1,24 +1,24 @@
 ---
-name: 🐞 Fehler Melden
-about: Melde einen Fehler in der App
+name: 🐞 Bug Report
+about: Report a bug or problem in the app
 ---
 
-## Beschreibung
+## Description
 
-[Was ist passiert]
+[What hapepned]
 
-## Reproduktionsschritte
+## Reproduction steps
 
-1. [Erster Schritt]
-2. [Zweiter Schritt]
+1. [First step]
+2. [Second step]
 3. etc.
 
-Gute Informationen die uns helfen:
+Additional helpful information:
 
 - Screenshots
-- Versionsnummer der App
+- Version of the app
 
-## Was hättest du erwartet?
+## What did you expect
 
-[Was denkst du hätte passieren sollen]
+[What you think should have happened]
 
