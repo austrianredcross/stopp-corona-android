@@ -3,12 +3,12 @@
   <br>
   <img src="./app/src/main/ic_launcher-playstore.png" alt="Stop Corona logo" width="200">
   <br>
-  Stop Corona
+  Stopp Corona
   <br>
 </h1>
 
 <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona"><img src="https://img.shields.io/badge/version-1.1.3.10-success"/></a>
+  <a href="https://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona"><img src="https://img.shields.io/badge/version-1.1.4.11-success"/></a>
 </p>
 
 <p align="center">
