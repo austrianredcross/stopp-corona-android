@@ -122,7 +122,7 @@ open class WebViewWithAssetsResourcesFragment : BaseFragment(R.layout.webview_fr
  * Start a web view.
  * For best Internationalization, the title is set from the [titleRes].
  *
- * @param titleRes String ressource for the Title. (Title will be changed on language changes)
+ * @param titleRes String resource for the Title. (Title will be changed on language changes)
  * @param assetsResourceName raw resource file to open
  */
 fun Fragment.startWebView(

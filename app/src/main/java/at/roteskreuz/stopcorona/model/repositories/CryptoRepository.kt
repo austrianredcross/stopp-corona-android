@@ -34,7 +34,7 @@ import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
 
 /**
- * Repository for managing public and private keys as well as encryption and decription
+ * Repository for managing public and private keys as well as encryption and decryption
  *
  * The key pair will be lazily created and stored in androids key chain when first needed.
  */

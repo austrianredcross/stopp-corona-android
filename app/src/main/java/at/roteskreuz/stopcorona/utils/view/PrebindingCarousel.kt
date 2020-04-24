@@ -11,8 +11,8 @@ import kotlin.math.max
 /**
  * A Carousel that prebinds one off-viewport view to reduce latency in image display
  *
- * As the default LinearLayoutManager only prebinds views during scroll, the first off screen image view will still have latency betwen rendering the
- * view and binding the image. Therfore this Carousel will use a layout manager that prebinds one off-viewport view by having one pixel extra
+ * As the default LinearLayoutManager only prebinds views during scroll, the first off screen image view will still have latency between rendering the
+ * view and binding the image. Therefore this Carousel will use a layout manager that prebinds one off-viewport view by having one pixel extra
  * layout space.
  *
  * To add preloading, please use [PreloadingGalleryCarousel].
