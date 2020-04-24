@@ -31,7 +31,7 @@ interface DatabaseCleanupManager {
 
 class DatabaseCleanupManagerImpl(
     private val appDispatchers: AppDispatchers,
-    configurationRepository: ConfigurationRepository,
+    private val configurationRepository: ConfigurationRepository,
     private val infectionMessageDao: InfectionMessageDao,
     private val quarantineRepository: QuarantineRepository,
     private val coronaDetectionRepository: CoronaDetectionRepository,
@@ -44,8 +44,6 @@ class DatabaseCleanupManagerImpl(
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
-
-    private val configuration = configurationRepository.observeConfiguration().blockingFirst()
 
     init {
         cleanupContacts()
@@ -67,6 +65,7 @@ class DatabaseCleanupManagerImpl(
 
     private fun cleanupNearbyRecords() {
         launch {
+            val configuration = configurationRepository.observeConfiguration().blockingFirst()
             val quarantineState = quarantineRepository.observeQuarantineState().blockingFirst()
 
             if (quarantineState is QuarantineStatus.Jailed.Limited && quarantineState.byContact.not()) {
@@ -86,6 +85,8 @@ class DatabaseCleanupManagerImpl(
 
     private fun cleanupIncomingInfectionMessages() {
         launch {
+            val configuration = configurationRepository.observeConfiguration().blockingFirst()
+
             val thresholdRedMessages = ZonedDateTime.now().minusHours(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
             infectionMessageDao.removeInfectionMessagesOlderThan(true, MessageType.InfectionLevel.Red, thresholdRedMessages)
 
@@ -99,6 +100,8 @@ class DatabaseCleanupManagerImpl(
 
     private fun cleanupOutgoingMessages() {
         launch {
+            val configuration = configurationRepository.observeConfiguration().blockingFirst()
+
             infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.Revoke, ZonedDateTime.now())
 
             val thresholdYellowMessages = ZonedDateTime.now().minusDays(configuration.yellowWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
