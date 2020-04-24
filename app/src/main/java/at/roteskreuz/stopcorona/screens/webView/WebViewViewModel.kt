@@ -151,8 +151,6 @@ sealed class WebViewError(messageDescription: String) : Throwable(messageDescrip
     data class SSL(
         val error: SslError?
     ) : WebViewError("WebView ssl error: $error")
-
-
 }
 
 fun WebResourceRequest?.getUrlOrNull(): Uri? {
