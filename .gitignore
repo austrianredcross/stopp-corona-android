@@ -1,0 +1,44 @@
+# built application files
+*.apk
+*.ap_
+.externalNativeBuild
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+/build
+.idea/*
+!.idea/localizerSettings.xml
+!.idea/mvpAddSettings.xml
+.gradle/
+/captures
+
+# iml files
+*.iml
+
+# local configuration file (sdk path, etc)
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# linux files
+.directory
+*.*~
+
+# mac files
+.DS_Store
+
+# windows files
+Thumbs.db
+thumbs.db
+
+/keystore
+/.babelish.token

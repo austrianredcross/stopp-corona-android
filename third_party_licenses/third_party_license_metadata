@@ -1,0 +1,126 @@
+0:46 androidx.slidingpanelayout:slidingpanelayout
+47:46 com.google.firebase:firebase-installations
+94:46 androidx.work:work-rxjava2
+141:46 androidx.lifecycle:lifecycle-livedata
+188:46 androidx.customview:customview
+235:46 androidx.swiperefreshlayout:swiperefreshlayout
+282:47 com.google.android.gms:play-services-stats
+330:21000 ICU4C
+21331:1602 JSR 305
+22934:1732 Protobuf Nano
+24667:680 STL
+25348:731 UTF
+26080:11342 flatbuffers
+37423:11358 safeparcel
+48782:60 com.airbnb.android:lottie
+48843:40 com.madgag.spongycastle:bcpkix-jdk15on
+48884:46 androidx.versionedparcelable:versionedparcelable
+48931:46 androidx.lifecycle:lifecycle-viewmodel
+48978:46 androidx.collection:collection
+49025:47 com.google.firebase:firebase-iid
+49073:10695 AndroidX document file library.
+59769:10695 AndroidX print library.
+70465:10695 AndroidX versioned parcelable library.
+81161:1846 Checker Framework Annotations
+83008:11353 Firebase Common
+94362:11342 FlatBuffers
+105705:11358 JSR 250
+117064:40 com.madgag.spongycastle:prov
+117105:47 org.jetbrains.kotlinx:kotlinx-coroutines-android
+117153:46 androidx.lifecycle:lifecycle-extensions
+117200:46 com.google.firebase:firebase-datatransport
+117247:47 com.google.android.gms:play-services-tasks
+117295:46 androidx.constraintlayout:constraintlayout
+117342:46 com.github.bumptech.glide:annotations Simplified BSD License
+117389:46 com.github.bumptech.glide:annotations The Apache Software License, Version 2.0
+117436:46 androidx.localbroadcastmanager:localbroadcastmanager
+117483:46 androidx.core:core
+117530:46 androidx.legacy:legacy-support-core-utils
+117577:46 com.github.bumptech.glide:glide Simplified BSD License
+117624:46 com.github.bumptech.glide:glide The Apache Software License, Version 2.0
+117671:47 com.google.android.gms:play-services-base
+117719:47 com.google.android.gms:play-services-nearby
+117767:3182 PCRE
+120950:2500 zlib
+123451:1481 darts_clone
+124933:1558 RE2
+126492:46 com.google.firebase:firebase-encoders-json
+126539:46 androidx.vectordrawable:vectordrawable
+126586:47 org.jetbrains.kotlinx:kotlinx-coroutines-core
+126634:46 com.google.android.datatransport:transport-backend-cct
+126681:46 com.github.bumptech.glide:gifdecoder Simplified BSD License
+126728:46 com.github.bumptech.glide:gifdecoder The Apache Software License, Version 2.0
+126775:46 com.google.firebase:firebase-installations-interop
+126822:46 androidx.print:print
+126869:46 androidx.lifecycle:lifecycle-common
+126916:46 androidx.drawerlayout:drawerlayout
+126963:46 androidx.interpolator:interpolator
+127010:46 androidx.viewpager:viewpager
+127057:46 com.google.android.datatransport:transport-api
+127104:46 com.github.bumptech.glide:disklrucache Simplified BSD License
+127151:46 com.github.bumptech.glide:disklrucache The Apache Software License, Version 2.0
+127198:46 io.reactivex.rxjava2:rxjava
+127245:46 androidx.arch.core:core-common
+127292:46 org.jetbrains.kotlin:kotlin-android-extensions-runtime
+127339:46 com.google.android.datatransport:transport-runtime
+127386:41 junit:junit
+127428:46 com.google.firebase:firebase-common
+127475:46 org.jetbrains.kotlin:kotlin-stdlib-common
+127522:47 com.google.firebase:firebase-messaging
+127570:46 org.jetbrains:annotations
+127617:46 androidx.documentfile:documentfile
+127664:46 androidx.cursoradapter:cursoradapter
+127711:46 javax.inject:javax.inject
+127758:46 androidx.coordinatorlayout:coordinatorlayout
+127805:46 androidx.work:work-runtime-ktx
+127852:46 com.google.firebase:firebase-components
+127899:47 com.google.android.gms:play-services-oss-licenses
+127947:11365 absl
+139313:49 org.reactivestreams:reactive-streams
+139363:46 androidx.cardview:cardview
+139410:46 androidx.legacy:legacy-support-core-ui
+139457:46 androidx.lifecycle:lifecycle-runtime
+139504:46 androidx.lifecycle:lifecycle-process
+139551:46 androidx.work:work-runtime
+139598:46 androidx.annotation:annotation
+139645:47 com.google.firebase:firebase-measurement-connector
+139693:47 com.google.firebase:firebase-iid-interop
+139741:47 com.google.dagger:dagger
+139789:40 com.madgag.spongycastle:core
+139830:46 androidx.constraintlayout:constraintlayout-solver
+139877:46 androidx.lifecycle:lifecycle-service
+139924:46 androidx.asynclayoutinflater:asynclayoutinflater
+139971:47 com.google.android.gms:play-services-basement
+140019:46 androidx.arch.core:core-runtime
+140066:46 org.jetbrains.kotlin:kotlin-stdlib
+140113:46 androidx.loader:loader
+140160:46 androidx.lifecycle:lifecycle-livedata-core
+140207:46 androidx.appcompat:appcompat
+140254:46 androidx.fragment:fragment
+140301:46 androidx.vectordrawable:vectordrawable-animated
+140348:46 androidx.sqlite:sqlite
+140395:46 com.squareup.okhttp3:logging-interceptor
+140442:72 org.threeten:threetenbp
+140515:51 com.airbnb.android:epoxy
+140567:46 androidx.savedstate:savedstate
+140614:46 androidx.room:room-rxjava2
+140661:46 com.squareup.okhttp3:okhttp
+140708:46 io.reactivex.rxjava2:rxkotlin
+140755:46 androidx.room:room-common
+140802:46 com.jakewharton.rxbinding3:rxbinding
+140849:46 androidx.room:room-ktx
+140896:46 androidx.transition:transition
+140943:46 androidx.core:core-ktx
+140990:51 com.airbnb.android:epoxy-annotations
+141042:46 androidx.sqlite:sqlite-framework
+141089:46 androidx.viewpager2:viewpager2
+141136:46 com.jakewharton.threetenabp:threetenabp
+141183:46 androidx.recyclerview:recyclerview
+141230:46 org.jetbrains.kotlin:kotlin-stdlib-jdk7
+141277:46 androidx.appcompat:appcompat-resources
+141324:46 com.squareup.okio:okio
+141371:46 io.reactivex.rxjava2:rxandroid
+141418:46 com.jakewharton.timber:timber
+141465:46 androidx.room:room-runtime
+141512:46 androidx.activity:activity
+141559:46 com.google.android.material:material

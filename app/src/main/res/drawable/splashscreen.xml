@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="@color/white" />
+    </item>
+    <!-- red cross logo -->
+    <item
+        android:width="230dp"
+        android:height="128dp"
+        android:bottom="92dp"
+        android:drawable="@drawable/red_cross_logo"
+        android:gravity="center_horizontal|bottom" />
+    <!-- app logo -->
+    <item
+        android:width="366dp"
+        android:height="366dp"
+        android:drawable="@drawable/logo"
+        android:gravity="center"
+        android:top="-183dp" />
+
+</layer-list>

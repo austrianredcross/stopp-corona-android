@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Stop Corona</string>
+
+	<!-- Technical strings -->
+	<string name="current_language">en</string>
+	<string name="general_ok">OK</string>
+	<string name="general_infection_messages_notification_channel_name">Infection notices</string>
+	<string name="general_self_retest_notification_channel_name">Self retesting notices</string>
+	<string name="general_self_recovered_channel_name">Some has recovered notices</string>
+	<string name="general_self_quarantine_channel_name">Quarantine notices</string>
+	<string name="general_automatic_bt_detection_channel_name">Automatic bluetooth device detection notices</string>
+	<string name="general_continue">Continue</string>
+	<string name="general_additional_information">Further information</string>
+
+	<!-- General Error Information -->
+	<string name="error_no_internet_title">No internet connection</string>
+	<string name="error_no_internet_message">Check your internet connection and try again. </string>
+	<string name="error_server_title">Server error</string>
+	<string name="error_server_message">Something went wrong. Please try again later. </string>
+	<string name="error_unknown_title">Unknown error</string>
+	<string name="error_unknown_message">An unknown error has occurred. Please try again later. </string>
+
+	<!-- Onboarding -->
+	<string name="onboarding_headline_1">Welcome!</string>
+	<string name="onboarding_copy_1_1">With the installation of the Stopp Corona app you help to</string>
+	<string name="onboarding_copy_1_2">slow down</string>
+	<string name="onboarding_copy_1_3">the</string>
+	<string name="onboarding_copy_1_4">spread</string>
+	<string name="onboarding_copy_1_5">of the novel corona virus</string>
+	<string name="onboarding_headline_2">Digital handshake</string>
+	<string name="onboarding_copy_2_1">Use the digital handshake to</string>
+	<string name="onboarding_copy_2_2">anonymously</string>
+	<string name="onboarding_copy_2_3">save your encounters. You will be notified anonymously in the app if one of your encounters falls ill.</string>
+	<string name="onboarding_headline_3">Check symptoms</string>
+	<string name="onboarding_copy_3_1">Use our clinically tested questionnaire. Get a</string>
+	<string name="onboarding_copy_3_2">daily</string>
+	<string name="onboarding_copy_3_3">assessment of your health status.</string>
+	<string name="onboarding_headline_4">Notification in the event of illness</string>
+	<string name="onboarding_copy_4_1">Help to help others! If you should contract the corona virus yourself, your contacts will be notified</string>
+	<string name="onboarding_copy_4_2">anonymously</string>
+	<string name="onboarding_copy_4_3">so that they can take measures.</string>
+	<string name="onboarding_headline_5">Thank you for using the app!</string>
+	<string name="onboarding_copy_5_1">You\'re actively helping to protect your health and the health of others. \nYou can now record encounters with other app users.\n\nBy installing the app you agree to the</string>
+	<string name="onboarding_copy_5_2">terms of use</string>
+	<string name="onboarding_copy_5_3">.</string>
+	<string name="onboarding_next_button">Continue</string>
+	<string name="onboarding_finish_button">Finished</string>
+	<string name="onboarding_headline_6">Declaration of consent</string>
+	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification number [ID], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of achieving a rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning in the event of a medically confirmed risk of infection.</string>
+	<string name="onboarding_dataprivacy_approval">Yes, I consent to the processing of data.</string>
+	<string name="onboarding_dataprivacy_description_2_1">I may revoke my consent at any time and I may switch off the automatic contact initiation feature in the app. Revocation does not affect the lawfulness of processing up until the time that consent is revoked. \n\nYou can find further information in our</string>
+	<string name="onboarding_dataprivacy_description_2_2">privacy policy.</string>
+	<string name="onboarding_headline_terms_of_use">Terms of use</string>
+	<string name="onboarding_headline_data_privacy">Privacy policy</string>
+
+	<!-- Dashboard -->
+	<string name="main_headline">Together against the corona virus</string>
+	<string name="main_body_contact_title">Digital Handshake</string>
+	<string name="main_body_contact_description">Start the digital handshake to save an encounter. Contacts will be notified anonymously should you fall ill.</string>
+	<string name="main_automatic_handshake_description_disabled">Please note, in quarantine you should reduce your contacts to a minimum, therefore the handshake is no longer possible.</string>
+	<string name="main_button_start_handshake_button">Start manual handshake</string>
+	<string name="main_body_saved_encounters">Saved Encounters (%,d)</string>
+	<string name="main_body_feeling_title">How do you feel today?</string>
+	<string name="main_body_feeling_description">Get an assessment of your health.</string>
+	<string name="main_button_feel_today_button">Check symptoms</string>
+	<string name="main_body_report_title">Report corona infection</string>
+	<string name="main_body_report_description">Report a medically confirmed infection to protect your contacts.</string>
+	<string name="main_body_report_button">Report medical confirmation</string>
+	<string name="main_play_services_not_available_dialog_title">Device does not support Google PlayServices</string>
+	<string name="main_play_services_not_available_dialog_message">Google PlayServices are needed to use the feature Nearby. At the moment the digital handshake only works with Google PlayServices. We are working on alternative methods. </string>
+	<string name="main_handshake_information_hint">When should I use this feature?</string>
+	<string name="main_handshake_dialog_title">Save encounters if ... </string>
+	<string name="main_handshake_dialog_description_1">... you have personal contact for more than 15 minutes and are unable to maintain a distance of 2 meters at all times. </string>
+	<string name="main_handshake_dialog_description_2">... you have personal contact for more than 15 minutes and are in a small, closed space such as a car, a room or on the train. </string>
+	<string name="main_microphone_explanation_dialog_title">Access to the microphone</string>
+	<string name="main_microphone_explanation_dialog_description">For the digital handshake, it is checked whether other smartphones in the area have also triggered the handshake. This works via ultrasound. Therefore it is possible that your smartphone emits an audible sound. The sound is recorded by other smartphones with the microphone, and vice versa, your smartphone also uses the microphone to pick up sounds from other devices. For this reason, access to the microphone is required.</string>
+	<string name="main_microphone_explanation_dialog_do_not_show_again">Don\'t show again</string>
+	<string name="main_status_update_headline">Status update</string>
+	<string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
+
+	<!-- Update Information -->
+	<string name="mandatory_update_title">Download the current version</string>
+	<string name="mandatory_update_message">This version is no longer supported. Download the current version to continue using the app. </string>
+	<string name="mandatory_update_playstore">Go to Play Store</string>
+
+	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
+	<string name="infection_info_title">Attention</string>
+	<string name="infection_info_headline_single">1 infected contact detected</string>
+	<string name="infection_info_headline_many">%d infected contacts detected</string>
+	<string name="infection_info_description1_single">One of your registered encounters is %s infected with the coronavirus.</string>
+	<string name="infection_info_description_acording_evidence">according to medical evidence</string>
+	<string name="infection_info_description1_many">%d of your registered encounters are %s infected with the coronavirus.</string>
+	<string name="infection_info_handshake_took_place_single">Handshake took place:</string>
+	<string name="infection_info_handshake_took_place_many">Handshakes took place:</string>
+	<string name="infection_info_handshake_took_place_format">%s, between %s and %s o`clock</string>
+	<string name="infection_info_go_to_quarantine">Self-quarantine immediately</string>
+	<string name="infection_info_quarantine_end">Please stay quarantined until %s</string>
+	<string name="infection_info_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
+
+	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
+	<string name="infection_info_warning_title">Note</string>
+	<string name="infection_info_warning_headline_single">1 contact with a suspected corona infection</string>
+	<string name="infection_info_warning_headline_many">%d contacts with suspected corona infection</string>
+	<string name="infection_info_warning_description1_single">One of your registered encounters %s.</string>
+	<string name="infection_info_warning_explanation">is suspected to have contracted corona.</string>
+	<string name="infection_info_warning_description1_many">%d of your registered encounters %s.</string>
+	<string name="infection_info_warning_go_to_quarantine">Self-quarantine as a precaution</string>
+	<string name="infection_info_warning_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
+
+	<!-- Handshake -->
+	<string name="handshake_title">Digital handshake</string>
+	<string name="handshake_headline">Select &amp; save encounter</string>
+	<string name="handshake_information">How does it work?</string>
+	<string name="handshake_identification_prefix">You are: </string>
+	<string name="handshake_results_headline">Smartphone search</string>
+	<string name="handshake_save_contacts">save</string>
+	<string name="handshake_contact_saved">saved</string>
+	<string name="handshake_select_all_contacts">all</string>
+	<string name="handshake_missing_permissions_title">Permissions are missing</string>
+	<string name="handshake_missing_permissions_microphone">Microphone</string>
+	<string name="handshake_missing_permissions_message">Additional authorizations are required for this feature:</string>
+	<string name="handshake_missing_permissions_message_settings">Please allow this in the system settings.</string>
+	<string name="handshake_missing_permissions_open_settings">Open settings</string>
+	<string name="handshake_dialog_title">Here’s how it works:</string>
+	<string name="handshake_dialog_description1">Open the manual handshake on both devices.</string>
+	<string name="handshake_dialog_description2">Your smartphone will now automatically search for other smartphones.</string>
+	<string name="handshake_dialog_description3">Select the number of your counterpart below and save.</string>
+	<string name="handshake_dialog_disclaimer">If you have further questions about the manual handshake, you can find more information in the FAQs.</string>
+	<string name="handshake_dialog_faq">Go to the FAQs</string>
+	<string name="handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
+	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 1 meter distance.</string>
+	<string name="automatic_handshake_dialog_title">Here’s how it works:</string>
+	<string name="automatic_handshake_dialog_description_1">Activate the automatic handshake in the app and allow background activities for this app.</string>
+	<string name="automatic_handshake_dialog_description_2">Bluetooth signals are sent and received by other app users.</string>
+	<string name="automatic_handshake_dialog_description_3">Entries in the contact diary are created automatically (e.g.: if other devices are received at least 15 minutes within 2 meters)</string>
+	<string name="automatic_handshake_dialog_description_4">Since not all devices and operating systems are supported, please use a manual handshake to check whether the automatic entry has already been made.</string>
+	<string name="automatic_handshake_dialog_disclaimer">Please make sure you allow background activities for this app so that other phones can recognize your phone.\n\nPlease note that the automatic handshake can function to a limited extent depending on the device type and operating system. If you notice any restrictions, please use the manual handshake.</string>
+	<string name="automatic_handshake_dialog_faq">To the FAQs</string>
+	<string name="automatic_handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
+	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 1 meter.</string>
+	<string name="main_automatic_handshake_information_hint">How does it work?</string>
+	<string name="main_automatic_handshake_switch_title">Automatic handshake:</string>
+	<string name="main_automatic_handshake_switch_on">active</string>
+	<string name="main_automatic_handshake_switch_off">inactive</string>
+	<string name="main_automatic_handshake_description_on">You can send and receive signals from other apps via Bluetooth. Signals over 15 minutes are recorded as handshake in your contact diary. Please check the recording by manual handshake, as not all devices are supported.</string>
+	<string name="main_automatic_handshake_description_off">None of your encounters are currently saved automatically. Please activate the automatic handshake.</string>
+	<string name="main_start_manual_handshake">Start manual handshake</string>
+
+	<!-- Sickness Certificate -->
+	<string name="certificate_personal_data_headline">Please enter your data</string>
+	<string name="certificate_personal_data_title">Report status</string>
+	<string name="certificate_personal_data_description">In the next step, we will anonymously inform your direct contacts of the last days.\nWith the mobile number, we ensure that the app is not misused and that infection reports contribute to the common good.</string>
+	<string name="certificate_personal_data_mobile_number_label">Mobile number (+43...)</string>
+	<string name="certificate_personal_data_next_button">Next</string>
+	<string name="certificate_personal_data_input_error">Mobile number</string>
+	<string name="certificate_personal_data_field_mandatory">Field is mandatory</string>
+	<string name="certificate_personal_data_phone_field_invalid">Invalid format (+43...)</string>
+	<string name="certificate_personal_data_invalid_mobile_number_error">Mobile number is invalid</string>
+	<string name="certificate_personal_data_invalid_mobile_number_error_description">Unfortunately the TAN could not be sent. Please check your mobile phone number.</string>
+	<string name="certificate_personal_progress_label">%d of %d</string>
+	<string name="certificate_tan_check_title">Confirm TAN</string>
+	<string name="certificate_tan_check_headline">Confirm your data with the TAN</string>
+	<string name="certificate_tan_check_description">Please enter the TAN we sent to %s.</string>
+	<string name="certificate_tan_check_tan_label">TAN</string>
+	<string name="certificate_tan_check_resend_tan_button">Resend TAN</string>
+	<string name="certificate_report_status_title">Report status</string>
+	<string name="certificate_report_status_headline">Has your corona infection been medically proven?</string>
+	<string name="certificate_report_status_description_1">It is important that only clearly confirmed infections are reported.\n\nIn the next step, all people with whom you have exchanged a digital handshake in the last 48 hours will be notified anonymously. This will protect others and slow the spread of the virus.</string>
+	<string name="certificate_report_status_description_2">The notification is anonymous.</string>
+	<string name="certificate_report_status_description_3">Your personal data will not be passed on to third parties.</string>
+	<string name="certificate_report_status_agreement_description"><b>Yes, I have been diagnosed with a corona infection.</b></string>
+	<string name="certificate_report_status_agreement_label">I hereby confirm to have provided all information truthfully.</string>
+	<string name="certificate_report_status_button">Report infection</string>
+	<string name="certificate_report_status_invalid_tan_error">TAN is incorrect</string>
+	<string name="certificate_report_status_invalid_tan_error_description">Please make sure the entered TAN is correct.</string>
+	<string name="certificate_report_status_invalid_birth_date_error">Date of birth is invalid</string>
+	<string name="certificate_report_status_invalid_birth_date_error_description">Please make sure you enter your date of birth in the correct format.</string>
+	<string name="sickness_certificate_confirmation_title">Infection reported</string>
+	<string name="sickness_certificate_confirmation_headline">Infection reported</string>
+	<string name="sickness_certificate_confirmation_description1">Thank you for reporting your infection and for contributing significantly to the common good.</string>
+	<string name="sickness_certificate_confirmation_description2">Your contacts were notified anonymously.</string>
+	<string name="sickness_certificate_confirmation_description3">We wish you a speedy recovery!</string>
+	<string name="sickness_certificate_confirmation_secondary_button">Quarantine guidelines</string>
+	<string name="sickness_certificate_confirmation_primary_button">Back to home screen</string>
+	<string name="sickness_certificate_guidelines_title">Attention</string>
+	<string name="sickness_certificate_guidelines_top_headline">Officially sick</string>
+	<string name="sickness_certificate_guidelines_top_description">You officially reported coronavirus on %s.</string>
+	<string name="sickness_certificate_guidelines_content_title">Please stay in quarantine!</string>
+	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Your doctor will decide when you can end the quarantine.</string>
+	<string name="sickness_certificate_guidelines_content_description">If possible, do not use public transport on the way and avoid contact with other people.</string>
+	<string name="sickness_certificate_guidelines_headline">Self-quarantine</string>
+	<string name="sickness_certificate_guidelines_first">Keep physical distance from healthy roommates.</string>
+	<string name="sickness_certificate_guidelines_second">Monitor your state of health: Measure fever twice a day and keep a diary of your symptoms.</string>
+	<string name="sickness_certificate_guidelines_third">Neighbours or relatives take over the care.</string>
+	<string name="sickness_certificate_guidelines_fourth">If this is not possible, the %s will be happy to help you:</string>
+	<string name="sickness_certificate_guidelines_fourth_team">Team Austria</string>
+	<string name="sickness_certificate_guidelines_fourth_phone">0800 600 600</string>
+	<string name="sickness_certificate_urgent_help_headline">Do you need help urgently?</string>
+	<string name="sickness_certificate_urgent_help_content">If you feel that you cannot manage at home, you cannot breathe or you are seriously ill, please contact the following numbers with the indication of a suspected corona infection:</string>
+	<string name="sickness_certificate_phone_emergency_label">Medical emergency service</string>
+	<string name="sickness_certificate_phone_emergency_number">141</string>
+	<string name="sickness_certificate_phone_ambulance_label">Ambulance</string>
+	<string name="sickness_certificate_phone_ambulance_number">144</string>
+	<string name="sickness_certificate_guidelines_consulting_description_title">Do you require any advice or care via telephone?</string>
+	<string name="sickness_certificate_guidelines_consulting_description_description">Please contact your attending physician\n\nIn the event of psychological stress, telephone counselling provides support: </string>
+	<string name="sickness_certificate_guidelines_consulting_first">Ö3 Kummernummer</string>
+	<string name="sickness_certificate_guidelines_consulting_first_phone">116123</string>
+	<string name="sickness_certificate_guidelines_consulting_second">Rat auf Draht</string>
+	<string name="sickness_certificate_guidelines_consulting_second_phone">147</string>
+	<string name="sickness_certificate_guidelines_consulting_third">Pastoral advice service</string>
+	<string name="sickness_certificate_guidelines_consulting_third_phone">142</string>
+
+	<!-- Start Screen Notification (user is infected) -->
+	<string name="sickness_certificate_attest_headline">Infection reported</string>
+	<string name="sickness_certificate_attest_description">Please remain in quarantine. You have officially declared yourself ill with the coronavirus.</string>
+	<string name="sickness_certificate_attest_button">Self-quarantine</string>
+
+	<!-- Start Menu -->
+	<string name="start_menu_headline_1">Info</string>
+	<string name="start_menu_item_1_1_what_does_the_app_do">What can this app do?</string>
+	<string name="start_menu_item_1_2_red_cross_link">FAQ at roteskreuz.at</string>
+
+	<!-- https://www.roteskreuz.at/site/faq-app-stopp-corona/ -->
+	<string name="start_menu_item_1_2_red_cross_link_link_target">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
+	<string name="start_menu_item_1_3_red_cross_link">More about coronavirus at roteskreuz.at</string>
+
+	<!-- https://www.roteskreuz.at/site/coronavirus-sind-wir-bereit/ -->
+	<string name="start_menu_item_1_3_red_cross_link_link_target">https://www.roteskreuz.at/site/coronavirus-sind-wir-bereit/</string>
+	<string name="start_menu_headline_2">Legal</string>
+	<string name="start_menu_item_2_1_open_source_licenses">Open Source Licenses</string>
+	<string name="start_menu_item_2_2_data_privacy">Data privacy</string>
+	<string name="start_menu_item_2_3_imprint">Imprint</string>
+	<string name="start_menu_item_version">Version: %s</string>
+	<string name="start_menu_headline_3">Functions</string>
+	<string name="start_menu_item_3_1">Start handshake manually</string>
+	<string name="start_menu_item_3_2">Examine symptoms</string>
+	<string name="start_menu_item_3_3">Report medical confirmation</string>
+
+	<!-- History -->
+	<string name="contact_history_title">Saved encounters</string>
+	<string name="contact_history_description_1">The encounters are stored anonymously.</string>
+	<string name="contact_history_description_2">In case of infection your contacts are automatically notified anonymously.</string>
+	<string name="contact_history_header_date">Date</string>
+	<string name="contact_history_header_time">Period</string>
+	<string name="contact_history_header_automatic_mode_title">Mode</string>
+	<string name="contact_history_header_automatic_mode_value">autom.</string>
+	<string name="contact_history_number_format">#%d</string>
+	<string name="contact_history_no_records">No encounters saved.</string>
+	<string name="contact_history_time_interval">%s - %s</string>
+	<string name="questionnaire_compliance_headline">Declaration of consent</string>
+	<string name="questionnaire_compliance_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification number [ID], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of achieving a rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning of a potential danger of infection, as well as a subsequent all-clear notification or a confirmation of such infection. </string>
+	<string name="questionnaire_compliance_approval">Yes, I consent to the processing of data.</string>
+	<string name="questionnaire_compliance_description_2">I may revoke my consent at any time, whereby revocation does not affect the lawfulness of processing up until the time that consent is revoked.</string>
+	<string name="questionnaire_compliance_description_3">Further information can be found in our</string>
+	<string name="questionnaire_compliance_description_4">privacy policy</string>
+
+	<!-- Self Testing -->
+	<string name="self_test_push_reminder">How are you feeling today?</string>
+	<string name="questionnaire_headline_1">%d. Question</string>
+	<string name="questionnaire_hint_headline_1">Result</string>
+	<string name="questionnaire_hint_headline_2">Stay healthy and help to protect others.</string>
+	<string name="questionnaire_hint_description">In the current situation it is important to follow a few basic rules. <bred>Care for you, care for me.</bred></string>
+	<string name="questionnaire_hint_recommendation_1">Wash your hands regularly: with soap, warm water and for at least 20 seconds.</string>
+	<string name="questionnaire_hint_recommendation_2">Keep at least 1-2 meters distance to other people.</string>
+	<string name="questionnaire_hint_recommendation_3">Keep in touch via electronic media.</string>
+	<string name="questionnaire_hint_recommendation_4">If you feel ill, please stay home.</string>
+	<string name="questionnaire_examine_title">Check symptoms</string>
+	<string name="questionnaire_examine_headling_1">The symptoms you describe can occur in case of a corona infection.</string>
+	<string name="questionnaire_examine_headling_2">Please report your suspected infection in the next step to protect others.</string>
+	<string name="questionnaire_examine_description">Your message helps to prevent the infection from spreading further. Your close contacts may have become infected unnoticed and already spread the virus. It is therefore important that these people are informed and stay away from other people.</string>
+	<string name="questionnaire_examine_btn_text">To anonymous notifications</string>
+	<string name="questionnaire_examine_observe_title">Check symptoms</string>
+	<string name="questionnaire_examine_observe_headline_1">Result</string>
+	<string name="questionnaire_examine_observe_sub_headline_1">Please monitor your symptoms.</string>
+	<string name="questionnaire_examine_observe_recommendation_1">Please take your temperature again in 6 hours.</string>
+	<string name="questionnaire_examine_observe_recommendation_2">Then start the form again.</string>
+	<string name="questionnaire_examine_observe_recommendation_3">Avoid social contacts. In this way you help to avoid further infections.</string>
+	<string name="questionnaire_examine_observe_headline_2">Attention</string>
+	<string name="questionnaire_examine_observe_description">Please contact your attending physician by phone if you need medical assistance. Your doctor can also sign you off sick or issue a prescription using your e-card.</string>
+	<string name="questionnaire_report_status_headline">Report suspicion?</string>
+	<string name="questionnaire_report_status_description_1">In the next step, all persons with whom you have exchanged a digital handshake within the last 48 hours will be notified anonymously. This way you protect others and the further spread of the virus is slowed down.\n\n\n</string>
+	<string name="questionnaire_report_status_description_2">The notification is anonymous.</string>
+	<string name="questionnaire_report_status_description_3">Your personal data will not be passed on to third parties.</string>
+	<string name="questionnaire_report_status_agreement">I hereby confirm to have provided all information truthfully.</string>
+	<string name="questionnaire_report_status_button">Report a suspected infektion</string>
+	<string name="questionnaire_report_success_headline">Suspected infection reported</string>
+	<string name="questionnaire_report_success_description">Thank you for reporting your suspected infection and for contributing significantly to the common good.</string>
+	<string name="questionnaire_report_success_next_steps">Next steps</string>
+	<string name="questionnaire_report_success_next_steps_content">Please inform your doctor or the hospital by phone so that you\n • can be tested for coronavirus \n • can get Medical treatment</string>
+	<string name="questionnaire_report_success_next_steps_phone_contact">If this is not possible, please call this number: <b>%s</b></string>
+	<string name="questionnaire_report_success_next_steps_phone_number">1450</string>
+	<string name="questionnaire_report_success_next_steps_recommendation_headline">Please stay at home.</string>
+	<string name="questionnaire_report_success_next_steps_recommendation_content">Please read the quarantine guidelines.</string>
+	<string name="questionnaire_report_success_next_steps_button">Quarantine guidelines</string>
+	<string name="questionnaire_report_success_urgent_help_headline">Do you need help urgently?</string>
+	<string name="questionnaire_report_success_urgent_help_content">If you feel that you cannot manage at home, you cannot breathe or you are seriously ill, please contact the following numbers with the indication of a suspected corona infection:</string>
+	<string name="questionnaire_report_success_phone_emergency_label">Medical emergency service</string>
+	<string name="questionnaire_report_success_phone_emergency_number">141</string>
+	<string name="questionnaire_report_success_phone_ambulance_label">Ambulance</string>
+	<string name="questionnaire_report_success_phone_ambulance_number">144</string>
+	<string name="questionnaire_report_success_health_wish">We wish you a speedy recovery!</string>
+	<string name="questionnaire_report_success_back_to_home_page_button">Back to the home page</string>
+
+	<!-- Start Screen Notification (user did the self test) -->
+	<string name="self_testing_suspicion_headline">Suspected infection</string>
+	<string name="self_testing_suspicion_description">You have completed the questionnaire and there is a suspicion of corona infection.</string>
+	<string name="self_testing_suspicion_button">Self-quarantine</string>
+	<string name="self_testing_suspicion_button_revoke">Give the all clear</string>
+	<string name="self_testing_suspicion_secondary_button">Report medical confirmation</string>
+	<string name="self_testing_symptoms_headline">Monitored symptoms</string>
+	<string name="self_testing_symptoms_description">You have completed the questionnaire and your symptoms are unclear.</string>
+	<string name="self_testing_symptoms_button">Next steps</string>
+	<string name="self_testing_symptoms_secondary_button">Reassess symptoms</string>
+
+	<!-- Self Testing (Detail screens) -->
+	<string name="questionnaire_guideline_title">Suspected infection </string>
+	<string name="questionnaire_guideline_headline">Suspected corona infection</string>
+	<string name="questionnaire_guideline_description">You have completed the questionnaire and <b>a corona infection is suspected.</b></string>
+	<string name="questionnaire_guideline_inform_doctor_headline">Talk to your doctor, if you have not done this yet</string>
+	<string name="questionnaire_guideline_inform_doctor_content">Please inform your doctor or the hospital by phone so that you\n• can be tested for coronavirus \n• can get Medical treatment</string>
+	<string name="questionnaire_guideline_contact_info1">If you are over 65 and / or suffer from at least one of the following conditions, please call </string>
+	<string name="questionnaire_guideline_contact_info2"> or your doctor to discuss how to proceed:\n\n• Badly controlled high blood pressure\n• Diabetes requiring insulin and poor general condition\n• Pronounced obesity\n• Circulatory disorders in the heart, heart failure requiring therapy\n• Advanced COPD\n• kidney disease (requiring dialysis)\n• high level immunosuppression\n\nPlease tell your doctor or hospital by phone so you can\n\n• Can be treated medically\n• Can be tested for the corona virus</string>
+	<string name="questionnaire_guideline_contact_info3">If this is not possible, please call this number: </string>
+	<string name="questionnaire_guideline_contact_phone">1450</string>
+	<string name="questionnaire_guideline_precaution_headline">Self-quarantine as a precaution.</string>
+	<string name="questionnaire_guideline_precaution_number_1">Keep physical distance from healthy roommates.</string>
+	<string name="questionnaire_guideline_precaution_number_2">Monitor your state of health: Measure fever twice a day and keep a diary of your symptoms.</string>
+	<string name="questionnaire_guideline_precaution_number_3">Neighbours or relatives take over the care.</string>
+	<string name="questionnaire_guideline_precaution_number_4">If this is not possible, the <b>Team Austria</b> will be happy to help you at:</string>
+	<string name="questionnaire_guideline_precaution_number_4_phone">0800 600 600</string>
+	<string name="questionnaire_guideline_urgent_help_headline">Do you need help urgently?</string>
+	<string name="questionnaire_guideline_urgent_help_content">If you feel that you cannot manage at home, you cannot breathe or you are seriously ill, please contact the following numbers with the indication of a suspected corona infection:</string>
+	<string name="questionnaire_guideline_urgent_help_emergency_label">Medical emergency service</string>
+	<string name="questionnaire_guideline_urgent_help_emergency_number">141</string>
+	<string name="questionnaire_guideline_urgent_help_ambulance_label">Ambulance</string>
+	<string name="questionnaire_guideline_urgent_help_ambulance_number">144</string>
+	<string name="questionnaire_guideline_advice_headline">Do you need advice or care via telephone?</string>
+	<string name="questionnaire_guideline_advice_content_1">Please contact your attending physician.</string>
+	<string name="questionnaire_guideline_advice_content_2">In case of psychological stress, telephone counselling provides support:</string>
+	<string name="questionnaire_guideline_advice_phone_1_label">Ö3 Kummernummer</string>
+	<string name="questionnaire_guideline_advice_phone_1_number">116123</string>
+	<string name="questionnaire_guideline_advice_phone_2_label">Rat auf Draht </string>
+	<string name="questionnaire_guideline_advice_phone_2_number">147</string>
+	<string name="questionnaire_guideline_advice_phone_3_label">Pastoral advice service</string>
+	<string name="questionnaire_guideline_advice_phone_3_number">142</string>
+	<string name="questionnaire_guideline_report_sick_headline">Report COVID-19</string>
+	<string name="questionnaire_guideline_report_sick_content">Report a medically confirmed infection to protect your contacts.</string>
+	<string name="questionnaire_guideline_report_button">Report medical confirmation</string>
+	<string name="questionnaire_observe_symptoms_title">Monitor symptoms</string>
+	<string name="questionnaire_observe_symptoms_sub_headline_1">Please monitor your symptoms.</string>
+	<string name="questionnaire_observe_symptoms_form_filled_date">Questionnaire completed:\n%s</string>
+	<string name="questionnaire_observe_symptoms_next_steps">Next steps</string>
+	<string name="questionnaire_observe_symptoms_step_1">Please take your temperature again in 6 hours.</string>
+	<string name="questionnaire_observe_symptoms_step_2">Then start the form again.</string>
+	<string name="questionnaire_observe_symptoms_step_3">Avoid social contacts. In this way you help to avoid further infections.</string>
+	<string name="questionnaire_observe_symptoms_attention_headline">Attention</string>
+	<string name="questionnaire_observe_symptoms_attention_description">Please contact your attending physician by phone if you need medical attention. Your doctor can also sign you off sick via telephone or issue a perscription using your e-card. </string>
+	<string name="questionnaire_observe_symptoms_button">Reassess symptoms</string>
+
+	<!-- Notifications -->
+	<string name="local_notification_sick_contact_headline">Contact with corona infection</string>
+	<string name="local_notification_sick_contact_message">Please go into self-quarantine and keep at least 2m distance to healthy people.</string>
+	<string name="local_notification_suspected_sick_contact_headline">Contact with suspected corona infection</string>
+	<string name="local_notification_suspected_sick_contact_message">Self-quarantine as a precaution. Keep a safe distance from your healthy environment</string>
+	<string name="local_notification_self_retest_headline">How do you feel today?</string>
+	<string name="local_notification_someone_has_recovered_headline">Someone has recovered.</string>
+	<string name="local_notification_quarantine_end_headline">You may terminate the quarantine!</string>
+	<string name="local_notification_quarantine_end_message">Thank you for quarantining yourself. You may terminate the quarantine.</string>
+	<string name="local_notification_automatic_handshake_title">The automatic handshake is carried out.</string>
+	<string name="local_notification_bluetooth_is_off_title">The automatic handshake was stopped.</string>
+	<string name="local_notification_bluetooth_is_off_message">Please switch on the Bluetooth function and restart the handshake in the app.</string>
+	<string name="local_notification_automatic_handshake_message">Thank you for helping us contain the Corona virus.</string>
+	<string name="local_notification_activate_automatic_handshake_again_title">Please activate the automatic handshake again</string>
+	<string name="local_notification_activate_automatic_handshake_again_message">and continue to help contain the corona virus.</string>
+
+	<!-- Contacts Health Status Info -->
+	<string name="contacts_confirmed_one_case_headline">Caution</string>
+	<string name="contacts_confirmed_one_case_description">A corona infection has been medically diagnosed in one of your contacts.</string>
+	<string name="contacts_suspicion_one_case_headline">Note</string>
+	<string name="contacts_suspicion_one_case_description">One of your contacts suspects a corona infection.</string>
+	<string name="contacts_confirmed_multiple_case_headline">Caution</string>
+	<string name="contacts_confirmed_multiple_case_description">In %d of your contacts a corona infection was confirmed.</string>
+	<string name="contacts_confirmed_multiple_case_description_1">%d of your contacts are</string>
+	<string name="contacts_confirmed_multiple_case_description_2">infected</string>
+	<string name="contacts_confirmed_multiple_case_description_3">with the corona virus.</string>
+	<string name="contacts_suspicion_multiple_case_headline">Note</string>
+	<string name="contacts_suspicion_multiple_case_description_1">%d of your contacts</string>
+	<string name="contacts_suspicion_multiple_case_description_2">suspect</string>
+	<string name="contacts_suspicion_multiple_case_description_3">a corona infection.</string>
+	<string name="contacts_quarantine_day_single">Self-quarantine day</string>
+	<string name="contacts_quarantine_day_many">Self-quarantine days</string>
+	<string name="revoke_suspicion_title">Report status</string>
+	<string name="revoke_suspicion_headline">Confirm all-clear</string>
+	<string name="revoke_suspicion_description">You have informed your contacts at the %s that you have experienced symptoms of corona infection.\n\nIf your suspicion has not been confirmed by\n• diagnostic findings or\n• your doctor  \nplease inform your contacts immediately about the all-clear.</string>
+	<string name="revoke_suspicion_approval">I hereby confirm that the information provided is true and correct.</string>
+	<string name="revoke_suspicion_action">confirm all-clear</string>
+	<string name="revoke_suspicion_success_headline">All-clear confirmed</string>
+	<string name="revoke_suspicion_success_description">Thank you for sharing your information and contributing to the common good.\n\nYour contacts have been notified anonymously.</string>
+	<string name="revoke_suspicion_success_finish">Done</string>
+</resources>

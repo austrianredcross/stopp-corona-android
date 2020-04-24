@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pageContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/scrollViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:elevation="0dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtHeadline1"
+                    style="@style/AppTheme.Heading1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="48dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:text="@string/questionnaire_hint_headline_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtHeadline2"
+                    style="@style/AppTheme.Heading1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    android:text="@string/questionnaire_hint_headline_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/txtHeadline1" />
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="24dp"
+                    android:textStyle="bold"
+                    android:text="@string/questionnaire_hint_description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtHeadline2" />
+
+                <RelativeLayout
+                    android:id="@+id/firstRecom"
+                    android:layout_width="fill_parent"
+                    android:layout_marginTop="32dp"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:background="@color/background_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription">
+                    <View
+                        android:id="@+id/selfmonitoring_hands"
+                        android:layout_height="120dp"
+                        android:layout_width="120dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/selfmonitoring_hands" />
+                    <TextView
+                        android:id="@+id/txtFirstRecom"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_alignTop="@+id/selfmonitoring_hands"
+                        android:layout_toRightOf="@+id/selfmonitoring_hands"
+                        android:text="@string/questionnaire_hint_recommendation_1"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/secondRecom"
+                    android:layout_width="fill_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/firstRecom">
+                    <View
+                        android:id="@+id/keep_distance"
+                        android:layout_height="120dp"
+                        android:layout_width="120dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/keep_distance" />
+                    <TextView
+                        android:id="@+id/txtSecondRecom"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/keep_distance"
+                        android:layout_toRightOf="@+id/keep_distance"
+                        android:text="@string/questionnaire_hint_recommendation_2"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/thirdRecom"
+                    android:layout_width="fill_parent"
+                    android:orientation="horizontal"
+                    android:background="@color/background_gray"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/secondRecom">
+                    <View
+                        android:id="@+id/contact_media"
+                        android:layout_height="120dp"
+                        android:layout_width="120dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/contact_media" />
+                    <TextView
+                        android:id="@+id/txtThirdRecom"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_alignTop="@+id/contact_media"
+                        android:layout_toRightOf="@+id/contact_media"
+                        android:text="@string/questionnaire_hint_recommendation_3"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/fourthRecom"
+                    android:layout_width="fill_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/thirdRecom">
+                    <View
+                        android:id="@+id/stay_home"
+                        android:layout_height="120dp"
+                        android:layout_width="120dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/stay_home" />
+                    <TextView
+                        android:id="@+id/txtFourthRecom"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/stay_home"
+                        android:layout_toRightOf="@+id/stay_home"
+                        android:text="@string/questionnaire_hint_recommendation_4"/>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btnActionButton"
+                    style="@style/AppTheme.ButtonLargeType1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="44dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="40dp"
+                    android:text="@string/onboarding_finish_button"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fourthRecom" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

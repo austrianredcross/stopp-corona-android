@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary" override="true">@color/white</color>
+    <color name="primaryDark" override="true">@color/white</color>
+    <color name="accent" override="true">@color/rouge</color>
+
+    <color name="transparent">@android:color/transparent</color>
+    <color name="white">#ffffff</color>
+    <color name="rouge">#b9131b</color>
+    <color name="red">#fe0000</color>
+    <color name="black">#000000</color>
+    <color name="brownGrey">#797979</color>
+    <color name="gray_2">#979797</color>
+    <color name="whiteGray">#f4f4f4</color>
+    <color name="gray_3">#e8e8e8</color>
+    <color name="darkGray">#383838</color>
+    <color name="mediumGreen">#3bb54a</color>
+    <color name="tangerine">#f39100</color>
+    <color name="orange">#ff5a00</color>
+    <color name="blue">#20a4f3</color>
+
+    <!-- General -->
+    <color name="text_default_heading1">@color/rouge</color>
+    <color name="text_default_heading2">@color/black</color>
+    <color name="text_circle_number">@color/rouge</color>
+    <color name="text_default_copy">@color/black</color>
+    <color name="text_default_input">@color/brownGrey</color>
+    <color name="text_default">@color/black</color>
+    <color name="edit_text_hint">@color/brownGrey</color>
+    <color name="background">@color/white</color>
+    <color name="background_gray">@color/whiteGray</color>
+    <color name="dialog_stroke">#e5e5e5</color>
+
+    <!-- Gallery -->
+    <color name="gallery_indicator_active">@color/rouge</color>
+    <color name="gallery_indicator_inactive">@color/brownGrey</color>
+
+    <!-- Onboarding -->
+    <color name="onboarding_indicator_active">@color/rouge</color>
+    <color name="onboarding_indicator_inactive">@color/brownGrey</color>
+    <color name="onboarding_headline">@color/rouge</color>
+
+    <!-- Button Type 1 -->
+    <color name="button_type1_background_default">@color/rouge</color>
+    <color name="button_type1_background_pressed">@color/rouge</color>
+    <color name="button_type1_background_disabled">@color/gray_2</color>
+    <color name="button_type1_text_default">@color/whiteGray</color>
+    <color name="button_type1_text_pressed">@color/whiteGray</color>
+    <color name="button_type1_text_disabled">@color/whiteGray</color>
+
+    <!-- Button Type 2 -->
+    <color name="button_type2_stroke">@color/rouge</color>
+    <color name="button_type2_background_default">@color/white</color>
+    <color name="button_type2_background_pressed">@color/white</color>
+    <color name="button_type2_background_disabled">@color/whiteGray</color>
+    <color name="button_type2_text_default">@color/rouge</color>
+    <color name="button_type2_text_pressed">@color/rouge</color>
+    <color name="button_type2_text_disabled">@color/brownGrey</color>
+
+    <!-- Toolbar -->
+    <color name="toolbar_text">@color/black</color>
+
+    <!-- Headline 1 -->
+    <color name="headline1">@color/rouge</color>
+
+    <!-- Provide certificate screens -->
+    <color name="certificate_progress_complete_step">@color/rouge</color>
+    <color name="certificate_progress_incomplete_step">@color/brownGrey</color>
+
+    <!-- Questionnaire self monitoring -->
+    <color name="questionnaire_self_monitoring_container">@color/whiteGray</color>
+    <color name="questionnaire_self_monitoring_circle_tint">@color/white</color>
+
+    <color name="switch_background_enabled">@color/blue</color>
+    <color name="switch_background_disabled">@color/gray_3</color>
+</resources>

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Skeleton core</string>
+
+    <!-- General -->
+    <string name="general_cancel">Cancel</string>
+    <string name="general_yes">Yes</string>
+    <string name="general_no">No</string>
+    <string name="general_ok">OK</string>
+    <string name="general_again">Again</string>
+    <string name="general_close">Close</string>
+    <string name="general_loading">Loading…</string>
+    <string name="general_permission_denied">Permission denied</string>
+    <string name="general_permission_denied_description">Permission is required to proper functioning of the application.</string>
+    <string name="general_unknown_exception">Unknown error</string>
+    <string name="general_no_connection_error">No internet connection</string>
+    <string name="general_server_connection_error">There was an error processing the request</string>
+
+</resources>

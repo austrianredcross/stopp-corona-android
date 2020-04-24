@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="onboarding_headline">20sp</dimen>
+    <dimen name="onboarding_body">16sp</dimen>
+    <dimen name="onboarding_headline_margin_horizontal">16dp</dimen>
+    <dimen name="onboarding_headline_top_margin">16dp</dimen>
+    <dimen name="onboarding_content_margin_horizontal">16dp</dimen>
+    <dimen name="onboarding_content_margin_top">8dp</dimen>
+    <dimen name="onboarding_content_margin_bottom">6dp</dimen>
+    <dimen name="onboarding_image_margin_bottom">12dp</dimen>
+    <dimen name="onboarding_carousel_max_height">512dp</dimen>
+
+    <!-- Questionnaire screen -->
+    <dimen name="questionnaire_headline">24sp</dimen>
+    <dimen name="questionnaire_headline_top_margin">16dp</dimen>
+    <dimen name="questionnaire_margin_horizontal">16dp</dimen>
+    <dimen name="questionnaire_answer">18sp</dimen>
+    <dimen name="questionnaire_answer_space">16sp</dimen>
+</resources>

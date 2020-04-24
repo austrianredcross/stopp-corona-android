@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pageContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/transparentAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:elevation="0dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.ToolbarTheme" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:id="@+id/scrollViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/transparent"
+            app:elevation="0dp"
+            app:layout_constraintTop_toBottomOf="@id/transparentAppBar"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtHeadline1"
+                    style="@style/AppTheme.Heading1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    tools:text="Ergebnis"
+                    android:textColor="@color/black"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtHeadline2"
+                    style="@style/AppTheme.Heading1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/txtHeadline1"
+                    tools:text="Bitte beobachten Sie Ihre Symptome." />
+
+                <TextView
+                    android:id="@+id/txtFormFilledDate"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="32dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtHeadline2"
+                    tools:text="Fragebogen ausgefüllt: \n16.03.2020, 12:23"
+                    android:visibility="visible"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/stepsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/txtFormFilledDate">
+
+                    <TextView
+                        android:id="@+id/txtStepsHeadline"
+                        style="@style/AppTheme.Heading2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="41dp"
+                        android:layout_marginEnd="24dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Nächste Schritte" />
+
+                    <ImageView
+                        android:id="@+id/imgCircle1"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="34dp"
+                        android:src="@drawable/circle"
+                        android:tint="@color/whiteGray"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtStepsHeadline" />
+
+                    <TextView
+                        android:id="@+id/txtCircle1"
+                        style="@style/AppTheme.Copy.Accented"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="1"
+                        app:layout_constraintBottom_toBottomOf="@id/imgCircle1"
+                        app:layout_constraintEnd_toEndOf="@id/imgCircle1"
+                        app:layout_constraintStart_toStartOf="@id/imgCircle1"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle1"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txtDescription1"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="@string/questionnaire_examine_observe_recommendation_1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imgCircle1"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle1" />
+
+                    <View
+                        android:id="@+id/viewConnector1to2"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/brownGrey"
+                        app:layout_constraintBottom_toTopOf="@id/imgCircle2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imgCircle1" />
+
+                    <ImageView
+                        android:id="@+id/imgCircle2"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/circle"
+                        android:tint="@color/whiteGray"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txtDescription1" />
+
+                    <TextView
+                        android:id="@+id/txtCircle2"
+                        style="@style/AppTheme.Copy.Accented"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="2"
+                        app:layout_constraintBottom_toBottomOf="@id/imgCircle2"
+                        app:layout_constraintEnd_toEndOf="@id/imgCircle2"
+                        app:layout_constraintStart_toStartOf="@id/imgCircle2"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle2"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txtDescription2"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="@string/questionnaire_examine_observe_recommendation_2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imgCircle2"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle2" />
+
+                    <View
+                        android:id="@+id/viewConnector2to3"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/brownGrey"
+                        app:layout_constraintBottom_toTopOf="@id/imgCircle3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imgCircle2" />
+
+                    <ImageView
+                        android:id="@+id/imgCircle3"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="52dp"
+                        android:src="@drawable/circle"
+                        android:tint="@color/whiteGray"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txtDescription2" />
+
+                    <TextView
+                        android:id="@+id/txtCircle3"
+                        style="@style/AppTheme.Copy.Accented"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="3"
+                        app:layout_constraintBottom_toBottomOf="@id/imgCircle3"
+                        app:layout_constraintEnd_toEndOf="@id/imgCircle3"
+                        app:layout_constraintStart_toStartOf="@id/imgCircle3"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle3"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txtDescription3"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginBottom="40dp"
+                        android:text="@string/questionnaire_examine_observe_recommendation_3"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imgCircle3"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle3"
+                        app:layout_constraintVertical_bias="0" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:text="@string/questionnaire_examine_observe_headline_2"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/stepsContainer" />
+
+                <TextView
+                    android:id="@+id/txtSubDescription"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:text="@string/questionnaire_examine_observe_description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription" />
+
+                <Button
+                    android:id="@+id/btnActionButton"
+                    style="@style/AppTheme.ButtonLargeType1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="44dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="40dp"
+                    android:text="@string/onboarding_finish_button"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtSubDescription" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
