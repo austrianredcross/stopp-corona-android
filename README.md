@@ -30,7 +30,7 @@ And vice versa of course. You too will be notified instantly and anonymously sho
 
 Together we can break the chain of infection. Not only by protecting ourselves, but also by preventing others from being infected.
 
-Say hello with a digital handshakeIt will definitely be a while before we'll actually shake each others hands again. In the meantime: use **Stopp Corona**'s digital handshake.
+Say hello with a digital handshake. It will definitely be a while before we'll actually shake each others hands again. In the meantime: use **Stopp Corona**'s digital handshake.
 If you and the person you encounter have installed the app, you can simply select each other. The app will anonymously save your meeting. Should one of you fall sick with the corona virus the other will receive an instant notification.
 
 ### Self-check your corona status
