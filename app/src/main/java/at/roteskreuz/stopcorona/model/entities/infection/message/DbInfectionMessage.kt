@@ -35,8 +35,8 @@ data class DbInfectionMessage(
             entity = DbInfectionMessage::class,
             parentColumns = ["uuid"],
             childColumns = ["messageUuid"],
-            onUpdate = ForeignKey.NO_ACTION,
-            onDelete = ForeignKey.NO_ACTION
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

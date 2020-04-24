@@ -104,10 +104,10 @@ class DatabaseCleanupManagerImpl(
 
             infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.Revoke, ZonedDateTime.now())
 
-            val thresholdYellowMessages = ZonedDateTime.now().minusDays(configuration.yellowWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
+            val thresholdYellowMessages = ZonedDateTime.now().minusHours(configuration.yellowWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
             infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.InfectionLevel.Yellow, thresholdYellowMessages)
 
-            val thresholdRedMessages = ZonedDateTime.now().minusDays(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
+            val thresholdRedMessages = ZonedDateTime.now().minusHours(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
             infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.InfectionLevel.Red, thresholdRedMessages)
         }
     }

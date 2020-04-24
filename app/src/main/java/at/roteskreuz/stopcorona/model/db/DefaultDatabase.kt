@@ -33,7 +33,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbContactWithInfectionMessage::class,
         DbAutomaticDiscoveryEvent::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(
@@ -107,6 +107,23 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(10, 11) {
                 // delete old table
                 execSQL("DROP TABLE `debug_playground_entity`")
+            },
+            /**
+             * Fix cascade rule on [DbContactWithInfectionMessage].
+             */
+            migration(11, 12) {
+                // create temp table
+                execSQL(
+                    "CREATE TABLE IF NOT EXISTS `contact_with_infection_message_temp` (`messageUuid` TEXT NOT NULL, `publicKey` BLOB NOT NULL, PRIMARY KEY(`messageUuid`), FOREIGN KEY(`messageUuid`) REFERENCES `infection_message`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )"
+                )
+                // copy data from old table to temp
+                execSQL(
+                    "INSERT INTO `contact_with_infection_message_temp` (`messageUuid`, `publicKey`) SELECT `messageUuid`, `publicKey` FROM `contact_with_infection_message`"
+                )
+                // delete old table
+                execSQL("DROP TABLE `contact_with_infection_message`")
+                // rename temp to original
+                execSQL("ALTER TABLE `contact_with_infection_message_temp` RENAME TO `contact_with_infection_message`")
             }
         )
     }

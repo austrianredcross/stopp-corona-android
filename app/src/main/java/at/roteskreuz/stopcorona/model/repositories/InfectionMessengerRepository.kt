@@ -9,6 +9,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMes
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -80,7 +81,8 @@ class InfectionMessengerRepositoryImpl(
     private val notificationsRepository: NotificationsRepository,
     private val preferences: SharedPreferences,
     private val quarantineRepository: QuarantineRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
+    private val databaseCleanupManager: DatabaseCleanupManager
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
@@ -151,6 +153,7 @@ class InfectionMessengerRepositoryImpl(
                                         MessageType.Revoke -> {
                                             setSomeoneHasRecovered()
                                             notificationsRepository.displaySomeoneHasRecoveredNotification()
+                                            databaseCleanupManager.removeIncomingGreenMessages()
                                         }
                                     }
                                 }
