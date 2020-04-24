@@ -69,7 +69,7 @@ android {
             minifyEnabled true
             // Commented out because it breaks CI. Do not put back in!
             // In release builds, the signing config is provided by the CI
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
