@@ -1,6 +1,8 @@
 package at.roteskreuz.stopcorona.screens.webView
 
+import android.net.Uri
 import android.net.http.SslError
+import android.os.Build
 import android.webkit.*
 import androidx.annotation.IntRange
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
@@ -139,14 +141,40 @@ sealed class WebViewError(messageDescription: String) : Throwable(messageDescrip
     data class General(
         val request: WebResourceRequest?,
         val webResourceError: WebResourceError?
-    ) : WebViewError("WebView error: ${request?.url} ${webResourceError?.errorCode} ${webResourceError?.description}")
+    ) : WebViewError("WebView error: ${request?.getUrlOrNull()} ${webResourceError?.getErrorCodeOrNull()} ${webResourceError?.getDescOrNull()}")
 
     data class Http(
         val request: WebResourceRequest?,
         val errorResponse: WebResourceResponse?
-    ) : WebViewError("WebView http error: ${request?.url} $errorResponse")
+    ) : WebViewError("WebView http error: ${request?.getUrlOrNull()} $errorResponse")
 
     data class SSL(
         val error: SslError?
     ) : WebViewError("WebView ssl error: $error")
+
+
+}
+
+fun WebResourceRequest?.getUrlOrNull(): Uri? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        this?.url
+    } else {
+        null
+    }
+}
+
+fun WebResourceError?.getErrorCodeOrNull(): Int? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        this?.errorCode
+    } else {
+        null
+    }
+}
+
+fun WebResourceError?.getDescOrNull(): CharSequence? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        this?.description
+    } else {
+        null
+    }
 }

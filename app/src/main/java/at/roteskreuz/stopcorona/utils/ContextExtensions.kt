@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.text.SpannableString
@@ -214,5 +215,9 @@ private fun getSpace(insertSpace: Boolean): String {
  */
 fun Context.isBatteryOptimizationIgnored(): Boolean {
     val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-    return powerManager.isIgnoringBatteryOptimizations(packageName)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        powerManager.isIgnoringBatteryOptimizations(packageName)
+    } else {
+        false
+    }
 }

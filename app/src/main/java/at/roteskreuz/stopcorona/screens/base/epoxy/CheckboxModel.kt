@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.base.epoxy
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.TextViewCompat
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
@@ -36,7 +37,7 @@ abstract class CheckboxModel(
         checkbox.isChecked = checked
         checkboxLabel.text = label
         checkboxLabel.textSize = textSize.toFloat()
-        checkboxLabel.setTextAppearance(textStyle)
+        TextViewCompat.setTextAppearance(checkboxLabel, textStyle)
 
         constraintLayoutCheckbox.setOnClickListener {
             checkbox.toggle()
