@@ -1,0 +1,53 @@
+ext.getBuildCode = {
+    if (System.getenv('CI_PIPELINE_IID') != null) {
+        return System.getenv('CI_PIPELINE_IID').trim().toInteger()
+    } else {
+        return 11
+    }
+}
+
+ext.getBranchName = {
+    def branch = System.getenv('CI_COMMIT_REF_NAME')
+    if (branch != null) {
+        return branch.trim()
+    } else {
+        return getGitBranch ?: "unknown"
+    }
+}
+
+ext.getGitDescribe = {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+ext.getGitBranch = {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git' 'rev-parse' '--abbrev-ref' 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+ext.getStorePassword = {
+    return getPropertyByName("storePassword")
+}
+
+ext.getKeyPassword = {
+    return getPropertyByName("keyPassword")
+}
+
+ext.getKeyAlias = {
+    return getPropertyByName("keyAlias")
+}
+
+ext.getPropertyByName = { propertyName ->
+    if (project.hasProperty(propertyName)) {
+        return project.getProperty(propertyName)
+    }
+    return ""
+}

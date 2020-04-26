@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pageContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/transparentAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:elevation="0dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.ToolbarTheme" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/contentRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipChildren="false"
+            app:layout_constraintBottom_toTopOf="@id/bottomSheet"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/transparentAppBar" />
+
+        <View
+            android:id="@+id/bottomSheet"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/shape_bottom_sheet"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <Button
+            android:id="@+id/btnSave"
+            style="@style/AppTheme.ButtonLargeType1"
+            android:layout_width="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="16dp"
+            android:enabled="false"
+            android:text="@string/handshake_save_contacts"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/bottomSheet" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

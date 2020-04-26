@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/debugMenuDebug"
+        android:title="Debug menu"
+        app:showAsAction="always"
+        tools:ignore="HardcodedText">
+        <menu>
+            <item
+                android:id="@+id/debugMenuNotifications"
+                android:title="Notifications">
+                <menu>
+                    <item
+                        android:id="@+id/debugMenuNotificationInfectionYellow"
+                        android:title="Yellow infection" />
+                    <item
+                        android:id="@+id/debugMenuNotificationInfectionRed"
+                        android:title="Red infection" />
+                    <item
+                        android:id="@+id/debugMenuNotificationSelfRetest"
+                        android:title="Self test" />
+                    <item
+                        android:id="@+id/debugMenuNotificationSomeoneRecovered"
+                        android:title="Someone is recovered" />
+                    <item
+                        android:id="@+id/debugMenuNotificationEndQuarantine"
+                        android:title="End of quarantine" />
+                </menu>
+            </item>
+            <item
+                android:id="@+id/debugMenuInfectionMessages"
+                android:title="InfectionMessages">
+                <menu>
+                    <item
+                        android:id="@+id/debugMenuInfectionMessagesOutgoingRed"
+                        android:title="Outgoing Red" />
+                    <item
+                        android:id="@+id/debugMenuInfectionMessagesOutgoingYellow"
+                        android:title="Outgoing Yellow" />
+
+                    <item
+                        android:id="@+id/debugMenuInfectionMessagesIncomingRed"
+                        android:title="Incoming Red" />
+                    <item
+                        android:id="@+id/debugMenuInfectionMessagesIncomingYellow"
+                        android:title="Incoming Yellow" />
+                    <item
+                        android:id="@+id/debugMenuInfectionMessagesIncomingGreen"
+                        android:title="Incoming Green" />
+                </menu>
+            </item>
+            <item
+                android:id="@+id/debugMenuQuarantineStatus"
+                android:title="Quarantine status" />
+            <item
+                android:id="@+id/debugMenuDiscovery"
+                android:title="Discovery screen" />
+            <item
+                android:id="@+id/debugMenuEvents"
+                android:title="Events" />
+            <item
+                android:id="@+id/debugAddContact"
+                android:title="Add Contact" />
+        </menu>
+    </item>
+</menu>

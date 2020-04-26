@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pageContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/transparentAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:elevation="0dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.ToolbarTheme" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:id="@+id/viewProgressBar1"
+                    android:layout_width="0dp"
+                    android:layout_height="6dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@color/certificate_progress_complete_step"
+                    app:layout_constraintEnd_toStartOf="@id/viewProgressBar2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/viewProgressBar2"
+                    android:layout_width="0dp"
+                    android:layout_height="6dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@color/certificate_progress_complete_step"
+                    app:layout_constraintEnd_toStartOf="@id/viewProgressBar3"
+                    app:layout_constraintStart_toEndOf="@id/viewProgressBar1"
+                    app:layout_constraintTop_toTopOf="@id/viewProgressBar1" />
+
+                <View
+                    android:id="@+id/viewProgressBar3"
+                    android:layout_width="0dp"
+                    android:layout_height="6dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@color/certificate_progress_complete_step"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/viewProgressBar2"
+                    app:layout_constraintTop_toTopOf="@id/viewProgressBar2" />
+
+                <TextView
+                    android:id="@+id/txtProgress"
+                    style="@style/AppTheme.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/viewProgressBar3"
+                    app:layout_constraintTop_toBottomOf="@id/viewProgressBar3"
+                    tools:text="1 of 3" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/contentRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/transparentAppBar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

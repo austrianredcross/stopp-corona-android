@@ -1,0 +1,140 @@
+{
+  "configuration": {
+    "warn_before_symptoms": 54,
+    "red_warning_quarantine": 336,
+    "yellow_warning_quarantine": 168,
+    "self_diagnosed_quarantine": 168,
+    "diagnostic_questionnaire": {
+      "de": [
+        {
+          "title": "1. Frage",
+          "questionText": "Wie geht es Ihnen heute?",
+          "answers": [
+            {
+              "text": "Ich fühle mich gut.",
+              "decission": "HINT"
+            },
+            {
+              "text": "Ich habe Krankheitssymptome.",
+              "decission": "next"
+            }
+          ]
+        },
+        {
+          "title": "2. Frage",
+          "questionText": "Haben Sie seit Kurzem immer wiederkehrenden und trockenen Husten?",
+          "answers": [
+            {
+              "text": "Nein",
+              "decission": "next"
+            },
+            {
+              "text": "Ja",
+              "decission": "SUSPICION"
+            }
+          ]
+        },
+        {
+          "title": "3. Frage",
+          "questionText": "Wie hoch ist Ihre Körpertemperatur?",
+          "answers": [
+            {
+              "text": "Unter 38°C.",
+              "decission": "SELFMONITORING"
+            },
+            {
+              "text": "Über 38°C.",
+              "decission": "SUSPICION"
+            }
+          ]
+        }
+      ],
+      "en": [
+        {
+          "title": "Question #1",
+          "questionText": "How are you today?",
+          "answers": [
+            {
+              "text": "I feel fine.",
+              "decission": "HINT"
+            },
+            {
+              "text": "I have symptoms of illness.",
+              "decission": "next"
+            }
+          ]
+        },
+        {
+          "title": "Question #2",
+          "questionText": "Have you recently had a recurrent and dry cough?",
+          "answers": [
+            {
+              "text": "No",
+              "decission": "next"
+            },
+            {
+              "text": "Yes",
+              "decission": "SUSPICION"
+            }
+          ]
+        },
+        {
+          "title": "Question #3",
+          "questionText": "What's your body temperature?",
+          "answers": [
+            {
+              "text": "Under 38°C.",
+              "decission": "SELFMONITORING"
+            },
+            {
+              "text": "Above 38°C.",
+              "decission": "SUSPICION"
+            }
+          ]
+        }
+      ]
+    },
+    "page_list": {
+      "de": {
+        "HINT": {
+          "roofline": "Danke für’s Mitmachen!",
+          "title": "Bleiben Sie gesund und helfen Sie, andere zu schützen.",
+          "boldText": "Das können Sie tun",
+          "longText": "In der aktuellen Situation ist es essentiell, dass Sie gut auf sich und andere aufpassen. Waschen Sie sich regelmäßig die Hände, halten Sie ausreichend Abstand zu anderen Menschen und beschränken Sie Ihre sozialen Kontakte auf ein Minimum. Nur so können wir die Verbreitung von COVID-19 verlangsamen und die Versorgung Kranker gewährleisten. Danke für Ihre Mithilfe!"
+        },
+        "SELFMONITORING": {
+          "roofline": "Ergebnis",
+          "title": "Bitte beobachten Sie Ihre Symptome.",
+          "boldText": "Nächste Schritte",
+          "longText": "1. Bitte messen Sie nach sechs Stunden erneut Fieber. 2. Starten Sie das Formular dann erneut. 3. Halten Sie Ihre sozialen Kontakte soweit gering. So helfen Sie mögliche Ansteckungen niedrig zu halten. Achtung Sollten Sie einen Arztbesuch planen oder ein Krankenhaus aufsuchen wollen, melden Sie sich bitte telefonisch an. So helfen Sie, Ansteckungen niedrig zu halten."
+        },
+        "SUSPICION": {
+          "roofline": "Ergebnis",
+          "title": "Ihre Symptome entsprechen jenen von COVID-19.",
+          "boldText": "Bitte melden Sie im nächsten Schritt den Verdacht, um andere zu schützen.",
+          "longText": "So können wir anonym Ihre Kontakte benachrichtigen. Aufgrund der aktuellen Situation ist es unumgänglich, dass Sie sich als Verdachtsfall melden und sich präventiv in Quarantäne begeben."
+        }
+      },
+      "en": {
+        "HINT": {
+          "roofline": "Danke für’s Mitmachen!",
+          "title": "Bleiben Sie gesund und helfen Sie, andere zu schützen.",
+          "boldText": "Das können Sie tun",
+          "longText": "In der aktuellen Situation ist es essentiell, dass Sie gut auf sich und andere aufpassen. Waschen Sie sich regelmäßig die Hände, halten Sie ausreichend Abstand zu anderen Menschen und beschränken Sie Ihre sozialen Kontakte auf ein Minimum. Nur so können wir die Verbreitung von COVID-19 verlangsamen und die Versorgung Kranker gewährleisten. Danke für Ihre Mithilfe!"
+        },
+        "SELFMONITORING": {
+          "roofline": "Ergebnis",
+          "title": "Bitte beobachten Sie Ihre Symptome.",
+          "boldText": "Nächste Schritte",
+          "longText": "1. Bitte messen Sie nach sechs Stunden erneut Fieber. 2. Starten Sie das Formular dann erneut. 3. Halten Sie Ihre sozialen Kontakte soweit gering. So helfen Sie mögliche Ansteckungen niedrig zu halten. Achtung Sollten Sie einen Arztbesuch planen oder ein Krankenhaus aufsuchen wollen, melden Sie sich bitte telefonisch an. So helfen Sie, Ansteckungen niedrig zu halten."
+        },
+        "SUSPICION": {
+          "roofline": "Ergebnis",
+          "title": "Ihre Symptome entsprechen jenen von COVID-19.",
+          "boldText": "Bitte melden Sie im nächsten Schritt den Verdacht, um andere zu schützen.",
+          "longText": "So können wir anonym Ihre Kontakte benachrichtigen. Aufgrund der aktuellen Situation ist es unumgänglich, dass Sie sich als Verdachtsfall melden und sich präventiv in Quarantäne begeben."
+        }
+      }
+    }
+  }
+}

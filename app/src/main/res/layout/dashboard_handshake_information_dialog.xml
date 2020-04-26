@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/btnClose"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_clear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtTitle"
+        style="@style/AppTheme.Heading2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/main_handshake_dialog_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnClose" />
+
+    <View
+        android:id="@+id/circle_1"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/description_1" />
+
+    <TextView
+        android:id="@+id/description_1"
+        style="@style/AppTheme.Copy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/main_handshake_dialog_description_1"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle" />
+
+    <View
+        android:id="@+id/circle_2"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/description_2" />
+
+    <TextView
+        android:id="@+id/description_2"
+        style="@style/AppTheme.Copy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="56dp"
+        android:text="@string/main_handshake_dialog_description_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description_1"
+        app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>
