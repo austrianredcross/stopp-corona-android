@@ -21,7 +21,7 @@
 
 ## About
 
-**Stopp Corona** helps you to keep track of encounters with friends, family or co-workers and save them anonymously. Should you contract the corona virus all your encounters of the last 48 hours will be informed automatically and anonymously.
+**Stopp Corona** helps you to keep track of encounters with friends, family or co-workers and save them anonymously. Should you contract the corona virus (to be precise: the <a href="https://en.wikipedia.org/wiki/Coronavirus_disease_2019">COVID-19 disease caused by the SARS-CoV-2 virus</a>) all your encounters of the last 48 hours will be informed automatically and anonymously.
 And vice versa of course. You too will be notified instantly and anonymously should one of your saved encounters report to have contracted the virus. Helping all of you to take appropriate measures such as.
 
 -	Keep a safe distance (1–2 meters) from others
