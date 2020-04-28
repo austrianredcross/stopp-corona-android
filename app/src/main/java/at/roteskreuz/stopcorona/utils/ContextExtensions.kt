@@ -218,6 +218,6 @@ fun Context.isBatteryOptimizationIgnored(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         powerManager.isIgnoringBatteryOptimizations(packageName)
     } else {
-        false
+        true
     }
 }
