@@ -370,7 +370,7 @@
 	<string name="local_notification_automatic_handshake_title">Der automatische Handshake wird ausgeführt.</string>
 	<string name="local_notification_bluetooth_is_off_title">Der automatische Handshake wurde gestoppt.</string>
 	<string name="local_notification_bluetooth_is_off_message">Schalten Sie bitte die Bluetooth-Funktion ein und starten Sie den Handshake in der App neu. </string>
-	<string name="local_notification_automatic_handshake_message">Vielen Dank, dass Sie uns bei der Eindämmung von des Corona-Virus helfen.</string>
+	<string name="local_notification_automatic_handshake_message">Vielen Dank, dass Sie uns bei der Eindämmung des Corona-Virus helfen.</string>
 	<string name="local_notification_activate_automatic_handshake_again_title">Bitte aktivieren Sie den automatischen Handshake wieder</string>
 	<string name="local_notification_activate_automatic_handshake_again_message">Und helfen Sie weiter bei der Eindämmung des Corona-Virus.</string>
 
