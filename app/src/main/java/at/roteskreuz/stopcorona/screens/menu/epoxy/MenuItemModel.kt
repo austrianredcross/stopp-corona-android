@@ -5,7 +5,6 @@ import android.widget.TextView
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
-import at.roteskreuz.stopcorona.utils.tintedDrawable
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 
@@ -26,8 +25,8 @@ abstract class MenuItemModel(
     override fun Holder.onBind() {
         txtTitle.text = title
         if (externalLink) {
-            imgIcon.setImageDrawable(tintedDrawable(R.drawable.ic_external_link, R.color.accent))
-            imgIcon.rotation = -45f
+            imgIcon.setImageResource(R.drawable.ic_external_link)
+            imgIcon.rotation = 0f
         } else {
             imgIcon.setImageResource(R.drawable.ic_back)
             imgIcon.rotation = 180f

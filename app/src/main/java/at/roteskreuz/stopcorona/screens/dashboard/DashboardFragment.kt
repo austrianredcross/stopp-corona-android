@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialog
@@ -30,6 +31,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.enableBluetoothForResult
 import at.roteskreuz.stopcorona.utils.isBatteryOptimizationIgnored
+import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
@@ -111,7 +113,8 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = ::checkDependenciesAndStartAutomaticHandshake
+            onAutomaticHandshakeEnabled = ::checkDependenciesAndStartAutomaticHandshake,
+            onShareAppClick = { shareApp() }
         )
     }
 

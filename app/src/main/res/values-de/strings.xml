@@ -215,6 +215,7 @@
 	<string name="sickness_certificate_attest_headline">Erkrankt gemeldet</string>
 	<string name="sickness_certificate_attest_description">Bitte bleiben Sie in Quarantäne. Sie haben sich offiziell als am Coronavirus erkrankt gemeldet.</string>
 	<string name="sickness_certificate_attest_button">Begeben Sie sich in Quarantäne</string>
+	<string name="sickness_certificate_attest_revoke">Krankmeldung zurückziehen</string>
 
 	<!-- Start Menu -->
 	<string name="start_menu_headline_1">Info</string>
@@ -370,7 +371,7 @@
 	<string name="local_notification_automatic_handshake_title">Der automatische Handshake wird ausgeführt.</string>
 	<string name="local_notification_bluetooth_is_off_title">Der automatische Handshake wurde gestoppt.</string>
 	<string name="local_notification_bluetooth_is_off_message">Schalten Sie bitte die Bluetooth-Funktion ein und starten Sie den Handshake in der App neu. </string>
-	<string name="local_notification_automatic_handshake_message">Vielen Dank, dass Sie uns bei der Eindämmung von des Corona-Virus helfen.</string>
+	<string name="local_notification_automatic_handshake_message">Vielen Dank, dass Sie uns bei der Eindämmung des Corona-Virus helfen.</string>
 	<string name="local_notification_activate_automatic_handshake_again_title">Bitte aktivieren Sie den automatischen Handshake wieder</string>
 	<string name="local_notification_activate_automatic_handshake_again_message">Und helfen Sie weiter bei der Eindämmung des Corona-Virus.</string>
 
@@ -398,4 +399,24 @@
 	<string name="revoke_suspicion_success_headline">Entwarnung bestätigt</string>
 	<string name="revoke_suspicion_success_description">Danke, dass Sie Ihre Information weitergegeben haben und damit zum Gemeinwohl beitragen.\n\nIhre Kontakte wurden anonym benachrichtigt.</string>
 	<string name="revoke_suspicion_success_finish">Fertig</string>
+	<string name="share_app_title">Teilen Sie die App!</string>
+	<string name="share_app_description">Teilen Sie die App und schützen Sie so sich und Ihr Umfeld.</string>
+	<string name="share_app_action_1">App teilen</string>
+	<string name="share_app_action_2">Teilen Sie die App</string>
+	<string name="share_app_menu">App teilen</string>
+	<string name="share_app_chooser">Teilen Sie die Stopp Corona App mit Ihrem Umfeld. </string>
+	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.</string>
+	<string name="revoke_sickness_title">Status ändern</string>
+	<string name="revoke_sickness_headline">Bitte geben Sie Ihre Daten ein</string>
+	<string name="revoke_sickness_personal_data_description">Wir werden nach dem nächsten Schritt Ihre vorher informierten Kontakte anonym informieren, dass Sie die Krankmeldung zurückziehen. Wir validieren die Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
+	<string name="revoke_sickness_report_title">Infektions-Meldung zurückziehen</string>
+	<string name="revoke_sickness_report_headline">War Ihre Krankmeldung ein Versehen?</string>
+	<string name="revoke_sickness_report_description">Sie haben Ihre Kontakte am %s darüber informiert, dass mit dem Coronavirus infiziert sind.\n\nWenn diese Meldung ein Versehen war, informieren Sie bitte umgehend Ihre Kontakte. Das funktioniert automatisch und anonym, wenn Sie dies hier bestätigen.</string>
+	<string name="revoke_sickness_report_approval">Hiermit bestätige ich, dass die Krankmeldung nicht wahrheitsgemäß war.</string>
+	<string name="revoke_sickness_report_action">Infektions-Meldung zurückziehen</string>
+	<string name="revoke_sickness_success_headline">Infektions-Meldung zurückgezogen</string>
+	<string name="revoke_sickness_success_description_1">Danke, dass Sie Ihre Angaben aktualisiert haben und damit erheblich zu einem transparenten Vorgehen und dem Gemeinwohl beitragen.</string>
+	<string name="revoke_sickness_success_description_2">Ihre Kontakte werden anonym benachrichtigt, dass es sich nicht um eine Corona-Infektion gehandelt hat.</string>
+	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
+	<string name="revoke_sickness_success_finish">Zurück zur Startseite</string>
 </resources>

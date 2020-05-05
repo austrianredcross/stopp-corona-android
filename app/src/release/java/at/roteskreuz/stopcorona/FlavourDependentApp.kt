@@ -5,5 +5,4 @@ package at.roteskreuz.stopcorona
  */
 fun App.onPostCreateFlavourDependent() {
     // logging
-    // do nothing
 }

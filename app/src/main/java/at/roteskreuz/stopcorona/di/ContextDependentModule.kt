@@ -25,7 +25,7 @@ internal val contextDependentModule = module {
 
     single<ContextInteractor> {
         ContextInteractorImpl(
-            context = get()
+            context = androidContext()
         )
     }
 

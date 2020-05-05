@@ -28,7 +28,8 @@ class MenuController(
     private val onVersionClick: () -> Unit,
     private val onHandshakeClick: () -> Unit,
     private val onCheckSymptomsClick: () -> Unit,
-    private val onReportOfficialSicknessClick: () -> Unit
+    private val onReportOfficialSicknessClick: () -> Unit,
+    private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
     var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
@@ -37,21 +38,27 @@ class MenuController(
 
         emptySpace(modelCountBuiltSoFar, 22)
 
+        headlineH2 {
+            id("headline_functionality")
+            title(context.string(R.string.start_menu_headline_3))
+        }
+
         with(buildFunctionalityMenuItems()) {
             if (isNotEmpty()) {
-                headlineH2 {
-                    id("headline_functionality")
-                    title(context.string(R.string.start_menu_headline_3))
-                }
-
                 verticalBackgroundModelGroup(this) {
                     id("vertical_model_group_functionality")
                     backgroundColor(R.color.white)
                 }
-
-                emptySpace(modelCountBuiltSoFar, 48)
             }
         }
+
+        menuItem(onShareAppClick) {
+            id("share_app")
+            title(context.string(R.string.share_app_menu))
+            externalLink(true)
+        }
+
+        emptySpace(modelCountBuiltSoFar, 48)
 
         headlineH2 {
             id("headline_info")

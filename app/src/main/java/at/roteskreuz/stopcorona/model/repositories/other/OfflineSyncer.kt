@@ -166,7 +166,7 @@ class OfflineSyncerImpl(
             // Do not sync if a last successful sync was in the last OFFLINE_SYNC_INTERVAL ms.
             // If the last sync appears to be in the future, we still sync as this can only happen
             // if the clock is off or was off during the last sync
-            if (timeSinceLastSync in 0..OFFLINE_SYNC_INTERVAL) return
+            if (timeSinceLastSync in 0..OFFLINE_SYNC_INTERVAL.toMillis()) return
 
             fetcher()
 

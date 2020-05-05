@@ -21,6 +21,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmen
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
+import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.startDefaultBrowser
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
@@ -79,6 +80,9 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
             },
             onReportOfficialSicknessClick = {
                 startReportingActivity(MessageType.InfectionLevel.Red)
+            },
+            onShareAppClick = {
+                shareApp()
             }
         )
     }

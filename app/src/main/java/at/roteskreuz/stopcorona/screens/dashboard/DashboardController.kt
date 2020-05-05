@@ -28,7 +28,8 @@ class DashboardController(
     private val onCheckSymptomsAgainClick: () -> Unit,
     private val onSomeoneHasRecoveredCloseClick: () -> Unit,
     private val onQuarantineEndCloseClick: () -> Unit,
-    private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit
+    private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
+    private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
     var savedEncounters: Int by adapterProperty(0)
@@ -182,10 +183,14 @@ class DashboardController(
             title(context.string(R.string.main_automatic_handshake_information_hint))
         }
 
+        emptySpace(modelCountBuiltSoFar, 16)
+
+        buildShareAppCard()
+
         if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness).not()
             && (ownHealthStatus is HealthStatusData.SicknessCertificate).not()
         ) {
-            emptySpace(modelCountBuiltSoFar, 24)
+            emptySpace(modelCountBuiltSoFar, 16)
 
             verticalBackgroundModelGroup(
                 listOf(
@@ -207,7 +212,7 @@ class DashboardController(
                         .height(40)
                 )
             ) {
-                backgroundColor(R.color.background_gray)
+                backgroundColor(R.color.white)
             }
         }
 
@@ -235,7 +240,7 @@ class DashboardController(
                         .height(40)
                 )
             ) {
-                backgroundColor(R.color.white)
+                backgroundColor(R.color.background_gray)
             }
         } else {
             emptySpace(modelCountBuiltSoFar, 40)
@@ -385,6 +390,32 @@ class DashboardController(
 
         verticalBackgroundModelGroup(modelList) {
             id("vertical_model_group_end_of_quarantine")
+            backgroundColor(R.color.background_gray)
+        }
+    }
+
+    /**
+     * Build card for sharing the app
+     */
+    private fun buildShareAppCard() {
+        val modelList = arrayListOf<EpoxyModel<out Any>>()
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        DashboardShareAppModel_(onShareAppClick)
+            .id("share_app")
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        verticalBackgroundModelGroup(modelList) {
+            id("vertical_model_group_share_app")
             backgroundColor(R.color.background_gray)
         }
     }

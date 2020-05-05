@@ -22,6 +22,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.backgroundColor
+import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import com.airbnb.epoxy.EpoxyVisibilityTracker
@@ -56,7 +57,8 @@ class HandshakeFragment : BaseFragment(R.layout.fragment_handshake) {
             onInfoClicked = { HandshakeExplanationDialog().show() },
             onSelectAllContacts = viewModel::selectAllContacts,
             onContactSelected = viewModel::selectContact,
-            onOpenSettingsClicked = ::openPlayServices
+            onOpenSettingsClicked = ::openPlayServices,
+            onShareAppClick = { shareApp() }
         )
     }
 

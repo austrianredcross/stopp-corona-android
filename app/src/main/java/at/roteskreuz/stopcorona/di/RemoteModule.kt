@@ -2,9 +2,9 @@ package at.roteskreuz.stopcorona.di
 
 import android.content.Context
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.constants.Constants.API.CERTIFICATE_CHAIN
+import at.roteskreuz.stopcorona.constants.Constants.API.HOSTNAME
 import at.roteskreuz.stopcorona.constants.Constants.API.Header
-import at.roteskreuz.stopcorona.constants.FlavorConstants.API.CERTIFICATE_CHAIN
-import at.roteskreuz.stopcorona.constants.FlavorConstants.API.HOSTNAME
 import at.roteskreuz.stopcorona.constants.isBeta
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.model.api.ApiDescription

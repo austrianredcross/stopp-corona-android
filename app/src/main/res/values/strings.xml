@@ -215,6 +215,7 @@
 	<string name="sickness_certificate_attest_headline">Infection reported</string>
 	<string name="sickness_certificate_attest_description">Please remain in quarantine. You have officially declared yourself ill with the coronavirus.</string>
 	<string name="sickness_certificate_attest_button">Self-quarantine</string>
+	<string name="sickness_certificate_attest_revoke"></string>
 
 	<!-- Start Menu -->
 	<string name="start_menu_headline_1">Info</string>
@@ -398,4 +399,24 @@
 	<string name="revoke_suspicion_success_headline">All-clear confirmed</string>
 	<string name="revoke_suspicion_success_description">Thank you for sharing your information and contributing to the common good.\n\nYour contacts have been notified anonymously.</string>
 	<string name="revoke_suspicion_success_finish">Done</string>
+	<string name="share_app_title">Share the app!</string>
+	<string name="share_app_description">Share the app and protect yourself and your environment.</string>
+	<string name="share_app_action_1">Share App</string>
+	<string name="share_app_action_2">Share the app</string>
+	<string name="share_app_menu">Share App</string>
+	<string name="share_app_chooser">Share the Stopp Corona App with your environment. </string>
+	<string name="share_app_content">Install the STOPP Corona App now!\nIn this way you protect yourself and your environment.</string>
+	<string name="revoke_sickness_title">Change Status</string>
+	<string name="revoke_sickness_headline">Please enter your data</string>
+	<string name="revoke_sickness_personal_data_description">After the next step, we will anonymously inform your previously informed contacts that you are withdrawing the sick note. We will validate the mobile number so that we can prevent misuse of this function.</string>
+	<string name="revoke_sickness_report_title">Revoke infection message</string>
+	<string name="revoke_sickness_report_headline">Was your sick call an accident?</string>
+	<string name="revoke_sickness_report_description">You have informed your contacts at the %s that you are infected with the coronavirus\n\nIf this message was an accident, please inform your contacts immediately. This will work automatically and anonymously if you confirm it here.</string>
+	<string name="revoke_sickness_report_approval">I hereby confirm that the sick note was not truthful.</string>
+	<string name="revoke_sickness_report_action">Revoke infection message</string>
+	<string name="revoke_sickness_success_headline">Infection message revoked</string>
+	<string name="revoke_sickness_success_description_1">Thank you for updating your information and thus contributing significantly to a transparent procedure and the common good.</string>
+	<string name="revoke_sickness_success_description_2">Your contacts will be anonymously notified that it was not a corona infection.</string>
+	<string name="revoke_sickness_success_description_3">We wish you all the best for the future!</string>
+	<string name="revoke_sickness_success_finish">Back to the start page</string>
 </resources>

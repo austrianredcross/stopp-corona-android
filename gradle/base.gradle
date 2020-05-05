@@ -51,3 +51,13 @@ ext.getPropertyByName = { propertyName ->
     }
     return ""
 }
+
+Properties localProperties = new Properties()
+File localPropertiesFile = project.rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.newDataInputStream())
+}
+
+ext.resolveProperty = { String key, String defaultValue ->
+    System.getenv(key) ?: localProperties.getProperty(key, defaultValue)
+}

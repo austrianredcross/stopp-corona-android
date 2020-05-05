@@ -25,11 +25,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
         android:text="@string/handshake_dialog_title"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnClose" />
 
     <ImageView
@@ -229,9 +229,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="24dp"
-            android:rotation="-45"
             android:src="@drawable/ic_external_link"
-            android:tint="@color/accent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -2,7 +2,7 @@ package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
 import androidx.work.*
-import at.roteskreuz.stopcorona.constants.Constants.Behavior.SELF_RETEST_NOTIFICATION_PERIOD
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.SELF_RETEST_NOTIFICATION_INTERVAL
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -24,8 +24,8 @@ class SelfRetestNotifierWorker(
          */
         fun enqueueSelfRetestingReminder(workManager: WorkManager) {
             val request =
-                PeriodicWorkRequestBuilder<SelfRetestNotifierWorker>(SELF_RETEST_NOTIFICATION_PERIOD, TimeUnit.MILLISECONDS)
-                    .setInitialDelay(SELF_RETEST_NOTIFICATION_PERIOD, TimeUnit.MILLISECONDS)
+                PeriodicWorkRequestBuilder<SelfRetestNotifierWorker>(SELF_RETEST_NOTIFICATION_INTERVAL.toMillis(), TimeUnit.MILLISECONDS)
+                    .setInitialDelay(SELF_RETEST_NOTIFICATION_INTERVAL.toMillis(), TimeUnit.MILLISECONDS)
                     .addTag(TAG)
                     .build()
 

@@ -33,7 +33,7 @@
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="${nearbyApiKey}" />
+            android:value="@string/NEARBY_API_KEY" />
 
         <activity
             android:name=".screens.routing.RouterActivity"

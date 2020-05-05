@@ -1,6 +1,6 @@
 package at.roteskreuz.stopcorona.model.repositories
 
-import at.roteskreuz.stopcorona.constants.FlavorConstants.P2PDiscovery.APPLICATION_KEY
+import at.roteskreuz.stopcorona.constants.Constants.P2PDiscovery.APPLICATION_KEY
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
