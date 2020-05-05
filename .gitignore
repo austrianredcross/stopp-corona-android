@@ -42,5 +42,6 @@ thumbs.db
 
 /keystore
 /.babelish.token
+/.babelish
 /app/src/prodApi/google-services.json
 /app/src/stageApi/google-services.json
