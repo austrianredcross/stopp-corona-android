@@ -33,7 +33,7 @@ abstract class HeadlineH1Model : BaseEpoxyModel<HeadlineH1Model.Holder>() {
     var textSize: Float = 32f // in sp
 
     @EpoxyAttribute
-    var gravitiy: Int = Gravity.CENTER_HORIZONTAL
+    var gravity: Int = Gravity.CENTER_HORIZONTAL
 
     override fun Holder.onBind() {
         txtText.text = text
@@ -42,7 +42,7 @@ abstract class HeadlineH1Model : BaseEpoxyModel<HeadlineH1Model.Holder>() {
             this.marginEnd = context.dipfi(marginHorizontal)
         }
         txtText.textSize = textSize
-        txtText.gravity = gravitiy
+        txtText.gravity = gravity
         txtText.setTextColor(color(textColor))
     }
 

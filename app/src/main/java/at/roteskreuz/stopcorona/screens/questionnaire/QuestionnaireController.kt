@@ -73,7 +73,7 @@ class QuestionnaireController(
                 .id("question_${questionIndex}")
                 .text(question.questionText)
                 .textSize(context.rawDimen(R.dimen.questionnaire_question_text_size))
-                .gravitiy(Gravity.START)
+                .gravity(Gravity.START)
                 .marginHorizontal(0f)
                 .addTo(questionPageContent)
 
