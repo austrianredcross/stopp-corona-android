@@ -55,7 +55,10 @@ android {
              */
             buildConfigField "String", "HOSTNAME", '"dummy"'
             buildConfigField "String", "BASE_URL", '"dummy"'
+            buildConfigField "String", "HOSTNAME_TAN", '"dummy"'
+            buildConfigField "String", "BASE_URL_TAN", '"dummy"'
             buildConfigField "String[]", "CERTIFICATE_CHAIN", '{}'
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", '{}'
             buildConfigField "String", "AUTHORIZATION_VALUE", '"dummy"'
             buildConfigField "String", "P2P_APPLICATION_KEY", '"dummy"'
 
@@ -68,7 +71,10 @@ android {
 
             buildConfigField "String", "HOSTNAME", resolveProperty("STAGE_HOSTNAME", '"dummy"')
             buildConfigField "String", "BASE_URL", resolveProperty("STAGE_BASE_URL", '"dummy"')
+            buildConfigField "String", "HOSTNAME_TAN", resolveProperty("STAGE_HOSTNAME_TAN", '"dummy"')
+            buildConfigField "String", "BASE_URL_TAN", resolveProperty("STAGE_BASE_URL_TAN", '"dummy"')
             buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("STAGE_CERTIFICATE_CHAIN", '{}')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("STAGE_CERTIFICATE_CHAIN_TAN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("STAGE_AUTHORIZATION_VALUE", '"dummy"')
             buildConfigField "String", "P2P_APPLICATION_KEY", resolveProperty("STAGE_P2P_APPLICATION_KEY", '"dummy"')
 
@@ -78,7 +84,10 @@ android {
         prodApi {
             buildConfigField "String", "HOSTNAME", resolveProperty("PROD_HOSTNAME", '"dummy"')
             buildConfigField "String", "BASE_URL", resolveProperty("PROD_BASE_URL", '"dummy"')
+            buildConfigField "String", "HOSTNAME_TAN", resolveProperty("PROD_HOSTNAME_TAN", '"dummy"')
+            buildConfigField "String", "BASE_URL_TAN", resolveProperty("PROD_BASE_URL_TAN", '"dummy"')
             buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("PROD_CERTIFICATE_CHAIN", '{}')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("PROD_CERTIFICATE_CHAIN_TAN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("PROD_AUTHORIZATION_VALUE", '"dummy"')
             buildConfigField "String", "P2P_APPLICATION_KEY", resolveProperty("PROD_P2P_APPLICATION_KEY", '"dummy"')
 

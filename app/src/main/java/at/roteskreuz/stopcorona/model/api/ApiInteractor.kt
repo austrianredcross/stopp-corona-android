@@ -55,6 +55,7 @@ interface ApiInteractor {
 class ApiInteractorImpl(
     private val appDispatchers: AppDispatchers,
     private val apiDescription: ApiDescription,
+    private val tanApiDescription: TanApiDescription,
     private val dataPrivacyRepository: DataPrivacyRepository
 ) : ApiInteractor,
     ExceptionMapperHelper {
@@ -129,7 +130,7 @@ class ApiInteractorImpl(
                 }
             },
                 {
-                    apiDescription.requestTan(mobileNumber)
+                    tanApiDescription.requestTan(mobileNumber)
                 })
         }
     }
