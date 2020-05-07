@@ -26,7 +26,6 @@ jobs:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
           GOOGLE_SERVICES_PROD: ${{ secrets.GOOGLE_SERVICES_PROD }}
           GOOGLE_SERVICES_STAGE: ${{ secrets.GOOGLE_SERVICES_STAGE }}
-          CI_PIPELINE_IID: ${{ job.container.id }}
         run: |
           mkdir keystore
           mkdir ./app/src/prodApi
@@ -35,12 +34,11 @@ jobs:
           echo "$LOCAL_PROPERTIES" > ./local.properties
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
-          CI_PIPELINE_IID="$CI_PIPELINE_IID"
       # Build QA version
       - name: Print build code
+        env:
+          CI_PIPELINE_IID: ${{ job.container.id }}
         run: |
-          echo CI_PIPELINE_IID
-          echo "$CI_PIPELINE_IID"
           ./gradlew app:printBuildCode
     #      - name: Build QA version
     #        run: ./gradlew clean assembleStageApiBeta
