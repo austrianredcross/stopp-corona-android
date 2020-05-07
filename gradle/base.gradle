@@ -1,6 +1,6 @@
 ext.getBuildCode = {
-    if (System.getenv('$GITHUB_RUN_NUMBER') != null) {
-        return System.getenv('$GITHUB_RUN_NUMBER')
+    if (System.getenv('GITHUB_RUN_NUMBER') != null) {
+        return System.getenv('GITHUB_RUN_NUMBER')
     } else {
         return 11
     }

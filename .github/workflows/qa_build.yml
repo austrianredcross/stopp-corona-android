@@ -37,8 +37,7 @@ jobs:
       # Build QA version
       - name: Print build code
         run: |
-          CI_PIPELINE_IID=$GITHUB_RUN_NUMBER
-          echo $CI_PIPELINE_IID
+          echo $GITHUB_RUN_NUMBER
           ./gradlew app:printBuildCode
     #      - name: Build QA version
     #        run: ./gradlew clean assembleStageApiBeta
