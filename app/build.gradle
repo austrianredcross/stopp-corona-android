@@ -93,11 +93,19 @@ android {
             ext.alwaysUpdateBuildId = false
         }
         release {
+            debuggable false
             minifyEnabled true
+            // Disables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            shrinkResources false
             // Commented out because it breaks CI. Do not put back in!
             // In release builds, the signing config is provided by the CI
             //signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        beta {
+            initWith release
+            signingConfig signingConfigs.debug
         }
     }
 
