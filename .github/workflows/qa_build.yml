@@ -50,16 +50,12 @@ jobs:
       # Save APK to artifacts
       - name: Archive apk to artifacts
         uses: actions/upload-artifact@v1
-        env:
-          VERSION_NAME: ${{ VERSION_NAME }}
         with:
           name: QA_build
           path: $VERSION_NAME.apk
       # Save mapping file to artifacts
       - name: Archive mapping file to artifacts
         uses: actions/upload-artifact@v1
-        env:
-          VERSION_NAME: ${{ VERSION_NAME }}
         with:
           name: $VERSION_NAME_mapping.txt
           path: $VERSION_NAME_mapping.txt
