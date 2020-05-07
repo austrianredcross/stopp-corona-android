@@ -71,15 +71,26 @@ class ReportingStatusViewModel(
         return Observables.combineLatest(
             reportingRepository.observeAgreementData(),
             reportingRepository.observeMessageType(),
-            quarantineRepository.observeDateOfFirstSelfDiagnose()
-        ).map { (agreementData, infectionLevel, dateOfFirstSelfDiagnose) ->
+            quarantineRepository.observeDateOfFirstSelfDiagnose(),
+            quarantineRepository.observeDateOfFirstMedicalConfirmation()
+        ) { agreementData, infectionLevel, dateOfFirstSelfDiagnose, dateOfFirstMedicalConfirmation ->
             ReportingStatusData(
                 agreementData,
                 infectionLevel,
-                dateOfFirstSelfDiagnose.orElse(null)
+                dateOfFirstSelfDiagnose.orElse(null),
+                dateOfFirstMedicalConfirmation.orElse(null)
             )
         }
     }
+
+    fun observeMessageType(): Observable<MessageType> {
+        return reportingRepository.observeMessageType()
+    }
 }
 
-data class ReportingStatusData(val agreementData: AgreementData, val messageType: MessageType, val dateOfFirstSelfDiagnose: ZonedDateTime?)
+data class ReportingStatusData(
+    val agreementData: AgreementData,
+    val messageType: MessageType,
+    val dateOfFirstSelfDiagnose: ZonedDateTime?,
+    val dateOfFirstMedicalConfirmation: ZonedDateTime?
+)

@@ -12,7 +12,6 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialog
@@ -103,7 +102,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
                 }
             },
             onRevokeSuspicionClick = {
-                startReportingActivity(MessageType.Revoke)
+                startReportingActivity(MessageType.Revoke.Suspicion)
             },
             onPresentMedicalReportClick = {
                 startReportingActivity(MessageType.InfectionLevel.Red)
@@ -114,7 +113,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
             onAutomaticHandshakeEnabled = ::checkDependenciesAndStartAutomaticHandshake,
-            onShareAppClick = { shareApp() }
+            onShareAppClick = {
+                shareApp()
+            },
+            onRevokeSicknessClick = {
+                startReportingActivity(MessageType.Revoke.Sickness)
+            }
         )
     }
 

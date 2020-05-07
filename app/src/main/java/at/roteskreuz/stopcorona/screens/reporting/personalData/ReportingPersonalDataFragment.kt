@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.SicknessCertificateUploadException
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
@@ -44,7 +45,7 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
     override val isToolbarVisible: Boolean = true
 
     override fun getTitle(): String? {
-        return getString(R.string.certificate_personal_data_title)
+        return "" // blank, is depending on messageType
     }
 
     private lateinit var textWatcherMobileNumber: TextWatcher
@@ -64,6 +65,23 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
         super.onViewCreated(view, savedInstanceState)
 
         txtProgress.text = getString(R.string.certificate_personal_progress_label, CURRENT_SCREEN, TOTAL_NUMBER_OF_SCREENS)
+
+        disposables += viewModel.observeMessageType()
+            .observeOnMainThread()
+            .subscribe { messageType ->
+                when (messageType) {
+                    is MessageType.Revoke.Sickness -> {
+                        setTitle(R.string.revoke_sickness_title)
+                        txtTitle.text = getString(R.string.revoke_sickness_headline)
+                        txtDescription.text = getString(R.string.revoke_sickness_personal_data_description)
+                    }
+                    else -> {
+                        setTitle(R.string.certificate_personal_data_title)
+                        txtTitle.text = getString(R.string.certificate_personal_data_title)
+                        txtDescription.text = getString(R.string.certificate_personal_data_description)
+                    }
+                }
+            }
 
         disposables += viewModel.observePersonalData()
             .observeOnMainThread()

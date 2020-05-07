@@ -28,6 +28,11 @@ import kotlin.coroutines.CoroutineContext
 interface QuarantineRepository {
 
     /**
+     * Indicator if the user was in yellow state before turning red.
+     */
+    val hasSelfDiagnoseBackup: Boolean
+
+    /**
      * Observe date of the first medical confirmation.
      */
     fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>>
@@ -53,14 +58,21 @@ interface QuarantineRepository {
     fun reportPositiveSelfDiagnose(timeOfReport: ZonedDateTime = ZonedDateTime.now())
 
     /**
+     * User has revoked his official sickness status and goes back to yellow case.
+     */
+    fun reportPositiveSelfDiagnoseFromBackup()
+
+    /**
      * User revoked the state of his red case.
      */
     fun revokeMedicalConfirmation()
 
     /**
      * User revoked the state of his yellow case.
+     *
+     * Use [backup] to store the self diagnose timestamps in a backup.
      */
-    fun revokePositiveSelfDiagnose()
+    fun revokePositiveSelfDiagnose(backup: Boolean)
 
     /**
      * Some contact has reported [warningType].
@@ -91,6 +103,11 @@ interface QuarantineRepository {
      * Observe if quarantine end information can be shown.
      */
     fun observeShowQuarantineEnd(): Observable<Boolean>
+
+    /**
+     * Resets the last red contact date.
+     */
+    fun revokeLastRedContactDate()
 }
 
 class QuarantineRepositoryImpl(
@@ -104,7 +121,9 @@ class QuarantineRepositoryImpl(
     companion object {
         private const val PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_medical_confirmation"
         private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose"
+        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose_backup"
         private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose"
+        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose_backup"
         private const val PREF_DATE_OF_LAST_RED_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_red_contact"
         private const val PREF_DATE_OF_LAST_YELLOW_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
         private const val PREF_DATE_OF_LAST_SELF_MONITORING = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
@@ -125,8 +144,14 @@ class QuarantineRepositoryImpl(
         return preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
     }
 
+    private var dateOfFirstSelfDiagnoseBackup: ZonedDateTime?
+        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP)
+
     private var dateOfLastSelfDiagnose: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE)
+
+    private var dateOfLastSelfDiagnoseBackup: ZonedDateTime?
+        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
 
     private var dateOfLastRedContact: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_RED_CONTACT)
@@ -142,6 +167,9 @@ class QuarantineRepositoryImpl(
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
+
+    override val hasSelfDiagnoseBackup: Boolean
+        get() = dateOfFirstSelfDiagnoseBackup != null && dateOfLastSelfDiagnoseBackup != null
 
     private val quarantineStateObservable = Observables.combineLatest(
         configurationRepository.observeConfiguration(),
@@ -270,11 +298,23 @@ class QuarantineRepositoryImpl(
         dateOfLastSelfDiagnose = timeOfReport
     }
 
+    override fun reportPositiveSelfDiagnoseFromBackup() {
+        dateOfFirstSelfDiagnose = dateOfFirstSelfDiagnoseBackup
+        dateOfLastSelfDiagnose = dateOfLastSelfDiagnoseBackup
+        dateOfFirstSelfDiagnoseBackup = null
+        dateOfLastSelfDiagnoseBackup = null
+    }
+
     override fun revokeMedicalConfirmation() {
         dateOfFirstMedicalConfirmation = null
     }
 
-    override fun revokePositiveSelfDiagnose() {
+    override fun revokePositiveSelfDiagnose(backup: Boolean) {
+        if (backup) {
+            dateOfFirstSelfDiagnoseBackup = dateOfFirstSelfDiagnose
+            dateOfLastSelfDiagnoseBackup = dateOfLastSelfDiagnose
+        }
+
         dateOfFirstSelfDiagnose = null
         dateOfLastSelfDiagnose = null
     }
@@ -304,6 +344,10 @@ class QuarantineRepositoryImpl(
 
     override fun observeShowQuarantineEnd(): Observable<Boolean> {
         return preferences.observeBoolean(PREF_SHOW_QUARANTINE_END, false)
+    }
+
+    override fun revokeLastRedContactDate() {
+        dateOfLastRedContact = null
     }
 }
 

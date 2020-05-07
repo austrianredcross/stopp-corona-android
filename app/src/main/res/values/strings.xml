@@ -237,6 +237,7 @@
 	<string name="start_menu_item_3_1">Start handshake manually</string>
 	<string name="start_menu_item_3_2">Examine symptoms</string>
 	<string name="start_menu_item_3_3">Report medical confirmation</string>
+	<string name="start_menu_item_revoke_sickness">Revoke sick note</string>
 
 	<!-- History -->
 	<string name="contact_history_title">Saved encounters</string>
