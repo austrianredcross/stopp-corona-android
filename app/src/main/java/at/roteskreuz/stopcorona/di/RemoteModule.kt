@@ -25,7 +25,6 @@ import okhttp3.Cache
 import okhttp3.CertificatePinner
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import okhttp3.logging.HttpLoggingInterceptor.Level.NONE
-import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module.module
 
 object CertificatePinnerTag {
@@ -58,14 +57,25 @@ val remoteModule = module {
         }.build()
     }
 
-    single { (certificatePinnerTag: String) ->
+    single(name = defaultCertificatePinnerTag) {
         createOkHttpClient(if (isDebug || isBeta) BODY else NONE) {
             addHeaders(
                 Header.AUTHORIZATION_KEY to Header.AUTHORIZATION_VALUE,
                 Header.APP_ID_KEY to Header.APP_ID_VALUE
             )
             cache(get())
-            certificatePinner(get(certificatePinnerTag))
+            certificatePinner(get(defaultCertificatePinnerTag))
+        }
+    }
+
+    single(name = tanCertificatePinnerTag) {
+        createOkHttpClient(if (isDebug || isBeta) BODY else NONE) {
+            addHeaders(
+                Header.AUTHORIZATION_KEY to Header.AUTHORIZATION_VALUE,
+                Header.APP_ID_KEY to Header.APP_ID_VALUE
+            )
+            cache(get())
+            certificatePinner(get(tanCertificatePinnerTag))
         }
     }
 
@@ -78,7 +88,7 @@ val remoteModule = module {
     single {
         createApi<ApiDescription>(
             baseUrl = Constants.API.BASE_URL,
-            okHttpClient = get { parametersOf(defaultCertificatePinnerTag) },
+            okHttpClient = get(defaultCertificatePinnerTag),
             moshi = get()
         )
     }
@@ -86,7 +96,7 @@ val remoteModule = module {
     single {
         createApi<TanApiDescription>(
             baseUrl = Constants.API.BASE_URL_TAN,
-            okHttpClient = get { parametersOf(tanCertificatePinnerTag) },
+            okHttpClient = get(tanCertificatePinnerTag),
             moshi = get()
         )
     }
