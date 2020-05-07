@@ -35,6 +35,7 @@ jobs:
           echo "$LOCAL_PROPERTIES" > ./local.properties
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
+          CI_PIPELINE_IID="$CI_PIPELINE_IID"
       # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
