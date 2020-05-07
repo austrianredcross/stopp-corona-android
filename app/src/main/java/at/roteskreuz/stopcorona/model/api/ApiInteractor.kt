@@ -4,6 +4,7 @@ import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionInfoRequest
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
+import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
@@ -130,7 +131,7 @@ class ApiInteractorImpl(
                 }
             },
                 {
-                    tanApiDescription.requestTan(mobileNumber)
+                    tanApiDescription.requestTan(ApiRequestTanBody(mobileNumber))
                 })
         }
     }
