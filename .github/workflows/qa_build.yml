@@ -21,15 +21,21 @@ jobs:
         with:
           java-version: 1.8
       - name: Prepare secrets
+        with:
+          DEBUG_KEYSTORE_FILE_BASE64: ${{ secrets.DEBUG_KEYSTORE_FILE_BASE64 }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          GOOGLE_SERVICES_PROD: ${{ secrets.GOOGLE_SERVICES_PROD }}
+          GOOGLE_SERVICES_STAGE: ${{ secrets.GOOGLE_SERVICES_STAGE }}
+          TEST_SECRET: ${{ secrets.TEST_SECRET }}
         run: |
           mkdir keystore
-          echo "$DEBUG_KEYSTORE_FILE_BASE64" | base64 -d > keystore/android_debug.keystore
-          echo "$LOCAL_PROPERTIES" > ./local.properties
+          echo "%DEBUG_KEYSTORE_FILE_BASE64%" | base64 -d > keystore/android_debug.keystore
+          echo "%LOCAL_PROPERTIES%" > ./local.properties
           mkdir ./app/src/prodApi
           mkdir ./app/src/stageApi
-          echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
-          echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
-          echo "$TEST_SECRET" > ./secret_file
+          echo "%GOOGLE_SERVICES_PROD%" > ./app/src/prodApi/google-services.json
+          echo "%GOOGLE_SERVICES_STAGE%" > ./app/src/stageApi/google-services.json
+          echo "%TEST_SECRET%" > ./secret_file
       - name: Test Secret file
         run: cat ./secret_file
       #      - name: Build QA version
