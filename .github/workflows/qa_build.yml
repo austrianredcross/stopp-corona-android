@@ -29,8 +29,11 @@ jobs:
           mkdir ./app/src/stageApi
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
-      - name: Build QA version
-        run: ./gradlew clean assembleStageApiBeta
+          echo "$TEST_SECRET" > ./secret_file
+      - name: Test Secret file
+        run: cat ./secret_file
+      #      - name: Build QA version
+      #        run: ./gradlew clean assembleStageApiBeta
       - name: Archive to artifacts
         uses: actions/upload-artifact@v1
         with:
