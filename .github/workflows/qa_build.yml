@@ -36,9 +36,9 @@ jobs:
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
       # Build QA version
       - name: Print build code
-        env:
-          CI_PIPELINE_IID: ${{ job.container.id }}
         run: |
+          CI_PIPELINE_IID=$GITHUB_RUN_NUMBER
+          echo $CI_PIPELINE_IID
           ./gradlew app:printBuildCode
     #      - name: Build QA version
     #        run: ./gradlew clean assembleStageApiBeta
