@@ -131,13 +131,14 @@ class ReportingRepositoryImpl(
 
     private val agreementDataSubject = NonNullableBehaviorSubject(AgreementData())
     private val messageTypeSubject = BehaviorSubject.create<MessageType>()
+    private var tanUuid: String? = null
 
     override fun setMessageType(messageType: MessageType) {
         messageTypeSubject.onNext(messageType)
     }
 
     override suspend fun requestTan(mobileNumber: String) {
-        apiInteractor.requestTan(mobileNumber)
+        tanUuid = apiInteractor.requestTan(mobileNumber).uuid
     }
 
     override suspend fun uploadReportInformation(): MessageType {
@@ -196,6 +197,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid ?: "",
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(infectionLevel.warningType)
@@ -233,6 +235,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid ?: "",
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(MessageType.Revoke.Suspicion.warningType)
@@ -265,6 +268,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid ?: "",
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(updateStatus.warningType)
