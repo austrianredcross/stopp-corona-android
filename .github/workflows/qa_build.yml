@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - release*
-      - task/CTAA-1329_set_up_CI_pipelines # TODO just for testing
+      - task/CTAA-1329* # TODO just for testing
 
 jobs:
   build_and_archive:
@@ -36,7 +36,11 @@ jobs:
           echo "$LOCAL_PROPERTIES" > ./local.properties
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
-      # TODO Set git tag
+      # Add QA tag
+      - name: Add QA tag
+        run: |
+          git tag -a QA_$GITHUB_RUN_NUMBER
+          git push origin QA_$GITHUB_RUN_NUMBER
       # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
@@ -45,9 +49,9 @@ jobs:
         run: |
           mkdir ./output
           OUTPUT_PATH=./app/build/outputs
-          VERSION_NAME=`cat $OUTPUT_PATH/apk/stageApi/beta/output.json | jq '.[].apkData.versionName' | tr -d '"'`
-          mv "$OUTPUT_PATH/apk/stageApi/beta/app-stageApi-beta.apk" "./output/$VERSION_NAME.apk"
-          mv "$OUTPUT_PATH/mapping/stageApi/beta/mapping.txt" "./output/$VERSION_NAME_mapping.txt"
+          VERSION_NAME=`cat ${OUTPUT_PATH}/apk/stageApi/beta/output.json | jq '.[].apkData.versionName' | tr -d '"'`
+          mv ${OUTPUT_PATH}/apk/stageApi/beta/app-stageApi-beta.apk ./output/${VERSION_NAME}.apk
+          mv ${OUTPUT_PATH}/mapping/stageApi/beta/mapping.txt ./output/${VERSION_NAME}_mapping.txt
       # Save APK and mapping file to artifacts
       - name: Archive outputs to artifacts
         uses: actions/upload-artifact@v1
