@@ -37,12 +37,17 @@ jobs:
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
           CI_PIPELINE_IID="$CI_PIPELINE_IID"
       # Build QA version
-      - name: Build QA version
-        run: ./gradlew clean assembleStageApiBeta
-      # Save APK to artifacts
-      - name: Archive apk to artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: QA_build
-          path: app/build/outputs
+      - name: Print build code
+        run: |
+          echo CI_PIPELINE_IID
+          echo "$CI_PIPELINE_IID"
+          ./gradlew app:printBuildCode
+    #      - name: Build QA version
+    #        run: ./gradlew clean assembleStageApiBeta
+    #      # Save APK to artifacts
+    #      - name: Archive apk to artifacts
+    #        uses: actions/upload-artifact@v1
+    #        with:
+    #          name: QA_build
+    #          path: app/build/outputs
     # TODO upload to appCenter

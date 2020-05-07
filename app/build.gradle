@@ -174,3 +174,7 @@ dependencies {
 task getAppVersion {
     println " version = $versionString"
 }
+
+task printBuildCode {
+    println " buildCode = $buildCode"
+}
