@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.questionnaire
 
 import android.content.Context
+import android.view.Gravity
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_CZ
 import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_DE
@@ -71,7 +72,8 @@ class QuestionnaireController(
             HeadlineH1Model_()
                 .id("question_${questionIndex}")
                 .text(question.questionText)
-                .textSize(context.rawDimen(R.dimen.questionnaire_headline))
+                .textSize(context.rawDimen(R.dimen.questionnaire_question_text_size))
+                .gravity(Gravity.START)
                 .marginHorizontal(0f)
                 .addTo(questionPageContent)
 
@@ -102,6 +104,11 @@ class QuestionnaireController(
 
             QuestionnaireRadioGroupModel_(answerList)
                 .id("question_answer_group_$questionIndex")
+                .addTo(questionPageContent)
+
+            EmptySpaceModel_()
+                .id(modelCountBuiltSoFar)
+                .height(32)
                 .addTo(questionPageContent)
 
             questionnairePage(onEnterPage, questionPageContent) {

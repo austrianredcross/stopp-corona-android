@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.base.epoxy
 
+import android.view.Gravity
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -31,6 +32,9 @@ abstract class HeadlineH1Model : BaseEpoxyModel<HeadlineH1Model.Holder>() {
     @EpoxyAttribute
     var textSize: Float = 32f // in sp
 
+    @EpoxyAttribute
+    var gravity: Int = Gravity.CENTER_HORIZONTAL
+
     override fun Holder.onBind() {
         txtText.text = text
         txtText.updateLayoutParams<ConstraintLayout.LayoutParams> {
@@ -38,6 +42,7 @@ abstract class HeadlineH1Model : BaseEpoxyModel<HeadlineH1Model.Holder>() {
             this.marginEnd = context.dipfi(marginHorizontal)
         }
         txtText.textSize = textSize
+        txtText.gravity = gravity
         txtText.setTextColor(color(textColor))
     }
 
