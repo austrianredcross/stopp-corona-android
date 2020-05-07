@@ -1,6 +1,6 @@
 name: Build and deploy stageApi QA version
 
-# Trigger on push
+# Trigger on push to release branch
 on:
   push:
     branches:
@@ -46,8 +46,8 @@ jobs:
           mkdir ./output
           OUTPUT_PATH=./app/build/outputs
           VERSION_NAME=`cat $OUTPUT_PATH/apk/stageApi/beta/output.json | jq '.[].apkData.versionName' | tr -d '"'`
-          mv $OUTPUT_PATH/apk/stageApi/beta/app-stageApi-beta.apk ./output/$VERSION_NAME.apk
-          mv $OUTPUT_PATH/mapping/stageApi/beta/mapping.txt ./output/$VERSION_NAME_mapping.txt
+          mv "$OUTPUT_PATH/apk/stageApi/beta/app-stageApi-beta.apk" "./output/$VERSION_NAME.apk"
+          mv "$OUTPUT_PATH/mapping/stageApi/beta/mapping.txt" "./output/$VERSION_NAME_mapping.txt"
       # Save APK and mapping file to artifacts
       - name: Archive outputs to artifacts
         uses: actions/upload-artifact@v1
