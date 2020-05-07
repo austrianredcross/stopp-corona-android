@@ -16,6 +16,7 @@ import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.Scope
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import at.roteskreuz.stopcorona.utils.view.safeMap
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
@@ -131,13 +132,14 @@ class ReportingRepositoryImpl(
 
     private val agreementDataSubject = NonNullableBehaviorSubject(AgreementData())
     private val messageTypeSubject = BehaviorSubject.create<MessageType>()
+    private var tanUuid: String? = null
 
     override fun setMessageType(messageType: MessageType) {
         messageTypeSubject.onNext(messageType)
     }
 
     override suspend fun requestTan(mobileNumber: String) {
-        apiInteractor.requestTan(mobileNumber)
+        tanUuid = apiInteractor.requestTan(mobileNumber).uuid
     }
 
     override suspend fun uploadReportInformation(): MessageType {
@@ -196,6 +198,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(infectionLevel.warningType)
@@ -233,6 +236,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(MessageType.Revoke.Suspicion.warningType)
@@ -265,6 +269,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(updateStatus.warningType)
