@@ -1,6 +1,6 @@
 ext.getBuildCode = {
-    if (System.getenv('CI_PIPELINE_IID') != null) {
-        return System.getenv('CI_PIPELINE_IID').trim().toInteger()
+    if (System.getenv('$GITHUB_RUN_NUMBER') != null) {
+        return System.getenv('$GITHUB_RUN_NUMBER')
     } else {
         return 11
     }
