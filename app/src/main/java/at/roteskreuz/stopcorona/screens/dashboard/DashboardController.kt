@@ -29,6 +29,7 @@ class DashboardController(
     private val onSomeoneHasRecoveredCloseClick: () -> Unit,
     private val onQuarantineEndCloseClick: () -> Unit,
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
+    private val onRevokeSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
@@ -294,6 +295,18 @@ class DashboardController(
             ButtonType2Model_(onCheckSymptomsAgainClick)
                 .id("own_health_status_check_symptoms_button")
                 .text(context.string(R.string.self_testing_symptoms_secondary_button))
+                .addTo(modelList)
+        }
+
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate) {
+            EmptySpaceModel_()
+                .id(modelCountBuiltSoFar)
+                .height(16)
+                .addTo(modelList)
+
+            ButtonType2Model_(onRevokeSicknessClick)
+                .id("own_health_status_revoke_sickness")
+                .text(context.string(R.string.sickness_certificate_attest_revoke))
                 .addTo(modelList)
         }
 

@@ -99,7 +99,7 @@ class FilesRepositoryImpl(
             val tmpDestFile: File = File.createTempFile(file.name, null, file.parentFile)
             // Write to temp file and only move to the requested file name when we know
             // we succeeded. Otherwise we might leave a half written file around which will
-            // never be replaced because ´if (!fileExists(destFilename))´ thinks everything is ok
+            // never be replaced beacuse ´if (!fileExists(destFilename))´ thinks everything is ok
             FileOutputStream(tmpDestFile).use { output ->
                 output.write(text.toByteArray())
                 output.flush() // Flush buffers to OS
