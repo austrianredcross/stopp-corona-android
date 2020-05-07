@@ -37,10 +37,11 @@ jobs:
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
       # Add QA tag
-      - name: Add QA tag
-        run: |
-          git tag -a QA_$GITHUB_RUN_NUMBER
-          git push origin QA_$GITHUB_RUN_NUMBER
+      # TODO add GITHUB_TOKEN to use git commands
+      # - name: Add QA tag
+      #   run: |
+      #     git tag -a QA_$GITHUB_RUN_NUMBER
+      #     git push origin QA_$GITHUB_RUN_NUMBER
       # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
