@@ -35,16 +35,22 @@ jobs:
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
       # Build QA version
-      - name: Print build code
+      - name: Build QA version
+        run: ./gradlew clean assembleStageApiBeta
+      # Save APK to artifacts
+      - name: Archive apk to artifacts
+        uses: actions/upload-artifact@v1
         run: |
-          echo $GITHUB_RUN_NUMBER
-          ./gradlew app:printBuildCode
-    #      - name: Build QA version
-    #        run: ./gradlew clean assembleStageApiBeta
-    #      # Save APK to artifacts
-    #      - name: Archive apk to artifacts
-    #        uses: actions/upload-artifact@v1
-    #        with:
-    #          name: QA_build
-    #          path: app/build/outputs
+          OUTPUT_PATH=./app/build/outputs
+          VERSION_NAME=`cat $OUTPUT_PATH/apk/stageApi/beta/output.json | jq '.[].apkData.versionName' | tr -d '"'`
+          mv $OUTPUT_PATH/apk/stageApi/beta/app-stageApi-beta.apk $VERSION_NAME.apk
+        with:
+          name: $VERSION_NAME.apk
+          path: $VERSION_NAME.apk
+      # Save mapping file to artifacts
+      - name: Archive mapping file to artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: $VERSION_NAME_mapping.txt
+          path: ./app/build/outputs/mapping/stageApi/beta/mapping.txt
     # TODO upload to appCenter
