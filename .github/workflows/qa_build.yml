@@ -11,11 +11,12 @@ jobs:
   build_and_archive:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Fetch code
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      - name: set up JDK 1.8
+      - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
@@ -27,13 +28,14 @@ jobs:
           GOOGLE_SERVICES_PROD: ${{ secrets.GOOGLE_SERVICES_PROD }}
           GOOGLE_SERVICES_STAGE: ${{ secrets.GOOGLE_SERVICES_STAGE }}
         run: |
-          mkdir keystore
+          mkdir ./keystore
           mkdir ./app/src/prodApi
           mkdir ./app/src/stageApi
           echo "$DEBUG_KEYSTORE_FILE_BASE64" | base64 -d > ./keystore/android_debug.keystore
           echo "$LOCAL_PROPERTIES" > ./local.properties
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
+      # TODO Set git tag
       # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
@@ -44,15 +46,20 @@ jobs:
           VERSION_NAME=`cat $OUTPUT_PATH/apk/stageApi/beta/output.json | jq '.[].apkData.versionName' | tr -d '"'`
           mv $OUTPUT_PATH/apk/stageApi/beta/app-stageApi-beta.apk $VERSION_NAME.apk
           mv $OUTPUT_PATH/mapping/stageApi/beta/mapping.txt $VERSION_NAME_mapping.txt
+          echo "::set-env name={VERSION_NAME}::{$VERSION_NAME}"
       # Save APK to artifacts
       - name: Archive apk to artifacts
         uses: actions/upload-artifact@v1
+        env:
+          VERSION_NAME: ${{ VERSION_NAME }}
         with:
-          name: $VERSION_NAME.apk
+          name: QA_build
           path: $VERSION_NAME.apk
       # Save mapping file to artifacts
       - name: Archive mapping file to artifacts
         uses: actions/upload-artifact@v1
+        env:
+          VERSION_NAME: ${{ VERSION_NAME }}
         with:
           name: $VERSION_NAME_mapping.txt
           path: $VERSION_NAME_mapping.txt
