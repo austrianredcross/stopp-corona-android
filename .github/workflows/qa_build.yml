@@ -37,13 +37,16 @@ jobs:
       # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
-      # Save APK to artifacts
-      - name: Archive apk to artifacts
-        uses: actions/upload-artifact@v1
+      # Prepare apk and mapping file
+      - name: Prepare artifacts
         run: |
           OUTPUT_PATH=./app/build/outputs
           VERSION_NAME=`cat $OUTPUT_PATH/apk/stageApi/beta/output.json | jq '.[].apkData.versionName' | tr -d '"'`
           mv $OUTPUT_PATH/apk/stageApi/beta/app-stageApi-beta.apk $VERSION_NAME.apk
+          mv $OUTPUT_PATH/mapping/stageApi/beta/mapping.txt $VERSION_NAME_mapping.txt
+      # Save APK to artifacts
+      - name: Archive apk to artifacts
+        uses: actions/upload-artifact@v1
         with:
           name: $VERSION_NAME.apk
           path: $VERSION_NAME.apk
@@ -52,5 +55,5 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: $VERSION_NAME_mapping.txt
-          path: ./app/build/outputs/mapping/stageApi/beta/mapping.txt
+          path: $VERSION_NAME_mapping.txt
     # TODO upload to appCenter
