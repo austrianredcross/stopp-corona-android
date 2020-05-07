@@ -4,9 +4,8 @@ name: Build and deploy stageApi QA version
 on:
   push:
     branches:
-      - task/CTAA-1329_set_up_CI_pipelines # just for testing
-    tags:
-      - QA*
+      - release*
+      - task/CTAA-1329_set_up_CI_pipelines # TODO just for testing
 
 jobs:
   build_and_archive:
@@ -20,23 +19,27 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      # Add secrets to the project to be buildable
       - name: Prepare secrets
         env:
           DEBUG_KEYSTORE_FILE_BASE64: ${{ secrets.DEBUG_KEYSTORE_FILE_BASE64 }}
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
           GOOGLE_SERVICES_PROD: ${{ secrets.GOOGLE_SERVICES_PROD }}
           GOOGLE_SERVICES_STAGE: ${{ secrets.GOOGLE_SERVICES_STAGE }}
+          CI_PIPELINE_IID: ${{ job.container.id }}
         run: |
           mkdir keystore
           mkdir ./app/src/prodApi
           mkdir ./app/src/stageApi
-          echo "$DEBUG_KEYSTORE_FILE_BASE64" | base64 -d > keystore/android_debug.keystore
+          echo "$DEBUG_KEYSTORE_FILE_BASE64" | base64 -d > ./keystore/android_debug.keystore
           echo "$LOCAL_PROPERTIES" > ./local.properties
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
+      # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
-      - name: Archive to artifacts
+      # Save APK to artifacts
+      - name: Archive apk to artifacts
         uses: actions/upload-artifact@v1
         with:
           name: QA_build
