@@ -27,7 +27,7 @@ jobs:
           GOOGLE_SERVICES_PROD: ${{ secrets.GOOGLE_SERVICES_PROD }}
           GOOGLE_SERVICES_STAGE: ${{ secrets.GOOGLE_SERVICES_STAGE }}
           TEST_SECRET: ${{ secrets.TEST_SECRET }}
-        run: |
+      - run: |
           mkdir keystore
           echo "%DEBUG_KEYSTORE_FILE_BASE64%" | base64 -d > keystore/android_debug.keystore
           echo "%LOCAL_PROPERTIES%" > ./local.properties
@@ -37,7 +37,7 @@ jobs:
           echo "%GOOGLE_SERVICES_STAGE%" > ./app/src/stageApi/google-services.json
           echo "%TEST_SECRET%" > ./secret_file
       - name: Test Secret file
-        run: cat ./secret_file
+      - run: cat ./secret_file
       #      - name: Build QA version
       #        run: ./gradlew clean assembleStageApiBeta
       - name: Archive to artifacts
