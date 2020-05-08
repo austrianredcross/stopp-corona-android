@@ -1,11 +1,10 @@
 name: Build and deploy stageApi QA version
 
-# Trigger on push to release branch
+# Trigger on pushing QA_xxx tag
 on:
   push:
-    branches:
-      - release*
-      - task/CTAA-1329* # TODO just for testing
+    tags:
+      - QA*
 
 jobs:
   build_and_archive:
@@ -36,12 +35,6 @@ jobs:
           echo "$LOCAL_PROPERTIES" > ./local.properties
           echo "$GOOGLE_SERVICES_PROD" > ./app/src/prodApi/google-services.json
           echo "$GOOGLE_SERVICES_STAGE" > ./app/src/stageApi/google-services.json
-      # Add QA tag
-      # TODO add GITHUB_TOKEN to use git commands
-      # - name: Add QA tag
-      #   run: |
-      #     git tag -a QA_$GITHUB_RUN_NUMBER
-      #     git push origin QA_$GITHUB_RUN_NUMBER
       # Build QA version
       - name: Build QA version
         run: ./gradlew clean assembleStageApiBeta
@@ -59,4 +52,3 @@ jobs:
         with:
           name: QA_build
           path: ./output
-    # TODO upload to appCenter
