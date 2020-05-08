@@ -21,12 +21,12 @@ interface DatabaseCleanupManager {
     /**
      * Remove incoming green messages immediately.
      */
-    suspend fun removeIncomingGreenMessages()
+    suspend fun removeReceivedGreenMessages()
 
     /**
      * Removes all outgoing yellow messages immediately when user revokes probably sick status.
      */
-    suspend fun removeOutgoingYellowMessages()
+    suspend fun removeSentYellowMessages()
 }
 
 class DatabaseCleanupManagerImpl(
@@ -50,12 +50,12 @@ class DatabaseCleanupManagerImpl(
         cleanupInfectionMessages()
     }
 
-    override suspend fun removeIncomingGreenMessages() {
-        infectionMessageDao.removeInfectionMessagesOlderThan(true, MessageType.Revoke, ZonedDateTime.now())
+    override suspend fun removeReceivedGreenMessages() {
+        infectionMessageDao.removeReceivedInfectionMessagesOlderThan(MessageType.Revoke.Suspicion, ZonedDateTime.now())
     }
 
-    override suspend fun removeOutgoingYellowMessages() {
-        infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
+    override suspend fun removeSentYellowMessages() {
+        infectionMessageDao.removeSentInfectionMessagesOlderThan(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
     }
 
     private fun cleanupContacts() {
@@ -79,36 +79,36 @@ class DatabaseCleanupManagerImpl(
     }
 
     private fun cleanupInfectionMessages() {
-        cleanupIncomingInfectionMessages()
-        cleanupOutgoingMessages()
+        cleanupReceivedInfectionMessages()
+        cleanupSentInfectionMessages()
     }
 
-    private fun cleanupIncomingInfectionMessages() {
+    private fun cleanupReceivedInfectionMessages() {
         launch {
             val configuration = configurationRepository.observeConfiguration().blockingFirst()
 
             val thresholdRedMessages = ZonedDateTime.now().minusHours(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
-            infectionMessageDao.removeInfectionMessagesOlderThan(true, MessageType.InfectionLevel.Red, thresholdRedMessages)
+            infectionMessageDao.removeReceivedInfectionMessagesOlderThan(MessageType.InfectionLevel.Red, thresholdRedMessages)
 
             val thresholdYellowMessages = ZonedDateTime.now().minusHours(configuration.yellowWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
-            infectionMessageDao.removeInfectionMessagesOlderThan(true, MessageType.InfectionLevel.Yellow, thresholdYellowMessages)
+            infectionMessageDao.removeReceivedInfectionMessagesOlderThan(MessageType.InfectionLevel.Yellow, thresholdYellowMessages)
 
             val thresholdGreenMessages = ZonedDateTime.now().minusDays(THRESHOLD_REMOVE_INCOMING_GREEN_MESSAGES)
-            infectionMessageDao.removeInfectionMessagesOlderThan(true, MessageType.Revoke, thresholdGreenMessages)
+            infectionMessageDao.removeReceivedInfectionMessagesOlderThan(MessageType.Revoke.Suspicion, thresholdGreenMessages)
         }
     }
 
-    private fun cleanupOutgoingMessages() {
+    private fun cleanupSentInfectionMessages() {
         launch {
             val configuration = configurationRepository.observeConfiguration().blockingFirst()
 
-            infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.Revoke, ZonedDateTime.now())
+            infectionMessageDao.removeSentInfectionMessagesOlderThan(MessageType.Revoke.Suspicion, ZonedDateTime.now())
 
             val thresholdYellowMessages = ZonedDateTime.now().minusHours(configuration.yellowWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
-            infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.InfectionLevel.Yellow, thresholdYellowMessages)
+            infectionMessageDao.removeSentInfectionMessagesOlderThan(MessageType.InfectionLevel.Yellow, thresholdYellowMessages)
 
             val thresholdRedMessages = ZonedDateTime.now().minusHours(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
-            infectionMessageDao.removeInfectionMessagesOlderThan(false, MessageType.InfectionLevel.Red, thresholdRedMessages)
+            infectionMessageDao.removeSentInfectionMessagesOlderThan(MessageType.InfectionLevel.Red, thresholdRedMessages)
         }
     }
 

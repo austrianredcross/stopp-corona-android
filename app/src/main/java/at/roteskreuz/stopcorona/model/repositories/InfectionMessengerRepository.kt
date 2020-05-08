@@ -5,10 +5,7 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.entities.infection.message.*
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -49,12 +46,12 @@ interface InfectionMessengerRepository {
     /**
      * Observe the infection messages received.
      */
-    fun observeReceivedInfectionMessages(): Observable<List<DbInfectionMessage>>
+    fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>>
 
     /**
      * Observe the infection messages sent.
      */
-    fun observeSentInfectionMessages(): Observable<List<DbInfectionMessage>>
+    fun observeSentInfectionMessages(): Observable<List<DbSentInfectionMessage>>
 
     /**
      * Observe info if someone has recovered.
@@ -141,20 +138,22 @@ class InfectionMessengerRepositoryImpl(
                         // store decrypted messages to DB
                         if (decryptedMessage != null) {
                             val infectionMessageContent = InfectionMessageContent(decryptedMessage)
-                            infectionMessageContent?.let {
-                                if (infectionMessageContent.timeStamp.isInTheFuture().not()) {
-                                    val dbMessage = it.asDbEntity().copy(isReceived = true)
-                                    infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
-                                    when (val messageType = it.messageType) {
-                                        is MessageType.InfectionLevel -> {
-                                            notificationsRepository.displayInfectionNotification(messageType)
-                                            quarantineRepository.receivedWarning(messageType.warningType)
+                            if (infectionMessageContent != null && infectionMessageContent.timeStamp.isInTheFuture().not()) {
+                                val dbMessage = infectionMessageContent.asReceivedDbEntity()
+                                infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
+                                when (val messageType = infectionMessageContent.messageType) {
+                                    is MessageType.InfectionLevel -> {
+                                        notificationsRepository.displayInfectionNotification(messageType)
+                                        quarantineRepository.receivedWarning(messageType.warningType)
+
+                                        if (infectionMessageDao.hasReceivedRedInfectionMessages().not()) {
+                                            quarantineRepository.revokeLastRedContactDate()
                                         }
-                                        MessageType.Revoke -> {
-                                            setSomeoneHasRecovered()
-                                            notificationsRepository.displaySomeoneHasRecoveredNotification()
-                                            databaseCleanupManager.removeIncomingGreenMessages()
-                                        }
+                                    }
+                                    MessageType.Revoke.Suspicion -> {
+                                        setSomeoneHasRecovered()
+                                        notificationsRepository.displaySomeoneHasRecoveredNotification()
+                                        databaseCleanupManager.removeReceivedGreenMessages()
                                     }
                                 }
                             }
@@ -170,11 +169,11 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    override fun observeReceivedInfectionMessages(): Observable<List<DbInfectionMessage>> {
+    override fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>> {
         return infectionMessageDao.observeReceivedInfectionMessages().asDbObservable()
     }
 
-    override fun observeSentInfectionMessages(): Observable<List<DbInfectionMessage>> {
+    override fun observeSentInfectionMessages(): Observable<List<DbSentInfectionMessage>> {
         return infectionMessageDao.observeSentInfectionMessages().asDbObservable()
     }
 

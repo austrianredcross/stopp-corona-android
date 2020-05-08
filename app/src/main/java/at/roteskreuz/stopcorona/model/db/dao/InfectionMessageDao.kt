@@ -1,45 +1,49 @@
 package at.roteskreuz.stopcorona.model.db.dao
 
 import androidx.room.*
-import at.roteskreuz.stopcorona.model.entities.infection.message.*
+import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
+import at.roteskreuz.stopcorona.model.entities.infection.message.DbSentInfectionMessage
+import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import io.reactivex.Flowable
 import org.threeten.bp.ZonedDateTime
 
 /**
- * DAO to manage [DbInfectionMessage].
+ * DAO to manage [DbSentInfectionMessage], [DbReceivedInfectionMessage].
  */
 @Dao
 abstract class InfectionMessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertOrUpdateInfectionMessage(record: DbInfectionMessage)
+    abstract suspend fun insertOrUpdateInfectionMessage(record: DbReceivedInfectionMessage)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertOrUpdateInfectionMessages(records: List<DbInfectionMessage>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertOrUpdateContactWithInfectionMessage(contacts: DbContactWithInfectionMessage)
+    abstract suspend fun insertOrUpdateInfectionMessage(record: DbSentInfectionMessage)
 
     @Transaction
     open suspend fun insertSentInfectionMessages(
         infectionMessagesWithContactEvents: List<Pair<ByteArray, InfectionMessageContent>>
     ) {
         infectionMessagesWithContactEvents.forEach { (publicKey, infectionMessage) ->
-            insertOrUpdateInfectionMessage(infectionMessage.asDbEntity())
-            insertOrUpdateContactWithInfectionMessage(DbContactWithInfectionMessage(infectionMessage.uuid, publicKey))
+            insertOrUpdateInfectionMessage(infectionMessage.asSentDbEntity(publicKey))
         }
     }
 
-    @Query("SELECT * FROM infection_message WHERE isReceived = 1")
-    abstract fun observeReceivedInfectionMessages(): Flowable<List<DbInfectionMessage>>
+    @Query("SELECT * FROM received_infection_message")
+    abstract fun observeReceivedInfectionMessages(): Flowable<List<DbReceivedInfectionMessage>>
 
-    @Query("SELECT * FROM infection_message WHERE isReceived = 0")
-    abstract fun observeSentInfectionMessages(): Flowable<List<DbInfectionMessage>>
+    @Query("SELECT * FROM sent_infection_message")
+    abstract fun observeSentInfectionMessages(): Flowable<List<DbSentInfectionMessage>>
 
-    @Transaction
-    @Query("SELECT * FROM infection_message WHERE isReceived = 0 AND messageType = :messageType")
-    abstract fun observeSentInfectionMessagesByMessageType(messageType: MessageType): Flowable<List<DbInfectionFullContainer>>
+    @Query("SELECT * FROM sent_infection_message WHERE messageType = :messageType")
+    abstract suspend fun getSentInfectionMessagesByMessageType(messageType: MessageType): List<DbSentInfectionMessage>
 
-    @Query("DELETE FROM infection_message WHERE isReceived = :isReceived AND messageType = :messageType AND timeStamp < :olderThan")
-    abstract suspend fun removeInfectionMessagesOlderThan(isReceived: Boolean, messageType: MessageType, olderThan: ZonedDateTime)
+    @Query("DELETE FROM sent_infection_message WHERE messageType = :messageType AND timeStamp < :olderThan")
+    abstract suspend fun removeSentInfectionMessagesOlderThan(messageType: MessageType, olderThan: ZonedDateTime)
+
+    @Query("DELETE FROM received_infection_message WHERE messageType = :messageType AND timeStamp < :olderThan")
+    abstract suspend fun removeReceivedInfectionMessagesOlderThan(messageType: MessageType, olderThan: ZonedDateTime)
+
+    @Query("SELECT COUNT(*) > 0  FROM received_infection_message WHERE messageType = 'r'")
+    abstract suspend fun hasReceivedRedInfectionMessages(): Boolean
 }

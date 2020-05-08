@@ -20,9 +20,6 @@ interface ApiDescription {
     @GET("infection-messages")
     suspend fun infectionMessages(@Query("addressPrefix") addressPrefix: String, @Query("fromId") fromId: Long? = null): ApiInfectionMessages
 
-    @GET("request-tan")
-    suspend fun requestTan(@Query("phone") mobileNumber: String): ApiRequestTan
-
     @PUT("infection-info")
     suspend fun infectionInfo(@Body infectionInfoRequest: ApiInfectionInfoRequest)
 }

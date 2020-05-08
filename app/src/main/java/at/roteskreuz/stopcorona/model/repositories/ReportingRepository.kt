@@ -16,6 +16,7 @@ import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.Scope
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import at.roteskreuz.stopcorona.utils.view.safeMap
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
@@ -131,18 +132,20 @@ class ReportingRepositoryImpl(
 
     private val agreementDataSubject = NonNullableBehaviorSubject(AgreementData())
     private val messageTypeSubject = BehaviorSubject.create<MessageType>()
+    private var tanUuid: String? = null
 
     override fun setMessageType(messageType: MessageType) {
         messageTypeSubject.onNext(messageType)
     }
 
     override suspend fun requestTan(mobileNumber: String) {
-        apiInteractor.requestTan(mobileNumber)
+        tanUuid = apiInteractor.requestTan(mobileNumber).uuid
     }
 
     override suspend fun uploadReportInformation(): MessageType {
         return when (messageTypeSubject.value) {
-            MessageType.Revoke -> uploadRevokeInfo()
+            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo()
+            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo()
             else -> uploadInfectionInfo()
         }
     }
@@ -159,13 +162,12 @@ class ReportingRepositoryImpl(
 
             if (infectionLevel == MessageType.InfectionLevel.Red) {
                 infectionMessages.addAll(
-                    infectionMessageDao.observeSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
-                        .blockingFirst()
-                        .map { fullContainer ->
-                            fullContainer.contacts.first().publicKey to InfectionMessageContent(
+                    infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
+                        .map { message ->
+                            message.publicKey to InfectionMessageContent(
                                 MessageType.InfectionLevel.Red,
-                                fullContainer.infectionMessageInstance.timeStamp,
-                                fullContainer.infectionMessageInstance.uuid
+                                message.timeStamp,
+                                message.uuid
                             )
                         }
                 )
@@ -175,13 +177,12 @@ class ReportingRepositoryImpl(
                     thresholdTime = infectionMessages.first().second.timeStamp
                 }
             } else if (infectionLevel == MessageType.InfectionLevel.Yellow) {
-                val resetMessages = infectionMessageDao.observeSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
-                    .blockingFirst()
-                    .map { fullContainer ->
-                        fullContainer.contacts.first().publicKey to InfectionMessageContent(
-                            MessageType.Revoke,
-                            fullContainer.infectionMessageInstance.timeStamp,
-                            fullContainer.infectionMessageInstance.uuid
+                val resetMessages = infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
+                    .map { message ->
+                        message.publicKey to InfectionMessageContent(
+                            MessageType.Revoke.Suspicion,
+                            message.timeStamp,
+                            message.uuid
                         )
                     }
 
@@ -197,6 +198,7 @@ class ReportingRepositoryImpl(
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
                     personalDataSubject.value.asApiEntity(infectionLevel.warningType)
@@ -208,7 +210,7 @@ class ReportingRepositoryImpl(
             when (infectionLevel) {
                 MessageType.InfectionLevel.Red -> {
                     quarantineRepository.reportMedicalConfirmation()
-                    quarantineRepository.revokePositiveSelfDiagnose()
+                    quarantineRepository.revokePositiveSelfDiagnose(backup = true)
                     quarantineRepository.revokeSelfMonitoring()
                 }
                 MessageType.InfectionLevel.Yellow -> {
@@ -221,29 +223,73 @@ class ReportingRepositoryImpl(
         }
     }
 
-    private suspend fun uploadRevokeInfo(): MessageType.Revoke {
+    private suspend fun uploadRevokeSuspicionInfo(): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
-            val infectionMessages = infectionMessageDao.observeSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow).blockingFirst()
-                .map { fullContainer ->
-                    fullContainer.contacts.first().publicKey to InfectionMessageContent(
-                        MessageType.Revoke,
-                        fullContainer.infectionMessageInstance.timeStamp,
-                        fullContainer.infectionMessageInstance.uuid
+            val infectionMessages = infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
+                .map { message ->
+                    message.publicKey to InfectionMessageContent(
+                        MessageType.Revoke.Suspicion,
+                        message.timeStamp,
+                        message.uuid
                     )
                 }
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
+                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
                     tanDataSubject.value.tan,
                     encryptInfectionMessages(infectionMessages),
-                    personalDataSubject.value.asApiEntity(MessageType.Revoke.warningType)
+                    personalDataSubject.value.asApiEntity(MessageType.Revoke.Suspicion.warningType)
                 )
             )
 
-            quarantineRepository.revokePositiveSelfDiagnose()
-            databaseCleanupManager.removeOutgoingYellowMessages()
+            quarantineRepository.revokePositiveSelfDiagnose(backup = false)
+            databaseCleanupManager.removeSentYellowMessages()
 
-            MessageType.Revoke
+            MessageType.Revoke.Suspicion
+        }
+    }
+
+    private suspend fun uploadRevokeSicknessInfo(): MessageType.Revoke.Sickness {
+        return withContext(coroutineContext) {
+
+            val updateStatus = when {
+                quarantineRepository.hasSelfDiagnoseBackup -> MessageType.InfectionLevel.Yellow
+                else -> MessageType.Revoke.Suspicion
+            }
+
+            val infectionMessages = infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Red)
+                .map { message ->
+                    message.publicKey to InfectionMessageContent(
+                        updateStatus,
+                        message.timeStamp,
+                        message.uuid
+                    )
+                }
+
+            apiInteractor.setInfectionInfo(
+                ApiInfectionInfoRequest(
+                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
+                    tanDataSubject.value.tan,
+                    encryptInfectionMessages(infectionMessages),
+                    personalDataSubject.value.asApiEntity(updateStatus.warningType)
+                )
+            )
+
+            infectionMessengerRepository.storeSentInfectionMessages(infectionMessages)
+
+            quarantineRepository.revokeMedicalConfirmation()
+
+            when (updateStatus) {
+                is MessageType.InfectionLevel.Yellow -> {
+                    quarantineRepository.reportPositiveSelfDiagnoseFromBackup()
+                }
+                is MessageType.Revoke.Suspicion -> {
+                    quarantineRepository.revokePositiveSelfDiagnose(backup = false)
+                }
+            }
+
+            MessageType.Revoke.Sickness
         }
     }
 

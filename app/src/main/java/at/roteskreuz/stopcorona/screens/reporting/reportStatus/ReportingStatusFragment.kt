@@ -14,6 +14,7 @@ import at.roteskreuz.stopcorona.screens.questionnaire.success.startQuestionnaire
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment.Companion.SCROLLED_DISTANCE_THRESHOLD
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.success.startCertificateReportSuccessFragment
+import at.roteskreuz.stopcorona.screens.reporting.reportStatus.success.startRevokeSicknessSuccessFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.success.startRevokeSuspicionSuccessFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -43,7 +44,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
     override val isToolbarVisible: Boolean = true
 
     override fun getTitle(): String? {
-        return getString(R.string.certificate_report_status_title)
+        return "" // blank, is depending on messageType
     }
 
     private val controller: ReportingStatusController by lazy {
@@ -92,12 +93,22 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
             addOnScrollListener(accurateScrollListener)
         }
 
+        disposables += viewModel.observeMessageType()
+            .observeOnMainThread()
+            .subscribe { messageType ->
+                when (messageType) {
+                    is MessageType.Revoke.Sickness -> setTitle(R.string.revoke_sickness_title)
+                    else -> setTitle(R.string.certificate_report_status_title)
+                }
+            }
+
         disposables += viewModel.observeReportingStatusData()
             .observeOnMainThread()
             .subscribe { statusData ->
                 controller.agreementData = statusData.agreementData
                 controller.messageType = statusData.messageType
                 controller.dateOfFirstSelfDiagnose = statusData.dateOfFirstSelfDiagnose
+                controller.dateOfFirstMedicalConfirmation = statusData.dateOfFirstMedicalConfirmation
             }
 
         disposables += viewModel.observeUploadReportDataState()
@@ -112,7 +123,8 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                         when (state.data) {
                             MessageType.InfectionLevel.Red -> startCertificateReportSuccessFragment()
                             MessageType.InfectionLevel.Yellow -> startQuestionnaireReportSuccessFragment()
-                            MessageType.Revoke -> startRevokeSuspicionSuccessFragment()
+                            MessageType.Revoke.Suspicion -> startRevokeSuspicionSuccessFragment()
+                            MessageType.Revoke.Sickness -> startRevokeSicknessSuccessFragment()
                         }
 
                         activity?.finish()

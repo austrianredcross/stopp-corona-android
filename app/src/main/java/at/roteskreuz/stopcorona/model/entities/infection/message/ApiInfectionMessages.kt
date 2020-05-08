@@ -5,7 +5,6 @@ import at.roteskreuz.stopcorona.constants.Constants.Security.BLOCK_SIZE
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
-import at.roteskreuz.stopcorona.skeleton.core.model.entities.ApiEntity
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -40,7 +39,7 @@ sealed class MessageType(val identifier: String) : Parcelable {
             return when (identifier) {
                 InfectionLevel.Red.identifier -> InfectionLevel.Red
                 InfectionLevel.Yellow.identifier -> InfectionLevel.Yellow
-                Revoke.identifier -> Revoke
+                Revoke.Suspicion.identifier -> Revoke.Suspicion
                 else -> {
                     Timber.e(SilentError("Unknown message type identifier $identifier"))
                     null
@@ -78,13 +77,30 @@ sealed class MessageType(val identifier: String) : Parcelable {
     }
 
     /**
-     * User is recovered as result of self test.
+     * Revoke-from options.
      */
-    @Parcelize
-    object Revoke : MessageType("g") {
+    sealed class Revoke(identifier: String) : MessageType(identifier) {
 
-        @IgnoredOnParcel
-        override val warningType: WarningType = WarningType.REVOKE
+        /**
+         * User is recovered as result of self test.
+         */
+        @Parcelize
+        object Suspicion : MessageType("g") {
+
+            @IgnoredOnParcel
+            override val warningType: WarningType = WarningType.REVOKE
+        }
+
+        /**
+         * Placeholder to initialize a sickness revoke process.
+         * Will be replaced by [Suspicion] or [InfectionLevel.Yellow] during the process.
+         */
+        @Parcelize
+        object Sickness : MessageType("g") {
+
+            @IgnoredOnParcel
+            override val warningType: WarningType = WarningType.REVOKE
+        }
     }
 }
 
@@ -107,7 +123,7 @@ data class InfectionMessageContent(
     val messageType: MessageType,
     val timeStamp: ZonedDateTime,
     val uuid: UUID = UUID.randomUUID()
-) : ApiEntity<DbInfectionMessage> {
+) {
 
     /**
      * Serialize to byte array of size [BLOCK_SIZE]
@@ -189,11 +205,20 @@ data class InfectionMessageContent(
         }
     }
 
-    override fun asDbEntity(): DbInfectionMessage {
-        return DbInfectionMessage(
+    fun asSentDbEntity(publicKey: ByteArray): DbSentInfectionMessage {
+        return DbSentInfectionMessage(
+            uuid = uuid,
             messageType = messageType,
             timeStamp = timeStamp,
-            uuid = uuid
+            publicKey = publicKey
+        )
+    }
+
+    fun asReceivedDbEntity(): DbReceivedInfectionMessage {
+        return DbReceivedInfectionMessage(
+            uuid = uuid,
+            messageType = messageType,
+            timeStamp = timeStamp
         )
     }
 }

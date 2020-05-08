@@ -29,6 +29,7 @@ class ReportingStatusController(
     var agreementData: AgreementData? by adapterProperty(null as AgreementData?)
     var messageType: MessageType? by adapterProperty(null as MessageType?)
     var dateOfFirstSelfDiagnose: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
+    var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 12)
@@ -36,7 +37,8 @@ class ReportingStatusController(
         when (messageType) {
             MessageType.InfectionLevel.Red -> buildScreenForProvenSickness()
             MessageType.InfectionLevel.Yellow -> buildScreenForSelfTestSuspicion()
-            MessageType.Revoke -> buildScreenForRevokeSuspicion()
+            MessageType.Revoke.Suspicion -> buildScreenForRevokeSuspicion()
+            MessageType.Revoke.Sickness -> buildScreenForRevokeSickness()
         }
 
         emptySpace(modelCountBuiltSoFar, 40)
@@ -132,8 +134,6 @@ class ReportingStatusController(
 
         emptySpace(modelCountBuiltSoFar, 32)
 
-
-
         description {
             id("description_revoke")
             description(SpannableString(context.string(
@@ -157,6 +157,48 @@ class ReportingStatusController(
         buttonType1(onSendReportClick) {
             id("button_revoke_suspicion")
             text(context.string(R.string.revoke_suspicion_action))
+            enabled(agreementData?.userHasAgreed ?: false)
+        }
+    }
+
+    private fun buildScreenForRevokeSickness() {
+        headlineH1 {
+            id("title")
+            text(context.string(R.string.revoke_sickness_report_title))
+        }
+
+        emptySpace(modelCountBuiltSoFar, 32)
+
+        headlineH2 {
+            id("headline")
+            title(context.string(R.string.revoke_sickness_report_headline))
+        }
+
+        emptySpace(modelCountBuiltSoFar, 32)
+
+        description {
+            id("description_revoke")
+            description(SpannableString(context.string(
+                R.string.revoke_sickness_report_description,
+                dateOfFirstMedicalConfirmation?.formatDayAndMonthAndYear(context).safeMap("Self diagnose date not available!", EMPTY_STRING)
+            )))
+        }
+
+        emptySpace(modelCountBuiltSoFar, 32)
+
+        checkbox(onAgreementCheckboxChange) {
+            id("checkbox_revoke_agreement")
+            label(context.string(R.string.revoke_sickness_report_approval))
+            checked(agreementData?.userHasAgreed ?: false)
+            textStyle(R.style.AppTheme_Heading2)
+            spanSizeOverride { totalSpanCount, _, _ -> totalSpanCount } // whole row
+        }
+
+        emptySpace(modelCountBuiltSoFar, 32)
+
+        buttonType1(onSendReportClick) {
+            id("button_revoke_suspicion")
+            text(context.string(R.string.revoke_sickness_report_action))
             enabled(agreementData?.userHasAgreed ?: false)
         }
     }

@@ -10,6 +10,7 @@ import org.threeten.bp.format.DateTimeFormatter
  */
 @JsonClass(generateAdapter = true)
 data class ApiInfectionInfoRequest(
+    val uuid: String,
     val authorization: String,
     @field:Json(name = "infection-messages")
     val infectionMessages: List<ApiAddressedInfectionMessage>,

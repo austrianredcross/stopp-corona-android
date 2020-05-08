@@ -12,6 +12,7 @@
 
     <!-- Questionnaire screen -->
     <dimen name="questionnaire_headline">24sp</dimen>
+    <dimen name="questionnaire_question_text_size">22sp</dimen>
     <dimen name="questionnaire_headline_top_margin">16dp</dimen>
     <dimen name="questionnaire_margin_horizontal">16dp</dimen>
     <dimen name="questionnaire_answer">18sp</dimen>

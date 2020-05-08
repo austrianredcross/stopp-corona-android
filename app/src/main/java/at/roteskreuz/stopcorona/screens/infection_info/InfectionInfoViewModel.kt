@@ -1,6 +1,6 @@
 package at.roteskreuz.stopcorona.screens.infection_info
 
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbInfectionMessage
+import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
@@ -35,7 +35,7 @@ class InfectionInfoViewModel(
 }
 
 data class InfectedContactsViewState(
-    val messages: List<DbInfectionMessage>,
+    val messages: List<DbReceivedInfectionMessage>,
     val quarantinedUntil: LocalDate? = null
 ) {
 

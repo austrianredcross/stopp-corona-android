@@ -1,0 +1,13 @@
+# This is a sample configuration file
+filename: CoronaContact_Strings
+fetch: true
+langs:
+ ENGLISH: "en"
+ GERMAN: "de"
+
+output_dir: "app/src/main/res/"
+state_column: 4
+keys_column: 1
+comments_column: 11
+excluded_states: ["SECTION", "DEPRECATED"]
+sheet: 0
