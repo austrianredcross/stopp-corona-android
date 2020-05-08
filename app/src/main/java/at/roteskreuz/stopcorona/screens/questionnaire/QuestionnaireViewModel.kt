@@ -6,7 +6,6 @@ import androidx.core.util.set
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
-import at.roteskreuz.stopcorona.model.repositories.QuestionnaireComplianceRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
@@ -22,8 +21,7 @@ import kotlinx.coroutines.launch
  */
 class QuestionnaireViewModel(
     appDispatchers: AppDispatchers,
-    private val apiInteractor: ApiInteractor,
-    questionnaireComplianceRepository: QuestionnaireComplianceRepository
+    private val apiInteractor: ApiInteractor
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
@@ -34,8 +32,6 @@ class QuestionnaireViewModel(
     private val decisionSubject = NonNullableBehaviorSubject(SparseArray<Decision>())
     private val executeDecisionSubject = BehaviorSubject.create<Decision>()
     private val questionnaireDataStateObserver = DataStateObserver<ApiConfiguration>()
-
-    val complianceAccepted = questionnaireComplianceRepository.complianceAccepted
 
     var currentPage: Int
         get() = currentPageSubject.value
