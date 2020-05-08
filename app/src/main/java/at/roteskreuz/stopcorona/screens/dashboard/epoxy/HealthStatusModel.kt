@@ -96,7 +96,7 @@ abstract class HealthStatusModel(
 
                             val builder = SpannableStringBuilder()
                             builder.append(context.string(R.string.contacts_confirmed_multiple_case_description_1, data.confirmed))
-                            builder.append(context.getBoldSpan(R.string.contacts_confirmed_multiple_case_description_2, insertLeadingSpace = false))
+                            builder.append(context.getBoldSpan(R.string.contacts_confirmed_multiple_case_description_2))
                             builder.append(context.getString(R.string.contacts_confirmed_multiple_case_description_3))
                             builder.append("\n\n")
                             builder.append(context.string(R.string.contacts_suspicion_multiple_case_description_1, data.suspicion))
