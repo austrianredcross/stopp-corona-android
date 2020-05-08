@@ -16,7 +16,7 @@ on:
       - master
 
 jobs:
-  run_tests:
+  pr_build_check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
