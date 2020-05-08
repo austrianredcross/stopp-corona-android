@@ -47,8 +47,8 @@
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
-	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (eindeutige Kennzahl [ID], meine Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet. Darüber hinaus wird mein öffentlicher Schlüssel mit meinen Intensiv-Kontakten zum Zweck der späteren Warnung vor einer ärztlich bestätigten Infektionsgefährdung ausgetauscht.  </string>
-	<string name="onboarding_dataprivacy_approval">Ja, ich stimme der Datenverarbeitung zu. </string>
+	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (eindeutige Kennzahlen [IDs], meine Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet. Darüber hinaus wird mein öffentlicher Schlüssel mit meinen Intensiv-Kontakten zum Zweck der späteren Warnung oder Entwarnung meiner Intensiv-Kontakte ausgetauscht.</string>
+	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
 	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
 	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
 	<string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
@@ -401,19 +401,19 @@
 	<string name="revoke_suspicion_success_description">Danke, dass Sie Ihre Information weitergegeben haben und damit zum Gemeinwohl beitragen.\n\nIhre Kontakte wurden anonym benachrichtigt.</string>
 	<string name="revoke_suspicion_success_finish">Fertig</string>
 	<string name="share_app_title">Teilen Sie die App!</string>
-	<string name="share_app_description">Teilen Sie die App und schützen Sie so sich und Ihr Umfeld.</string>
+	<string name="share_app_description">Empfehlen Sie die App und schützen Sie so sich und Ihr Umfeld.</string>
 	<string name="share_app_action_1">App teilen</string>
 	<string name="share_app_action_2">Teilen Sie die App</string>
 	<string name="share_app_menu">App teilen</string>
 	<string name="share_app_chooser">Teilen Sie die Stopp Corona App mit Ihrem Umfeld. </string>
-	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.</string>
+	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224</string>
 	<string name="revoke_sickness_title">Status ändern</string>
 	<string name="revoke_sickness_headline">Bitte geben Sie Ihre Daten ein</string>
 	<string name="revoke_sickness_personal_data_description">Wir werden nach dem nächsten Schritt Ihre vorher informierten Kontakte anonym informieren, dass Sie die Krankmeldung zurückziehen. Wir validieren die Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
 	<string name="revoke_sickness_report_title">Infektions-Meldung zurückziehen</string>
 	<string name="revoke_sickness_report_headline">War Ihre Krankmeldung ein Versehen?</string>
-	<string name="revoke_sickness_report_description">Sie haben Ihre Kontakte am %s darüber informiert, dass mit dem Coronavirus infiziert sind.\n\nWenn diese Meldung ein Versehen war, informieren Sie bitte umgehend Ihre Kontakte. Das funktioniert automatisch und anonym, wenn Sie dies hier bestätigen.</string>
-	<string name="revoke_sickness_report_approval">Hiermit bestätige ich, dass die Krankmeldung nicht wahrheitsgemäß war.</string>
+	<string name="revoke_sickness_report_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Sie mit dem Coronavirus infiziert sind.\n\nWenn diese Meldung ein Versehen war, informieren Sie bitte umgehend Ihre Kontakte. Das funktioniert automatisch und anonym, wenn Sie dies hier bestätigen.</string>
+	<string name="revoke_sickness_report_approval">Hiermit bestätige ich den Widerruf meiner Krankmeldung.</string>
 	<string name="revoke_sickness_report_action">Infektions-Meldung zurückziehen</string>
 	<string name="revoke_sickness_success_headline">Infektions-Meldung zurückgezogen</string>
 	<string name="revoke_sickness_success_description_1">Danke, dass Sie Ihre Angaben aktualisiert haben und damit erheblich zu einem transparenten Vorgehen und dem Gemeinwohl beitragen.</string>
