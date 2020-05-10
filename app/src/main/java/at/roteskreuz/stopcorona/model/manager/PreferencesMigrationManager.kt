@@ -21,7 +21,7 @@ class PreferencesMigrationManagerImpl(
 ) : PreferencesMigrationManager {
 
     companion object {
-        private const val VERSION = 1
+        private const val VERSION = 2
         private const val PREF_CURRENT_VERSION = Constants.Prefs.PREFERENCES_MIGRATION_MANAGER_PREFIX + "current_version"
     }
 
@@ -31,6 +31,9 @@ class PreferencesMigrationManagerImpl(
         val migrations = listOf(
             PreferencesMigration(0, 1) {
                 preferences.removeAndApply("pref_infection_messenger_repository_client_uuid")
+            },
+            PreferencesMigration(1, 2) {
+                preferences.removeAndApply("pref_questionnaire_compliance_repository_compliance_accepted_timestamp")
             }
         )
 

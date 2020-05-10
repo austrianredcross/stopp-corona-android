@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.questionnaire.compliance.startQuestionnaireComplianceFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.startQuestionnaireHintFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuestionnaireSelfMonitoringFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.suspicion.startQuestionnaireSuspicionFragment
@@ -57,15 +56,6 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             indicatorItemPadding = requireContext().dip(8),
             indicatorItemDiameter = requireContext().dip(8)
         )
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (viewModel.complianceAccepted.not()) {
-            startQuestionnaireComplianceFragment()
-            activity?.finish()
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
