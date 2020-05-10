@@ -123,10 +123,4 @@ val repositoryModule = module {
             dataPrivacyRepository = get()
         )
     }
-
-    single<QuestionnaireComplianceRepository> {
-        QuestionnaireComplianceRepositoryImpl(
-            preferences = get()
-        )
-    }
 }

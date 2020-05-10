@@ -47,9 +47,9 @@
 	<string name="onboarding_next_button">Continue</string>
 	<string name="onboarding_finish_button">Finished</string>
 	<string name="onboarding_headline_6">Declaration of consent</string>
-	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification number [ID], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of achieving a rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning in the event of a medically confirmed risk of infection.</string>
-	<string name="onboarding_dataprivacy_approval">Yes, I consent to the processing of data.</string>
-	<string name="onboarding_dataprivacy_description_2_1">I may revoke my consent at any time and I may switch off the automatic contact initiation feature in the app. Revocation does not affect the lawfulness of processing up until the time that consent is revoked. \n\nYou can find further information in our</string>
+	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification numbers [IDs], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning or an all-clear notification.</string>
+	<string name="onboarding_dataprivacy_approval">I consent</string>
+	<string name="onboarding_dataprivacy_description_2_1">I may revoke my consent at any time, whereby revocation does not affect the lawfulness of processing up until the time that consent is revoked. \n\nFurther information can be found in our</string>
 	<string name="onboarding_dataprivacy_description_2_2">privacy policy.</string>
 	<string name="onboarding_headline_terms_of_use">Terms of use</string>
 	<string name="onboarding_headline_data_privacy">Privacy policy</string>
@@ -215,7 +215,7 @@
 	<string name="sickness_certificate_attest_headline">Infection reported</string>
 	<string name="sickness_certificate_attest_description">Please remain in quarantine. You have officially declared yourself ill with the coronavirus.</string>
 	<string name="sickness_certificate_attest_button">Self-quarantine</string>
-	<string name="sickness_certificate_attest_revoke"></string>
+	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>
 
 	<!-- Start Menu -->
 	<string name="start_menu_headline_1">Info</string>
@@ -406,14 +406,14 @@
 	<string name="share_app_action_2">Share the app</string>
 	<string name="share_app_menu">Share App</string>
 	<string name="share_app_chooser">Share the Stopp Corona App with your environment. </string>
-	<string name="share_app_content">Install the STOPP Corona App now!\nIn this way you protect yourself and your environment.</string>
+	<string name="share_app_content">Install the STOPP Corona App now!\nIn this way you protect yourself and your environment.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224</string>
 	<string name="revoke_sickness_title">Change Status</string>
 	<string name="revoke_sickness_headline">Please enter your data</string>
 	<string name="revoke_sickness_personal_data_description">After the next step, we will anonymously inform your previously informed contacts that you are withdrawing the sick note. We will validate the mobile number so that we can prevent misuse of this function.</string>
 	<string name="revoke_sickness_report_title">Revoke infection message</string>
 	<string name="revoke_sickness_report_headline">Was your sick call an accident?</string>
 	<string name="revoke_sickness_report_description">You have informed your contacts at the %s that you are infected with the coronavirus\n\nIf this message was an accident, please inform your contacts immediately. This will work automatically and anonymously if you confirm it here.</string>
-	<string name="revoke_sickness_report_approval">I hereby confirm that the sick note was not truthful.</string>
+	<string name="revoke_sickness_report_approval">I hereby confirm the revocation of my sick note.</string>
 	<string name="revoke_sickness_report_action">Revoke infection message</string>
 	<string name="revoke_sickness_success_headline">Infection message revoked</string>
 	<string name="revoke_sickness_success_description_1">Thank you for updating your information and thus contributing significantly to a transparent procedure and the common good.</string>
