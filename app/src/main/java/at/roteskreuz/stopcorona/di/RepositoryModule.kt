@@ -123,4 +123,10 @@ val repositoryModule = module {
             dataPrivacyRepository = get()
         )
     }
+
+    single<HandshakeCodewordRepository> {
+        HandshakeCodewordRepositoryImpl(
+            contextInteractor = get()
+        )
+    }
 }
