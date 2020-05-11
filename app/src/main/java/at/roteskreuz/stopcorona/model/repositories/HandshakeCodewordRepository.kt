@@ -21,6 +21,6 @@ class HandshakeCodewordRepositoryImpl(
 
     @StringRes
     override fun getCodeword(identification: String): Int {
-        return contextInteractor.resources.getIdentifier("handshake_code_$identification", "id", contextInteractor.packageName)
+        return contextInteractor.resources.getIdentifier("handshake_code_$identification", "string", contextInteractor.packageName)
     }
 }
