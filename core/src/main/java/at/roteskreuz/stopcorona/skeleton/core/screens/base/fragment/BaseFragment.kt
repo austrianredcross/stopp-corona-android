@@ -175,7 +175,11 @@ abstract class BaseFragment(
     fun hideProgressDialog() {
         val currentDialog =
             childFragmentManager.findFragmentByTag(ProgressDialogFragment::class.java.name) as? ProgressDialogFragment
-        currentDialog?.dismiss()
+
+        currentDialog?.apply {
+            dismissAllowingStateLoss()
+            childFragmentManager.executePendingTransactions() // to prevent race condition
+        }
     }
 
     inline fun <reified T : DialogFragment> T.show(fragmentManager: FragmentManager = this@BaseFragment.childFragmentManager) {
