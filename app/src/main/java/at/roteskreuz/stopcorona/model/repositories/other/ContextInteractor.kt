@@ -52,6 +52,11 @@ interface ContextInteractor {
     val powerManager: PowerManager?
 
     /**
+     * Get the package name.
+     */
+    val packageName: String
+
+    /**
      * Shortcut for density independent pixels (dp).
      */
     fun dip(value: Int): Int
@@ -112,6 +117,9 @@ class ContextInteractorImpl(
 
     override val powerManager: PowerManager?
         get() = context.getSystemService()
+
+    override val packageName: String
+        get() = context.packageName
 
     override fun dip(value: Int): Int {
         return context.dip(value)
