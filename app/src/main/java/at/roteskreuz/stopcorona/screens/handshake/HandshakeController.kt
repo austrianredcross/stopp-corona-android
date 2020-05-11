@@ -4,9 +4,13 @@ import android.content.Context
 import android.text.SpannableString
 import android.view.Gravity
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.repositories.NearbyResult
-import at.roteskreuz.stopcorona.screens.base.epoxy.*
+import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
+import at.roteskreuz.stopcorona.screens.base.epoxy.description
+import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
+import at.roteskreuz.stopcorona.screens.base.epoxy.headlineH2
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeContactIdentification
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeIdentification
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeResultListHeadline
@@ -27,7 +31,7 @@ class HandshakeController(
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
-    var identification: String? by adapterProperty(null as String?)
+    var identification: Int by adapterProperty(0)
     var contactList: List<NearbyResult> by adapterProperty(ArrayList())
     var selectAllChecked: Boolean by adapterProperty(false)
     var showLoadingIndicator: Boolean by adapterProperty(false)
@@ -66,7 +70,12 @@ class HandshakeController(
 
             handshakeIdentification {
                 id("handshake_identification")
-                identification(identification)
+                identification(
+                    when (identification) {
+                        0 -> EMPTY_STRING
+                        else -> context.string(identification)
+                    }
+                )
             }
 
             emptySpace(modelCountBuiltSoFar, 20)

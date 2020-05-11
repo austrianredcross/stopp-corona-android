@@ -12,7 +12,7 @@ interface HandshakeCodewordRepository {
      * Returns the related codeword resource id for a random number.
      */
     @StringRes
-    fun getCodeword(index: Int): Int
+    fun getCodeword(identification: String): Int
 }
 
 class HandshakeCodewordRepositoryImpl(
@@ -20,7 +20,7 @@ class HandshakeCodewordRepositoryImpl(
 ) : HandshakeCodewordRepository {
 
     @StringRes
-    override fun getCodeword(index: Int): Int {
-        return contextInteractor.resources.getIdentifier("handshake_code_$index", "id", contextInteractor.packageName)
+    override fun getCodeword(identification: String): Int {
+        return contextInteractor.resources.getIdentifier("handshake_code_$identification", "id", contextInteractor.packageName)
     }
 }
