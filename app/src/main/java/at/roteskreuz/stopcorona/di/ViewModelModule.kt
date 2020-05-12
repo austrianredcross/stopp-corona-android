@@ -88,7 +88,8 @@ val viewModelModule = module {
         HandshakeViewModel(
             appDispatchers = get(),
             googleApiClientBuilder = get(),
-            nearbyRepository = get()
+            nearbyRepository = get(),
+            handshakeCodewordRepository = get()
         )
     }
 

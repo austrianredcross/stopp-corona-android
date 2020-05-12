@@ -30,7 +30,8 @@ val repositoryModule = module {
         NearbyRepositoryImpl(
             cryptoRepository = get(),
             appDispatchers = get(),
-            nearbyRecordDao = get()
+            nearbyRecordDao = get(),
+            handshakeCodewordRepository = get()
         )
     }
 
@@ -121,6 +122,12 @@ val repositoryModule = module {
             contextInteractor = get(),
             cryptoRepository = get(),
             dataPrivacyRepository = get()
+        )
+    }
+
+    single<HandshakeCodewordRepository> {
+        HandshakeCodewordRepositoryImpl(
+            contextInteractor = get()
         )
     }
 }

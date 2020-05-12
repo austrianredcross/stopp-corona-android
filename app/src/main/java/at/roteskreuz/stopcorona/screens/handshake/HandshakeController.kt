@@ -4,9 +4,13 @@ import android.content.Context
 import android.text.SpannableString
 import android.view.Gravity
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.repositories.NearbyResult
-import at.roteskreuz.stopcorona.screens.base.epoxy.*
+import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
+import at.roteskreuz.stopcorona.screens.base.epoxy.description
+import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
+import at.roteskreuz.stopcorona.screens.base.epoxy.headlineH2
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeContactIdentification
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeIdentification
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeResultListHeadline
