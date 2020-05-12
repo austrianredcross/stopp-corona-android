@@ -30,7 +30,8 @@ val repositoryModule = module {
         NearbyRepositoryImpl(
             cryptoRepository = get(),
             appDispatchers = get(),
-            nearbyRecordDao = get()
+            nearbyRecordDao = get(),
+            handshakeCodewordRepository = get()
         )
     }
 
