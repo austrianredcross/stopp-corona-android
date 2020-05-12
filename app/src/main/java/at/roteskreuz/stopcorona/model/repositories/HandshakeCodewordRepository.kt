@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 
 /**
@@ -20,9 +21,14 @@ class HandshakeCodewordRepositoryImpl(
     override fun getCodeword(identification: String): String? {
         val parts = listOf(identification.substring(0, 2), identification.substring(2))
 
-        return when (val resId = contextInteractor.resources.getIdentifier("handshake_code_${parts[0]}", "string", contextInteractor.packageName)) {
+        return when (val resId = getResourceId(parts[0])) {
             0 -> null
             else -> "${contextInteractor.getString(resId)}${parts[1]}"
         }
+    }
+
+    @StringRes
+    private fun getResourceId(identifier: String): Int {
+        return contextInteractor.resources.getIdentifier("handshake_code_$identifier", "string", contextInteractor.packageName)
     }
 }
