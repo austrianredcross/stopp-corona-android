@@ -1,16 +1,12 @@
 package at.roteskreuz.stopcorona.model.repositories
 
 import android.os.Bundle
-import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.IDENTIFICATION_BYTE_LENGTH
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES
-import at.roteskreuz.stopcorona.constants.Constants.Nearby.RANDOM_IDENTIFICATION_MAX
-import at.roteskreuz.stopcorona.constants.Constants.Nearby.RANDOM_IDENTIFICATION_MIN
 import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
 import at.roteskreuz.stopcorona.model.entities.nearby.DbNearbyRecord
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.asDbObservable
-import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.nearby.messages.*
 import io.reactivex.Observable
@@ -20,7 +16,6 @@ import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
-import kotlin.random.Random
 
 /**
  * Repository for managing incoming and outgoing nearby messages
@@ -102,7 +97,7 @@ class NearbyRepositoryImpl(
     private val connectionSubject = BehaviorSubject.create<ApiConnectionState>()
     private val handshakeStateSubject = BehaviorSubject.create<NearbyHandshakeState>()
 
-    override val personalIdentification = Random.nextInt(from = RANDOM_IDENTIFICATION_MIN, until = RANDOM_IDENTIFICATION_MAX).toString()
+    override val personalIdentification = handshakeCodewordRepository.identification
 
     override val message: Message = Message(personalIdentification.toByteArray().plus(cryptoRepository.publicKeyPKCS1))
 
@@ -148,7 +143,7 @@ class NearbyRepositoryImpl(
                         nearbyRecordDao.wasRecordSavedInGivenPeriod(publicKey, ZonedDateTime.now().minusMinutes(PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES))
 
                     messageSubject.onNext(NearbyResult.Found(
-                        identification = handshakeCodewordRepository.getCodeword(identification).safeMap("No codeword available!", EMPTY_STRING),
+                        identification = handshakeCodewordRepository.getCodeword(identification),
                         publicKey = publicKey,
                         selected = publicKeySavedInLast15Minutes,
                         saved = publicKeySavedInLast15Minutes))
