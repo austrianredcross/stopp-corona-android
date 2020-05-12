@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.handshake
 
 import androidx.fragment.app.FragmentActivity
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.LOADING_INDICATOR_DELAY_MILLIS
+import at.roteskreuz.stopcorona.model.repositories.HandshakeCodewordRepository
 import at.roteskreuz.stopcorona.model.repositories.NearbyHandshakeState
 import at.roteskreuz.stopcorona.model.repositories.NearbyRepository
 import at.roteskreuz.stopcorona.model.repositories.NearbyResult
@@ -24,10 +25,12 @@ import java.util.concurrent.TimeUnit
 class HandshakeViewModel(
     appDispatchers: AppDispatchers,
     private val googleApiClientBuilder: GoogleApiClient.Builder,
-    private val nearbyRepository: NearbyRepository
+    private val nearbyRepository: NearbyRepository,
+    private val handshakeCodewordRepository: HandshakeCodewordRepository
 ) : ScopedViewModel(appDispatchers) {
 
-    val personalIdentification = nearbyRepository.personalIdentification
+    val personalIdentification
+        get() = handshakeCodewordRepository.getCodeword(nearbyRepository.personalIdentification)
 
     private var messagesClient: MessagesClient? = null
     private var googleApiClient: GoogleApiClient? = null

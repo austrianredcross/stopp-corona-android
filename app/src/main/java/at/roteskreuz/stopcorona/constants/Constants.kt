@@ -79,7 +79,6 @@ object Constants {
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
         const val CORONA_DETECTION_REPOSITORY_PREFIX = PREFIX + "corona_detection_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
-        const val QUESTIONNAIRE_COMPLIANCE_PREFIX = PREFIX + "questionnaire_compliance_repository_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
     }
 

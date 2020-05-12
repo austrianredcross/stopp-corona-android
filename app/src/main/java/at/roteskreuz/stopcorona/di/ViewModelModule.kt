@@ -11,7 +11,6 @@ import at.roteskreuz.stopcorona.screens.history.ContactHistoryViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
-import at.roteskreuz.stopcorona.screens.questionnaire.compliance.QuestionnaireComplianceViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.QuestionnaireGuidelineViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.QuestionnaireHintViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.QuestionnaireSelfMonitoringViewModel
@@ -89,7 +88,8 @@ val viewModelModule = module {
         HandshakeViewModel(
             appDispatchers = get(),
             googleApiClientBuilder = get(),
-            nearbyRepository = get()
+            nearbyRepository = get(),
+            handshakeCodewordRepository = get()
         )
     }
 
@@ -111,8 +111,7 @@ val viewModelModule = module {
     viewModel {
         QuestionnaireViewModel(
             appDispatchers = get(),
-            apiInteractor = get(),
-            questionnaireComplianceRepository = get()
+            apiInteractor = get()
         )
     }
 
@@ -208,13 +207,6 @@ val viewModelModule = module {
         CertificateReportGuidelinesViewModel(
             appDispatchers = get(),
             quarantineRepository = get()
-        )
-    }
-
-    viewModel {
-        QuestionnaireComplianceViewModel(
-            appDispatchers = get(),
-            questionnaireComplianceRepository = get()
         )
     }
 

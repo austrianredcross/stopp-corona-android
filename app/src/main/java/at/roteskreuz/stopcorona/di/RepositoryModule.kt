@@ -30,7 +30,8 @@ val repositoryModule = module {
         NearbyRepositoryImpl(
             cryptoRepository = get(),
             appDispatchers = get(),
-            nearbyRecordDao = get()
+            nearbyRecordDao = get(),
+            handshakeCodewordRepository = get()
         )
     }
 
@@ -124,9 +125,9 @@ val repositoryModule = module {
         )
     }
 
-    single<QuestionnaireComplianceRepository> {
-        QuestionnaireComplianceRepositoryImpl(
-            preferences = get()
+    single<HandshakeCodewordRepository> {
+        HandshakeCodewordRepositoryImpl(
+            contextInteractor = get()
         )
     }
 }
