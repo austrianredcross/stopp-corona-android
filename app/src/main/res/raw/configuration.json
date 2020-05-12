@@ -22,28 +22,28 @@
         },
         {
           "title": "2. Frage",
-          "questionText": "Haben Sie seit Kurzem immer wiederkehrenden und trockenen Husten?",
+          "questionText": "Haben Sie eines der folgenden Symptome:\n* Husten\n* Halsschmerzen\n* Kurzatmigkeit\n* Atemwegsentzündung\n* Plötzlicher Verlust des Geschmack- oder Geruchssinns",
           "answers": [
             {
               "text": "Nein",
-              "decission": "next"
+              "decission": "HINT"
             },
             {
               "text": "Ja",
-              "decission": "SUSPICION"
+              "decission": "next"
             }
           ]
         },
         {
           "title": "3. Frage",
-          "questionText": "Wie hoch ist Ihre Körpertemperatur?",
+          "questionText": "Haben Sie eine plausible Erklärung dafür?\n(Z.B. Bekannte Allergie zu dieser Zeit, die eines der Symptome auslöst oder eine andere bestätigte Diagnose)",
           "answers": [
             {
-              "text": "Unter 38°C.",
+              "text": "Ja",
               "decission": "SELFMONITORING"
             },
             {
-              "text": "Über 38°C.",
+              "text": "Nein",
               "decission": "SUSPICION"
             }
           ]
@@ -66,28 +66,58 @@
         },
         {
           "title": "Question #2",
-          "questionText": "Have you recently had a recurrent and dry cough?",
+          "questionText": "Do you have any of the following symptoms:\n* Cough\n* Sore throat\n* Shortness of breath\n* Respiratory Inflammation\n* Sudden loss of the sense of taste or smell",
           "answers": [
             {
               "text": "No",
-              "decission": "next"
+              "decission": "HINT"
             },
             {
               "text": "Yes",
-              "decission": "SUSPICION"
+              "decission": "next"
             }
           ]
         },
         {
           "title": "Question #3",
-          "questionText": "What's your body temperature?",
+          "questionText": "Do you habe a plausible explanation (e.g. known allergy)?",
           "answers": [
             {
-              "text": "Under 38°C.",
+              "text": "Yes",
               "decission": "SELFMONITORING"
             },
             {
-              "text": "Above 38°C.",
+              "text": "No",
+              "decission": "SUSPICION"
+            }
+          ]
+        }
+      ],
+      "nl": [
+        {
+          "title": "1. Vraag",
+          "questionText": "Hoe gaat het vandaag?",
+          "answers": [
+            {
+              "text": "Ik voel mij goed.",
+              "decission": "HINT"
+            },
+            {
+              "text": "Ik heb ziekteverschijnselen.",
+              "decission": "next"
+            }
+          ]
+        },
+        {
+          "title": "2. Vraag",
+          "questionText": "Heb je last van terugkerende, droge hoest zonder plausibele verklaring?",
+          "answers": [
+            {
+              "text": "Nee",
+              "decission": "HINT"
+            },
+            {
+              "text": "Ja",
               "decission": "SUSPICION"
             }
           ]
@@ -133,6 +163,26 @@
           "title": "Ihre Symptome entsprechen jenen von COVID-19.",
           "boldText": "Bitte melden Sie im nächsten Schritt den Verdacht, um andere zu schützen.",
           "longText": "So können wir anonym Ihre Kontakte benachrichtigen. Aufgrund der aktuellen Situation ist es unumgänglich, dass Sie sich als Verdachtsfall melden und sich präventiv in Quarantäne begeben."
+        }
+      },
+      "nl": {
+        "HINT": {
+          "roofline": "Bedankt voor je deelname!",
+          "title": "Blijf gezond en help mee om anderen te beschermen.",
+          "boldText": "Dat kan je doen",
+          "longText": "In de huidige situatie is het essentieel dat je goed voor jezelf en anderen zorgt. Was daarom regelmatig je handen, hou voldoende afstand van andere mensen en beperk je sociale contacten tot een minimum. Dit is de enige manier waarop we de verspreiding van het Coronavirus kunnen vertragen. Dank voor je hulp!"
+        },
+        "SELFMONITORING": {
+          "roofline": "Resultaat",
+          "title": "Let op je symptomen.",
+          "boldText": "Volgende stappen",
+          "longText": "1. Meet je temperatuur na 6 uur opnieuw. 2. Start het formulier opnieuw. 3. Beperkt sociale contacten tot een minimum. Zo help je het aantal infecties laag te houden. Waarschuwing: Indien je verwacht naar de dokter of ziekenhuis te moeten gaan, meld je dan eerst telefonisch om infecties laag te houden."
+        },
+        "SUSPICION": {
+          "roofline": "Resultaat",
+          "title": "Jouw symptomen komen overeen met COVID-19.",
+          "boldText": "Meld de vermoedelijke infectie in de volgende stap om anderen te beschermen",
+          "longText": "Zo kunnen we je contacten anoniem informeren. Gezien de huidige situatie is het absoluut noodzakelijk dat je een vermoedelijke infectie meld ten jezelf preventief in quarantaine plaatst."
         }
       }
     }
