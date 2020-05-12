@@ -31,7 +31,7 @@ class HandshakeController(
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
-    var identification: Int by adapterProperty(0)
+    var identification: String? by adapterProperty(null as String?)
     var contactList: List<NearbyResult> by adapterProperty(ArrayList())
     var selectAllChecked: Boolean by adapterProperty(false)
     var showLoadingIndicator: Boolean by adapterProperty(false)
@@ -70,12 +70,7 @@ class HandshakeController(
 
             handshakeIdentification {
                 id("handshake_identification")
-                identification(
-                    when (identification) {
-                        0 -> EMPTY_STRING
-                        else -> context.string(identification)
-                    }
-                )
+                identification(identification)
             }
 
             emptySpace(modelCountBuiltSoFar, 20)
