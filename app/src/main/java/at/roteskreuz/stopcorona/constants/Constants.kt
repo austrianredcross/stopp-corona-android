@@ -162,11 +162,15 @@ object Constants {
     object Nearby {
 
         /**
-         * [RANDOM_IDENTIFICATION_MIN] defines the lower and [RANDOM_IDENTIFICATION_MAX] defines the
-         * upper bound of the randomly generated four digit long random identification number
-         * which is transmitted to all nearby devices
+         * [RANDOM_IDENTIFICATION_MIN] defines the lower bound of the randomly generated four digit
+         * long random identification number which is transmitted to all nearby devices.
          */
-        const val RANDOM_IDENTIFICATION_MIN = 1000
+        const val RANDOM_IDENTIFICATION_MIN = 0
+
+        /**
+         * [RANDOM_IDENTIFICATION_MAX] defines the upper bound of the randomly generated four digit
+         * long random identification number which is transmitted to all nearby devices.
+         */
         const val RANDOM_IDENTIFICATION_MAX = 9999
 
         /**
