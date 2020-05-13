@@ -80,7 +80,7 @@
         },
         {
           "title": "Question #3",
-          "questionText": "Do you habe a plausible explanation (e.g. known allergy)?",
+          "questionText": "Do you have a plausible explanation (e.g. known allergy)?",
           "answers": [
             {
               "text": "Yes",
