@@ -44,7 +44,7 @@ class HandshakeCodewordRepositoryImpl(
     private val contextInteractor: ContextInteractor
 ) : HandshakeCodewordRepository {
 
-    override val identificationNumber: Int = Random.nextInt(from = RANDOM_IDENTIFICATION_MIN, until = RANDOM_IDENTIFICATION_MAX)
+    override val identificationNumber: Int = Random.nextInt(from = RANDOM_IDENTIFICATION_MIN, until = RANDOM_IDENTIFICATION_MAX + 1)
 
     override fun getCodeword(identification: Int): String {
         val value = zeroPrefixed(identification)
