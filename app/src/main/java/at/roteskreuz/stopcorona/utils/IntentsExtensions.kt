@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.fragment.app.Fragment
+import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import timber.log.Timber
 
@@ -76,4 +77,14 @@ fun Activity.startBatteryOptimisationSettingsForResult(requestCode: Int) {
 fun Fragment.enableBluetoothForResult(requestCode: Int) {
     val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
     startActivityForResult(enableBtIntent, requestCode)
+}
+
+/**
+ * Open system sharing dialog for sharing app links to stores.
+ */
+fun Fragment.shareApp() {
+    val sharingIntent = Intent(Intent.ACTION_SEND)
+    sharingIntent.type = "text/plain"
+    sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_content));
+    startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_app_chooser)))
 }

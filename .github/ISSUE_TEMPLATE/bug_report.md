@@ -5,7 +5,7 @@ about: Report a bug or problem in the app
 
 ## Description
 
-[What hapepned]
+[What happened]
 
 ## Reproduction steps
 

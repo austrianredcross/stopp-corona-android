@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.constants
 
+import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.BuildConfig.APPLICATION_ID
 import at.roteskreuz.stopcorona.skeleton.core.constants.BaseAppRequest
 import org.threeten.bp.Duration
@@ -9,11 +10,8 @@ import org.threeten.bp.Duration
  */
 object Constants {
 
-    const val EN = "en"
-    const val DE = "de"
-
     /**
-     * Constant useful for debugging.
+     * Constants useful for debugging.
      */
     object Debug {
 
@@ -28,21 +26,22 @@ object Constants {
         /**
          * Minimum time between offline syncs in ms.
          */
-        val OFFLINE_SYNC_INTERVAL = if (isDebug) {
-            5L * 60 * 1000 // 5m
+        val OFFLINE_SYNC_INTERVAL: Duration = if (isDebug) {
+            Duration.ofMinutes(5)
         } else {
-            1L * 60 * 60 * 1000 // 1h
+            Duration.ofHours(1)
         }
 
-        const val SELF_RETEST_NOTIFICATION_PERIOD = 6L * 60 * 60 * 1000 // 6h
+        /**
+         * Minimum delay between self retest notifications.
+         */
+        val SELF_RETEST_NOTIFICATION_INTERVAL: Duration = Duration.ofHours(6)
     }
 
     /**
      * Constants related to the domain.
      */
     object Domain {
-
-        const val QUARANTINE_STAY_DURATION = 14 // days
 
         /**
          * Array of weights to calculate the risk of being in a proximity class for one minute.
@@ -54,7 +53,7 @@ object Constants {
         /**
          * Interval (sliding window) of time to consider when detecting intensive contacts.
          */
-        val INTENSIVE_CONTACT_DETECTION_INTERVAL = Duration.ofHours(1)
+        val INTENSIVE_CONTACT_DETECTION_INTERVAL: Duration = Duration.ofHours(1)
 
         /**
          * Score from which a contact is considered an intensive contact.
@@ -80,25 +79,43 @@ object Constants {
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
         const val CORONA_DETECTION_REPOSITORY_PREFIX = PREFIX + "corona_detection_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
-        const val QUESTIONNAIRE_COMPLIANCE_PREFIX = PREFIX + "questionnaire_compliance_repository_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
     }
 
+    /**
+     * Constants related to network interaction.
+     */
     object API {
-        const val BASE_URL = FlavorConstants.API.BASE_URL
+
+        const val HOSTNAME = BuildConfig.HOSTNAME
+        const val BASE_URL = BuildConfig.BASE_URL
+
+        const val HOSTNAME_TAN = BuildConfig.HOSTNAME_TAN
+        const val BASE_URL_TAN = BuildConfig.BASE_URL_TAN
+
+        val CERTIFICATE_CHAIN_DEFAULT: Array<String> = BuildConfig.CERTIFICATE_CHAIN
+        val CERTIFICATE_CHAIN_TAN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_TAN
 
         const val HTTP_CACHE_SIZE = 64L * 1024L * 1024L // 64 MB
 
         object Header {
             const val AUTHORIZATION_KEY = "AuthorizationKey"
-            const val AUTHORIZATION_VALUE = FlavorConstants.API.Header.AUTHORIZATION_VALUE
+            const val AUTHORIZATION_VALUE = BuildConfig.AUTHORIZATION_VALUE
             const val APP_ID_KEY = "X-AppId"
             const val APP_ID_VALUE = APPLICATION_ID
         }
     }
 
     /**
-     * Constant related to database.
+     * Constants related to P2Pkit.
+     */
+    object P2PDiscovery {
+
+        const val APPLICATION_KEY = BuildConfig.P2P_APPLICATION_KEY
+    }
+
+    /**
+     * Constants related to database.
      */
     object DB {
 
@@ -121,6 +138,9 @@ object Constants {
         const val AUTOMATIC_DETECTION_NOTIFICATION_ID = APP_BASE_REQUEST + (2 shl OFFSET)
     }
 
+    /**
+     * Constants related to security.
+     */
     object Security {
 
         const val KEYSTORE = "AndroidKeyStore"
@@ -136,14 +156,21 @@ object Constants {
         const val ADDRESS_PREFIX_LENGTH = 8
     }
 
+    /**
+     * Constants related to Google nearby.
+     */
     object Nearby {
 
         /**
-         * [RANDOM_IDENTIFICATION_MIN] defines the lower and [RANDOM_IDENTIFICATION_MAX] defines the
-         * upper bound of the randomly generated four digit long random identification number
-         * which is transmitted to all nearby devices
+         * [RANDOM_IDENTIFICATION_MIN] defines the lower bound of the randomly generated four digit
+         * long random identification number which is transmitted to all nearby devices.
          */
-        const val RANDOM_IDENTIFICATION_MIN = 1000
+        const val RANDOM_IDENTIFICATION_MIN = 0
+
+        /**
+         * [RANDOM_IDENTIFICATION_MAX] defines the upper bound of the randomly generated four digit
+         * long random identification number which is transmitted to all nearby devices.
+         */
         const val RANDOM_IDENTIFICATION_MAX = 9999
 
         /**
@@ -163,12 +190,6 @@ object Constants {
         const val PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES = 15L
     }
 
-    object Misc {
-        const val EMPTY_STRING = ""
-        const val SPACE = " "
-        const val UTF_8 = "utf-8"
-    }
-
     /**
      * Ids of the notification channels the app is notifying through.
      */
@@ -181,6 +202,9 @@ object Constants {
         const val CHANNEL_AUTOMATIC_DETECTION = "channel_automatic_detection"
     }
 
+    /**
+     * Country codes for questionnaires.
+     */
     object Questionnaire {
 
         const val COUNTRY_CODE_CZ = "cz"
@@ -189,5 +213,14 @@ object Constants {
         const val COUNTRY_CODE_FR = "fr"
         const val COUNTRY_CODE_HU = "hu"
         const val COUNTRY_CODE_SK = "sk"
+    }
+
+    /**
+     * Other constants without some relation.
+     */
+    object Misc {
+
+        const val EMPTY_STRING = ""
+        const val SPACE = " "
     }
 }

@@ -27,7 +27,8 @@ class HandshakeViewModel(
     private val nearbyRepository: NearbyRepository
 ) : ScopedViewModel(appDispatchers) {
 
-    val personalIdentification = nearbyRepository.personalIdentification
+    val personalIdentification
+        get() = nearbyRepository.personalIdentificationCodeword
 
     private var messagesClient: MessagesClient? = null
     private var googleApiClient: GoogleApiClient? = null

@@ -2,7 +2,7 @@ ext.getBuildCode = {
     if (System.getenv('CI_PIPELINE_IID') != null) {
         return System.getenv('CI_PIPELINE_IID').trim().toInteger()
     } else {
-        return 11
+        return 12
     }
 }
 
@@ -50,4 +50,14 @@ ext.getPropertyByName = { propertyName ->
         return project.getProperty(propertyName)
     }
     return ""
+}
+
+Properties localProperties = new Properties()
+File localPropertiesFile = project.rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.newDataInputStream())
+}
+
+ext.resolveProperty = { String key, String defaultValue ->
+    System.getenv(key) ?: localProperties.getProperty(key, defaultValue)
 }

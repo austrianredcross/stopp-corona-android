@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.reporting.personalData
 import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.PersonalData
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -86,6 +87,10 @@ class ReportingPersonalDataViewModel(
 
     fun observePersonalData(): Observable<PersonalData> {
         return reportingRepository.observePersonalData()
+    }
+
+    fun observeMessageType(): Observable<MessageType> {
+        return reportingRepository.observeMessageType()
     }
 }
 

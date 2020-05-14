@@ -28,7 +28,9 @@ class MenuController(
     private val onVersionClick: () -> Unit,
     private val onHandshakeClick: () -> Unit,
     private val onCheckSymptomsClick: () -> Unit,
-    private val onReportOfficialSicknessClick: () -> Unit
+    private val onReportOfficialSicknessClick: () -> Unit,
+    private val onShareAppClick: () -> Unit,
+    private val onRevokeSicknessClick: () -> Unit
 ) : EpoxyController() {
 
     var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
@@ -37,21 +39,25 @@ class MenuController(
 
         emptySpace(modelCountBuiltSoFar, 22)
 
+        headlineH2 {
+            id("headline_functionality")
+            title(context.string(R.string.start_menu_headline_3))
+        }
+
         with(buildFunctionalityMenuItems()) {
-            if (isNotEmpty()) {
-                headlineH2 {
-                    id("headline_functionality")
-                    title(context.string(R.string.start_menu_headline_3))
-                }
-
-                verticalBackgroundModelGroup(this) {
-                    id("vertical_model_group_functionality")
-                    backgroundColor(R.color.white)
-                }
-
-                emptySpace(modelCountBuiltSoFar, 48)
+            verticalBackgroundModelGroup(this) {
+                id("vertical_model_group_functionality")
+                backgroundColor(R.color.white)
             }
         }
+
+        menuItem(onShareAppClick) {
+            id("share_app")
+            title(context.string(R.string.share_app_menu))
+            externalLink(true)
+        }
+
+        emptySpace(modelCountBuiltSoFar, 48)
 
         headlineH2 {
             id("headline_info")
@@ -123,7 +129,12 @@ class MenuController(
                 .addTo(modelList)
         }
 
-        if ((ownHealthStatus is HealthStatusData.SicknessCertificate).not()) {
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate) {
+            MenuItemModel_(onRevokeSicknessClick)
+                .id("revoke_sickness")
+                .title(context.string(R.string.start_menu_item_revoke_sickness))
+                .addTo(modelList)
+        } else {
             MenuItemModel_(onReportOfficialSicknessClick)
                 .id("official_sickness")
                 .title(context.string(R.string.start_menu_item_3_3))

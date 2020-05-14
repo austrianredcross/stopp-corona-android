@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.reporting.tanCheck
 
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.PersonalData
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.model.repositories.TanData
@@ -69,6 +70,10 @@ class ReportingTanCheckViewModel(
 
     fun observeTanRequestState(): Observable<State> {
         return tanRequestStateObserver.observe()
+    }
+
+    fun observeMessageType(): Observable<MessageType> {
+        return reportingRepository.observeMessageType()
     }
 
     fun goBack() {

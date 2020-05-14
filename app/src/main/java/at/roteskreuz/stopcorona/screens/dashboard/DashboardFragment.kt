@@ -30,6 +30,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.enableBluetoothForResult
 import at.roteskreuz.stopcorona.utils.isBatteryOptimizationIgnored
+import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
@@ -101,7 +102,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
                 }
             },
             onRevokeSuspicionClick = {
-                startReportingActivity(MessageType.Revoke)
+                startReportingActivity(MessageType.Revoke.Suspicion)
             },
             onPresentMedicalReportClick = {
                 startReportingActivity(MessageType.InfectionLevel.Red)
@@ -111,7 +112,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = ::checkDependenciesAndStartAutomaticHandshake
+            onAutomaticHandshakeEnabled = ::checkDependenciesAndStartAutomaticHandshake,
+            onShareAppClick = {
+                shareApp()
+            },
+            onRevokeSicknessClick = {
+                startReportingActivity(MessageType.Revoke.Sickness)
+            }
         )
     }
 

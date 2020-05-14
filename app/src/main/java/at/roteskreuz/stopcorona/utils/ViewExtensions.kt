@@ -19,6 +19,10 @@ import timber.log.Timber
 /**
  * Extensions for views, project specific.
  */
+
+/**
+ * Snackbar for debug purposes.
+ */
 fun Fragment.notImplementedSnackbar() {
     view?.snackbar("Not implemented yet") ?: Timber.e(SilentError("view is null"))
 }

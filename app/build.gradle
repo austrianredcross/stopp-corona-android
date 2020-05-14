@@ -4,10 +4,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply from: "../gradle/base.gradle"
+apply from: "$rootDir/gradle/base.gradle"
 
-def apiVersion = "1.1"
-def minorVersion = "4"
+def apiVersion = "1.2"
+def minorVersion = "0"
 def versionString = apiVersion + "." + minorVersion
 def buildCode = getBuildCode()
 def buildName = versionString + "." + buildCode.toString() + "-" + getGitDescribe()
@@ -23,9 +23,6 @@ android {
         versionCode buildCode
         versionName buildName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [
-                nearbyApiKey: "insert_google_nearby_api_key",
-        ]
     }
 
     signingConfigs {
@@ -37,23 +34,64 @@ android {
         }
 
         debug {
-            keyAlias "android_debug_key"
-            storeFile file("../keystore/android_debug.keystore")
-            storePassword "android_debug"
-            keyPassword "android_debug"
+            def keyStoreFile = file("../keystore/android_debug.keystore")
+            if (keyStoreFile.exists()) {
+                keyAlias "android_debug_key"
+                storeFile keyStoreFile
+                storePassword "android_debug"
+                keyPassword "android_debug"
+            }
         }
     }
 
     flavorDimensions "default"
 
     productFlavors {
+        dummyApi {
+            /*
+             * Default values provided for CI during merge requests only.
+             *
+             * Always provide real values through local.properties
+             */
+            buildConfigField "String", "HOSTNAME", '"dummy"'
+            buildConfigField "String", "BASE_URL", '"dummy"'
+            buildConfigField "String", "HOSTNAME_TAN", '"dummy"'
+            buildConfigField "String", "BASE_URL_TAN", '"dummy"'
+            buildConfigField "String[]", "CERTIFICATE_CHAIN", '{}'
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", '{}'
+            buildConfigField "String", "AUTHORIZATION_VALUE", '"dummy"'
+            buildConfigField "String", "P2P_APPLICATION_KEY", '"dummy"'
+
+            resValue "string", "NEARBY_API_KEY", '"dummy"'
+        }
+
         stageApi {
             applicationIdSuffix ".stage"
             versionName versionString + "." + buildCode.toString() + "-" + getGitDescribe() + "-stageApi"
+
+            buildConfigField "String", "HOSTNAME", resolveProperty("STAGE_HOSTNAME", '"dummy"')
+            buildConfigField "String", "BASE_URL", resolveProperty("STAGE_BASE_URL", '"dummy"')
+            buildConfigField "String", "HOSTNAME_TAN", resolveProperty("STAGE_HOSTNAME_TAN", '"dummy"')
+            buildConfigField "String", "BASE_URL_TAN", resolveProperty("STAGE_BASE_URL_TAN", '"dummy"')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("STAGE_CERTIFICATE_CHAIN", '{}')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("STAGE_CERTIFICATE_CHAIN_TAN", '{}')
+            buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("STAGE_AUTHORIZATION_VALUE", '"dummy"')
+            buildConfigField "String", "P2P_APPLICATION_KEY", resolveProperty("STAGE_P2P_APPLICATION_KEY", '"dummy"')
+
+            resValue "string", "NEARBY_API_KEY", resolveProperty("STAGE_NEARBY_API_KEY", '"dummy"')
         }
 
         prodApi {
-            // Add PlayStore specific configurations
+            buildConfigField "String", "HOSTNAME", resolveProperty("PROD_HOSTNAME", '"dummy"')
+            buildConfigField "String", "BASE_URL", resolveProperty("PROD_BASE_URL", '"dummy"')
+            buildConfigField "String", "HOSTNAME_TAN", resolveProperty("PROD_HOSTNAME_TAN", '"dummy"')
+            buildConfigField "String", "BASE_URL_TAN", resolveProperty("PROD_BASE_URL_TAN", '"dummy"')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("PROD_CERTIFICATE_CHAIN", '{}')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("PROD_CERTIFICATE_CHAIN_TAN", '{}')
+            buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("PROD_AUTHORIZATION_VALUE", '"dummy"')
+            buildConfigField "String", "P2P_APPLICATION_KEY", resolveProperty("PROD_P2P_APPLICATION_KEY", '"dummy"')
+
+            resValue "string", "NEARBY_API_KEY", resolveProperty("PROD_NEARBY_API_KEY", '"dummy"')
         }
     }
 
@@ -115,10 +153,11 @@ dependencies {
     def nearbyVersion = "17.0.0"
     implementation "com.google.android.gms:play-services-nearby:$nearbyVersion"
 
-    def spongyCastleCoreVersion = "1.58.0.0"
-    implementation "com.madgag.spongycastle:core:$spongyCastleCoreVersion"
-    implementation "com.madgag.spongycastle:prov:$spongyCastleCoreVersion"
-    implementation "com.madgag.spongycastle:bcpkix-jdk15on:$spongyCastleCoreVersion"
+    // When upgrading, please check if `android.jetifier.blacklist=bcprov-jdk15on` in
+    // gradle.properties is still needed
+    def bouncyCastleCoreVersion = "1.65"
+    implementation "org.bouncycastle:bcprov-jdk15on:$bouncyCastleCoreVersion"
+    implementation "org.bouncycastle:bcpkix-jdk15on:$bouncyCastleCoreVersion"
 
     def work_version = "2.3.4"
     implementation "androidx.work:work-runtime-ktx:$work_version"

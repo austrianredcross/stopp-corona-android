@@ -53,7 +53,7 @@ class DashboardViewModel(
             quarantineRepository.observeQuarantineState(),
             configurationRepository.observeConfiguration()
         ).map { (infectionMessageList, quarantineStatus, configuration) ->
-            val filteredInfectionMessages = infectionMessageList.filter { it.messageType != MessageType.Revoke }
+            val filteredInfectionMessages = infectionMessageList.filter { it.messageType != MessageType.Revoke.Suspicion }
             Triple(filteredInfectionMessages, quarantineStatus, configuration)
         }.map { (infectionMessageList, quarantineStatus, configuration) ->
             if (infectionMessageList.isNotEmpty()) {
@@ -122,7 +122,7 @@ class DashboardViewModel(
         infectionMessengerRepository.someoneHasRecoveredMessageSeen()
 
         launch {
-            databaseCleanupManager.removeIncomingGreenMessages()
+            databaseCleanupManager.removeReceivedGreenMessages()
         }
     }
 

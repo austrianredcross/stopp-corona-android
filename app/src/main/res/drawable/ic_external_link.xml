@@ -2,10 +2,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:tint="?attr/colorControlNormal"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <path
-      android:fillColor="@android:color/white"
-      android:pathData="M12,4l-1.41,1.41L16.17,11H4v2h12.17l-5.58,5.59L12,20l8,-8z" />
+    <group>
+        <path
+            android:fillColor="#b9131b"
+            android:fillType="evenOdd"
+            android:pathData="M17.365,4v1.634h3.844L15.144,11.699 16.3,12.854l6.065,-6.065v3.844h1.634L23.999,4L17.365,4zM8,20l13.184,-0.002v-9.74L19.551,11.89v6.474l-9.917,0.001L9.634,8.447l6.472,0.002 1.633,-1.633L8,6.814L8,20z" />
+    </group>
 </vector>

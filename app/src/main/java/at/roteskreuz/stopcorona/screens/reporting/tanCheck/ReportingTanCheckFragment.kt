@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
@@ -15,7 +16,10 @@ import at.roteskreuz.stopcorona.screens.reporting.personalData.listenForTextChan
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
-import at.roteskreuz.stopcorona.skeleton.core.utils.*
+import at.roteskreuz.stopcorona.skeleton.core.utils.dip
+import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
+import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
+import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.KeyboardHelper
 import at.roteskreuz.stopcorona.utils.view.applyText
 import io.reactivex.rxkotlin.plusAssign
@@ -36,7 +40,7 @@ class ReportingTanCheckFragment : BaseFragment(R.layout.fragment_reporting_tan_c
     override val isToolbarVisible: Boolean = true
 
     override fun getTitle(): String? {
-        return getString(R.string.certificate_tan_check_title)
+        return "" // blank, is depending on messageType
     }
 
     private val keyboardHelper = KeyboardHelper(
@@ -68,6 +72,15 @@ class ReportingTanCheckFragment : BaseFragment(R.layout.fragment_reporting_tan_c
             CURRENT_SCREEN,
             ReportingPersonalDataFragment.TOTAL_NUMBER_OF_SCREENS
         )
+
+        disposables += viewModel.observeMessageType()
+            .observeOnMainThread()
+            .subscribe { messageType ->
+                when (messageType) {
+                    is MessageType.Revoke.Sickness -> setTitle(R.string.revoke_sickness_title)
+                    else -> setTitle(R.string.certificate_tan_check_title)
+                }
+            }
 
         disposables += viewModel.observePersonalData()
             .observeOnMainThread()

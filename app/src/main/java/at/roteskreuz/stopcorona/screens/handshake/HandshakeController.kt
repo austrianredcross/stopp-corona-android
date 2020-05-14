@@ -4,12 +4,17 @@ import android.content.Context
 import android.text.SpannableString
 import android.view.Gravity
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.repositories.NearbyResult
-import at.roteskreuz.stopcorona.screens.base.epoxy.*
+import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
+import at.roteskreuz.stopcorona.screens.base.epoxy.description
+import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
+import at.roteskreuz.stopcorona.screens.base.epoxy.headlineH2
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeContactIdentification
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeIdentification
 import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeResultListHeadline
+import at.roteskreuz.stopcorona.screens.handshake.epoxy.handshakeShareApp
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
@@ -22,7 +27,8 @@ class HandshakeController(
     private val onInfoClicked: () -> Unit,
     private val onSelectAllContacts: (selected: Boolean) -> Unit,
     private val onContactSelected: (contactSelected: Boolean, result: NearbyResult) -> Unit,
-    private val onOpenSettingsClicked: () -> Unit
+    private val onOpenSettingsClicked: () -> Unit,
+    private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
     var identification: String? by adapterProperty(null as String?)
@@ -46,7 +52,13 @@ class HandshakeController(
                 iconRes(R.drawable.ic_info)
             }
 
-            emptySpace(modelCountBuiltSoFar, 32)
+            emptySpace(modelCountBuiltSoFar, 16)
+
+            handshakeShareApp(onShareAppClick) {
+                id("handshake_share_app")
+            }
+
+            emptySpace(modelCountBuiltSoFar, 24)
 
             handshakeResultListHeadline {
                 id("handshake_result_list_headline")

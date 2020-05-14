@@ -16,12 +16,12 @@ import at.roteskreuz.stopcorona.constants.Constants.Security.KEY_ALGORITHM
 import at.roteskreuz.stopcorona.constants.Constants.Security.KEY_SIZE
 import at.roteskreuz.stopcorona.constants.Constants.Security.KEY_VALIDILITY_YEARS
 import at.roteskreuz.stopcorona.constants.Constants.Security.X500_PRINCIPAL_NAME
-import org.spongycastle.asn1.ASN1Primitive
-import org.spongycastle.asn1.x509.SubjectPublicKeyInfo
-import org.spongycastle.jce.provider.BouncyCastleProvider
-import org.spongycastle.openssl.PEMParser
-import org.spongycastle.util.io.pem.PemObject
-import org.spongycastle.util.io.pem.PemWriter
+import org.bouncycastle.asn1.ASN1Primitive
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.openssl.PEMParser
+import org.bouncycastle.util.io.pem.PemObject
+import org.bouncycastle.util.io.pem.PemWriter
 import timber.log.Timber
 import java.io.StringReader
 import java.io.StringWriter
@@ -34,7 +34,7 @@ import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
 
 /**
- * Repository for managing public and private keys as well as encryption and decription
+ * Repository for managing public and private keys as well as encryption and decryption
  *
  * The key pair will be lazily created and stored in androids key chain when first needed.
  */

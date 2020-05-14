@@ -63,7 +63,7 @@ class DebugViewModel(
     fun addOutgoingMessageRed() {
         launch {
             val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
-            infectionMessengerRepository.storeSentInfectionMessages(listOf(ByteArray(1) to infectionMessageContent))
+            infectionMessengerRepository.storeSentInfectionMessages(listOf(Random.nextBytes(ByteArray(1)) to infectionMessageContent))
             quarantineRepository.reportMedicalConfirmation()
         }
     }
@@ -71,7 +71,7 @@ class DebugViewModel(
     fun addOutgoingMessageYellow() {
         launch {
             val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
-            infectionMessengerRepository.storeSentInfectionMessages(listOf(ByteArray(1) to infectionMessageContent))
+            infectionMessengerRepository.storeSentInfectionMessages(listOf(Random.nextBytes(ByteArray(1)) to infectionMessageContent))
             quarantineRepository.reportPositiveSelfDiagnose()
         }
     }
@@ -79,7 +79,7 @@ class DebugViewModel(
     fun addIncomingMessageRed() {
         launch {
             val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
-            val dbMessage = infectionMessageContent.asDbEntity().copy(isReceived = true)
+            val dbMessage = infectionMessageContent.asReceivedDbEntity()
             infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
         }
     }
@@ -87,7 +87,7 @@ class DebugViewModel(
     fun addIncomingMessageYellow() {
         launch {
             val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
-            val dbMessage = infectionMessageContent.asDbEntity().copy(isReceived = true)
+            val dbMessage = infectionMessageContent.asReceivedDbEntity()
             infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
         }
     }
@@ -97,7 +97,7 @@ class DebugViewModel(
             infectionMessageDao.observeReceivedInfectionMessages().blockingFirst()
                 .firstOrNull { infectionMessage -> infectionMessage.messageType == MessageType.InfectionLevel.Yellow }
                 .safeRun("Yellow message not available!") { yellowMessage ->
-                    infectionMessageDao.insertOrUpdateInfectionMessage(yellowMessage.copy(messageType = MessageType.Revoke))
+                    infectionMessageDao.insertOrUpdateInfectionMessage(yellowMessage.copy(messageType = MessageType.Revoke.Suspicion))
                     infectionMessengerRepository.setSomeoneHasRecovered()
                 }
         }
