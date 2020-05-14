@@ -5,6 +5,7 @@ import at.roteskreuz.stopcorona.constants.Constants.Nearby.IDENTIFICATION_BYTE_L
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES
 import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
 import at.roteskreuz.stopcorona.model.entities.nearby.DbNearbyRecord
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.asDbObservable
 import com.google.android.gms.common.api.GoogleApiClient
@@ -23,57 +24,63 @@ import kotlin.coroutines.CoroutineContext
 interface NearbyRepository {
 
     /**
-     * Random personal identification part of the content that is published in the message
+     * Random personal identification part of the content that is published in the message.
      */
-    val personalIdentification: String
+    val personalIdentificationNumber: Int
 
     /**
-     * Message that will be broadcasted via publish process
+     * Random personal identification part of the content that is published in the message.
+     * Converted to human readable codeword.
+     */
+    val personalIdentificationCodeword: String
+
+    /**
+     * Message that will be broadcasted via publish process.
      */
     val message: Message
 
     /**
-     * Options for outgoing publications
+     * Options for outgoing publications.
      */
     val publishOptions: PublishOptions
 
     /**
-     * Options for incoming subscriptions
+     * Options for incoming subscriptions.
      */
     val subscribeOptions: SubscribeOptions
 
     /**
-     * Listener for incoming messages
+     * Listener for incoming messages.
      */
     val messageListener: MessageListener
 
     /**
-     * Listener for connection state
+     * Listener for connection state.
      */
     val connectionCallbacks: GoogleApiClient.ConnectionCallbacks
 
     /**
-     * Listener for failed connections
+     * Listener for failed connections.
      */
     val connectionFailedListener: GoogleApiClient.OnConnectionFailedListener
 
     /**
-     * Observes incoming messages
+     * Observes incoming messages.
      */
     fun observeMessages(): Observable<NearbyResult>
 
     /**
-     * Observes the GoogleApiClient connection state
+     * Observes the GoogleApiClient connection state.
      */
     fun observeConnection(): Observable<ApiConnectionState>
 
     /**
-     * Observes the state of the current handshake progress
+     * Observes the state of the current handshake progress.
      */
     fun observeHandshakeState(): Observable<NearbyHandshakeState>
 
     /**
-     * Saves a given publicKey to the database
+     * Saves a given publicKey to the database.
      */
     suspend fun savePublicKey(publicKey: ByteArray, detectedAutomatically: Boolean)
 
@@ -97,9 +104,17 @@ class NearbyRepositoryImpl(
     private val connectionSubject = BehaviorSubject.create<ApiConnectionState>()
     private val handshakeStateSubject = BehaviorSubject.create<NearbyHandshakeState>()
 
-    override val personalIdentification = handshakeCodewordRepository.identification
+    override val personalIdentificationNumber: Int = handshakeCodewordRepository.identificationNumber
+    override val personalIdentificationCodeword: String = handshakeCodewordRepository.getCodeword(
+        personalIdentificationNumber
+    )
 
-    override val message: Message = Message(personalIdentification.toByteArray().plus(cryptoRepository.publicKeyPKCS1))
+    override val message: Message = Message(
+        handshakeCodewordRepository
+            .zeroPrefixed(personalIdentificationNumber)
+            .toByteArray()
+            .plus(cryptoRepository.publicKeyPKCS1)
+    )
 
     override val publishOptions: PublishOptions
         get() = PublishOptions.Builder().apply {
@@ -137,6 +152,14 @@ class NearbyRepositoryImpl(
                     val identification = it.content.take(IDENTIFICATION_BYTE_LENGTH)
                         .map { byte -> byte.toChar() }
                         .joinToString(separator = "")
+                        .let { value ->
+                            try {
+                                Integer.parseInt(value)
+                            } catch (exc: NumberFormatException) {
+                                Timber.e(SilentError("Invalid received id", exc))
+                                return@launch // ignore the message
+                            }
+                        }
 
                     val publicKey = it.content.drop(IDENTIFICATION_BYTE_LENGTH).toByteArray()
                     val publicKeySavedInLast15Minutes =
