@@ -3,25 +3,27 @@ package at.roteskreuz.stopcorona.screens.questionnaire
 import android.util.SparseArray
 import androidx.core.util.contains
 import androidx.core.util.set
-import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
-import at.roteskreuz.stopcorona.model.entities.configuration.Decision
+import at.roteskreuz.stopcorona.model.entities.configuration.*
+import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * Handles the user interaction and provides data for [OnboardingFragment].
  */
 class QuestionnaireViewModel(
     appDispatchers: AppDispatchers,
-    private val apiInteractor: ApiInteractor
+    private val configurationRepository: ConfigurationRepository
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
@@ -31,7 +33,7 @@ class QuestionnaireViewModel(
     private val currentPageSubject = NonNullableBehaviorSubject(0)
     private val decisionSubject = NonNullableBehaviorSubject(SparseArray<Decision>())
     private val executeDecisionSubject = BehaviorSubject.create<Decision>()
-    private val questionnaireDataStateObserver = DataStateObserver<ApiConfiguration>()
+    private val questionnaireStateObserver = StateObserver()
 
     var currentPage: Int
         get() = currentPageSubject.value
@@ -59,16 +61,22 @@ class QuestionnaireViewModel(
 
     fun isFirstPage() = currentPage == 0
 
+    /**
+     * Try to fetch fresh questionnaire, but in case of error, the data is already cached in DB,
+     * so we can ignore no internet connection case.
+     */
     private fun fetchQuestionnaire() {
-        questionnaireDataStateObserver.loading()
+        questionnaireStateObserver.loading()
         launch {
             try {
-                val configuration = apiInteractor.getConfiguration()
-                questionnaireDataStateObserver.loaded(configuration)
-            } catch (ex: Exception) {
-                questionnaireDataStateObserver.error(ex)
+                configurationRepository.fetchAndStoreConfiguration()
+            } catch (e: NoInternetConnectionException) {
+                Timber.e(e, "Ignored")
+                // ignore, this is ok
+            } catch (e: Exception) {
+                questionnaireStateObserver.error(e)
             } finally {
-                questionnaireDataStateObserver.idle()
+                questionnaireStateObserver.idle()
             }
         }
     }
@@ -97,9 +105,11 @@ class QuestionnaireViewModel(
         executeDecisionSubject.onNext(decisionSubject.value.get(currentPage))
     }
 
-    fun observeDecision() = executeDecisionSubject
+    fun observeDecision(): Observable<Decision> = executeDecisionSubject
 
-    fun observeQuestionnaireDataState(): Observable<DataState<ApiConfiguration>> {
-        return questionnaireDataStateObserver.observe()
+    fun observeFetchState(): Observable<State> = questionnaireStateObserver.observe()
+
+    fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
+        return configurationRepository.observeQuestionnaireWithAnswers(language)
     }
 }

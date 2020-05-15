@@ -9,13 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.startQuestionnaireHintFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuestionnaireSelfMonitoringFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.suspicion.startQuestionnaireSuspicionFragment
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.getFragmentActivityIntent
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
@@ -32,6 +33,7 @@ import com.airbnb.epoxy.EpoxyVisibilityTracker
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_questionnaire.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
 
@@ -70,21 +72,32 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             EpoxyVisibilityTracker().attach(this)
         }
 
-        disposables += viewModel.observeQuestionnaireDataState()
+        disposables += viewModel.observeFetchState()
             .observeOnMainThread()
             .subscribe { state ->
-                hideProgressDialog()
-                when (state) {
-                    State.Loading -> {
-                        showProgressDialog(R.string.general_loading)
-                    }
-                    is DataState.Loaded -> {
-                        controller.apiConfiguration = state.data
-                    }
-                    is State.Error -> {
-                        handleBaseCoronaErrors(state.error)
-                    }
+                if (state is State.Loading) {
+                    showProgressDialog(R.string.general_loading)
+                } else {
+                    hideProgressDialog()
                 }
+                if (state is State.Error) {
+                    handleBaseCoronaErrors(state.error)
+                }
+            }
+
+        disposables += viewModel.observeQuestionnaireWithAnswers(
+            requireContext().getString(R.string.current_language).let { currentLanguage ->
+                ConfigurationLanguage.parse(currentLanguage).let {
+                    if (it == ConfigurationLanguage.UNDEFINED) {
+                        Timber.e(SilentError("Undefined language for questionnaire: $currentLanguage"))
+                        ConfigurationLanguage.EN // fallback when undefined
+                    } else it
+                }
+            }
+        )
+            .observeOnMainThread()
+            .subscribe { configuration ->
+                controller.setData(configuration)
             }
 
         btnNext.setOnClickListener {
@@ -109,7 +122,7 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
 
         disposables += viewModel.observeDecision()
             .observeOnMainThread()
-            .subscribe { decision ->
+            .subscribe { decision: Decision ->
                 when (decision) {
                     Decision.NEXT -> contentRecyclerView.forceSmoothScrollToPosition(viewModel.getNextPage())
                     Decision.HINT -> startQuestionnaireHintFragment()

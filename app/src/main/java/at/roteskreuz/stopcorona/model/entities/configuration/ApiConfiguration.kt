@@ -77,7 +77,7 @@ data class ApiQuestionnaireAnswer(
     override fun asDbEntity(): DbQuestionnaireAnswer {
         return DbQuestionnaireAnswer(
             text = text,
-            decision = _decision
+            decision = decision
         )
     }
 }

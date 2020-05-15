@@ -3,13 +3,9 @@ package at.roteskreuz.stopcorona.screens.questionnaire
 import android.content.Context
 import android.view.Gravity
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_CZ
-import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_DE
-import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_EN
-import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_FR
-import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_HU
-import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_SK
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
+import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
+import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
 import at.roteskreuz.stopcorona.screens.base.epoxy.HeadlineH1Model_
@@ -21,39 +17,16 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.skeleton.core.utils.rawDimen
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import com.airbnb.epoxy.TypedEpoxyController
 
 class QuestionnaireController(
     private val context: Context,
     private val onEnterPage: (pageNumber: Int) -> Unit,
     private val onAnswerSelected: (pageNumber: Int, decision: Decision) -> Unit
-) : EpoxyController() {
+) : TypedEpoxyController<List<DbQuestionnaireWithAnswers>>() {
 
-    var apiConfiguration: ApiConfiguration? by adapterProperty(null as ApiConfiguration?)
-
-    override fun buildModels() {
-        val questions = when (context.getString(R.string.current_language)) {
-            COUNTRY_CODE_CZ -> {
-                apiConfiguration?.diagnosticQuestionnaire?.cz
-            }
-            COUNTRY_CODE_DE -> {
-                apiConfiguration?.diagnosticQuestionnaire?.de
-            }
-            COUNTRY_CODE_EN -> {
-                apiConfiguration?.diagnosticQuestionnaire?.en
-            }
-            COUNTRY_CODE_FR -> {
-                apiConfiguration?.diagnosticQuestionnaire?.fr
-            }
-            COUNTRY_CODE_HU -> {
-                apiConfiguration?.diagnosticQuestionnaire?.hu
-            }
-            COUNTRY_CODE_SK -> {
-                apiConfiguration?.diagnosticQuestionnaire?.sk
-            }
-            else -> apiConfiguration?.diagnosticQuestionnaire?.en
-        }
-
-        questions?.forEachIndexed { questionIndex, question ->
+    override fun buildModels(questionsWithAnsers: List<DbQuestionnaireWithAnswers>?) {
+        questionsWithAnsers?.forEachIndexed { questionIndex, questionWithAnswer ->
             val questionPageContent = mutableListOf<EpoxyModel<*>>()
 
             EmptySpaceModel_()
@@ -71,7 +44,7 @@ class QuestionnaireController(
 
             HeadlineH1Model_()
                 .id("question_${questionIndex}")
-                .text(question.questionText)
+                .text(questionWithAnswer.question.questionText)
                 .textSize(context.rawDimen(R.dimen.questionnaire_question_text_size))
                 .gravity(Gravity.START)
                 .marginHorizontal(0f)
@@ -84,7 +57,7 @@ class QuestionnaireController(
 
             val answerList = mutableListOf<EpoxyModel<*>>()
 
-            question.answers?.forEachIndexed { answerIndex, answer ->
+            questionWithAnswer.answers.forEachIndexed { answerIndex, answer ->
                 val id = "answer_${questionIndex}_${answerIndex}"
                 QuestionnaireAnswerModel_ { decision -> onAnswerSelected(questionIndex, decision) }
                     .id(id)
@@ -94,7 +67,7 @@ class QuestionnaireController(
                     .textSize(context.rawDimen(R.dimen.questionnaire_answer))
                     .addTo(answerList)
 
-                if (answerIndex < question.answers.size - 1) {
+                if (answerIndex < questionWithAnswer.answers.size - 1) {
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(context.rawDimen(R.dimen.questionnaire_answer_space).toInt())
@@ -102,9 +75,11 @@ class QuestionnaireController(
                 }
             }
 
-            QuestionnaireRadioGroupModel_(answerList)
-                .id("question_answer_group_$questionIndex")
-                .addTo(questionPageContent)
+            if(answerList.isNotEmpty()) {
+                QuestionnaireRadioGroupModel_(answerList)
+                    .id("question_answer_group_$questionIndex")
+                    .addTo(questionPageContent)
+            }
 
             EmptySpaceModel_()
                 .id(modelCountBuiltSoFar)

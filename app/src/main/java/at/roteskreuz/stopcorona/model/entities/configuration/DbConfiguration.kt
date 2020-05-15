@@ -1,7 +1,14 @@
 package at.roteskreuz.stopcorona.model.entities.configuration
 
 import androidx.room.*
+import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_CZ
+import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_DE
+import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_EN
+import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_FR
+import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_HU
+import at.roteskreuz.stopcorona.constants.Constants.Questionnaire.COUNTRY_CODE_SK
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.EnumTypeConverter
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.DbEntity
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
@@ -50,21 +57,31 @@ data class DbQuestionnaire(
     val questionText: String?
 ) : DbEntity
 
-enum class ConfigurationLanguage(val code: Int) {
-    UNDEFINED(0),
-    CZ(1),
-    DE(2),
-    EN(3),
-    FR(4),
-    HU(5),
-    SK(6)
+enum class ConfigurationLanguage(val code: Int, val stringValue: String) {
+    UNDEFINED(0, ""),
+    CZ(1, COUNTRY_CODE_CZ),
+    DE(2, COUNTRY_CODE_DE),
+    EN(3, COUNTRY_CODE_EN),
+    FR(4, COUNTRY_CODE_FR),
+    HU(5, COUNTRY_CODE_HU),
+    SK(6, COUNTRY_CODE_SK);
+
+    companion object {
+        fun parse(value: String): ConfigurationLanguage {
+            return enumValues<ConfigurationLanguage>().firstOrNull {
+                it.stringValue == value
+            } ?: UNDEFINED
+        }
+    }
 }
 
 class ConfigurationLanguageConverter {
     @TypeConverter
     fun get(code: Int?): ConfigurationLanguage? {
-        return ConfigurationLanguage.values().firstOrNull { it.code == code }?.also {
-            Timber.e(SilentError("Asking for language with code $code"))
+        return ConfigurationLanguage.values().firstOrNull { it.code == code }.also {
+            if (it == null) {
+                Timber.e(SilentError("Asking for language with code $code"))
+            }
         }
     }
 
@@ -91,11 +108,13 @@ class ConfigurationLanguageConverter {
 )
 data class DbQuestionnaireAnswer(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val answerId: Long = 0,
     var questionnaireId: Long = 0, // will be set up during inserting to DB
     val text: String?,
-    val decision: String?
+    val decision: Decision?
 ) : DbEntity
+
+class DecisionConverter : EnumTypeConverter<Decision>({ enumValueOf(it) })
 
 @Entity(
     tableName = "page_content",
@@ -137,3 +156,17 @@ data class DbTextContent(
     val roofLine: String?,
     val title: String?
 ) : DbEntity
+
+/**
+ * This entity is wrapping one question with list of possible answers.
+ */
+data class DbQuestionnaireWithAnswers(
+    @Embedded
+    var question: DbQuestionnaire,
+    @Relation(
+        entity = DbQuestionnaireAnswer::class,
+        parentColumn = "id",
+        entityColumn = "questionnaireId"
+    )
+    var answers: List<DbQuestionnaireAnswer> = listOf()
+)

@@ -83,4 +83,14 @@ abstract class ConfigurationDao {
     @Transaction
     @Query("SELECT * FROM configuration")
     abstract fun observeConfiguration(): Flowable<DbConfiguration>
+
+    @Transaction
+    @Query("""
+        SELECT * 
+        FROM configuration_questionnaire AS question
+        INNER JOIN configuration_questionnaire_answer AS answer
+        ON (question.id = answer.questionnaireId)
+        WHERE question.language = :language
+    """)
+    abstract fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Flowable<List<DbQuestionnaireWithAnswers>>
 }
