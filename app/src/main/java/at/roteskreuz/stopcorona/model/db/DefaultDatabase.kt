@@ -33,7 +33,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbSentInfectionMessage::class,
         DbAutomaticDiscoveryEvent::class
     ],
-    version = 13,
+    version = 15,
     exportSchema = false
 )
 @TypeConverters(
@@ -41,7 +41,8 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     ConfigurationLanguageConverter::class,
     MessageTypeConverter::class,
     WarningTypeConverter::class,
-    UUIDConverter::class
+    UUIDConverter::class,
+    DecisionConverter::class
 )
 abstract class DefaultDatabase : RoomDatabase() {
 
@@ -151,6 +152,32 @@ abstract class DefaultDatabase : RoomDatabase() {
                 // delete old tables
                 execSQL("DROP TABLE `infection_message`")
                 execSQL("DROP TABLE `contact_with_infection_message`")
+            },
+            /**
+             * Update [Decision] to use UpperCase.
+             */
+            migration(13, 14) {
+                execSQL("UPDATE `configuration_questionnaire_answer` SET `decision` = UPPER(`decision`)")
+            },
+            /**
+             * Rename [DbQuestionnaireAnswer.id] to answerId, because of @Relation doesn't know which id to use for mapping.
+             */
+            migration(14, 15) {
+                // create new temp table
+                execSQL(
+                    "CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (`answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionnaireId` INTEGER NOT NULL, `text` TEXT, `decision` TEXT, FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )"
+                )
+                execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_configuration_questionnaire_answer_temp_questionnaireId` ON `configuration_questionnaire_answer_temp` (`questionnaireId`)"
+                )
+                // copy data from old table to temp
+                execSQL(
+                    "INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`"
+                )
+                // delete old table
+                execSQL("DROP TABLE `configuration_questionnaire_answer`")
+                // rename temp to original
+                execSQL("ALTER TABLE `configuration_questionnaire_answer_temp` RENAME TO `configuration_questionnaire_answer`")
             }
         )
     }

@@ -110,7 +110,7 @@ val viewModelModule = module {
     viewModel {
         QuestionnaireViewModel(
             appDispatchers = get(),
-            apiInteractor = get()
+            configurationRepository = get()
         )
     }
 

@@ -3,7 +3,9 @@ package at.roteskreuz.stopcorona.model.repositories
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.assets.AssetInteractor
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
+import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
+import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.asDbObservable
 import io.reactivex.Observable
@@ -33,6 +35,11 @@ interface ConfigurationRepository {
      * Observe cached version of configuration.
      */
     fun observeConfiguration(): Observable<DbConfiguration>
+
+    /**
+     * Observe cached version of questions with answers for current [language].
+     */
+    fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>>
 }
 
 class ConfigurationRepositoryImpl(
@@ -64,5 +71,9 @@ class ConfigurationRepositoryImpl(
 
     override fun observeConfiguration(): Observable<DbConfiguration> {
         return configurationDao.observeConfiguration().asDbObservable()
+    }
+
+    override fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
+        return configurationDao.observeQuestionnaireWithAnswers(language).asDbObservable()
     }
 }
