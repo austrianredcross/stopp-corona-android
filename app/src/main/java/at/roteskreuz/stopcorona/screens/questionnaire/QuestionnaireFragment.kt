@@ -35,6 +35,9 @@ import kotlinx.android.synthetic.main.fragment_questionnaire.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
+/**
+ * Screen to display questionnaire about health state.
+ */
 class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
 
     private val viewModel: QuestionnaireViewModel by viewModel()
@@ -142,6 +145,24 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             true
         }
     }
+
+    private fun RecyclerView.forceSmoothScrollToPosition(position: Int) {
+        (layoutManager as? LinearLayoutManagerWithScrollOption).safeRun("LayoutManager does not support scroll options") { manager ->
+            manager.scrollable = true
+            smoothScrollToPosition(position)
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == SCROLL_STATE_IDLE) {
+                        manager.scrollable = false
+                        removeOnScrollListener(this)
+                    }
+                }
+            })
+        }
+    }
+
 }
 
 fun Activity.startQuestionnaireFragment() {
@@ -159,21 +180,4 @@ fun Context.getQuestionnaireIntent(): Intent {
         this,
         fragmentName = QuestionnaireFragment::class.java.name
     )
-}
-
-fun RecyclerView.forceSmoothScrollToPosition(position: Int) {
-    (layoutManager as? LinearLayoutManagerWithScrollOption).safeRun("LayoutManager does not support scroll options") { manager ->
-        manager.scrollable = true
-        smoothScrollToPosition(position)
-
-        addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == SCROLL_STATE_IDLE) {
-                    manager.scrollable = false
-                    removeOnScrollListener(this)
-                }
-            }
-        })
-    }
 }

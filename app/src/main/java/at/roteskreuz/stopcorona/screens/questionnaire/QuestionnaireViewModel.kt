@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
- * Handles the user interaction and provides data for [OnboardingFragment].
+ * Handles the user interaction and provides data for [QuestionnaireFragment].
  */
 class QuestionnaireViewModel(
     appDispatchers: AppDispatchers,
@@ -71,7 +71,6 @@ class QuestionnaireViewModel(
             try {
                 configurationRepository.fetchAndStoreConfiguration()
             } catch (e: NoInternetConnectionException) {
-                Timber.e(e, "Ignored")
                 // ignore, this is ok
             } catch (e: Exception) {
                 questionnaireStateObserver.error(e)
