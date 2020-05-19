@@ -21,6 +21,15 @@
 
 ## About
 
+The **Stopp Corona** project is an open source project for bluetooth based contact
+tracing deployed by the Austrian Red Cross in Austria.  For developers interested
+in contributing, other organizations interested in joining forces please have a look
+at the following documents:
+
+* [Covenant](https://github.com/austrianredcross/meta/blob/master/COVENANT.md): the project's ideals and goals
+* [Cooperation and Funding](https://github.com/austrianredcross/meta/blob/master/COOPERATION.md): support the development or join the project
+* [Code of Conduct](https://github.com/austrianredcross/meta/blob/master/CODE_OF_CONDUCT.md): fair guidelines for a friendly discourse
+
 **Stopp Corona** helps you to keep track of encounters with friends, family or co-workers and save them anonymously. Should you contract the corona virus (to be precise: the <a href="https://en.wikipedia.org/wiki/Coronavirus_disease_2019">COVID-19 disease caused by the SARS-CoV-2 virus</a>) all your encounters of the last 48 hours will be informed automatically and anonymously.
 And vice versa of course. You too will be notified instantly and anonymously should one of your saved encounters report to have contracted the virus. Helping all of you to take appropriate measures such as.
 
