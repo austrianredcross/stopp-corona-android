@@ -6,9 +6,6 @@ if test -f "local.properties"; then
   echo "local.properties exist we check it"
 else
   echo "no local.properties found - no need to check them"
-
-  echo "this is just a test fail"
-  exit 1
   exit 0
 fi
 
