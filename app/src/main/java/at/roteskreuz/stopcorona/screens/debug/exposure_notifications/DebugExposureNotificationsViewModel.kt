@@ -8,10 +8,10 @@ import com.google.android.gms.nearby.exposurenotification.ExposureNotificationSt
 import timber.log.Timber
 
 class DebugExposureNotificationsViewModel(
-    application: Application,
-    private var exposureNotificationsEnabled: Boolean,
-    private var exposureNotificationsError: String = ""
+    application: Application
 ): AndroidViewModel(application){
+    private var exposureNotificationsEnabled: Boolean = false
+    private var exposureNotificationsError: String = ""
 
     /**
      * Calls start on the Exposure Notifications API.
