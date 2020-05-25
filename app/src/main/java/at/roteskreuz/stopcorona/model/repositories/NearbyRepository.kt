@@ -144,7 +144,7 @@ class NearbyRepositoryImpl(
 
     override val messageListener: MessageListener = object : MessageListener() {
 
-        override fun onFound(message: Message?) {
+        override fun onFound(message: Message) {
             super.onFound(message)
 
             message?.let {
