@@ -63,6 +63,9 @@
             <item
                 android:id="@+id/debugAddContact"
                 android:title="Add Contact" />
+            <item
+                android:id="@+id/debugExposureNotifications"
+                android:title="Exposure Notifications" />
         </menu>
     </item>
 </menu>

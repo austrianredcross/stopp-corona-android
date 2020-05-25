@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
+import at.roteskreuz.stopcorona.screens.debug.contact_tracing.DebugContactNotificationsFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
@@ -45,5 +46,11 @@ class DebugAutomaticEventsFragment : BaseFragment(R.layout.debug_automatic_event
 fun Activity.startDebugAutomaticEventsFragment() {
     startFragmentActivity<CoronaPortraitBaseActivity>(
         fragmentName = DebugAutomaticEventsFragment::class.java.name
+    )
+}
+
+fun Activity.startDebugExposureNotificationsFragment() {
+    startFragmentActivity<CoronaPortraitBaseActivity>(
+        fragmentName = DebugContactNotificationsFragment::class.java.name
     )
 }

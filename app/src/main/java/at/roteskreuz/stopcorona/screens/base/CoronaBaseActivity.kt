@@ -10,6 +10,7 @@ import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.debug.discovery.startDebugDiscoveryFragment
 import at.roteskreuz.stopcorona.screens.debug.events.startDebugAutomaticEventsFragment
+import at.roteskreuz.stopcorona.screens.debug.events.startDebugExposureNotificationsFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -92,6 +93,10 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
             }
             R.id.debugAddContact -> {
                 debugViewModel.addRandomContact()
+                true
+            }
+            R.id.debugExposureNotifications -> {
+                startDebugExposureNotificationsFragment()
                 true
             }
             else -> super.onOptionsItemSelected(item)
