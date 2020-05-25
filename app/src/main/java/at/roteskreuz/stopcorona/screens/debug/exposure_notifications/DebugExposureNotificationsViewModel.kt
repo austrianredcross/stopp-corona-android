@@ -1,14 +1,13 @@
-package at.roteskreuz.stopcorona.screens.debug.contact_tracing
+package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.google.android.apps.exposurenotification.nearby.ExposureNotificationClientWrapper
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import timber.log.Timber
 
-class DebugContactNotificationsViewModel(
+class DebugExposureNotificationsViewModel(
     application: Application,
     private var exposureNotificationsEnabled: Boolean,
     private var exposureNotificationsError: String = ""

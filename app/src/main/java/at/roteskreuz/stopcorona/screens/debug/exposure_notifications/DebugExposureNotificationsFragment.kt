@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.screens.debug.contact_tracing
+package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
 import android.app.Activity
 import androidx.appcompat.app.ActionBar
@@ -7,8 +7,11 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DebugContactNotificationsFragment : BaseFragment(R.layout.debug_contact_tracing_fragment) {
+class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_tracing_fragment) {
+
+    private val viewModel: DebugExposureNotificationsFragment by viewModel()
 
     override val isToolbarVisible: Boolean
         get() = true
@@ -26,6 +29,6 @@ class DebugContactNotificationsFragment : BaseFragment(R.layout.debug_contact_tr
 
 fun Activity.startDebugExposureNotificationsFragment() {
     startFragmentActivity<CoronaPortraitBaseActivity>(
-        fragmentName = DebugContactNotificationsFragment::class.java.name
+        fragmentName = DebugExposureNotificationsFragment::class.java.name
     )
 }
