@@ -8,9 +8,9 @@ import androidx.annotation.LayoutRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.screens.debug.contact_tracing.startDebugExposureNotificationsFragment
 import at.roteskreuz.stopcorona.screens.debug.discovery.startDebugDiscoveryFragment
 import at.roteskreuz.stopcorona.screens.debug.events.startDebugAutomaticEventsFragment
-import at.roteskreuz.stopcorona.screens.debug.events.startDebugExposureNotificationsFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 

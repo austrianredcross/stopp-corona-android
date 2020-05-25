@@ -48,9 +48,3 @@ fun Activity.startDebugAutomaticEventsFragment() {
         fragmentName = DebugAutomaticEventsFragment::class.java.name
     )
 }
-
-fun Activity.startDebugExposureNotificationsFragment() {
-    startFragmentActivity<CoronaPortraitBaseActivity>(
-        fragmentName = DebugContactNotificationsFragment::class.java.name
-    )
-}
