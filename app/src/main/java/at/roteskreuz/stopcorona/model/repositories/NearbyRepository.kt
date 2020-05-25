@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.model.repositories
 
 import android.os.Bundle
+import androidx.annotation.NonNull
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.IDENTIFICATION_BYTE_LENGTH
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES
 import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
@@ -146,31 +147,28 @@ class NearbyRepositoryImpl(
 
         override fun onFound(message: Message) {
             super.onFound(message)
-
-            message?.let {
-                launch {
-                    val identification = it.content.take(IDENTIFICATION_BYTE_LENGTH)
-                        .map { byte -> byte.toChar() }
-                        .joinToString(separator = "")
-                        .let { value ->
-                            try {
-                                Integer.parseInt(value)
-                            } catch (exc: NumberFormatException) {
-                                Timber.e(SilentError("Invalid received id", exc))
-                                return@launch // ignore the message
-                            }
+            launch {
+                val identification = message.content.take(IDENTIFICATION_BYTE_LENGTH)
+                    .map { byte -> byte.toChar() }
+                    .joinToString(separator = "")
+                    .let { value ->
+                        try {
+                            Integer.parseInt(value)
+                        } catch (exc: NumberFormatException) {
+                            Timber.e(SilentError("Invalid received id", exc))
+                            return@launch // ignore the message
                         }
+                    }
 
-                    val publicKey = it.content.drop(IDENTIFICATION_BYTE_LENGTH).toByteArray()
-                    val publicKeySavedInLast15Minutes =
-                        nearbyRecordDao.wasRecordSavedInGivenPeriod(publicKey, ZonedDateTime.now().minusMinutes(PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES))
+                val publicKey = message.content.drop(IDENTIFICATION_BYTE_LENGTH).toByteArray()
+                val publicKeySavedInLast15Minutes =
+                    nearbyRecordDao.wasRecordSavedInGivenPeriod(publicKey, ZonedDateTime.now().minusMinutes(PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES))
 
-                    messageSubject.onNext(NearbyResult.Found(
-                        identification = handshakeCodewordRepository.getCodeword(identification),
-                        publicKey = publicKey,
-                        selected = publicKeySavedInLast15Minutes,
-                        saved = publicKeySavedInLast15Minutes))
-                }
+                messageSubject.onNext(NearbyResult.Found(
+                    identification = handshakeCodewordRepository.getCodeword(identification),
+                    publicKey = publicKey,
+                    selected = publicKeySavedInLast15Minutes,
+                    saved = publicKeySavedInLast15Minutes))
             }
         }
     }
