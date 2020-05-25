@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialogViewModel
 import at.roteskreuz.stopcorona.screens.debug.discovery.DebugDiscoveryViewModel
 import at.roteskreuz.stopcorona.screens.debug.events.DebugAutomaticEventsViewModel
+import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
 import at.roteskreuz.stopcorona.screens.handshake.HandshakeViewModel
 import at.roteskreuz.stopcorona.screens.history.ContactHistoryViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
@@ -53,6 +54,12 @@ val viewModelModule = module {
             automaticDiscoveryDao = get(),
             contextInteractor = get(),
             cryptoRepository = get()
+        )
+    }
+
+    viewModel {
+        DebugExposureNotificationsViewModel(
+            application = get()
         )
     }
 
