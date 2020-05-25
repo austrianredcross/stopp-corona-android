@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.model.repositories
 
 import android.os.Bundle
-import androidx.annotation.NonNull
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.IDENTIFICATION_BYTE_LENGTH
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES
 import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
