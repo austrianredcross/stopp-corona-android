@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$rootDir/gradle/base.gradle"
 
-def apiVersion = "2.0"
+def apiVersion = "1.2"
 def minorVersion = "0"
 def versionString = apiVersion + "." + minorVersion
 def buildCode = getBuildCode()
