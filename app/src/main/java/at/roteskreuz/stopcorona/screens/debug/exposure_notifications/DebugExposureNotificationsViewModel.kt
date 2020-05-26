@@ -76,6 +76,7 @@ class DebugExposureNotificationsViewModel(
 
     fun jumpToSystemSettings() {
         val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication<Application>().startActivity(intent)
     }
 
