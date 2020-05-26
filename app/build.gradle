@@ -151,6 +151,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
+    //as of now https://developers.google.com/android/guides/releases states 17.0.0 is still the latest release
     //def nearbyVersion = "17.0.0"
     //implementation "com.google.android.gms:play-services-nearby:$nearbyVersion"
     implementation 'com.google.android.gms:play-services-base:17.2.1'
