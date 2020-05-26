@@ -43,8 +43,7 @@ val viewModelModule = module {
 
     viewModel {
         DebugDiscoveryViewModel(
-            appDispatchers = get(),
-            discoveryRepository = get()
+            appDispatchers = get()
         )
     }
 

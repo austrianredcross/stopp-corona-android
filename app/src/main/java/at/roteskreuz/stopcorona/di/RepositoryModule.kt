@@ -109,19 +109,9 @@ val repositoryModule = module {
             preferences = get(),
             batterySaverStateReceiver = get<BatterySaverStateReceiver>(),
             bluetoothStateReceiver = get<BluetoothStateReceiver>(),
-            discoveryRepository = get(),
             automaticDiscoveryDao = get(),
             nearbyRepository = get(),
             cryptoRepository = get()
-        )
-    }
-
-    single<DiscoveryRepository> {
-        DiscoveryRepositoryImpl(
-            appDispatchers = get(),
-            contextInteractor = get(),
-            cryptoRepository = get(),
-            dataPrivacyRepository = get()
         )
     }
 
