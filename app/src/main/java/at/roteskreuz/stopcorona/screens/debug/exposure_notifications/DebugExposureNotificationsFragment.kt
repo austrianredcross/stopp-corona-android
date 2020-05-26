@@ -30,7 +30,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         exposureNotificationsMasterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked){
-                viewModel.startExposureNotifications()
+                activity?.let { viewModel.startExposureNotifications(it) }
             } else {
                 viewModel.stopExposureNotifications()
             }

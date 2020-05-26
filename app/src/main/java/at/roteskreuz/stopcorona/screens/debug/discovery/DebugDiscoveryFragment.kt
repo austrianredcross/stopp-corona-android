@@ -2,8 +2,6 @@ package at.roteskreuz.stopcorona.screens.debug.discovery
 
 import android.Manifest
 import android.app.Activity
-import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
@@ -12,13 +10,9 @@ import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.PermissionChecker
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
-import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.debug_discovery_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
-import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
 class DummyDiscoveryFragment : BaseFragment(R.layout.debug_discovery_fragment), PermissionChecker, KoinComponent {

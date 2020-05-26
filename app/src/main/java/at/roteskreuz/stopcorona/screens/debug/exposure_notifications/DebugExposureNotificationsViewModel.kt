@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,6 +25,7 @@ class DebugExposureNotificationsViewModel(
                 exposureNotificationsEnabled = enabled
             }
             .addOnFailureListener { exception: Exception? ->
+                Timber.e(exception, "could not get the current state of the exposure notifications SDK")
                 //TODO: how do we handle this???
                 exposureNotificationsEnabled = false;
             }
@@ -32,7 +34,7 @@ class DebugExposureNotificationsViewModel(
     /**
      * Calls start on the Exposure Notifications API.
      */
-    fun startExposureNotifications() {
+    fun startExposureNotifications(activity: Activity) {
         ExposureNotificationClientWrapper.get(getApplication())
             .start()
             .addOnSuccessListener { unused: Void? ->
@@ -48,6 +50,10 @@ class DebugExposureNotificationsViewModel(
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
+                    apiException
+                        .getStatus()
+                        .startResolutionForResult(
+                            activity, 99);
                     exposureNotificationsError = "Error, RESOLUTION_REQUIRED in result"
                     exposureNotificationsEnabled = false
                 } else {
