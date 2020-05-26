@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="debug_version_gms" translatable="false">Google Play services: %1$s</string>
+    <string name="debug_version_not_available" translatable="false">Not available</string>
+</resources>

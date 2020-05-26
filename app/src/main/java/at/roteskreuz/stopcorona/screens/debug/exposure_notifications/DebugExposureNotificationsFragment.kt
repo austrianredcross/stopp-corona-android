@@ -2,9 +2,7 @@ package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
 import android.app.Activity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
@@ -24,6 +22,11 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
+
+        viewModel.checkEnabledState()
+
+        googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 
         exposureNotificationsMasterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked){

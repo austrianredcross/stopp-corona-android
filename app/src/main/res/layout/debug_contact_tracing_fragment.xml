@@ -25,7 +25,17 @@
         android:layout_marginHorizontal="16dp">
 
     </ScrollView>
-
+    <TextView
+        android:id="@+id/googlePlayServicesVersionTextView"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="?attr/textAppearanceBody2" />
+    <Button
+        android:id="@+id/exposureNotificationsSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Jump to System Settings"
+         />
     <Switch
         android:id="@+id/exposureNotificationsMasterSwitch"
         android:layout_width="match_parent"
