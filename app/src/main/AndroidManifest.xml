@@ -108,7 +108,7 @@
         <receiver android:name=".model.receivers.BatterySaverStateReceiver" />
 
         <receiver
-            android:name=".nearby.ExposureNotificationBroadcastReceiver"
+            android:name="com.google.android.apps.exposurenotification.nearby.ExposureNotificationBroadcastReceiver"
             android:permission="com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK"
             android:exported="true">
             <intent-filter>
