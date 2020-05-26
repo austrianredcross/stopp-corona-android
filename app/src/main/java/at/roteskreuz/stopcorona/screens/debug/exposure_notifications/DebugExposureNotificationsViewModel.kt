@@ -6,60 +6,79 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.lifecycle.AndroidViewModel
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
+import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
+import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.apps.exposurenotification.nearby.ExposureNotificationClientWrapper
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
+import io.reactivex.Observable
 import timber.log.Timber
 
 class DebugExposureNotificationsViewModel(
     application: Application
-): AndroidViewModel(application){
-    private var exposureNotificationsEnabled: Boolean = false
-    private var exposureNotificationsError: String = ""
+    ): AndroidViewModel(application){
 
+    private var exposureNotificationsError: String = ""
+    private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject<Boolean>(false);
+    private val exposureNotificationsErrorState = DataStateObserver<Status>()
+
+
+    //TODO: move to a ExposureNotificationsRepository
+    //TODO: get inspired by https://github.com/austrianredcross/stopp-corona-android/blob/develop/app/src/main/java/at/roteskreuz/stopcorona/model/repositories/DiscoveryRepository.kt
     fun checkEnabledState(){
         ExposureNotificationClientWrapper.get(getApplication()).isEnabled()
             .addOnSuccessListener { enabled: Boolean ->
-                exposureNotificationsEnabled = enabled
+                exposureNotificationsEnabledSubject.onNext(enabled)
             }
             .addOnFailureListener { exception: Exception? ->
                 Timber.e(exception, "could not get the current state of the exposure notifications SDK")
                 //TODO: how do we handle this???
-                exposureNotificationsEnabled = false;
+                exposureNotificationsEnabledSubject.onNext(false)
             }
+    }
+
+    fun observeEnabledState(): Observable<Boolean> {
+        return exposureNotificationsEnabledSubject
+    }
+
+    fun observeResolutionError(): Observable<DataState<Status>>{
+        return exposureNotificationsErrorState.observe()
     }
 
     /**
      * Calls start on the Exposure Notifications API.
      */
     fun startExposureNotifications(activity: Activity) {
+        exposureNotificationsErrorState.loading()
         ExposureNotificationClientWrapper.get(getApplication())
             .start()
             .addOnSuccessListener { unused: Void? ->
-                exposureNotificationsEnabled = true
+                exposureNotificationsEnabledSubject.onNext(true)
+                exposureNotificationsErrorState.idle()
             }
             .addOnFailureListener { exception: Exception? ->
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
                     exposureNotificationsError = "Unknown error when attempting to start API"
-                    exposureNotificationsEnabled = false
+                    exposureNotificationsEnabledSubject.onNext(false)
                     return@addOnFailureListener
                 }
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    apiException
-                        .getStatus()
-                        .startResolutionForResult(
-                            activity, 99);
+                    exposureNotificationsErrorState.loaded(apiException.getStatus())
+                    exposureNotificationsErrorState.idle()
                     exposureNotificationsError = "Error, RESOLUTION_REQUIRED in result"
-                    exposureNotificationsEnabled = false
+                    exposureNotificationsEnabledSubject.onNext(false)
                 } else {
                     Timber.e(apiException,"No RESOLUTION_REQUIRED in result")
                     exposureNotificationsError = "No RESOLUTION_REQUIRED in result"
-                    exposureNotificationsEnabled = false
+                    exposureNotificationsEnabledSubject.onNext(false)
                 }
             }
     }
@@ -71,7 +90,7 @@ class DebugExposureNotificationsViewModel(
         ExposureNotificationClientWrapper.get(getApplication())
             .stop()
             .addOnSuccessListener { unused: Void? ->
-                exposureNotificationsEnabled = false
+                exposureNotificationsEnabledSubject.onNext(false)
             }
             .addOnFailureListener { exception: java.lang.Exception? ->
                 Timber.w(exception, "Failed to stop")
@@ -101,5 +120,9 @@ class DebugExposureNotificationsViewModel(
             Timber.e(e, "Couldn't get the app version")
         }
         return getApplication<Application>().getString(R.string.debug_version_not_available)
+    }
+
+    fun resolutionSucceeded() {
+        exposureNotificationsEnabledSubject.onNext(true)
     }
 }
