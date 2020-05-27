@@ -133,7 +133,7 @@ class DebugExposureNotificationsViewModel(
         return getApplication<Application>().getString(R.string.debug_version_not_available)
     }
 
-    fun resolutionSucceeded() {
-        exposureNotificationsEnabledSubject.onNext(true)
+    fun resolutionSucceeded(activity: Activity) {
+        startExposureNotifications(activity)
     }
 }
