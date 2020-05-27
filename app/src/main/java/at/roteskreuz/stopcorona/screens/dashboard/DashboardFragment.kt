@@ -1,8 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
-import android.Manifest
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -27,13 +25,9 @@ import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCe
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
-import at.roteskreuz.stopcorona.skeleton.core.utils.PermissionChecker
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
-import at.roteskreuz.stopcorona.utils.enableBluetoothForResult
-import at.roteskreuz.stopcorona.utils.isBatteryOptimizationIgnored
 import at.roteskreuz.stopcorona.utils.shareApp
-import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import com.google.android.gms.common.ConnectionResult
@@ -46,28 +40,19 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * Sample dashboard.
  */
-class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionChecker {
+class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     companion object {
+        // TODO: 27/05/2020 dusanjencik: Remove
         private const val REQUEST_MICROPHONE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 1
-        private const val REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 2
-        private const val REQUEST_ENABLE_BLUETOOTH_DIALOG = Constants.Request.REQUEST_DASHBOARD + 3
-        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 4
+        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 2
     }
-
-    override val requiredPermissions: List<String>
-        get() = listOf(Manifest.permission.ACCESS_COARSE_LOCATION)
-
-    override val askForPermissionOnViewCreated: Boolean
-        get() = false
 
     override val isToolbarVisible: Boolean = true
 
     override fun getTitle(): String? {
         return "" // blank
     }
-
-    private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
     private val viewModel: DashboardViewModel by viewModel()
 
@@ -116,7 +101,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = ::checkDependenciesAndStartAutomaticHandshake,
+            onAutomaticHandshakeEnabled = viewModel::onAutomaticHandshakeEnabled,
             onShareAppClick = {
                 shareApp()
             },
@@ -254,39 +239,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
         }
     }
 
-    // TODO: 27/05/2020 dusanjencik: Remove
-    private fun checkDependenciesAndStartAutomaticHandshake(isEnabled: Boolean) {
-        when {
-            isEnabled && checkAllPermissionsGranted(requireContext()).not() -> {
-                checkPermissions()
-            }
-            isEnabled && bluetoothAdapter != null && bluetoothAdapter.isEnabled.not() -> {
-                enableBluetoothForResult(REQUEST_ENABLE_BLUETOOTH_DIALOG)
-            }
-            isEnabled && requireContext().isBatteryOptimizationIgnored().not() && viewModel.batteryOptimizationDialogShown.not() -> {
-                viewModel.batteryOptimizationDialogShown = true
-                requireActivity().startBatteryOptimisationSettingsForResult(REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG)
-            }
-            else -> {
-                viewModel.onAutomaticHandshakeEnabled(isEnabled)
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_MICROPHONE_DIALOG -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    startHandshakeFragment()
-                }
-            }
-            REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG -> {
-                checkDependenciesAndStartAutomaticHandshake(true)
-            }
-            REQUEST_ENABLE_BLUETOOTH_DIALOG -> {
-                checkDependenciesAndStartAutomaticHandshake(bluetoothAdapter?.isEnabled == true)
-            }
             REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.startResolutionResultOk()
@@ -295,9 +250,5 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
                 }
             }
         }
-    }
-
-    override fun onPermissionGranted(permission: String) {
-        checkDependenciesAndStartAutomaticHandshake(true)
     }
 }

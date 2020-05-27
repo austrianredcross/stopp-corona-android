@@ -1,6 +1,5 @@
 package at.roteskreuz.stopcorona.utils
 
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -58,17 +57,6 @@ fun Context.startAppSystemSettings() {
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)
     ))
-}
-
-/**
- * Open system settings on battery optimisation screen.
- */
-fun Activity.startBatteryOptimisationSettingsForResult(requestCode: Int) {
-    startActivityForResult(
-        Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            .setData(Uri.parse("package:$packageName")),
-        requestCode
-    )
 }
 
 /**

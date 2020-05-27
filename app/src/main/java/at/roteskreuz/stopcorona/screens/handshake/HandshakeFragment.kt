@@ -38,6 +38,7 @@ import org.koin.core.parameter.parametersOf
 /**
  * Screen for discovering nearby contacts and executing handshakes
  */
+// TODO: 27/05/2020 dusanjencik: Remove
 class HandshakeFragment : BaseFragment(R.layout.fragment_handshake) {
 
     override val isToolbarVisible = true
