@@ -22,9 +22,8 @@ import timber.log.Timber
 class DebugExposureNotificationsViewModel(
     application: Application
     ): AndroidViewModel(application){
-
-    private var exposureNotificationsError: String = ""
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject<Boolean>(false);
+    private val exposureNotificationsErrorSubject = NonNullableBehaviorSubject<String>("no error");
     private val exposureNotificationsErrorState = DataStateObserver<Status>()
 
 
@@ -34,11 +33,13 @@ class DebugExposureNotificationsViewModel(
         ExposureNotificationClientWrapper.get(getApplication()).isEnabled()
             .addOnSuccessListener { enabled: Boolean ->
                 exposureNotificationsEnabledSubject.onNext(enabled)
+                exposureNotificationsErrorSubject.onNext("")
             }
             .addOnFailureListener { exception: Exception? ->
                 Timber.e(exception, "could not get the current state of the exposure notifications SDK")
                 //TODO: how do we handle this???
                 exposureNotificationsEnabledSubject.onNext(false)
+                exposureNotificationsErrorSubject.onNext("could not get the current state of the exposure notifications SDK: '${exception}'")
             }
     }
 
@@ -48,6 +49,10 @@ class DebugExposureNotificationsViewModel(
 
     fun observeResolutionError(): Observable<DataState<Status>>{
         return exposureNotificationsErrorState.observe()
+    }
+
+    fun observeResultionErrorReasons(): Observable<String>{
+        return exposureNotificationsErrorSubject
     }
 
     /**
@@ -60,12 +65,13 @@ class DebugExposureNotificationsViewModel(
             .addOnSuccessListener { unused: Void? ->
                 exposureNotificationsEnabledSubject.onNext(true)
                 exposureNotificationsErrorState.idle()
+                exposureNotificationsErrorSubject.onNext("")
             }
             .addOnFailureListener { exception: Exception? ->
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
-                    exposureNotificationsError = "Unknown error when attempting to start API"
                     exposureNotificationsEnabledSubject.onNext(false)
+                    exposureNotificationsErrorSubject.onNext("Unknown error when attempting to start API: '${exception}'")
                     return@addOnFailureListener
                 }
                 val apiException = exception
@@ -73,11 +79,11 @@ class DebugExposureNotificationsViewModel(
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
                     exposureNotificationsErrorState.loaded(apiException.getStatus())
                     exposureNotificationsErrorState.idle()
-                    exposureNotificationsError = "Error, RESOLUTION_REQUIRED in result"
+                    exposureNotificationsErrorSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
                 } else {
                     Timber.e(apiException,"No RESOLUTION_REQUIRED in result")
-                    exposureNotificationsError = "No RESOLUTION_REQUIRED in result"
+                    exposureNotificationsErrorSubject.onNext("No RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
                 }
             }
@@ -93,8 +99,9 @@ class DebugExposureNotificationsViewModel(
                 exposureNotificationsEnabledSubject.onNext(false)
             }
             .addOnFailureListener { exception: java.lang.Exception? ->
+                exposureNotificationsEnabledSubject.onNext(true)
                 Timber.w(exception, "Failed to stop")
-                exposureNotificationsError = "Failed to stop"
+                exposureNotificationsErrorSubject.onNext("Failed to stop the Exposure Notifications SDK: '$exception'")
             }
 
     }

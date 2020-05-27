@@ -47,6 +47,12 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 listenerActive = true
             }
 
+        disposables += viewModel.observeResultionErrorReasons()
+            .observeOnMainThread()
+            .subscribe{
+                exposureNotificationsErrorMessage.text = it
+            }
+
         disposables += viewModel.observeResolutionError()
             .observeOnMainThread()
             .subscribe { state ->

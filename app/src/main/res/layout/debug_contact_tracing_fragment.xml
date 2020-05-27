@@ -43,7 +43,7 @@
         android:text="Enable Exposure Tracing" />
 
     <TextView
-        android:id="@+id/txtError"
+        android:id="@+id/exposureNotificationsErrorMessage"
         style="@style/AppTheme.Label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
