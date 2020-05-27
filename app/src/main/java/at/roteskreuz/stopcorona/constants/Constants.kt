@@ -136,6 +136,7 @@ object Constants {
 
         const val REQUEST_DASHBOARD = APP_BASE_REQUEST + (1 shl OFFSET)
         const val AUTOMATIC_DETECTION_NOTIFICATION_ID = APP_BASE_REQUEST + (2 shl OFFSET)
+        const val EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT = APP_BASE_REQUEST + (3 shl OFFSET)
     }
 
     /**

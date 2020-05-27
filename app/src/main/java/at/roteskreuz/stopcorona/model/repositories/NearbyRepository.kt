@@ -144,33 +144,30 @@ class NearbyRepositoryImpl(
 
     override val messageListener: MessageListener = object : MessageListener() {
 
-        override fun onFound(message: Message?) {
+        override fun onFound(message: Message) {
             super.onFound(message)
-
-            message?.let {
-                launch {
-                    val identification = it.content.take(IDENTIFICATION_BYTE_LENGTH)
-                        .map { byte -> byte.toChar() }
-                        .joinToString(separator = "")
-                        .let { value ->
-                            try {
-                                Integer.parseInt(value)
-                            } catch (exc: NumberFormatException) {
-                                Timber.e(SilentError("Invalid received id", exc))
-                                return@launch // ignore the message
-                            }
+            launch {
+                val identification = message.content.take(IDENTIFICATION_BYTE_LENGTH)
+                    .map { byte -> byte.toChar() }
+                    .joinToString(separator = "")
+                    .let { value ->
+                        try {
+                            Integer.parseInt(value)
+                        } catch (exc: NumberFormatException) {
+                            Timber.e(SilentError("Invalid received id", exc))
+                            return@launch // ignore the message
                         }
+                    }
 
-                    val publicKey = it.content.drop(IDENTIFICATION_BYTE_LENGTH).toByteArray()
-                    val publicKeySavedInLast15Minutes =
-                        nearbyRecordDao.wasRecordSavedInGivenPeriod(publicKey, ZonedDateTime.now().minusMinutes(PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES))
+                val publicKey = message.content.drop(IDENTIFICATION_BYTE_LENGTH).toByteArray()
+                val publicKeySavedInLast15Minutes =
+                    nearbyRecordDao.wasRecordSavedInGivenPeriod(publicKey, ZonedDateTime.now().minusMinutes(PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES))
 
-                    messageSubject.onNext(NearbyResult.Found(
-                        identification = handshakeCodewordRepository.getCodeword(identification),
-                        publicKey = publicKey,
-                        selected = publicKeySavedInLast15Minutes,
-                        saved = publicKeySavedInLast15Minutes))
-                }
+                messageSubject.onNext(NearbyResult.Found(
+                    identification = handshakeCodewordRepository.getCodeword(identification),
+                    publicKey = publicKey,
+                    selected = publicKeySavedInLast15Minutes,
+                    saved = publicKeySavedInLast15Minutes))
             }
         }
     }
