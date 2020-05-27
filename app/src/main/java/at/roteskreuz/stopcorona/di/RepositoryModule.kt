@@ -115,6 +115,13 @@ val repositoryModule = module {
         )
     }
 
+    single<ExposureNotificationRepository> {
+        ExposureNotificationRepositoryImpl(
+            appDispatchers = get(),
+            exposureNotificationClient = get()
+        )
+    }
+
     single<HandshakeCodewordRepository> {
         HandshakeCodewordRepositoryImpl(
             contextInteractor = get()
