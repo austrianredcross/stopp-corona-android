@@ -1,8 +1,8 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import android.app.Activity
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
@@ -11,7 +11,6 @@ import com.google.android.gms.nearby.exposurenotification.ExposureNotificationCl
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
@@ -21,9 +20,14 @@ import kotlin.coroutines.CoroutineContext
 interface ExposureNotificationRepository {
 
     /**
+     * Get information if framework is running or not.
+     */
+    val isFrameworkRunning: Boolean
+
+    /**
      * Observe information if framework is running or not.
      */
-    fun observeIsServiceRunning(): Observable<Boolean>
+    fun observeIsFrameworkRunning(): Observable<Boolean>
 
     /**
      * Observe information about starting/stopping and error.
@@ -39,6 +43,16 @@ interface ExposureNotificationRepository {
      * Register receivers to handle edge situations.
      */
     fun startListening()
+
+    /**
+     * Handles [Activity.RESULT_OK] for a resolution. User accepted opt-in.
+     */
+    fun startResolutionResultOk()
+
+    /**
+     * Handles not [Activity.RESULT_OK] for a resolution. User accepted opt-in.
+     */
+    fun startResolutionResultNotOk()
 
     /**
      * Stop automatic detection.
@@ -62,7 +76,13 @@ class ExposureNotificationRepositoryImpl(
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
 
-    override fun observeIsServiceRunning(): Observable<Boolean> {
+    override var isFrameworkRunning: Boolean
+        get() = frameworkEnabledState.value
+        private set(value) {
+            frameworkEnabledState.onNext(value)
+        }
+
+    override fun observeIsFrameworkRunning(): Observable<Boolean> {
         return frameworkEnabledState
     }
 
@@ -98,6 +118,27 @@ class ExposureNotificationRepositoryImpl(
             .addOnCanceledListener {
                 frameworkState.idle()
             }
+    }
+
+    override fun startResolutionResultOk() {
+        frameworkState.loading()
+        exposureNotificationClient.start()
+            .addOnSuccessListener {
+                refreshEnabledState()
+                frameworkState.idle()
+            }
+            .addOnFailureListener { exception: Exception ->
+                Timber.e(exception, "Error handling resolution ok")
+                frameworkState.idle()
+            }
+            .addOnCanceledListener {
+                frameworkState.idle()
+            }
+    }
+
+    override fun startResolutionResultNotOk() {
+        frameworkState.idle()
+        frameworkEnabledState.onNext(false)
     }
 
     override fun stopListening() {

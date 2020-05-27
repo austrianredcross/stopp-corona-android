@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialog
@@ -24,6 +25,7 @@ import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuesti
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCertificateReportGuidelinesFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.PermissionChecker
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
@@ -36,6 +38,7 @@ import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.api.ApiException
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -49,6 +52,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
         private const val REQUEST_MICROPHONE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 1
         private const val REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 2
         private const val REQUEST_ENABLE_BLUETOOTH_DIALOG = Constants.Request.REQUEST_DASHBOARD + 3
+        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 4
     }
 
     override val requiredPermissions: List<String>
@@ -178,19 +182,42 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
                 controller.someoneHasRecoveredHealthStatus = it
             }
 
-        disposables += viewModel.observeAutomaticHandshake()
+        disposables += viewModel.observeExposureNotificationRunningState()
             .observeOnMainThread()
             .subscribe { enabled ->
                 controller.automaticHandshakeEnabled = enabled
             }
 
+        disposables += viewModel.observeExposureNotificationState()
+            .observeOnMainThread()
+            .subscribe { state ->
+                when (state) {
+                    State.Idle -> {
+                        // TODO: 27/05/2020 dusanjencik: enable switch
+                    }
+                    State.Loading -> {
+                        // TODO: 27/05/2020 dusanjencik: disable switch
+                    }
+                    is State.Error -> {
+                        when (state.error) {
+                            is ApiException -> {
+                                (state.error as ApiException).status.startResolutionForResult(requireActivity(),
+                                    REQUEST_CODE_START_EXPOSURE_NOTIFICATION)
+                            }
+                            else -> handleBaseCoronaErrors(state.error)
+                        }
+                    }
+                }
+            }
+
         /**
          * If the user starts the app for the first time the service will be started automatically
          */
-        if (viewModel.wasServiceEnabledAutomaticallyOnFirstStart.not()) {
-            viewModel.wasServiceEnabledAutomaticallyOnFirstStart = true
-            checkDependenciesAndStartAutomaticHandshake(true)
-        }
+        // TODO: 27/05/2020 dusanjencik: Decide if we want to enable it automatically or not
+//        if (viewModel.wasServiceEnabledAutomaticallyOnFirstStart.not()) {
+//            viewModel.wasServiceEnabledAutomaticallyOnFirstStart = true
+//            checkDependenciesAndStartAutomaticHandshake(true)
+//        }
 
         controller.requestModelBuild()
     }
@@ -210,6 +237,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
         }
     }
 
+    // TODO: 27/05/2020 dusanjencik: Remove
     private fun checkPlayServicesAvailabilityAndStartHandshakeFragment() {
         when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
             ConnectionResult.SUCCESS -> {
@@ -226,6 +254,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
         }
     }
 
+    // TODO: 27/05/2020 dusanjencik: Remove
     private fun checkDependenciesAndStartAutomaticHandshake(isEnabled: Boolean) {
         when {
             isEnabled && checkAllPermissionsGranted(requireContext()).not() -> {
@@ -257,6 +286,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard), PermissionC
             }
             REQUEST_ENABLE_BLUETOOTH_DIALOG -> {
                 checkDependenciesAndStartAutomaticHandshake(bluetoothAdapter?.isEnabled == true)
+            }
+            REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.startResolutionResultOk()
+                } else {
+                    viewModel.startResolutionResultNotOk()
+                }
             }
         }
     }
