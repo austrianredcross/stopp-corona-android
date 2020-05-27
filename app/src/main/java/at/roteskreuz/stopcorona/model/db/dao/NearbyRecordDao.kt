@@ -22,9 +22,6 @@ abstract class NearbyRecordDao {
         ))
     }
 
-    @Query("SELECT * FROM nearby_record")
-    abstract fun observeAllRecords(): Flowable<List<DbNearbyRecord>>
-
     @Query("SELECT * FROM nearby_record WHERE timestamp > :time")
     abstract fun observeRecordsRecentThan(time: ZonedDateTime): Flowable<List<DbNearbyRecord>>
 
