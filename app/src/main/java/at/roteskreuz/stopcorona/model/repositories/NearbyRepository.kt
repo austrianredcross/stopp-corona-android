@@ -4,10 +4,8 @@ import android.os.Bundle
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.IDENTIFICATION_BYTE_LENGTH
 import at.roteskreuz.stopcorona.constants.Constants.Nearby.PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES
 import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
-import at.roteskreuz.stopcorona.model.entities.nearby.DbNearbyRecord
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.utils.asDbObservable
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.nearby.messages.*
 import io.reactivex.Observable
@@ -83,11 +81,6 @@ interface NearbyRepository {
      * Saves a given publicKey to the database.
      */
     suspend fun savePublicKey(publicKey: ByteArray, detectedAutomatically: Boolean)
-
-    /**
-     * Observe all the nearby records stored in the database.
-     */
-    fun observeAllNearbyRecords(): Observable<List<DbNearbyRecord>>
 }
 
 class NearbyRepositoryImpl(
@@ -200,10 +193,6 @@ class NearbyRepositoryImpl(
             .doOnSubscribe {
                 handshakeStateSubject.onNext(NearbyHandshakeState.Active)
             }
-    }
-
-    override fun observeAllNearbyRecords(): Observable<List<DbNearbyRecord>> {
-        return nearbyRecordDao.observeAllRecords().asDbObservable()
     }
 
     /**

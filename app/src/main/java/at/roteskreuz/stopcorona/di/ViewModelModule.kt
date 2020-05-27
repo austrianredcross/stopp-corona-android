@@ -7,7 +7,6 @@ import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDi
 import at.roteskreuz.stopcorona.screens.debug.discovery.DebugDiscoveryViewModel
 import at.roteskreuz.stopcorona.screens.debug.events.DebugAutomaticEventsViewModel
 import at.roteskreuz.stopcorona.screens.handshake.HandshakeViewModel
-import at.roteskreuz.stopcorona.screens.history.ContactHistoryViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
@@ -186,13 +185,6 @@ val viewModelModule = module {
             appDispatchers = get(),
             reportingRepository = get(),
             messageType = messageType
-        )
-    }
-
-    viewModel {
-        ContactHistoryViewModel(
-            appDispatchers = get(),
-            nearbyRepository = get()
         )
     }
 
