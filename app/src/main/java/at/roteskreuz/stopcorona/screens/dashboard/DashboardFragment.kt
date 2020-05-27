@@ -32,6 +32,7 @@ import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -182,8 +183,15 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is State.Error -> {
                         when (state.error) {
                             is ApiException -> {
-                                (state.error as ApiException).status.startResolutionForResult(requireActivity(),
-                                    REQUEST_CODE_START_EXPOSURE_NOTIFICATION)
+                                val apiException = state.error as ApiException
+                                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+                                    apiException.status.startResolutionForResult(
+                                        requireActivity(),
+                                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                                    )
+                                } else {
+                                    handleBaseCoronaErrors(state.error)
+                                }
                             }
                             else -> handleBaseCoronaErrors(state.error)
                         }

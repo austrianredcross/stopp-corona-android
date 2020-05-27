@@ -8,7 +8,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
@@ -107,13 +106,8 @@ class ExposureNotificationRepositoryImpl(
                     frameworkState.idle()
                     return@addOnFailureListener
                 }
-                val apiException: ApiException = exception
-                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    frameworkState.error(apiException)
-                    frameworkState.idle()
-                } else {
-                    frameworkState.idle()
-                }
+                frameworkState.error(exception) // will be type of ApiException
+                frameworkState.idle()
             }
             .addOnCanceledListener {
                 frameworkState.idle()
