@@ -169,6 +169,8 @@ class CoronaDetectionRepositoryImpl(
         disposables += discoveryDbObservable.subscribe()
 
         Timber.d("### Started observing")
+
+        //TODO: integrate Exposure notifications service here
     }
 
     override fun stopListening() {
@@ -176,6 +178,8 @@ class CoronaDetectionRepositoryImpl(
         disposables = CompositeDisposable()
 
         Timber.d("### Stopped observing")
+
+        //TODO: integrate Exposure notifications service here
 
         with(contextInteractor.applicationContext) {
             bluetoothStateReceiver.unregister(this)
