@@ -3,7 +3,7 @@ package at.roteskreuz.stopcorona.model.entities.infection.info
 import com.squareup.moshi.JsonClass
 
 /**
- * Describes infection info about user with data from the Exposure SDK.
+ * Describes infection info about user with data gathered from the Exposure SDK.
  */
 @JsonClass(generateAdapter = true)
 data class ApiInfectionDataRequest(
