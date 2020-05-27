@@ -175,10 +175,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { state ->
                 when (state) {
                     State.Idle -> {
-                        // TODO: 27/05/2020 dusanjencik: enable switch
+                        // TODO: 27/05/2020 dusanjencik: enable switch, related to https://github.com/austrianredcross/stopp-corona-android/issues/44
                     }
                     State.Loading -> {
-                        // TODO: 27/05/2020 dusanjencik: disable switch
+                        // TODO: 27/05/2020 dusanjencik: disable switch, related to https://github.com/austrianredcross/stopp-corona-android/issues/44
                     }
                     is State.Error -> {
                         when (state.error) {
@@ -246,6 +246,11 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            REQUEST_MICROPHONE_DIALOG -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    startHandshakeFragment()
+                }
+            }
             REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.startResolutionResultOk()
