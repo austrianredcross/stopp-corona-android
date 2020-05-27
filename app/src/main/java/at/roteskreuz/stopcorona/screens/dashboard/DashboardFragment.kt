@@ -15,7 +15,6 @@ import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExpla
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialog
 import at.roteskreuz.stopcorona.screens.handshake.startHandshakeFragment
-import at.roteskreuz.stopcorona.screens.history.startContactHistoryFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
@@ -64,9 +63,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onAutomaticHandshakeInformationClick = {
                 AutomaticHandshakeExplanationDialog().show()
-            },
-            onSavedEncountersClick = {
-                startContactHistoryFragment()
             },
             onFeelingClick = {
                 startQuestionnaireFragment()

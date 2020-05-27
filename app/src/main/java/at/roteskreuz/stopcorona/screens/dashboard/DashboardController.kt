@@ -19,7 +19,6 @@ class DashboardController(
     private val context: Context,
     private val onManualHandshakeClick: () -> Unit,
     private val onAutomaticHandshakeInformationClick: () -> Unit,
-    private val onSavedEncountersClick: () -> Unit,
     private val onFeelingClick: () -> Unit,
     private val onReportClick: () -> Unit,
     private val onHealthStatusClick: (data: HealthStatusData) -> Unit,
@@ -118,10 +117,9 @@ class DashboardController(
             }
         }
 
-        handshakeHeadlineWithHistory(onSavedEncountersClick) {
+        handshakeHeadline {
             id("handshake_title")
             title(context.string(R.string.main_body_contact_title))
-            savedEncounters(savedEncounters)
         }
 
         emptySpace(modelCountBuiltSoFar, 16)
