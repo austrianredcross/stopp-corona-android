@@ -1,7 +1,7 @@
 package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionInfoRequest
+import at.roteskreuz.stopcorona.model.entities.infection.info.*
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
@@ -51,6 +51,16 @@ interface ApiInteractor {
      * @return
      */
     suspend fun requestTan(mobileNumber: String): ApiRequestTan
+
+    /**
+     * Upload infection data about the user.
+     */
+    suspend fun uploadInfectionData(
+        temporaryTracingKeyList: List<ApiTemporaryTracingKey>,
+        packageName: String,
+        diagnosisType: WarningType,
+        verificationPayload: ApiVerificationPayload
+    )
 }
 
 class ApiInteractorImpl(
@@ -60,6 +70,12 @@ class ApiInteractorImpl(
     private val dataPrivacyRepository: DataPrivacyRepository
 ) : ApiInteractor,
     ExceptionMapperHelper {
+
+    companion object {
+        private const val ANDROID_OS = "android"
+        private const val VERIFICATION_AUTHORITY_NAME = "RedCross"
+        private val regions = arrayListOf("AT")
+    }
 
     private val generalExceptionMapper: (HttpException) -> Exception? = {
         when (it.code()) {
@@ -133,6 +149,38 @@ class ApiInteractorImpl(
                 {
                     tanApiDescription.requestTan(ApiRequestTanBody(mobileNumber))
                 })
+        }
+    }
+
+    override suspend fun uploadInfectionData(
+        temporaryTracingKeyList: List<ApiTemporaryTracingKey>,
+        packageName: String,
+        diagnosisType: WarningType,
+        verificationPayload: ApiVerificationPayload
+    ) {
+        withContext(appDispatchers.IO) {
+            dataPrivacyRepository.assertDataPrivacyAccepted()
+            checkGeneralErrors(
+                { httpException ->
+                    when (httpException.code()) {
+                        HTTP_FORBIDDEN -> SicknessCertificateUploadException.TanInvalidException
+                        else -> generalExceptionMapper(httpException)
+                    }
+                },
+                {
+                    apiDescription.publish(
+                        ApiInfectionDataRequest(
+                            temporaryTracingKeyList,
+                            regions,
+                            packageName,
+                            ANDROID_OS,
+                            diagnosisType,
+                            VERIFICATION_AUTHORITY_NAME,
+                            verificationPayload
+                        )
+                    )
+                }
+            )
         }
     }
 }
