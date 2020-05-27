@@ -8,12 +8,11 @@ import androidx.lifecycle.AndroidViewModel
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.apps.exposurenotification.nearby.ExposureNotificationClientWrapper
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
@@ -26,11 +25,14 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationsErrorSubject = NonNullableBehaviorSubject<String>("no error");
     private val exposureNotificationsErrorState = DataStateObserver<Status>()
 
+    private val exposureNotificationClient: ExposureNotificationClient by lazy {
+        Nearby.getExposureNotificationClient(application);
+    }
 
     //TODO: move to a ExposureNotificationsRepository
     //TODO: get inspired by https://github.com/austrianredcross/stopp-corona-android/blob/develop/app/src/main/java/at/roteskreuz/stopcorona/model/repositories/DiscoveryRepository.kt
     fun checkEnabledState(){
-        ExposureNotificationClientWrapper.get(getApplication()).isEnabled()
+        exposureNotificationClient.isEnabled()
             .addOnSuccessListener { enabled: Boolean ->
                 exposureNotificationsEnabledSubject.onNext(enabled)
                 exposureNotificationsErrorSubject.onNext("")
@@ -60,8 +62,7 @@ class DebugExposureNotificationsViewModel(
      */
     fun startExposureNotifications(activity: Activity) {
         exposureNotificationsErrorState.loading()
-        ExposureNotificationClientWrapper.get(getApplication())
-            .start()
+        exposureNotificationClient.start()
             .addOnSuccessListener { unused: Void? ->
                 exposureNotificationsEnabledSubject.onNext(true)
                 exposureNotificationsErrorState.idle()
@@ -93,8 +94,7 @@ class DebugExposureNotificationsViewModel(
      * Calls stop on the Exposure Notifications API.
      */
     fun stopExposureNotifications() {
-        ExposureNotificationClientWrapper.get(getApplication())
-            .stop()
+        exposureNotificationClient.stop()
             .addOnSuccessListener { unused: Void? ->
                 exposureNotificationsEnabledSubject.onNext(false)
             }
