@@ -22,8 +22,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_tracing_fragment) {
 
-    companion object{
-        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT+1;
+    companion object {
+        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION =
+            EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1;
     }
 
     private var listenerActive: Boolean = false
@@ -41,7 +42,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         disposables += viewModel.observeEnabledState()
             .observeOnMainThread()
-            .subscribe{
+            .subscribe {
                 listenerActive = false
                 exposureNotificationsMasterSwitch.isChecked = it
                 listenerActive = true
@@ -49,7 +50,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         disposables += viewModel.observeResultionErrorReasons()
             .observeOnMainThread()
-            .subscribe{
+            .subscribe {
                 exposureNotificationsErrorMessage.text = it
             }
 
@@ -61,16 +62,19 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                         //TODO think about what to do here
                     }
                     is DataState.Loaded -> {
-                        state.data.startResolutionForResult(activity, REQUEST_CODE_START_EXPOSURE_NOTIFICATION);
+                        state.data.startResolutionForResult(
+                            activity,
+                            REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                        );
                     }
                 }
             }
 
         exposureNotificationsMasterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (listenerActive.not()){
+            if (listenerActive.not()) {
                 return@setOnCheckedChangeListener
             }
-            if (isChecked){
+            if (isChecked) {
                 activity?.let { viewModel.startExposureNotifications(it) }
             } else {
                 viewModel.stopExposureNotifications()

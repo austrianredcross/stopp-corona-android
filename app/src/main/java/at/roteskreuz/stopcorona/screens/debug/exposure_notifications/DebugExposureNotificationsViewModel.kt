@@ -20,7 +20,7 @@ import timber.log.Timber
 
 class DebugExposureNotificationsViewModel(
     application: Application
-    ): AndroidViewModel(application){
+) : AndroidViewModel(application) {
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject<Boolean>(false);
     private val exposureNotificationsErrorSubject = NonNullableBehaviorSubject<String>("no error");
     private val exposureNotificationsErrorState = DataStateObserver<Status>()
@@ -31,14 +31,17 @@ class DebugExposureNotificationsViewModel(
 
     //TODO: move to a ExposureNotificationsRepository
     //TODO: get inspired by https://github.com/austrianredcross/stopp-corona-android/blob/develop/app/src/main/java/at/roteskreuz/stopcorona/model/repositories/DiscoveryRepository.kt
-    fun checkEnabledState(){
+    fun checkEnabledState() {
         exposureNotificationClient.isEnabled()
             .addOnSuccessListener { enabled: Boolean ->
                 exposureNotificationsEnabledSubject.onNext(enabled)
                 exposureNotificationsErrorSubject.onNext("")
             }
             .addOnFailureListener { exception: Exception? ->
-                Timber.e(exception, "could not get the current state of the exposure notifications SDK")
+                Timber.e(
+                    exception,
+                    "could not get the current state of the exposure notifications SDK"
+                )
                 //TODO: how do we handle this???
                 exposureNotificationsEnabledSubject.onNext(false)
                 exposureNotificationsErrorSubject.onNext("could not get the current state of the exposure notifications SDK: '${exception}'")
@@ -49,11 +52,11 @@ class DebugExposureNotificationsViewModel(
         return exposureNotificationsEnabledSubject
     }
 
-    fun observeResolutionError(): Observable<DataState<Status>>{
+    fun observeResolutionError(): Observable<DataState<Status>> {
         return exposureNotificationsErrorState.observe()
     }
 
-    fun observeResultionErrorReasons(): Observable<String>{
+    fun observeResultionErrorReasons(): Observable<String> {
         return exposureNotificationsErrorSubject
     }
 
@@ -83,7 +86,7 @@ class DebugExposureNotificationsViewModel(
                     exposureNotificationsErrorSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
                 } else {
-                    Timber.e(apiException,"No RESOLUTION_REQUIRED in result")
+                    Timber.e(apiException, "No RESOLUTION_REQUIRED in result")
                     exposureNotificationsErrorSubject.onNext("No RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
                 }
@@ -122,7 +125,8 @@ class DebugExposureNotificationsViewModel(
     /** Gets the version name for a specified package. Returns a debug string if not found.  */
     private fun getVersionNameForPackage(packageName: String): String? {
         try {
-            return getApplication<Application>().getPackageManager().getPackageInfo(packageName, 0).versionName
+            return getApplication<Application>().getPackageManager()
+                .getPackageInfo(packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             Timber.e(e, "Couldn't get the app version")
         }
