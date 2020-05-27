@@ -5,7 +5,7 @@
     package="at.roteskreuz.stopcorona">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    
+
     <!-- P2PKit permissions-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -105,7 +105,7 @@
         <receiver android:name=".model.receivers.BatterySaverStateReceiver" />
 
         <receiver
-            android:name="com.google.android.apps.exposurenotification.nearby.ExposureNotificationBroadcastReceiver"
+            android:name=".model.receivers.ExposureNotificationBroadcastReceiver"
             android:permission="com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK"
             android:exported="true">
             <intent-filter>
