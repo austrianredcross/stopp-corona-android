@@ -55,9 +55,6 @@
                 android:id="@+id/debugMenuQuarantineStatus"
                 android:title="Quarantine status" />
             <item
-                android:id="@+id/debugMenuDiscovery"
-                android:title="Discovery screen" />
-            <item
                 android:id="@+id/debugMenuEvents"
                 android:title="Events" />
             <item

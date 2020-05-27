@@ -4,7 +4,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialogViewModel
-import at.roteskreuz.stopcorona.screens.debug.discovery.DebugDiscoveryViewModel
 import at.roteskreuz.stopcorona.screens.debug.events.DebugAutomaticEventsViewModel
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
 import at.roteskreuz.stopcorona.screens.handshake.HandshakeViewModel
@@ -38,12 +37,6 @@ val viewModelModule = module {
             quarantineRepository = get(),
             infectionMessageDao = get(),
             nearbyRecordDao = get()
-        )
-    }
-
-    viewModel {
-        DebugDiscoveryViewModel(
-            appDispatchers = get()
         )
     }
 
