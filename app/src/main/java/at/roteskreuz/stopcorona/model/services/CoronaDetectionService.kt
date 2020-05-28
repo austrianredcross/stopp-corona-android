@@ -16,6 +16,7 @@ import org.koin.android.ext.android.inject
 /**
  * Foreground service for automatic detection of bluetooth devices nearby.
  */
+// TODO: 27/05/2020 dusanjencik: Remove
 class CoronaDetectionService : Service() {
 
     companion object {

@@ -15,7 +15,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.utils.asDbObservable
-import ch.uepaa.p2pkit.discovery.DiscoveryListener
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -72,7 +71,6 @@ class CoronaDetectionRepositoryImpl(
     private val preferences: SharedPreferences,
     private val bluetoothStateReceiver: Registrable,
     private val batterySaverStateReceiver: Registrable,
-    private val discoveryRepository: DiscoveryRepository,
     private val automaticDiscoveryDao: AutomaticDiscoveryDao,
     private val nearbyRepository: NearbyRepository,
     private val cryptoRepository: CryptoRepository
@@ -87,38 +85,6 @@ class CoronaDetectionRepositoryImpl(
     }
 
     private var disposables = CompositeDisposable()
-
-    /**
-     * Checking new discovery events and storing them into DB.
-     */
-    private val discoveryEventsObservable = discoveryRepository.observeDiscoveryResult()
-
-        .doOnNext { event ->
-            when (event) {
-                is DiscoveryResult.PeerDiscovered -> {
-                    saveEvent(event.discoveryInfo, event.proximityStrength)
-                    Timber.d("### New event: ${cryptoRepository.getPublicKeyPrefix(event.discoveryInfo)}, Proximity: ${event.proximityStrength}")
-                }
-                is DiscoveryResult.ProximityStrengthChanged -> {
-                    saveEvent(event.discoveryInfo, event.proximityStrength)
-                    Timber.d("### Next event: ${cryptoRepository.getPublicKeyPrefix(event.discoveryInfo)}, Proximity: ${event.proximityStrength}")
-                }
-                is DiscoveryResult.PeerLost -> {
-                    // Start event with null signal strength. This event will not count into the risk score
-                    saveEvent(event.discoveryInfo, PROXIMITY_LOST)
-                    Timber.d("### New event: ${cryptoRepository.getPublicKeyPrefix(event.discoveryInfo)}, LOST")
-                }
-                is DiscoveryResult.StateChanged -> {
-                    Timber.d("### Discovery state changed: ${event.state}")
-                    if (event.state == DiscoveryListener.STATE_OFF) {
-                        // If we stopped scanning, we have to assume all peers are lost.
-                        Timber.d("### Saving 'lost' events for all peers")
-                        saveEventForAllPeers(PROXIMITY_LOST)
-                    }
-                }
-            }
-        }
-        .ignoreResult()
 
     /**
      * Chain procedure to observe discovery events.
@@ -200,21 +166,20 @@ class CoronaDetectionRepositoryImpl(
             batterySaverStateReceiver.register(this)
         }
 
-        disposables += discoveryEventsObservable.subscribe()
         disposables += discoveryDbObservable.subscribe()
 
         Timber.d("### Started observing")
 
-        discoveryRepository.start()
+        //TODO: integrate Exposure notifications service here
     }
 
     override fun stopListening() {
-        discoveryRepository.stop()
-
         disposables.dispose()
         disposables = CompositeDisposable()
 
         Timber.d("### Stopped observing")
+
+        //TODO: integrate Exposure notifications service here
 
         with(contextInteractor.applicationContext) {
             bluetoothStateReceiver.unregister(this)

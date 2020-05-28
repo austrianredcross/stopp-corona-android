@@ -78,4 +78,8 @@ internal val contextDependentModule = module {
     single {
         LocalBroadcastManager.getInstance(androidContext())
     }
+
+    single {
+        Nearby.getExposureNotificationClient(androidContext())
+    }
 }

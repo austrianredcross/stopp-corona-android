@@ -6,14 +6,15 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
+    <uses-feature android:name="android.hardware.bluetooth" />
+
     <!-- P2PKit permissions-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- For automatic bluetooth detection service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -105,6 +106,15 @@
 
         <receiver android:name=".model.receivers.BluetoothStateReceiver" />
         <receiver android:name=".model.receivers.BatterySaverStateReceiver" />
+
+        <receiver
+            android:name=".model.receivers.ExposureNotificationBroadcastReceiver"
+            android:permission="com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="firebase_performance_collection_enabled"
