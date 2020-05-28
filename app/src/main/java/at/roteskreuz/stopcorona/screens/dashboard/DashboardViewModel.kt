@@ -1,11 +1,9 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
+import android.app.Activity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
-import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.model.services.startCoronaDetectionService
-import at.roteskreuz.stopcorona.model.services.stopCoronaDetectionService
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import io.reactivex.Observable
@@ -22,8 +20,7 @@ class DashboardViewModel(
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
-    private val contextInteractor: ContextInteractor,
-    private val coronaDetectionRepository: CoronaDetectionRepository,
+    private val exposureNotificationRepository: ExposureNotificationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager
 ) : ScopedViewModel(appDispatchers) {
 
@@ -35,11 +32,12 @@ class DashboardViewModel(
     val showMicrophoneExplanationDialog: Boolean
         get() = dashboardRepository.showMicrophoneExplanationDialog
 
-    var wasServiceEnabledAutomaticallyOnFirstStart: Boolean
-        get() = coronaDetectionRepository.serviceEnabledOnFirstStart
-        set(value) {
-            coronaDetectionRepository.serviceEnabledOnFirstStart = value
-        }
+    // TODO: 27/05/2020 dusanjencik: Decide if we want to enable it automatically or not
+//    var wasServiceEnabledAutomaticallyOnFirstStart: Boolean
+//        get() = coronaDetectionRepository.serviceEnabledOnFirstStart
+//        set(value) {
+//            coronaDetectionRepository.serviceEnabledOnFirstStart = value
+//        }
 
     var batteryOptimizationDialogShown = false
 
@@ -128,16 +126,36 @@ class DashboardViewModel(
 
     fun onAutomaticHandshakeEnabled(enabled: Boolean) {
         when {
-            enabled && coronaDetectionRepository.isServiceRunning.not() -> {
-                contextInteractor.applicationContext.startCoronaDetectionService()
+            enabled && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
+                exposureNotificationRepository.registerAppForExposureNotifications()
             }
-            enabled.not() && coronaDetectionRepository.isServiceRunning -> {
-                contextInteractor.applicationContext.stopCoronaDetectionService()
+            enabled.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
+                exposureNotificationRepository.unregisterAppFromExposureNotifications()
             }
         }
     }
 
-    fun observeAutomaticHandshake() = coronaDetectionRepository.observeIsServiceRunning()
+    fun observeExposureNotificationRunningState() = exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+
+    fun observeExposureNotificationState() = exposureNotificationRepository.observeRegistrationState()
+
+    /**
+     * Handles [Activity.RESULT_OK] for a resolution. User accepted opt-in for exposure notification.
+     */
+    fun onExposureNotificationRegistrationResolutionResultOk() {
+        exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
+    }
+
+    /**
+     * Handles not [Activity.RESULT_OK] for a resolution. User rejected opt-in for exposure notification.
+     */
+    fun onExposureNotificationRegistrationResolutionResultNotOk() {
+        exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
+    }
+
+    fun refreshExposureNotificationAppRegisteredState() {
+        exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
+    }
 }
 
 /**

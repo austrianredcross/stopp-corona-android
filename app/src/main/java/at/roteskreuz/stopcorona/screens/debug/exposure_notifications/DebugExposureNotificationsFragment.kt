@@ -9,8 +9,6 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.dashboard.DashboardFragment
-import at.roteskreuz.stopcorona.screens.handshake.startHandshakeFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
@@ -102,7 +100,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
         when (requestCode) {
             REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    viewModel.resolutionSucceeded()
+                    activity?.let { viewModel.resolutionSucceeded(it) }
                 }
             }
         }
