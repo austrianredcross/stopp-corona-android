@@ -16,6 +16,7 @@ import org.threeten.bp.ZonedDateTime
  */
 class DashboardViewModel(
     appDispatchers: AppDispatchers,
+    private val dashboardRepository: DashboardRepository,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
@@ -28,12 +29,11 @@ class DashboardViewModel(
         const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
     }
 
-    // TODO: 27/05/2020 dusanjencik: Decide if we want to enable it automatically or not
-//    var wasServiceEnabledAutomaticallyOnFirstStart: Boolean
-//        get() = coronaDetectionRepository.serviceEnabledOnFirstStart
-//        set(value) {
-//            coronaDetectionRepository.serviceEnabledOnFirstStart = value
-//        }
+    var wasServiceEnabledAutomaticallyOnFirstStart: Boolean
+        get() = dashboardRepository.serviceEnabledOnFirstStart
+        set(value) {
+            dashboardRepository.serviceEnabledOnFirstStart = value
+        }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
         return Observables.combineLatest(

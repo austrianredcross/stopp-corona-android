@@ -91,17 +91,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = { enable ->
-                when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
-                    ConnectionResult.SUCCESS -> {
-                        // TODO: 28/05/2020 dusanjencik: We should check also correct version
-                        viewModel.onAutomaticHandshakeEnabled(enable)
-                    }
-                    else -> {
-                        GooglePlayServicesNotAvailableDialog().show()
-                    }
-                }
-            },
+            onAutomaticHandshakeEnabled = ::checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework,
             onShareAppClick = {
                 shareApp()
             },
@@ -193,11 +183,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         /**
          * If the user starts the app for the first time the service will be started automatically
          */
-        // TODO: 27/05/2020 dusanjencik: Decide if we want to enable it automatically or not
-//        if (viewModel.wasServiceEnabledAutomaticallyOnFirstStart.not()) {
-//            viewModel.wasServiceEnabledAutomaticallyOnFirstStart = true
-//            checkDependenciesAndStartAutomaticHandshake(true)
-//        }
+        if (viewModel.wasServiceEnabledAutomaticallyOnFirstStart.not()) {
+            viewModel.wasServiceEnabledAutomaticallyOnFirstStart = true
+            checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(true)
+        }
 
         controller.requestModelBuild()
     }
@@ -219,6 +208,18 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(enableFramework: Boolean) {
+        when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
+            ConnectionResult.SUCCESS -> {
+                // TODO: 28/05/2020 dusanjencik: We should check also correct version
+                viewModel.onAutomaticHandshakeEnabled(enableFramework)
+            }
+            else -> {
+                GooglePlayServicesNotAvailableDialog().show()
+            }
         }
     }
 

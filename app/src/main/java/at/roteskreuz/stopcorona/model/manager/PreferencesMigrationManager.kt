@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.manager
 import android.content.SharedPreferences
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
+import at.roteskreuz.stopcorona.skeleton.core.utils.putAndApply
 import at.roteskreuz.stopcorona.skeleton.core.utils.removeAndApply
 
 /**
@@ -45,12 +46,17 @@ class PreferencesMigrationManagerImpl(
              * Remove keys:
              * - `pref_dashboard_microphone_explanation_dialog_show_again`
              * - `pref_corona_detection_repository_is_service_running`
-             * - `pref_corona_detection_repository_service_enabled_on_first_start`
+             * Rename key:
+             * - from: `pref_corona_detection_repository_service_enabled_on_first_start`
+             * - to: `pref_corona_detection_repository_service_enabled_on_first_start`
              */
             migration(2, 3) {
                 removeAndApply("pref_dashboard_microphone_explanation_dialog_show_again")
                 removeAndApply("pref_corona_detection_repository_is_service_running")
+
+                val serviceEnabled = getBoolean("pref_corona_detection_repository_service_enabled_on_first_start", false)
                 removeAndApply("pref_corona_detection_repository_service_enabled_on_first_start")
+                putAndApply("pref_dashboard_service_enabled_on_first_start", serviceEnabled)
             }
         )
 

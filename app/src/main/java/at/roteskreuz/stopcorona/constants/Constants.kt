@@ -75,6 +75,7 @@ object Constants {
         const val ONBOARDING_REPOSITORY_PREFIX = PREFIX + "onboarding_repository_"
         const val INFECTION_MESSENGER_REPOSITORY_PREFIX = PREFIX + "infection_messenger_repository_"
         const val DATA_PRIVACY_REPOSITORY_PREFIX = PREFIX + "terms_and_conditions_repository_"
+        const val DASHBOARD_PREFIX = PREFIX + "dashboard_"
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"

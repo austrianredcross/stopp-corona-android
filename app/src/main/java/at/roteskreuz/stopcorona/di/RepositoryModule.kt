@@ -46,6 +46,12 @@ val repositoryModule = module {
         )
     }
 
+    single<DashboardRepository> {
+        DashboardRepositoryImpl(
+            preferences = get()
+        )
+    }
+
 
     single<InfectionMessengerRepository> {
         InfectionMessengerRepositoryImpl(
