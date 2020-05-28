@@ -13,8 +13,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
-import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialog
-import at.roteskreuz.stopcorona.screens.handshake.startHandshakeFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
@@ -43,9 +41,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     companion object {
-        // TODO: 27/05/2020 dusanjencik: Remove
-        private const val REQUEST_MICROPHONE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 1
-        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 2
+        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 1
     }
 
     override val isToolbarVisible: Boolean = true
@@ -59,9 +55,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
     private val controller: DashboardController by lazy {
         DashboardController(
             context = requireContext(),
-            onManualHandshakeClick = {
-                checkPlayServicesAvailabilityAndStartHandshakeFragment()
-            },
             onAutomaticHandshakeInformationClick = {
                 AutomaticHandshakeExplanationDialog().show()
             },
@@ -98,7 +91,17 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = viewModel::onAutomaticHandshakeEnabled,
+            onAutomaticHandshakeEnabled = { enable ->
+                when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
+                    ConnectionResult.SUCCESS -> {
+                        // TODO: 28/05/2020 dusanjencik: We should check also correct version
+                        viewModel.onAutomaticHandshakeEnabled(enable)
+                    }
+                    else -> {
+                        GooglePlayServicesNotAvailableDialog().show()
+                    }
+                }
+            },
             onShareAppClick = {
                 shareApp()
             },
@@ -134,12 +137,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             addOnScrollListener(accurateScrollListener)
         }
 
-        disposables += viewModel.observeSavedEncounters()
-            .observeOnMainThread()
-            .subscribe { savedEncounters ->
-                controller.savedEncounters = savedEncounters
-            }
-
         disposables += viewModel.observeOwnHealthStatus()
             .observeOnMainThread()
             .subscribe {
@@ -174,12 +171,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .observeOnMainThread()
             .subscribe { state ->
                 when (state) {
-                    State.Idle -> {
-                        // TODO: 27/05/2020 dusanjencik: enable switch, related to https://github.com/austrianredcross/stopp-corona-android/issues/44
-                    }
-                    State.Loading -> {
-                        // TODO: 27/05/2020 dusanjencik: disable switch, related to https://github.com/austrianredcross/stopp-corona-android/issues/44
-                    }
                     is State.Error -> {
                         when (state.error) {
                             is ApiException -> {
@@ -231,31 +222,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         }
     }
 
-    // TODO: 27/05/2020 dusanjencik: Remove
-    private fun checkPlayServicesAvailabilityAndStartHandshakeFragment() {
-        when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
-            ConnectionResult.SUCCESS -> {
-                if (viewModel.showMicrophoneExplanationDialog) {
-                    // will call startHandshakeFragment() if OK
-                    MicrophoneExplanationDialog().showForResult(REQUEST_MICROPHONE_DIALOG)
-                } else {
-                    startHandshakeFragment()
-                }
-            }
-            else -> {
-                GooglePlayServicesNotAvailableDialog().show()
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_MICROPHONE_DIALOG -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    startHandshakeFragment()
-                }
-            }
             REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.onExposureNotificationRegistrationResolutionResultOk()

@@ -3,10 +3,7 @@ package at.roteskreuz.stopcorona.di
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
-import at.roteskreuz.stopcorona.screens.dashboard.dialog.MicrophoneExplanationDialogViewModel
-import at.roteskreuz.stopcorona.screens.debug.events.DebugAutomaticEventsViewModel
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
-import at.roteskreuz.stopcorona.screens.handshake.HandshakeViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
@@ -34,17 +31,7 @@ val viewModelModule = module {
             infectionMessengerRepository = get(),
             notificationsRepository = get(),
             quarantineRepository = get(),
-            infectionMessageDao = get(),
-            nearbyRecordDao = get()
-        )
-    }
-
-    viewModel {
-        DebugAutomaticEventsViewModel(
-            appDispatchers = get(),
-            automaticDiscoveryDao = get(),
-            contextInteractor = get(),
-            cryptoRepository = get()
+            infectionMessageDao = get()
         )
     }
 
@@ -57,7 +44,6 @@ val viewModelModule = module {
     viewModel {
         DashboardViewModel(
             appDispatchers = get(),
-            dashboardRepository = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get(),
             configurationRepository = get(),
@@ -67,25 +53,10 @@ val viewModelModule = module {
     }
 
     viewModel {
-        MicrophoneExplanationDialogViewModel(
-            appDispatchers = get(),
-            dashboardRepository = get()
-        )
-    }
-
-    viewModel {
         InfectionInfoViewModel(
             appDispatchers = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get()
-        )
-    }
-
-    viewModel {
-        HandshakeViewModel(
-            appDispatchers = get(),
-            googleApiClientBuilder = get(),
-            nearbyRepository = get()
         )
     }
 
@@ -163,9 +134,7 @@ val viewModelModule = module {
         ReportingStatusViewModel(
             appDispatchers = get(),
             reportingRepository = get(),
-            quarantineRepository = get(),
-            coronaDetectionRepository = get(),
-            contextInteractor = get()
+            quarantineRepository = get()
         )
     }
 

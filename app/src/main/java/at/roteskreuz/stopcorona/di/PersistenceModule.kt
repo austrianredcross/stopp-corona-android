@@ -39,10 +39,7 @@ internal val persistenceModule = module {
         DatabaseCleanupManagerImpl(
             appDispatchers = get(),
             configurationRepository = get(),
-            infectionMessageDao = get(),
-            quarantineRepository = get(),
-            coronaDetectionRepository = get(),
-            nearbyRecordDao = get()
+            infectionMessageDao = get()
         )
     }
 
@@ -53,14 +50,6 @@ internal val persistenceModule = module {
     }
 
     single {
-        get<DefaultDatabase>().nearbyRecordDao()
-    }
-
-    single {
         get<DefaultDatabase>().infectionMessageDao()
-    }
-
-    single {
-        get<DefaultDatabase>().automaticDiscoveryDao()
     }
 }

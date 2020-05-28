@@ -8,7 +8,6 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.utils.startDefaultBrowser
 import at.roteskreuz.stopcorona.utils.withCustomStyle
 import kotlinx.android.synthetic.main.automatic_handshake_explanation_dialog.*
-import kotlinx.android.synthetic.main.handshake_explanation_dialog.btnClose
 
 class AutomaticHandshakeExplanationDialog : DialogFragment() {
 

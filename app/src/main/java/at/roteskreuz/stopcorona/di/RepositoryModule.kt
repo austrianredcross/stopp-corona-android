@@ -1,7 +1,5 @@
 package at.roteskreuz.stopcorona.di
 
-import at.roteskreuz.stopcorona.model.receivers.BatterySaverStateReceiver
-import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.model.repositories.*
 import org.koin.dsl.module.module
 
@@ -26,15 +24,6 @@ val repositoryModule = module {
         )
     }
 
-    single<NearbyRepository> {
-        NearbyRepositoryImpl(
-            cryptoRepository = get(),
-            appDispatchers = get(),
-            nearbyRecordDao = get(),
-            handshakeCodewordRepository = get()
-        )
-    }
-
     @Suppress("DEPRECATION")
     single<CryptoRepository> {
         CryptoRepositoryImpl(
@@ -54,13 +43,6 @@ val repositoryModule = module {
             apiInteractor = get(),
             configurationDao = get(),
             assetInteractor = get()
-        )
-    }
-
-    single<DashboardRepository> {
-        DashboardRepositoryImpl(
-            nearbyRecordDao = get(),
-            preferences = get()
         )
     }
 
@@ -102,29 +84,10 @@ val repositoryModule = module {
         )
     }
 
-    single<CoronaDetectionRepository> {
-        CoronaDetectionRepositoryImpl(
-            appDispatchers = get(),
-            contextInteractor = get(),
-            preferences = get(),
-            batterySaverStateReceiver = get<BatterySaverStateReceiver>(),
-            bluetoothStateReceiver = get<BluetoothStateReceiver>(),
-            automaticDiscoveryDao = get(),
-            nearbyRepository = get(),
-            cryptoRepository = get()
-        )
-    }
-
     single<ExposureNotificationRepository> {
         ExposureNotificationRepositoryImpl(
             appDispatchers = get(),
             exposureNotificationClient = get()
-        )
-    }
-
-    single<HandshakeCodewordRepository> {
-        HandshakeCodewordRepositoryImpl(
-            contextInteractor = get()
         )
     }
 }

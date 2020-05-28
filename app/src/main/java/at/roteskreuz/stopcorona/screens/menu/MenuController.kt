@@ -26,7 +26,6 @@ class MenuController(
     private val onPrivacyDataClick: () -> Unit,
     private val onImprintClick: () -> Unit,
     private val onVersionClick: () -> Unit,
-    private val onHandshakeClick: () -> Unit,
     private val onCheckSymptomsClick: () -> Unit,
     private val onReportOfficialSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit,
@@ -112,13 +111,6 @@ class MenuController(
 
     private fun buildFunctionalityMenuItems(): List<EpoxyModel<out Any>> {
         val modelList = arrayListOf<EpoxyModel<out Any>>()
-
-        if ((ownHealthStatus is HealthStatusData.SicknessCertificate).not()) {
-            MenuItemModel_(onHandshakeClick)
-                .id("start_handshake")
-                .title(context.string(R.string.start_menu_item_3_1))
-                .addTo(modelList)
-        }
 
         if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness).not()
             && (ownHealthStatus is HealthStatusData.SicknessCertificate).not()
