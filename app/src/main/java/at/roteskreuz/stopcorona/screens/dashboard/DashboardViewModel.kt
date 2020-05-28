@@ -126,16 +126,16 @@ class DashboardViewModel(
 
     fun onAutomaticHandshakeEnabled(enabled: Boolean) {
         when {
-            enabled && exposureNotificationRepository.isFrameworkRunning.not() -> {
+            enabled && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
                 exposureNotificationRepository.startListening()
             }
-            enabled.not() && exposureNotificationRepository.isFrameworkRunning -> {
+            enabled.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
                 exposureNotificationRepository.stopListening()
             }
         }
     }
 
-    fun observeExposureNotificationRunningState() = exposureNotificationRepository.observeIsFrameworkRunning()
+    fun observeExposureNotificationRunningState() = exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
 
     fun observeExposureNotificationState() = exposureNotificationRepository.observeState()
 
@@ -151,6 +151,10 @@ class DashboardViewModel(
      */
     fun startResolutionResultNotOk() {
         exposureNotificationRepository.startResolutionResultNotOk()
+    }
+
+    fun refreshExposureNotificationAppRegisteredState() {
+        exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
     }
 }
 

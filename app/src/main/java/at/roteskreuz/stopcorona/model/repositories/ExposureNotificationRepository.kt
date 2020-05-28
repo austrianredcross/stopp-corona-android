@@ -19,14 +19,14 @@ import kotlin.coroutines.CoroutineContext
 interface ExposureNotificationRepository {
 
     /**
-     * Get information if framework is running or not.
+     * Get information if the app is registered with the Exposure Notifications framework.
      */
-    val isFrameworkRunning: Boolean
+    val isAppRegisteredForExposureNotifications: Boolean
 
     /**
-     * Observe information if framework is running or not.
+     * Observe information if the app is registered with the Exposure Notifications framework.
      */
-    fun observeIsFrameworkRunning(): Observable<Boolean>
+    fun observeAppIsRegisteredForExposureNotifications(): Observable<Boolean>
 
     /**
      * Observe information about starting/stopping and error.
@@ -58,6 +58,11 @@ interface ExposureNotificationRepository {
      * Unregister receivers of edge situations.
      */
     fun stopListening()
+
+    /**
+     * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
+     */
+    fun refreshExposureNotificationAppRegisteredState()
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -75,13 +80,13 @@ class ExposureNotificationRepositoryImpl(
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
 
-    override var isFrameworkRunning: Boolean
+    override var isAppRegisteredForExposureNotifications: Boolean
         get() = frameworkEnabledState.value
         private set(value) {
             frameworkEnabledState.onNext(value)
         }
 
-    override fun observeIsFrameworkRunning(): Observable<Boolean> {
+    override fun observeAppIsRegisteredForExposureNotifications(): Observable<Boolean> {
         return frameworkEnabledState
     }
 
@@ -97,7 +102,7 @@ class ExposureNotificationRepositoryImpl(
         frameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
-                refreshEnabledState()
+                refreshExposureNotificationAppRegisteredState()
                 frameworkState.idle()
             }
             .addOnFailureListener { exception: Exception ->
@@ -118,7 +123,7 @@ class ExposureNotificationRepositoryImpl(
         frameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
-                refreshEnabledState()
+                refreshExposureNotificationAppRegisteredState()
                 frameworkState.idle()
             }
             .addOnFailureListener { exception: Exception ->
@@ -143,7 +148,7 @@ class ExposureNotificationRepositoryImpl(
         frameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
-                refreshEnabledState()
+                refreshExposureNotificationAppRegisteredState()
                 frameworkState.idle()
             }
             .addOnFailureListener { exception: Exception ->
@@ -152,7 +157,7 @@ class ExposureNotificationRepositoryImpl(
             }
     }
 
-    private fun refreshEnabledState() {
+    override fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
