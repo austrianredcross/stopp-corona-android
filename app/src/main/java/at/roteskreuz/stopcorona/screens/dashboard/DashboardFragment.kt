@@ -211,6 +211,11 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         controller.requestModelBuild()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshExposureNotificationAppRegisteredState()
+    }
+
     override fun onDestroyView() {
         contentRecyclerView.removeOnScrollListener(accurateScrollListener)
         super.onDestroyView()
