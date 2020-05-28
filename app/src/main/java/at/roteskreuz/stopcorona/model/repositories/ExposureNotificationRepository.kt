@@ -29,35 +29,37 @@ interface ExposureNotificationRepository {
     fun observeAppIsRegisteredForExposureNotifications(): Observable<Boolean>
 
     /**
-     * Observe information about starting/stopping and error.
+     * Observe if the App is registered with the Exposure Notifications Framework
      * Emit:
      * - loading when framework is starting/stopping
      * - error if happened
      * - idle otherwise
      */
-    fun observeState(): Observable<State>
+    fun observeRegistrationState(): Observable<State>
 
     /**
      * Start automatic detecting.
      * Register receivers to handle edge situations.
      */
-    fun startListening()
+    fun registerAppForExposureNotifications()
 
     /**
-     * Handles [Activity.RESULT_OK] for a resolution. User accepted opt-in.
+     * User handled the resolution of an Error while registering the app with the Exposure
+     * Notifications framework.
      */
-    fun startResolutionResultOk()
+    fun onExposureNotificationRegistrationResolutionResultOk()
 
     /**
-     * Handles not [Activity.RESULT_OK] for a resolution. User accepted opt-in.
+     * User did not handle the resolution of an Error while registering the app with the Exposure
+     * Notifications framework. Or an Error occured while handling the resolution.
      */
-    fun startResolutionResultNotOk()
+    fun onExposureNotificationRegistrationResolutionResultNotOk()
 
     /**
      * Stop automatic detection.
      * Unregister receivers of edge situations.
      */
-    fun stopListening()
+    fun unregisterAppFromExposureNotifications()
 
     /**
      * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
@@ -74,7 +76,7 @@ class ExposureNotificationRepositoryImpl(
     /**
      * Holds the enabled state, loading or error.
      */
-    private val frameworkState = StateObserver()
+    private val registeringWithFrameworkState = StateObserver()
     private val frameworkEnabledState = NonNullableBehaviorSubject(false)
 
     override val coroutineContext: CoroutineContext
@@ -90,70 +92,70 @@ class ExposureNotificationRepositoryImpl(
         return frameworkEnabledState
     }
 
-    override fun observeState(): Observable<State> {
-        return frameworkState.observe()
+    override fun observeRegistrationState(): Observable<State> {
+        return registeringWithFrameworkState.observe()
     }
 
-    override fun startListening() {
-        if (frameworkState.currentState is State.Loading) {
+    override fun registerAppForExposureNotifications() {
+        if (registeringWithFrameworkState.currentState is State.Loading) {
             Timber.e(SilentError("Start called when it is in loading"))
             return
         }
-        frameworkState.loading()
+        registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
             .addOnFailureListener { exception: Exception ->
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
-                    frameworkState.idle()
+                    registeringWithFrameworkState.idle()
                     return@addOnFailureListener
                 }
-                frameworkState.error(exception) // will be type of ApiException
-                frameworkState.idle()
+                registeringWithFrameworkState.error(exception) // will be type of ApiException
+                registeringWithFrameworkState.idle()
             }
             .addOnCanceledListener {
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
     }
 
-    override fun startResolutionResultOk() {
-        frameworkState.loading()
+    override fun onExposureNotificationRegistrationResolutionResultOk() {
+        registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
             .addOnFailureListener { exception: Exception ->
                 Timber.e(exception, "Error handling resolution ok")
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
             .addOnCanceledListener {
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
     }
 
-    override fun startResolutionResultNotOk() {
-        frameworkState.idle()
+    override fun onExposureNotificationRegistrationResolutionResultNotOk() {
+        registeringWithFrameworkState.idle()
         frameworkEnabledState.onNext(false)
     }
 
-    override fun stopListening() {
-        if (frameworkState.currentState is State.Loading) {
+    override fun unregisterAppFromExposureNotifications() {
+        if (registeringWithFrameworkState.currentState is State.Loading) {
             Timber.e(SilentError("Stop called when it is in loading"))
             return
         }
-        frameworkState.loading()
+        registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
             .addOnFailureListener { exception: Exception ->
                 Timber.e(exception, "Unknown error when attempting to start API")
-                frameworkState.idle()
+                registeringWithFrameworkState.idle()
             }
     }
 

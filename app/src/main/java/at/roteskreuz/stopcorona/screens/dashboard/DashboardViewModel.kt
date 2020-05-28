@@ -127,30 +127,30 @@ class DashboardViewModel(
     fun onAutomaticHandshakeEnabled(enabled: Boolean) {
         when {
             enabled && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
-                exposureNotificationRepository.startListening()
+                exposureNotificationRepository.registerAppForExposureNotifications()
             }
             enabled.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
-                exposureNotificationRepository.stopListening()
+                exposureNotificationRepository.unregisterAppFromExposureNotifications()
             }
         }
     }
 
     fun observeExposureNotificationRunningState() = exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
 
-    fun observeExposureNotificationState() = exposureNotificationRepository.observeState()
+    fun observeExposureNotificationState() = exposureNotificationRepository.observeRegistrationState()
 
     /**
      * Handles [Activity.RESULT_OK] for a resolution. User accepted opt-in for exposure notification.
      */
-    fun startResolutionResultOk() {
-        exposureNotificationRepository.startResolutionResultOk()
+    fun onExposureNotificationRegistrationResolutionResultOk() {
+        exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
     }
 
     /**
      * Handles not [Activity.RESULT_OK] for a resolution. User rejected opt-in for exposure notification.
      */
-    fun startResolutionResultNotOk() {
-        exposureNotificationRepository.startResolutionResultNotOk()
+    fun onExposureNotificationRegistrationResolutionResultNotOk() {
+        exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
     }
 
     fun refreshExposureNotificationAppRegisteredState() {

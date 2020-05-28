@@ -258,9 +258,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             }
             REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    viewModel.startResolutionResultOk()
+                    viewModel.onExposureNotificationRegistrationResolutionResultOk()
                 } else {
-                    viewModel.startResolutionResultNotOk()
+                    viewModel.onExposureNotificationRegistrationResolutionResultNotOk()
                 }
             }
         }
