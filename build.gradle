@@ -8,9 +8,6 @@ buildscript {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
-        maven {
-            url 'http://p2pkit.io/maven2'
-        }
         jcenter()
     }
     dependencies {
@@ -27,9 +24,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            url 'http://p2pkit.io/maven2'
-        }
     }
 }
 

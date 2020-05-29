@@ -62,7 +62,6 @@ Care for you. Care for me. That's how we protect ourselves.
 
 1. Add your own google-services.json.
 2. Add your own hostname & api-key.
-3. Add your own Nearby and P2P Application Tokens.
 
 ## Download
 
