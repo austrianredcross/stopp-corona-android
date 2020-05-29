@@ -11,6 +11,7 @@ import org.koin.standalone.inject
 /**
  * Display a notification to start exposure notification listeting when device is booted.
  */
+//TODO: discuss onboot notification https://tasks.pxp-x.com/browse/CTAA-1548
 class OnBootReceiver : BroadcastReceiver(), KoinComponent {
 
     private val notificationsRepository: NotificationsRepository by inject()

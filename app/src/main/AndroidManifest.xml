@@ -85,6 +85,7 @@
             </intent-filter>
         </service>
 
+        <!-- //TODO: https://tasks.pxp-x.com/browse/CTAA-1548 -->
         <receiver
             android:name=".model.receivers.OnBootReceiver"
             android:enabled="true"
@@ -94,9 +95,9 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-
+        <!-- //TODO: https://tasks.pxp-x.com/browse/CTAA-1546 -->
         <receiver android:name=".model.receivers.BluetoothStateReceiver" />
-        <receiver android:name=".model.receivers.BatterySaverStateReceiver" />
+
 
         <receiver
             android:name=".model.receivers.ExposureNotificationBroadcastReceiver"
