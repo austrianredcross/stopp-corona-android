@@ -1,8 +1,10 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
+import android.graphics.Color
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.repositories.CombinedExposureNotificationsState
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import com.airbnb.epoxy.EpoxyAttribute
@@ -23,12 +25,13 @@ abstract class AutomaticHandshakeSwitchModel(
     var stateTextDisabled: String? = null
 
     @EpoxyAttribute
-    var checked: Boolean = false
+    var state: CombinedExposureNotificationsState = CombinedExposureNotificationsState.Disabled
 
     @EpoxyAttribute
     var enabled: Boolean = true
 
     override fun Holder.onBind() {
+        val checked = state in arrayOf(CombinedExposureNotificationsState.UserWantsItEnabled, CombinedExposureNotificationsState.ItIsEnabledAndRunning)
         txtTitle.text = title
         switch.isChecked = checked
         txtState.isEnabled = checked
@@ -39,6 +42,12 @@ abstract class AutomaticHandshakeSwitchModel(
         }
 
         view.isEnabled = enabled
+
+        when (state) {
+            CombinedExposureNotificationsState.UserWantsItEnabled -> TODO() //switch.currentTextColor = Color.GREEN
+            CombinedExposureNotificationsState.ItIsEnabledAndRunning -> TODO()
+            CombinedExposureNotificationsState.Disabled -> TODO()
+        }
     }
 
     class Holder : BaseEpoxyHolder() {

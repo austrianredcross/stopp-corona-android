@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.repositories.CombinedExposureNotificationsState
 import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
@@ -32,17 +33,19 @@ class DashboardController(
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
+    var combinedExposureNotificationsState: CombinedExposureNotificationsState by adapterProperty(CombinedExposureNotificationsState.Disabled)
     var savedEncounters: Int by adapterProperty(0)
 
     var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var contactsHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var showQuarantineEnd: Boolean by adapterProperty(false)
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
-    var automaticHandshakeEnabled: Boolean by adapterProperty(false)
+    //var automaticHandshakeEnabled: Boolean by adapterProperty(false)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
 
+        EmptySpaceModel_().id(232342).height(212).addTo(this)
         /**
          * Build all cards for own and contact health status as well as status updates
          */
@@ -125,7 +128,7 @@ class DashboardController(
         emptySpace(modelCountBuiltSoFar, 16)
 
         // needed to have two caches of epoxy models because of lottie
-        if (automaticHandshakeEnabled) {
+        if (combinedExposureNotificationsState == CombinedExposureNotificationsState.ItIsEnabledAndRunning) {
             handshakeImage {
                 id("handshake_image_active")
                 active(true)
@@ -144,11 +147,14 @@ class DashboardController(
             title(context.string(R.string.main_automatic_handshake_switch_title))
             stateTextEnabled(context.string(R.string.main_automatic_handshake_switch_on))
             stateTextDisabled(context.string(R.string.main_automatic_handshake_switch_off))
-            checked(automaticHandshakeEnabled)
+            state(combinedExposureNotificationsState)
             enabled((ownHealthStatus is HealthStatusData.SicknessCertificate).not())
         }
 
         emptySpace(modelCountBuiltSoFar, 16)
+
+        //TODO: Falko new card depending on the errors
+        // when(combinedExposureNotificationsState)
 
         smallDescription {
             id("automatic_handshake_description_enabled")

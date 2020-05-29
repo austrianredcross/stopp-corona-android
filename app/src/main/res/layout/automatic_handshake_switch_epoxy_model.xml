@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/shape_switch_background"
         android:clickable="false"
+        tools:checked="true"
         android:minHeight="32dp"
         android:paddingStart="2dp"
         android:paddingTop="4dp"

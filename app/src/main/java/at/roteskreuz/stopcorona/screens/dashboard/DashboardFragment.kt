@@ -170,6 +170,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.automaticHandshakeEnabled = enabled
             }
 
+        disposables += viewModel.observeCombinedExposureNotificationsState()
+            .observeOnMainThread()
+            .subscribe{
+                controller.combinedExposureNotificationsState = it
+            }
+
         disposables += viewModel.observeExposureNotificationState()
             .observeOnMainThread()
             .subscribe { state ->

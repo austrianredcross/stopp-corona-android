@@ -125,6 +125,9 @@ class DashboardViewModel(
     }
 
     fun onAutomaticHandshakeEnabled(enabled: Boolean) {
+        dashboardRepository.userWantsToRegisterAppForExposureNotifications = enabled
+        //TODO: Falko refresh state in exposureNotificationRepository
+
         when {
             enabled && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
                 exposureNotificationRepository.registerAppForExposureNotifications()
@@ -133,6 +136,10 @@ class DashboardViewModel(
                 exposureNotificationRepository.unregisterAppFromExposureNotifications()
             }
         }
+    }
+
+    fun observeCombinedExposureNotficationsState(){
+
     }
 
     fun observeExposureNotificationRunningState() = exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
@@ -156,6 +163,8 @@ class DashboardViewModel(
     fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
     }
+
+    fun observeCombinedExposureNotificationsState() = dashboardRepository.observeCombinedExposureNotificationsState()
 }
 
 /**
@@ -199,4 +208,6 @@ sealed class HealthStatusData {
      */
     object NoHealthStatus : HealthStatusData()
 }
+
+
 
