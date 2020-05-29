@@ -15,6 +15,8 @@ import org.koin.standalone.inject
  */
 // TODO: 28/05/2020 dusanjencik: Do we want to handle bluetooth state changes?
 //   if so, let's implement it, otherwise let's remove this receiver.
+//   https://tasks.pxp-x.com/browse/CTAA-1546 basucally covers this
+
 class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
 
     companion object {
