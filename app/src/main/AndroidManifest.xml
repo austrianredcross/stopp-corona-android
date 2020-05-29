@@ -85,16 +85,6 @@
             </intent-filter>
         </service>
 
-        <!-- Automatic detection bluetooth devices service -->
-        <service
-            android:name=".model.services.CoronaDetectionService"
-            android:enabled="true">
-            <!-- To not stop beacon service after 30 min -->
-            <meta-data
-                android:name="longScanForcingEnabled"
-                android:value="true" />
-        </service>
-
         <receiver
             android:name=".model.receivers.OnBootReceiver"
             android:enabled="true"
