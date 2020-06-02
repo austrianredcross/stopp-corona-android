@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.lifecycle.AndroidViewModel
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
@@ -19,11 +20,13 @@ import io.reactivex.Observable
 import timber.log.Timber
 
 class DebugExposureNotificationsViewModel(
-    application: Application
+    application: Application,
+    private val exposureNotificationRepository: ExposureNotificationRepository
 ) : AndroidViewModel(application) {
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject<Boolean>(false);
     private val exposureNotificationsErrorSubject = NonNullableBehaviorSubject<String>("no error");
     private val exposureNotificationsErrorState = DataStateObserver<Status>()
+
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
         Nearby.getExposureNotificationClient(application);
@@ -110,7 +113,7 @@ class DebugExposureNotificationsViewModel(
     }
 
     fun jumpToSystemSettings() {
-        val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+        val intent = exposureNotificationRepository.settingsIntent()
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication<Application>().startActivity(intent)
     }

@@ -37,7 +37,8 @@ val viewModelModule = module {
 
     viewModel {
         DebugExposureNotificationsViewModel(
-            application = get()
+            application = get(),
+            exposureNotificationRepository = get()
         )
     }
 

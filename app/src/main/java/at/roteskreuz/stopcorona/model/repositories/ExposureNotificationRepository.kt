@@ -75,6 +75,11 @@ interface ExposureNotificationRepository {
      * return a pending Intent to the Setting in the system
      */
     fun settingsPendingIntent(context: Context): PendingIntent;
+
+    /**
+     * return an Intent to the Setting in the system
+     */
+    fun settingsIntent(): Intent
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -186,9 +191,13 @@ class ExposureNotificationRepositoryImpl(
             }
     }
 
+    override fun settingsIntent(): Intent{
+        return Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+    }
+
     override fun settingsPendingIntent(context: Context): PendingIntent {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        val settingsIntent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+        val settingsIntent = settingsIntent()
 
 
         return PendingIntent.getActivity(context, 0, enableBtIntent, PendingIntent.FLAG_ONE_SHOT)
