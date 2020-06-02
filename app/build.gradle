@@ -60,7 +60,6 @@ android {
             buildConfigField "String[]", "CERTIFICATE_CHAIN", '{}'
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", '{}'
             buildConfigField "String", "AUTHORIZATION_VALUE", '"dummy"'
-            buildConfigField "String", "P2P_APPLICATION_KEY", '"dummy"'
 
             resValue "string", "NEARBY_API_KEY", '"dummy"'
         }
@@ -76,7 +75,6 @@ android {
             buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("STAGE_CERTIFICATE_CHAIN", '{}')
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("STAGE_CERTIFICATE_CHAIN_TAN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("STAGE_AUTHORIZATION_VALUE", '"dummy"')
-            buildConfigField "String", "P2P_APPLICATION_KEY", resolveProperty("STAGE_P2P_APPLICATION_KEY", '"dummy"')
 
             resValue "string", "NEARBY_API_KEY", resolveProperty("STAGE_NEARBY_API_KEY", '"dummy"')
         }
@@ -89,7 +87,6 @@ android {
             buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("PROD_CERTIFICATE_CHAIN", '{}')
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("PROD_CERTIFICATE_CHAIN_TAN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("PROD_AUTHORIZATION_VALUE", '"dummy"')
-            buildConfigField "String", "P2P_APPLICATION_KEY", resolveProperty("PROD_P2P_APPLICATION_KEY", '"dummy"')
 
             resValue "string", "NEARBY_API_KEY", resolveProperty("PROD_NEARBY_API_KEY", '"dummy"')
         }

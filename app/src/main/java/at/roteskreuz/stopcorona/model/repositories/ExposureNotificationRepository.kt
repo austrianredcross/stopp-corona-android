@@ -147,7 +147,7 @@ class ExposureNotificationRepositoryImpl(
             return
         }
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.start()
+        exposureNotificationClient.stop()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()

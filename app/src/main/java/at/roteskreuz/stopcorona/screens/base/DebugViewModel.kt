@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.screens.base
 
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
@@ -25,8 +24,7 @@ class DebugViewModel(
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val notificationsRepository: NotificationsRepository,
     private val quarantineRepository: QuarantineRepository,
-    private val infectionMessageDao: InfectionMessageDao,
-    private val nearbyRecordDao: NearbyRecordDao
+    private val infectionMessageDao: InfectionMessageDao
 ) : ScopedViewModel(appDispatchers) {
 
 
@@ -102,19 +100,4 @@ class DebugViewModel(
                 }
         }
     }
-
-    fun addRandomContact() {
-        launch {
-            val randomValue = Random.nextInt()
-            nearbyRecordDao.insert(randomValue.toString().toByteArray(), randomValue % 2 == 0)
-        }
-    }
 }
-
-/**
- * Code marked by this annotation should not be used in release builds.
- */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.SOURCE)
-@MustBeDocumented
-annotation class DebugOnly

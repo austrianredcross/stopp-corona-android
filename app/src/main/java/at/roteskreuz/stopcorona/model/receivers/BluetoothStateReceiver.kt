@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
-import at.roteskreuz.stopcorona.model.services.CoronaDetectionService
-import at.roteskreuz.stopcorona.model.services.stopCoronaDetectionService
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
@@ -15,6 +13,10 @@ import org.koin.standalone.inject
  * Update [CoronaDetectionService] when bluetooth state changed.
  * Receiver listens only when [CoronaDetectionService] is running.
  */
+// TODO: 28/05/2020 dusanjencik: Do we want to handle bluetooth state changes?
+//   if so, let's implement it, otherwise let's remove this receiver.
+//   https://tasks.pxp-x.com/browse/CTAA-1546 basucally covers this
+
 class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
 
     companion object {
@@ -31,7 +33,7 @@ class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
                     notificationsRepository.displayPleaseActivateAutomaticDetectionNotification()
                 }
                 BluetoothAdapter.STATE_OFF -> {
-                    context.stopCoronaDetectionService()
+                    // TODO: 28/05/2020 dusanjencik: Stop exposure notification?
                     notificationsRepository.displayBluetoothIsOffAutomaticDetectionServiceCannotRunNotification()
                 }
             }

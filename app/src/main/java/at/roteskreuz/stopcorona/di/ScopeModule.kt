@@ -18,7 +18,6 @@ val scopeModule = module {
             appDispatchers = get(),
             apiInteractor = get(),
             configurationRepository = get(),
-            nearbyRecordDao = get(),
             infectionMessageDao = get(),
             cryptoRepository = get(),
             infectionMessengerRepository = get(),

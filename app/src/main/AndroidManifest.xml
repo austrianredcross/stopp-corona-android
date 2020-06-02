@@ -8,13 +8,14 @@
 
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
     <uses-feature android:name="android.hardware.bluetooth" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
+    <!-- //TODO: reconsider all permissions https://tasks.pxp-x.com/browse/CTAA-1547 -->
     <!-- P2PKit permissions-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <!-- For automatic bluetooth detection service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -84,16 +85,7 @@
             </intent-filter>
         </service>
 
-        <!-- Automatic detection bluetooth devices service -->
-        <service
-            android:name=".model.services.CoronaDetectionService"
-            android:enabled="true">
-            <!-- To not stop beacon service after 30 min -->
-            <meta-data
-                android:name="longScanForcingEnabled"
-                android:value="true" />
-        </service>
-
+        <!-- //TODO: https://tasks.pxp-x.com/browse/CTAA-1548 -->
         <receiver
             android:name=".model.receivers.OnBootReceiver"
             android:enabled="true"
@@ -103,9 +95,9 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-
+        <!-- //TODO: https://tasks.pxp-x.com/browse/CTAA-1546 -->
         <receiver android:name=".model.receivers.BluetoothStateReceiver" />
-        <receiver android:name=".model.receivers.BatterySaverStateReceiver" />
+
 
         <receiver
             android:name=".model.receivers.ExposureNotificationBroadcastReceiver"

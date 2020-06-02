@@ -4,7 +4,6 @@ import android.util.Base64
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiAddressedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionInfoRequest
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiPersonalData
@@ -109,7 +108,6 @@ class ReportingRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val configurationRepository: ConfigurationRepository,
-    private val nearbyRecordDao: NearbyRecordDao,
     private val infectionMessageDao: InfectionMessageDao,
     private val cryptoRepository: CryptoRepository,
     private val infectionMessengerRepository: InfectionMessengerRepository,
@@ -188,13 +186,15 @@ class ReportingRepositoryImpl(
 
                 infectionMessengerRepository.storeSentInfectionMessages(resetMessages)
             }
+            // TODO: current_date name.lastname: Comment
 
-            infectionMessages.addAll(nearbyRecordDao.observeRecordsRecentThan(thresholdTime)
-                .blockingFirst()
-                .map { nearbyRecord ->
-                    nearbyRecord.publicKey to InfectionMessageContent(infectionLevel, nearbyRecord.timestamp)
-                }
-            )
+            // TODO: 28/05/2020 dusanjencik: How to integrate exposure notifications to infection messages?
+//            infectionMessages.addAll(nearbyRecordDao.observeRecordsRecentThan(thresholdTime)
+//                .blockingFirst()
+//                .map { nearbyRecord ->
+//                    nearbyRecord.publicKey to InfectionMessageContent(infectionLevel, nearbyRecord.timestamp)
+//                }
+//            )
 
             apiInteractor.setInfectionInfo(
                 ApiInfectionInfoRequest(
