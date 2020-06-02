@@ -68,6 +68,10 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 }
             }
 
+        exposureNotificationsGetTemporaryExposureKeyHistoryButton.setOnClickListener{
+            viewModel.getTemporaryExposureKeyHistory()
+        }
+
         exposureNotificationsMasterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (listenerActive.not()) {
                 return@setOnCheckedChangeListener

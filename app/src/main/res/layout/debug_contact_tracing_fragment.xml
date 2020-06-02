@@ -36,6 +36,12 @@
         android:layout_height="wrap_content"
         android:text="Jump to System Settings"
          />
+    <Button
+        android:id="@+id/exposureNotificationsGetTemporaryExposureKeyHistoryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Temporary Exposure Key History"
+        />
     <Switch
         android:id="@+id/exposureNotificationsMasterSwitch"
         android:layout_width="match_parent"
