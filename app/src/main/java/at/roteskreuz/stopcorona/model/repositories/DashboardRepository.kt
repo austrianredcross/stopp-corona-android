@@ -12,7 +12,7 @@ interface DashboardRepository {
     /**
      * Information if the automatic handshake was enabled automatically on the first start
      */
-    var serviceEnabledOnFirstStart: Boolean
+    var exposureFrameworkEnabledOnFirstStart: Boolean
 }
 
 class DashboardRepositoryImpl(
@@ -20,8 +20,10 @@ class DashboardRepositoryImpl(
 ) : DashboardRepository {
 
     companion object {
-        private const val PREF_SERVICE_ENABLED_ON_FIRST_START = Constants.Prefs.DASHBOARD_PREFIX + "service_enabled_on_first_start"
+        private const val PREF_EXPOSURE_FRAMEWORK_ENABLED_ON_FIRST_START =
+            Constants.Prefs.DASHBOARD_PREFIX + "exposure_framework_enabled_on_first_start"
     }
 
-    override var serviceEnabledOnFirstStart: Boolean by preferences.booleanSharedPreferencesProperty(PREF_SERVICE_ENABLED_ON_FIRST_START, false)
+    override var exposureFrameworkEnabledOnFirstStart: Boolean by preferences.booleanSharedPreferencesProperty(
+        PREF_EXPOSURE_FRAMEWORK_ENABLED_ON_FIRST_START, false)
 }

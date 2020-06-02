@@ -181,10 +181,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             }
 
         /**
-         * If the user starts the app for the first time the service will be started automatically
+         * If the user starts the app for the first time the exposure notification framework will be started automatically.
          */
-        if (viewModel.wasServiceEnabledAutomaticallyOnFirstStart.not()) {
-            viewModel.wasServiceEnabledAutomaticallyOnFirstStart = true
+        if (viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
+            viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(true)
         }
 

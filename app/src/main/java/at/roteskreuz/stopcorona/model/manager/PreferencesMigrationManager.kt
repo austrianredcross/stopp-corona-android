@@ -48,7 +48,7 @@ class PreferencesMigrationManagerImpl(
              * - `pref_corona_detection_repository_is_service_running`
              * Rename key:
              * - from: `pref_corona_detection_repository_service_enabled_on_first_start`
-             * - to: `pref_corona_detection_repository_service_enabled_on_first_start`
+             * - to: `pref_dashboard_service_exposure_framework_enabled_on_first_start`
              */
             migration(2, 3) {
                 removeAndApply("pref_dashboard_microphone_explanation_dialog_show_again")
@@ -56,7 +56,7 @@ class PreferencesMigrationManagerImpl(
 
                 val serviceEnabled = getBoolean("pref_corona_detection_repository_service_enabled_on_first_start", false)
                 removeAndApply("pref_corona_detection_repository_service_enabled_on_first_start")
-                putAndApply("pref_dashboard_service_enabled_on_first_start", serviceEnabled)
+                putAndApply("pref_dashboard_service_exposure_framework_enabled_on_first_start", serviceEnabled)
             }
         )
 

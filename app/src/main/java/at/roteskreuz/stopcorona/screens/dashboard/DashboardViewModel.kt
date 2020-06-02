@@ -29,10 +29,10 @@ class DashboardViewModel(
         const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
     }
 
-    var wasServiceEnabledAutomaticallyOnFirstStart: Boolean
-        get() = dashboardRepository.serviceEnabledOnFirstStart
+    var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
+        get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
         set(value) {
-            dashboardRepository.serviceEnabledOnFirstStart = value
+            dashboardRepository.exposureFrameworkEnabledOnFirstStart = value
         }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
