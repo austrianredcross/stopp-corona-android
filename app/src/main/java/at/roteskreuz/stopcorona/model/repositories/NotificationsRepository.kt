@@ -17,7 +17,6 @@ import at.roteskreuz.stopcorona.screens.infection_info.getInfectionInfoFragmentI
 import at.roteskreuz.stopcorona.screens.questionnaire.getQuestionnaireIntent
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.string
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import kotlinx.coroutines.CoroutineScope
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
@@ -74,7 +73,8 @@ interface NotificationsRepository {
 class NotificationsRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val contextInteractor: ContextInteractor,
-    private val dataPrivacyRepository: DataPrivacyRepository
+    private val dataPrivacyRepository: DataPrivacyRepository,
+    val exposureNotificationRepository: ExposureNotificationRepository
 ) : NotificationsRepository,
     CoroutineScope {
 
@@ -190,8 +190,7 @@ class NotificationsRepositoryImpl(
         buildNotification(
             title = title,
             message = message,
-            pendingIntent = PendingIntent.getActivity(context, 0, Intent(
-                ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS),0 ),
+            pendingIntent = exposureNotificationRepository.settingsPendingIntent(context),
             channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
         ).show()
     }

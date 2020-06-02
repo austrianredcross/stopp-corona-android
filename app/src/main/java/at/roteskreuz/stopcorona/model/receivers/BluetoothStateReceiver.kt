@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
+import timber.log.Timber
 
 /**
  * Show notifications based on bluetooth state
@@ -24,15 +26,21 @@ class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == ACTION) {
-            if (!exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()){
-                //we are not registered, we don´t care
-                return
-            }
-            when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
-                BluetoothAdapter.STATE_OFF -> {
-                    notificationsRepository.displayPleaseActivateBluetoothNotification()
+            try {
+                if (!exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()){
+                    //we are not registered, we don´t care
+                    return
                 }
+                when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
+                    BluetoothAdapter.STATE_OFF -> {
+                        notificationsRepository.displayPleaseActivateBluetoothNotification()
+                    }
+                }
+            } catch (e:Exception){
+                //if it goes wrong, we do not case as we can´t handle the error
+                Timber.e(SilentError(e))
             }
+
         }
     }
 

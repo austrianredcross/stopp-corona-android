@@ -1,5 +1,8 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -64,6 +67,11 @@ interface ExposureNotificationRepository {
      * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
      */
     fun refreshExposureNotificationAppRegisteredState()
+
+    /**
+     * return a pending Intent to the Setting in the system
+     */
+    fun settingsPendingIntent(context: Context): PendingIntent;
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -163,5 +171,10 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
             }
+    }
+
+    override fun settingsPendingIntent(context: Context): PendingIntent {
+        return PendingIntent.getActivity(context, 0, Intent(
+            ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS),0 )
     }
 }
