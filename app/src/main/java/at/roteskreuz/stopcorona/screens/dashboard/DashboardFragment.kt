@@ -215,7 +215,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
             ConnectionResult.SUCCESS -> {
                 // TODO: 28/05/2020 dusanjencik: We should check also correct version
-                viewModel.onAutomaticHandshakeEnabled(enableFramework)
+                viewModel.onRegisterToExposureFramework(enableFramework)
             }
             else -> {
                 GooglePlayServicesNotAvailableDialog().show()

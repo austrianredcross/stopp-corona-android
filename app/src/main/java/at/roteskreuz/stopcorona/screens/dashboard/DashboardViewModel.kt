@@ -114,12 +114,15 @@ class DashboardViewModel(
         }
     }
 
-    fun onAutomaticHandshakeEnabled(enabled: Boolean) {
+    /**
+     * @param register True to start it, false to stop it.
+     */
+    fun onRegisterToExposureFramework(register: Boolean) {
         when {
-            enabled && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
+            register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
                 exposureNotificationRepository.registerAppForExposureNotifications()
             }
-            enabled.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
+            register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
                 exposureNotificationRepository.unregisterAppFromExposureNotifications()
             }
         }

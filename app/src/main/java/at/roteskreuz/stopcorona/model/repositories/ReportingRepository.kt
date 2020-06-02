@@ -186,6 +186,7 @@ class ReportingRepositoryImpl(
 
                 infectionMessengerRepository.storeSentInfectionMessages(resetMessages)
             }
+            // TODO: current_date name.lastname: Comment
 
             // TODO: 28/05/2020 dusanjencik: How to integrate exposure notifications to infection messages?
 //            infectionMessages.addAll(nearbyRecordDao.observeRecordsRecentThan(thresholdTime)
