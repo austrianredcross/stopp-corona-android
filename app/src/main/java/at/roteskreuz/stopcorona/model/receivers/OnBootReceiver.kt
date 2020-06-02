@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.model.receivers
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,7 +16,6 @@ import timber.log.Timber
  * Display a notification to turn on Bluetooth when the app is registered as the Exposure
  * Notifications application
  */
-//TODO: discuss onboot notification https://tasks.pxp-x.com/browse/CTAA-1548
 class OnBootReceiver : BroadcastReceiver(), KoinComponent {
 
     private val notificationsRepository: NotificationsRepository by inject()
@@ -35,8 +33,6 @@ class OnBootReceiver : BroadcastReceiver(), KoinComponent {
                 //if it goes wrong, we do not case as we can´t handle the error
                 Timber.e(SilentError(e))
             }
-
         }
-
     }
 }
