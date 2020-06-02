@@ -15,7 +15,7 @@ import timber.log.Timber
 /**
  * Show notifications based on bluetooth state
  */
-class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
+class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
 
     companion object {
         private const val ACTION = BluetoothAdapter.ACTION_STATE_CHANGED
@@ -44,14 +44,14 @@ class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
         }
     }
 
-    override fun register(context: Context) {
+    fun register(context: Context) {
         context.registerReceiver(
             this,
             IntentFilter(ACTION)
         )
     }
 
-    override fun unregister(context: Context) {
+    fun unregister(context: Context) {
         context.unregisterReceiver(this)
     }
 }

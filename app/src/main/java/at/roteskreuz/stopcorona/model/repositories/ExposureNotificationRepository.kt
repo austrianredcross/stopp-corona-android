@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
@@ -76,7 +77,9 @@ interface ExposureNotificationRepository {
 
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
-    private val exposureNotificationClient: ExposureNotificationClient
+    private val bluetoothStateReceiver: BluetoothStateReceiver,
+    private val exposureNotificationClient: ExposureNotificationClient,
+    private val context: Context
 ) : ExposureNotificationRepository,
     CoroutineScope {
 
@@ -113,6 +116,7 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.register(context)
             }
             .addOnFailureListener { exception: Exception ->
                 if (exception !is ApiException) {
@@ -154,6 +158,7 @@ class ExposureNotificationRepositoryImpl(
             Timber.e(SilentError("Stop called when it is in loading"))
             return
         }
+        bluetoothStateReceiver.unregister(context)
         registeringWithFrameworkState.loading()
         exposureNotificationClient.stop()
             .addOnSuccessListener {
@@ -170,6 +175,12 @@ class ExposureNotificationRepositoryImpl(
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
+                //call it here again as we want to keep the state most up to date
+                if (enabled){
+                    bluetoothStateReceiver.register(context)
+                } else {
+                    bluetoothStateReceiver.unregister(context)
+                }
             }
     }
 
