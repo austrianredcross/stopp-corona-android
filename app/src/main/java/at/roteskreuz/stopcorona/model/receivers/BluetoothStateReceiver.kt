@@ -5,18 +5,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
 /**
- * Update [CoronaDetectionService] when bluetooth state changed.
- * Receiver listens only when [CoronaDetectionService] is running.
+ * Show notifications based on bluetooth state
  */
-// TODO: 28/05/2020 dusanjencik: Do we want to handle bluetooth state changes?
-//   if so, let's implement it, otherwise let's remove this receiver.
-//   https://tasks.pxp-x.com/browse/CTAA-1546 basucally covers this
-
 class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
 
     companion object {
@@ -24,17 +20,17 @@ class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
     }
 
     private val notificationsRepository: NotificationsRepository by inject()
+    private val exposureNotificationRepository: ExposureNotificationRepository by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == ACTION) {
+            if (!exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()){
+                //we are not registered, we don´t care
+                return
+            }
             when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
-                BluetoothAdapter.STATE_ON -> {
-                    // this won't happen if CoronaDetectionService is not running
-                    notificationsRepository.displayPleaseActivateAutomaticDetectionNotification()
-                }
                 BluetoothAdapter.STATE_OFF -> {
-                    // TODO: 28/05/2020 dusanjencik: Stop exposure notification?
-                    notificationsRepository.displayBluetoothIsOffAutomaticDetectionServiceCannotRunNotification()
+                    notificationsRepository.displayPleaseActivateBluetoothNotification()
                 }
             }
         }

@@ -17,6 +17,7 @@ import at.roteskreuz.stopcorona.screens.infection_info.getInfectionInfoFragmentI
 import at.roteskreuz.stopcorona.screens.questionnaire.getQuestionnaireIntent
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.string
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import kotlinx.coroutines.CoroutineScope
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
@@ -62,12 +63,7 @@ interface NotificationsRepository {
     /**
      * Display notification when bluetooth is off.
      */
-    fun displayBluetoothIsOffAutomaticDetectionServiceCannotRunNotification()
-
-    /**
-     * Display a request to activate automatic detection again.
-     */
-    fun displayPleaseActivateAutomaticDetectionNotification()
+    fun displayPleaseActivateBluetoothNotification()
 
     /**
      * Hide notification by [id].
@@ -187,30 +183,15 @@ class NotificationsRepositoryImpl(
         notificationManager.notify(id, notification)
     }
 
-    override fun displayBluetoothIsOffAutomaticDetectionServiceCannotRunNotification() {
+    override fun displayPleaseActivateBluetoothNotification() {
         val title = context.string(R.string.local_notification_bluetooth_is_off_title)
         val message = context.string(R.string.local_notification_bluetooth_is_off_message)
 
         buildNotification(
             title = title,
             message = message,
-            pendingIntent = buildPendingIntentWithActivityStack {
-                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
-            },
-            channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
-        ).show()
-    }
-
-    override fun displayPleaseActivateAutomaticDetectionNotification() {
-        val title = context.string(R.string.local_notification_activate_automatic_handshake_again_title)
-        val message = context.string(R.string.local_notification_activate_automatic_handshake_again_message)
-
-        buildNotification(
-            title = title,
-            message = message,
-            pendingIntent = buildPendingIntentWithActivityStack {
-                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
-            },
+            pendingIntent = PendingIntent.getActivity(context, 0, Intent(
+                ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS),0 ),
             channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
         ).show()
     }
