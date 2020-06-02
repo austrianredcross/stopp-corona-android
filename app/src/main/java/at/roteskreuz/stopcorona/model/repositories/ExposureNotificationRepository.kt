@@ -122,7 +122,7 @@ class ExposureNotificationRepositoryImpl(
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.start()
+        exposureNotificationClient.stop()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
