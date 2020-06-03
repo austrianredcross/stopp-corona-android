@@ -32,7 +32,6 @@ class DashboardController(
 ) : EpoxyController() {
 
     var combinedExposureNotificationsState: CombinedExposureNotificationsState by adapterProperty(CombinedExposureNotificationsState.Disabled)
-    var savedEncounters: Int by adapterProperty(0)
 
     var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var contactsHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
@@ -43,7 +42,6 @@ class DashboardController(
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
 
-        EmptySpaceModel_().id(232342).height(212).addTo(this)
         /**
          * Build all cards for own and contact health status as well as status updates
          */
