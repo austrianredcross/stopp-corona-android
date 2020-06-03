@@ -196,9 +196,8 @@ class ExposureNotificationRepositoryImpl(
     }
 
     override fun settingsPendingIntent(context: Context): PendingIntent {
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        val settingsIntent = settingsIntent()
-
+        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val settingsIntent = settingsIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
         return PendingIntent.getActivity(context, 0, enableBtIntent, PendingIntent.FLAG_ONE_SHOT)
     }
