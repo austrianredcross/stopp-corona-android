@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
-import at.roteskreuz.stopcorona.screens.handshake.startHandshakeFragment
 import at.roteskreuz.stopcorona.screens.onboarding.startOnboardingFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
@@ -71,9 +70,6 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
             },
             onVersionClick = {
                 versionClickSubject.onNext(Unit)
-            },
-            onHandshakeClick = {
-                startHandshakeFragment()
             },
             onCheckSymptomsClick = {
                 startQuestionnaireFragment()

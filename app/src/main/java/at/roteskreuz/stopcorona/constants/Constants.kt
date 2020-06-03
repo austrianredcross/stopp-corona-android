@@ -77,7 +77,6 @@ object Constants {
         const val DATA_PRIVACY_REPOSITORY_PREFIX = PREFIX + "terms_and_conditions_repository_"
         const val DASHBOARD_PREFIX = PREFIX + "dashboard_"
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
-        const val CORONA_DETECTION_REPOSITORY_PREFIX = PREFIX + "corona_detection_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
         const val EXPOSURE_NOTIFICATIONS_PREFIX = PREFIX + "exposure_notifications_"
@@ -108,14 +107,6 @@ object Constants {
     }
 
     /**
-     * Constants related to P2Pkit.
-     */
-    object P2PDiscovery {
-
-        const val APPLICATION_KEY = BuildConfig.P2P_APPLICATION_KEY
-    }
-
-    /**
      * Constants related to database.
      */
     object DB {
@@ -136,8 +127,7 @@ object Constants {
         private const val OFFSET = BaseAppRequest.OFFSET
 
         const val REQUEST_DASHBOARD = APP_BASE_REQUEST + (1 shl OFFSET)
-        const val AUTOMATIC_DETECTION_NOTIFICATION_ID = APP_BASE_REQUEST + (2 shl OFFSET)
-        const val EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT = APP_BASE_REQUEST + (3 shl OFFSET)
+        const val EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT = APP_BASE_REQUEST + (2 shl OFFSET)
     }
 
     /**
@@ -156,40 +146,6 @@ object Constants {
         const val CRYPTO_PROVIDER_CALLER_POSITION = 99
         const val FINGERPRINT_ALGORITHM = "SHA256"
         const val ADDRESS_PREFIX_LENGTH = 8
-    }
-
-    /**
-     * Constants related to Google nearby.
-     */
-    object Nearby {
-
-        /**
-         * [RANDOM_IDENTIFICATION_MIN] defines the lower bound of the randomly generated four digit
-         * long random identification number which is transmitted to all nearby devices.
-         */
-        const val RANDOM_IDENTIFICATION_MIN = 0
-
-        /**
-         * [RANDOM_IDENTIFICATION_MAX] defines the upper bound of the randomly generated four digit
-         * long random identification number which is transmitted to all nearby devices.
-         */
-        const val RANDOM_IDENTIFICATION_MAX = 9999
-
-        /**
-         * Byte length of the transmitted identification number
-         */
-        const val IDENTIFICATION_BYTE_LENGTH = 4
-
-        /**
-         * Delay for checking found contacts and to show the loading indicator, if no contacts
-         * where discovered in this interval
-         */
-        const val LOADING_INDICATOR_DELAY_MILLIS = 500L
-
-        /**
-         * Lookup public keys in the nearby record database of the last given minutes
-         */
-        const val PUBLIC_KEY_LOOKUP_THRESHOLD_MINUTES = 15L
     }
 
     /**

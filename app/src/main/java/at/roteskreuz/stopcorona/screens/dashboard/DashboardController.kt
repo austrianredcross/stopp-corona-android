@@ -5,7 +5,6 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.repositories.CombinedExposureNotificationsState
 import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
-import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -18,7 +17,6 @@ import com.airbnb.epoxy.EpoxyModel
  */
 class DashboardController(
     private val context: Context,
-    private val onManualHandshakeClick: () -> Unit,
     private val onAutomaticHandshakeInformationClick: () -> Unit,
     private val onFeelingClick: () -> Unit,
     private val onReportClick: () -> Unit,
@@ -171,14 +169,6 @@ class DashboardController(
                     }
                 }
             )
-        }
-
-        emptySpace(modelCountBuiltSoFar, 24)
-
-        buttonType1(onManualHandshakeClick) {
-            id("handshake_button")
-            text(context.string(R.string.main_button_start_handshake_button))
-            enabled((ownHealthStatus is HealthStatusData.SicknessCertificate).not())
         }
 
         emptySpace(modelCountBuiltSoFar, 16)

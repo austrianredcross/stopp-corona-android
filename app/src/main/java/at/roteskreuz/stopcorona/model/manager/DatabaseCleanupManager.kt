@@ -1,12 +1,8 @@
 package at.roteskreuz.stopcorona.model.manager
 
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
-import at.roteskreuz.stopcorona.model.repositories.CoronaDetectionRepository
-import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
-import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -32,10 +28,7 @@ interface DatabaseCleanupManager {
 class DatabaseCleanupManagerImpl(
     private val appDispatchers: AppDispatchers,
     private val configurationRepository: ConfigurationRepository,
-    private val infectionMessageDao: InfectionMessageDao,
-    private val quarantineRepository: QuarantineRepository,
-    private val coronaDetectionRepository: CoronaDetectionRepository,
-    private val nearbyRecordDao: NearbyRecordDao
+    private val infectionMessageDao: InfectionMessageDao
 ) : DatabaseCleanupManager, CoroutineScope {
 
     companion object {
@@ -46,7 +39,6 @@ class DatabaseCleanupManagerImpl(
         get() = appDispatchers.Default
 
     init {
-        cleanupContacts()
         cleanupInfectionMessages()
     }
 
@@ -56,26 +48,6 @@ class DatabaseCleanupManagerImpl(
 
     override suspend fun removeSentYellowMessages() {
         infectionMessageDao.removeSentInfectionMessagesOlderThan(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
-    }
-
-    private fun cleanupContacts() {
-        cleanupNearbyRecords()
-        cleanupContactEvents()
-    }
-
-    private fun cleanupNearbyRecords() {
-        launch {
-            val configuration = configurationRepository.observeConfiguration().blockingFirst()
-            val quarantineState = quarantineRepository.observeQuarantineState().blockingFirst()
-
-            if (quarantineState is QuarantineStatus.Jailed.Limited && quarantineState.byContact.not()) {
-                val thresholdProbablySick = ZonedDateTime.now().minusHours(configuration.selfDiagnosedQuarantine?.toLong() ?: Long.MAX_VALUE)
-                nearbyRecordDao.removeContactOlderThan(thresholdProbablySick)
-            } else {
-                val threshold = ZonedDateTime.now().minusHours(configuration.warnBeforeSymptoms?.toLong() ?: Long.MAX_VALUE)
-                nearbyRecordDao.removeContactOlderThan(threshold)
-            }
-        }
     }
 
     private fun cleanupInfectionMessages() {
@@ -109,12 +81,6 @@ class DatabaseCleanupManagerImpl(
 
             val thresholdRedMessages = ZonedDateTime.now().minusHours(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
             infectionMessageDao.removeSentInfectionMessagesOlderThan(MessageType.InfectionLevel.Red, thresholdRedMessages)
-        }
-    }
-
-    private fun cleanupContactEvents() {
-        launch {
-            coronaDetectionRepository.deleteOldEvents()
         }
     }
 }

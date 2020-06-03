@@ -2,11 +2,8 @@ package at.roteskreuz.stopcorona.screens.reporting.reportStatus
 
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.AgreementData
-import at.roteskreuz.stopcorona.model.repositories.CoronaDetectionRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
-import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.model.services.stopCoronaDetectionService
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
@@ -22,9 +19,7 @@ import org.threeten.bp.ZonedDateTime
 class ReportingStatusViewModel(
     appDispatchers: AppDispatchers,
     private val reportingRepository: ReportingRepository,
-    private val quarantineRepository: QuarantineRepository,
-    private val coronaDetectionRepository: CoronaDetectionRepository,
-    private val contextInteractor: ContextInteractor
+    private val quarantineRepository: QuarantineRepository
 ) : ScopedViewModel(appDispatchers) {
 
     private val uploadReportDataStateObserver = DataStateObserver<MessageType>()
@@ -52,19 +47,7 @@ class ReportingStatusViewModel(
     }
 
     fun observeUploadReportDataState(): Observable<DataState<MessageType>> {
-        return uploadReportDataStateObserver.observe().map { dataState ->
-
-            /**
-             * Stop the automatic handshake when the user reported himself proven sick.
-             */
-            if (dataState is DataState.Loaded &&
-                dataState.data is MessageType.InfectionLevel.Red &&
-                coronaDetectionRepository.isServiceRunning) {
-                contextInteractor.applicationContext.stopCoronaDetectionService()
-            }
-
-            dataState
-        }
+        return uploadReportDataStateObserver.observe()
     }
 
     fun observeReportingStatusData(): Observable<ReportingStatusData> {

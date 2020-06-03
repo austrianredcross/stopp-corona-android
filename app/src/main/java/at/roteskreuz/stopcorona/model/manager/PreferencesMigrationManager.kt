@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.manager
 import android.content.SharedPreferences
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
+import at.roteskreuz.stopcorona.skeleton.core.utils.putAndApply
 import at.roteskreuz.stopcorona.skeleton.core.utils.removeAndApply
 
 /**
@@ -21,7 +22,7 @@ class PreferencesMigrationManagerImpl(
 ) : PreferencesMigrationManager {
 
     companion object {
-        private const val VERSION = 2
+        private const val VERSION = 3
         private const val PREF_CURRENT_VERSION = Constants.Prefs.PREFERENCES_MIGRATION_MANAGER_PREFIX + "current_version"
     }
 
@@ -29,11 +30,33 @@ class PreferencesMigrationManagerImpl(
 
     init {
         val migrations = listOf(
-            PreferencesMigration(0, 1) {
-                preferences.removeAndApply("pref_infection_messenger_repository_client_uuid")
+            /**
+             * Remove `pref_infection_messenger_repository_client_uuid` key.
+             */
+            migration(0, 1) {
+                removeAndApply("pref_infection_messenger_repository_client_uuid")
             },
-            PreferencesMigration(1, 2) {
-                preferences.removeAndApply("pref_questionnaire_compliance_repository_compliance_accepted_timestamp")
+            /**
+             * Remove `pref_questionnaire_compliance_repository_compliance_accepted_timestamp` key.
+             */
+            migration(1, 2) {
+                removeAndApply("pref_questionnaire_compliance_repository_compliance_accepted_timestamp")
+            },
+            /**
+             * Remove keys:
+             * - `pref_dashboard_microphone_explanation_dialog_show_again`
+             * - `pref_corona_detection_repository_is_service_running`
+             * Rename key:
+             * - from: `pref_corona_detection_repository_service_enabled_on_first_start`
+             * - to: `pref_dashboard_service_exposure_framework_enabled_on_first_start`
+             */
+            migration(2, 3) {
+                removeAndApply("pref_dashboard_microphone_explanation_dialog_show_again")
+                removeAndApply("pref_corona_detection_repository_is_service_running")
+
+                val serviceEnabled = getBoolean("pref_corona_detection_repository_service_enabled_on_first_start", false)
+                removeAndApply("pref_corona_detection_repository_service_enabled_on_first_start")
+                putAndApply("pref_dashboard_service_exposure_framework_enabled_on_first_start", serviceEnabled)
             }
         )
 
@@ -46,7 +69,7 @@ class PreferencesMigrationManagerImpl(
 
         while (migrations.isNotEmpty()) {
             migrations.firstOrNull { it.startVersion == processingVersion }?.let { migration ->
-                migration.migration()
+                migration.migrateProcedure(preferences)
                 migrations.remove(migration)
                 processingVersion = migration.endVersion
             } ?: migrations.clear()
@@ -63,11 +86,22 @@ class PreferencesMigrationManagerImpl(
         get() = currentVersion
 }
 
-data class PreferencesMigration(
-    var startVersion: Int,
+private data class PreferencesMigration(
+    val startVersion: Int,
     val endVersion: Int,
-    val migration: () -> Unit
+    val migrateProcedure: SharedPreferences.() -> Unit
 )
+
+/**
+ * Helper fun to create migration instance.
+ */
+private fun migration(
+    startVersion: Int,
+    endVersion: Int,
+    migrateProcedure: SharedPreferences.() -> Unit
+): PreferencesMigration {
+    return PreferencesMigration(startVersion, endVersion, migrateProcedure)
+}
 
 data class MissingMigrationException(val fromVersion: Int, val toVersion: Int) :
     Throwable("Missing migration from version $fromVersion to version $toVersion")

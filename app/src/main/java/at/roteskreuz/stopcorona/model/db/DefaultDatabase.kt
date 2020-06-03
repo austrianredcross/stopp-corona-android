@@ -5,18 +5,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import at.roteskreuz.stopcorona.model.db.dao.AutomaticDiscoveryDao
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.db.dao.NearbyRecordDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
-import at.roteskreuz.stopcorona.model.entities.discovery.DbAutomaticDiscoveryEvent
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConverter
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbSentInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
 import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
-import at.roteskreuz.stopcorona.model.entities.nearby.DbNearbyRecord
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -28,12 +24,10 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbQuestionnaire::class,
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
-        DbNearbyRecord::class,
         DbReceivedInfectionMessage::class,
-        DbSentInfectionMessage::class,
-        DbAutomaticDiscoveryEvent::class
+        DbSentInfectionMessage::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = false
 )
 @TypeConverters(
@@ -178,17 +172,23 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("DROP TABLE `configuration_questionnaire_answer`")
                 // rename temp to original
                 execSQL("ALTER TABLE `configuration_questionnaire_answer_temp` RENAME TO `configuration_questionnaire_answer`")
+            },
+            /**
+             * Removing [DbNearbyRecord], [DbAutomaticDiscoveryEvent].
+             */
+            migration(15, 16) {
+                // delete DbNearbyRecord
+                execSQL("DROP TABLE `nearby_record`")
+                // delete DbAutomaticDiscoveryEvent
+                execSQL("DROP TABLE `automatic_discovery`")
+
             }
         )
     }
 
     abstract fun configurationDao(): ConfigurationDao
 
-    abstract fun nearbyRecordDao(): NearbyRecordDao
-
     abstract fun infectionMessageDao(): InfectionMessageDao
-
-    abstract fun automaticDiscoveryDao(): AutomaticDiscoveryDao
 }
 
 /**

@@ -29,21 +29,11 @@ class DashboardViewModel(
         const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
     }
 
-    val showMicrophoneExplanationDialog: Boolean
-        get() = dashboardRepository.showMicrophoneExplanationDialog
-
-    // TODO: 27/05/2020 dusanjencik: Decide if we want to enable it automatically or not
-//    var wasServiceEnabledAutomaticallyOnFirstStart: Boolean
-//        get() = coronaDetectionRepository.serviceEnabledOnFirstStart
-//        set(value) {
-//            coronaDetectionRepository.serviceEnabledOnFirstStart = value
-//        }
-
-    var batteryOptimizationDialogShown = false
-
-    fun observeSavedEncounters(): Observable<Int> {
-        return dashboardRepository.observeSavedEncountersNumber()
-    }
+    var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
+        get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
+        set(value) {
+            dashboardRepository.exposureFrameworkEnabledOnFirstStart = value
+        }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
         return Observables.combineLatest(
@@ -124,15 +114,17 @@ class DashboardViewModel(
         }
     }
 
-    fun onAutomaticHandshakeEnabled(enabled: Boolean) {
+    /**
+     * @param register True to start it, false to stop it.
+     */
+    fun onRegisterToExposureFramework(register: Boolean) {
         dashboardRepository.userWantsToRegisterAppForExposureNotifications = enabled
         //TODO: Falko refresh state in exposureNotificationRepository
-
         when {
-            enabled && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
+            register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
                 exposureNotificationRepository.registerAppForExposureNotifications()
             }
-            enabled.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
+            register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
                 exposureNotificationRepository.unregisterAppFromExposureNotifications()
             }
         }

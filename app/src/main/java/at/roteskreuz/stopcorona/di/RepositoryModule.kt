@@ -1,7 +1,5 @@
 package at.roteskreuz.stopcorona.di
 
-import at.roteskreuz.stopcorona.model.receivers.BatterySaverStateReceiver
-import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.model.repositories.*
 import org.koin.dsl.module.module
 
@@ -23,15 +21,6 @@ val repositoryModule = module {
             cryptoRepository = get(),
             dataPrivacyRepository = get(),
             infectionMessengerRepository = get()
-        )
-    }
-
-    single<NearbyRepository> {
-        NearbyRepositoryImpl(
-            cryptoRepository = get(),
-            appDispatchers = get(),
-            nearbyRecordDao = get(),
-            handshakeCodewordRepository = get()
         )
     }
 
@@ -103,30 +92,11 @@ val repositoryModule = module {
         )
     }
 
-    single<CoronaDetectionRepository> {
-        CoronaDetectionRepositoryImpl(
-            appDispatchers = get(),
-            contextInteractor = get(),
-            preferences = get(),
-            batterySaverStateReceiver = get<BatterySaverStateReceiver>(),
-            bluetoothStateReceiver = get<BluetoothStateReceiver>(),
-            automaticDiscoveryDao = get(),
-            nearbyRepository = get(),
-            cryptoRepository = get()
-        )
-    }
-
     single<ExposureNotificationRepository> {
         ExposureNotificationRepositoryImpl(
             appDispatchers = get(),
             exposureNotificationClient = get(),
             preferences = get()
-        )
-    }
-
-    single<HandshakeCodewordRepository> {
-        HandshakeCodewordRepositoryImpl(
-            contextInteractor = get()
         )
     }
 }
