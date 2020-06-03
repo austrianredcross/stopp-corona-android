@@ -1,19 +1,19 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
-import android.app.Activity
-import android.content.Context
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
+import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.github.dmstocking.optional.java.util.Optional
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.api.ApiException
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import java.util.concurrent.TimeUnit
@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit
 class DashboardViewModel(
     appDispatchers: AppDispatchers,
     private val dashboardRepository: DashboardRepository,
+    private val contextInteractor: ContextInteractor,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
@@ -41,8 +42,16 @@ class DashboardViewModel(
      * Holder for the current error state.
      * Used to check prerequisites to register to Exposure notification framework.
      */
-    private val prerequisitesErrorSubject = NonNullableBehaviorSubject<Optional<CombinedExposureNotificationsState.EnabledWithError>>(
+    private val prerequisitesErrorSubject = NonNullableBehaviorSubject<Optional<CombinedExposureNotificationsState.EnabledWithError.Prerequisites>>(
         Optional.ofNullable(null)
+    )
+
+    private val registrationErrorSubject = NonNullableBehaviorSubject<Optional<Throwable>>(
+        Optional.ofNullable(null)
+    )
+
+    private val exposureCheckPhaseSubject = NonNullableBehaviorSubject<ExposureCheckPhase>(
+        ExposureCheckPhase.WaitingForWantedState
     )
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
@@ -65,6 +74,52 @@ class DashboardViewModel(
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
+
+        disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+            .subscribe { wantedState ->
+                if (wantedState) {
+                    exposureCheckPhaseSubject.onNext(ExposureCheckPhase.CheckPrerequisites)
+                } else {
+                    exposureCheckPhaseSubject.onNext(ExposureCheckPhase.WaitingForWantedState)
+                }
+            }
+
+        disposables += exposureCheckPhaseSubject
+            .subscribe { phase ->
+                when (phase) {
+                    ExposureCheckPhase.WaitingForWantedState -> {
+                        // do nothing
+                    }
+                    ExposureCheckPhase.CheckPrerequisites -> {
+                        val error = checkExposureNotificationPrerequisitesAndGetError()
+                        prerequisitesErrorSubject.onNext(Optional.ofNullable(error))
+                        if (error == null) {
+                            exposureCheckPhaseSubject.onNext(ExposureCheckPhase.RegistrationActing)
+                        }
+                    }
+                    ExposureCheckPhase.RegistrationActing -> {
+                        registerToExposureFramework(userWantsToRegisterAppForExposureNotifications)
+                    }
+                    ExposureCheckPhase.Running -> {
+                        // do nothing
+                    }
+                }
+            }
+
+        disposables += Observables.combineLatest(
+            exposureCheckPhaseSubject,
+            exposureNotificationRepository.observeRegistrationState()
+        )
+            .subscribe { (phase, state) ->
+                if (phase == ExposureCheckPhase.RegistrationActing) {
+                    when (state) {
+                        State.Idle -> TODO()
+                        is State.Error -> {
+                            registrationErrorSubject.onNext(Optional.ofNullable(state.error))
+                        }
+                    }
+                }
+            }
     }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
@@ -149,8 +204,7 @@ class DashboardViewModel(
     /**
      * @param register True to start it, false to stop it.
      */
-    private fun onRegisterToExposureFramework(register: Boolean) {
-        //TODO: Falko refresh state in exposureNotificationRepository
+    private fun registerToExposureFramework(register: Boolean) {
         when {
             register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
                 exposureNotificationRepository.registerAppForExposureNotifications()
@@ -164,18 +218,46 @@ class DashboardViewModel(
     fun observeCombinedExposureNotificationState(): Observable<CombinedExposureNotificationsState> {
         return Observables.combineLatest(
             dashboardRepository.observeUserWantsToRegisterAppForExposureNotification(),
-            prerequisitesErrorSubject
-//            exposureNotificationRepository.observeRegistrationState(),
-//            exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
-        )
-            .debounce(50, TimeUnit.MILLISECONDS) // some of the sources can be changed together
-            .map { (wantedState, prerequisitesErrors) -> //, registrationState, registrationStatess ->
-                when {
-                    wantedState && prerequisitesErrors.isPresent -> prerequisitesErrors.get()
-                    wantedState -> CombinedExposureNotificationsState.Enabled
-//                wantedState && registr
-//                wantedState && realState -> CombinedExposureNotificationsState.Enabled
-                    else -> CombinedExposureNotificationsState.Disabled
+            prerequisitesErrorSubject,
+            exposureNotificationRepository.observeRegistrationState()
+                // ignoring idle and loading states
+                .map { state ->
+                    if (state is State.Error) {
+                        Optional.of(state.error)
+                    } else {
+                        Optional.ofNullable(null)
+                    }
+                },
+            exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+        ) { wantedState, prerequisitesError, registrationError, runningState ->
+            CombinedExposureNotificationSet(
+                wantedState,
+                prerequisitesError.orElse(null),
+                registrationError.orElse(null),
+                runningState
+            )
+        }
+            .debounce(50, TimeUnit.MILLISECONDS) // some of the values can be changed together
+            .map { combinedExposureNotificationSet ->
+                with(combinedExposureNotificationSet) {
+                    when {
+                        wantedState -> {
+                            when {
+                                prerequisitesError != null -> {
+                                    prerequisitesError
+                                }
+                                registrationError != null -> {
+                                    CombinedExposureNotificationsState.EnabledWithError.ExposureNotificationError(registrationError)
+                                }
+                                else -> {
+                                    CombinedExposureNotificationsState.Enabled
+                                }
+                            }
+                        }
+                        else -> {
+                            CombinedExposureNotificationsState.Disabled
+                        }
+                    }
                 }
             }
             .distinctUntilChanged()
@@ -195,19 +277,18 @@ class DashboardViewModel(
         exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
     }
 
-    private fun refreshExposureNotificationAppRegisteredState() {
-        exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
-    }
-
-    fun checkExposureNotificationPrerequisites(context: Context) {
-        var error: CombinedExposureNotificationsState.EnabledWithError? = null
-        if (googlePlayAvailability.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
-            // TODO: 28/05/2020 dusanjencik: We should check also correct version
-            onRegisterToExposureFramework(userWantsToRegisterAppForExposureNotifications)
-        } else {
+    //
+//    private fun refreshExposureNotificationAppRegisteredState() {
+//        exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
+//    }
+//
+    private fun checkExposureNotificationPrerequisitesAndGetError(): CombinedExposureNotificationsState.EnabledWithError.Prerequisites? {
+        var error: CombinedExposureNotificationsState.EnabledWithError.Prerequisites? = null
+        if (googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext) != ConnectionResult.SUCCESS) {
             error = CombinedExposureNotificationsState.EnabledWithError.Prerequisites.UnavailableGooglePlayServices
         }
-        prerequisitesErrorSubject.onNext(Optional.ofNullable(error))
+        // TODO: 28/05/2020 dusanjencik: We should check also correct version
+        return error
     }
 }
 
@@ -253,6 +334,13 @@ sealed class HealthStatusData {
     object NoHealthStatus : HealthStatusData()
 }
 
+data class CombinedExposureNotificationSet(
+    val wantedState: Boolean,
+    val prerequisitesError: CombinedExposureNotificationsState.EnabledWithError.Prerequisites?,
+    val registrationError: Throwable?,
+    val runningState: Boolean
+)
+
 /**
  * Indication for switch.
  */
@@ -263,20 +351,27 @@ sealed class CombinedExposureNotificationsState {
             /**
              * Google play services are not available on the phone.
              */
-            object UnavailableGooglePlayServices : EnabledWithError()
+            object UnavailableGooglePlayServices : Prerequisites()
 
             /**
              * The current Google play services version is not matching Exposure notification minimum version.
              */
-            object InvalidVersionOfGooglePlayServices : EnabledWithError()
+            object InvalidVersionOfGooglePlayServices : Prerequisites()
         }
 
         /**
          * Error from Exposure notification framework.
          */
-        data class ExposureNotificationApiException(val error: ApiException) : EnabledWithError()
+        data class ExposureNotificationError(val error: Throwable) : EnabledWithError()
     }
 
     object Enabled : CombinedExposureNotificationsState()
     object Disabled : CombinedExposureNotificationsState()
+}
+
+sealed class ExposureCheckPhase {
+    object WaitingForWantedState : ExposureCheckPhase()
+    object CheckPrerequisites : ExposureCheckPhase()
+    object RegistrationActing : ExposureCheckPhase()
+    object Running : ExposureCheckPhase()
 }

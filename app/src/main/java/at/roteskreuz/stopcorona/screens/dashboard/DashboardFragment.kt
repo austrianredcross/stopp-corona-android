@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.ExposureNotificationApiException
 import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.Prerequisites
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
@@ -29,10 +28,12 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 /**
  * Sample dashboard.
@@ -92,7 +93,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
             onAutomaticHandshakeEnabled = { enable ->
                 viewModel.userWantsToRegisterAppForExposureNotifications = enable
-                viewModel.checkExposureNotificationPrerequisites(requireContext())
+//                viewModel.checkExposureNotificationPrerequisites(requireContext())
             },
             onShareAppClick = {
                 shareApp()
@@ -156,6 +157,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         disposables += viewModel.observeCombinedExposureNotificationState()
             .observeOnMainThread()
             .subscribe { state ->
+                Timber.w("CombinedState = $state")
                 controller.combinedExposureNotificationsState = state
                 when (state) {
                     is EnabledWithError -> {
@@ -163,30 +165,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     }
                 }
             }
-
-//        disposables += viewModel.observeExposureNotificationState()
-//            .observeOnMainThread()
-//            .subscribe { state ->
-//                controller.combinedExposureNotificationsState = state
-//                when (state) {
-//                    is State.Error -> {
-//                        when (state.error) {
-//                            is ApiException -> {
-//                                val apiException = state.error as ApiException
-//                                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-//                                    apiException.status.startResolutionForResult(
-//                                        requireActivity(),
-//                                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
-//                                    )
-//                                } else {
-//                                    handleBaseCoronaErrors(state.error)
-//                                }
-//                            }
-//                            else -> handleBaseCoronaErrors(state.error)
-//                        }
-//                    }
-//                }
-//            }
 
         controller.requestModelBuild()
     }
@@ -219,12 +197,16 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             Prerequisites.InvalidVersionOfGooglePlayServices -> {
                 // TODO: 03/06/2020 dusanjencik: display dialog
             }
-            is ExposureNotificationApiException -> {
-                if (error.error.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    error.error.status.startResolutionForResult(
-                        requireActivity(),
-                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
-                    )
+            is EnabledWithError.ExposureNotificationError -> {
+                if (error.error is ApiException) {
+                    if (error.error.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+                        error.error.status.startResolutionForResult(
+                            requireActivity(),
+                            REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                        )
+                    } else {
+                        handleBaseCoronaErrors(error.error)
+                    }
                 } else {
                     handleBaseCoronaErrors(error.error)
                 }

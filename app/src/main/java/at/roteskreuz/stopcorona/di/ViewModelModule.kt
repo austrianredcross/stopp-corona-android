@@ -45,6 +45,7 @@ val viewModelModule = module {
         DashboardViewModel(
             appDispatchers = get(),
             dashboardRepository = get(),
+            contextInteractor = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get(),
             configurationRepository = get(),
