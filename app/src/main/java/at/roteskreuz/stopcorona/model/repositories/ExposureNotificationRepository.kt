@@ -214,12 +214,10 @@ class ExposureNotificationRepositoryImpl(
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
-                //call it here again as we want to keep the state most up to date
-                if (enabled) {
-                    bluetoothStateReceiver.register(contextInteractor.applicationContext)
-                } else {
-                    bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
-                }
+            }
+            .addOnFailureListener {
+                Timber.e(SilentError(it))
+                frameworkEnabledState.onNext(false)
             }
     }
 
