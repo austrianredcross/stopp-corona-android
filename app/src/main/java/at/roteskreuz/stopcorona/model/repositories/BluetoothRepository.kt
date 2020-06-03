@@ -6,19 +6,29 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.ActivityCompat.startActivityForResult
 
+interface BluetoothRepository {
+
+    val enableBluetoothIntent: Intent
+
+    fun isBluetoothEnabled(): Boolean
+
+    fun enableBluetoothPendingIntent(context: Context): PendingIntent
+}
+
 /**
  * wrapper for Bluetooth related functionality
  */
-class BluetoothRepository(
+class BluetoothRepositoryImpl(
     private val bluetoothAdapter: BluetoothAdapter
-){
-    val enableBluetoothIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+) : BluetoothRepository {
 
-    fun isBluetoothEnabled(): Boolean {
+    override val enableBluetoothIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+
+    override fun isBluetoothEnabled(): Boolean {
         return bluetoothAdapter.isEnabled
     }
 
-    fun enableBluetoothPendingIntent(context: Context): PendingIntent {
+    override fun enableBluetoothPendingIntent(context: Context): PendingIntent {
         val enableBtIntent = enableBluetoothIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return PendingIntent.getActivity(context, 0, enableBtIntent, PendingIntent.FLAG_ONE_SHOT)
     }

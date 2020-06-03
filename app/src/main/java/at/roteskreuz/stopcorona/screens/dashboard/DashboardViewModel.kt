@@ -119,10 +119,10 @@ class DashboardViewModel(
      */
     fun onRegisterToExposureFramework(register: Boolean) {
         when {
-            register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
+            register && exposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState.not() -> {
                 exposureNotificationRepository.registerAppForExposureNotifications()
             }
-            register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
+            register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState -> {
                 exposureNotificationRepository.unregisterAppFromExposureNotifications()
             }
         }

@@ -94,6 +94,15 @@ val repositoryModule = module {
     }
 
     single<BluetoothRepository> {
-        BluetoothRepository(BluetoothAdapter.getDefaultAdapter())
+        BluetoothRepositoryImpl(BluetoothAdapter.getDefaultAdapter())
+    }
+
+    single<ExposureNotificationRepository> {
+        ExposureNotificationRepositoryImpl(
+            appDispatchers = get(),
+            bluetoothStateReceiver = get(),
+            exposureNotificationClient = get(),
+            contextInteractor = get()
+        )
     }
 }

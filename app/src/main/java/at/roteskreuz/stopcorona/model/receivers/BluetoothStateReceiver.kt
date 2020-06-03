@@ -5,9 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
+import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker
+import at.roteskreuz.stopcorona.model.workers.ExposureNotificationNotifierWorker
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
@@ -21,27 +24,10 @@ class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
         private const val ACTION = BluetoothAdapter.ACTION_STATE_CHANGED
     }
 
-    private val notificationsRepository: NotificationsRepository by inject()
-    private val exposureNotificationRepository: ExposureNotificationRepository by inject()
+    private val workManager: WorkManager by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
-        if (intent?.action == ACTION) {
-            try {
-                if (exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()){
-                    //we are not registered, we don´t care
-                    return
-                }
-                when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
-                    BluetoothAdapter.STATE_OFF -> {
-                        notificationsRepository.displayPleaseActivateBluetoothNotification()
-                    }
-                }
-            } catch (e:Exception){
-                //if it goes wrong, we do not case as we can´t handle the error
-                Timber.e(SilentError(e))
-            }
-
-        }
+        ExposureNotificationNotifierWorker.enqueueExposureNotificationNotifierWorker(workManager)
     }
 
     fun register(context: Context) {

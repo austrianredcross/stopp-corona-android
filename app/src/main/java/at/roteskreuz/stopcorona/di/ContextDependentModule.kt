@@ -69,13 +69,4 @@ internal val contextDependentModule = module {
     single {
         Nearby.getExposureNotificationClient(androidContext())
     }
-
-    single<ExposureNotificationRepository> {
-        ExposureNotificationRepositoryImpl(
-            appDispatchers = get(),
-            bluetoothStateReceiver = get(),
-            exposureNotificationClient = get(),
-            context = get()
-        )
-    }
 }
