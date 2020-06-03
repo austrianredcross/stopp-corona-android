@@ -27,7 +27,7 @@ class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == ACTION) {
             try {
-                if (!exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()){
+                if (exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()){
                     //we are not registered, we don´t care
                     return
                 }
