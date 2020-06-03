@@ -7,8 +7,6 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.ExposureNotificationError
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.Prerequisites
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -31,7 +29,7 @@ class DashboardController(
     private val onSomeoneHasRecoveredCloseClick: () -> Unit,
     private val onQuarantineEndCloseClick: () -> Unit,
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
-    private val refreshAutomaticHandshakeErrors: () -> Unit,
+    private val refreshAutomaticHandshakeErrors: (ExposureNotificationPhase) -> Unit,
     private val onRevokeSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
@@ -40,7 +38,7 @@ class DashboardController(
     var contactsHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var showQuarantineEnd: Boolean by adapterProperty(false)
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
-    var combinedExposureNotificationsState: CombinedExposureNotificationsState by adapterProperty(CombinedExposureNotificationsState.Disabled)
+    var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -127,7 +125,7 @@ class DashboardController(
         emptySpace(modelCountBuiltSoFar, 16)
 
         // needed to have two caches of epoxy models because of lottie
-        if (combinedExposureNotificationsState == CombinedExposureNotificationsState.Enabled) {
+        if (exposureNotificationPhase is ExposureNotificationPhase.FrameworkRunning) {
             handshakeImage {
                 id("handshake_image_active")
                 active(true)
@@ -143,36 +141,35 @@ class DashboardController(
 
         automaticHandshakeSwitch(onAutomaticHandshakeEnabled) {
             id("automatic_handshake_switch")
-            state(combinedExposureNotificationsState)
+            phase(exposureNotificationPhase)
             // TODO: 03/06/2020 dusanjencik: Do we need to disable it?
 //            enabled((ownHealthStatus is HealthStatusData.SicknessCertificate).not())
         }
 
         emptySpace(modelCountBuiltSoFar, 16)
 
-        //TODO: Falko new card depending on the errors
-        // when(combinedExposureNotificationsState)
-
-        when (combinedExposureNotificationsState) {
-            Prerequisites.UnavailableGooglePlayServices -> {
-                statusUpdate(refreshAutomaticHandshakeErrors) {
-                    id("UnavailableGooglePlayServices")
-                    title("UnavailableGooglePlayServices")
-                    cardStatus(CardUpdateStatus.ContactUpdate)
+        if (exposureNotificationPhase != null) {
+            when (exposureNotificationPhase) {
+                is ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices -> {
+                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                        id("UnavailableGooglePlayServices")
+                        title("UnavailableGooglePlayServices")
+                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    }
                 }
-            }
-            Prerequisites.InvalidVersionOfGooglePlayServices -> {
-                statusUpdate(refreshAutomaticHandshakeErrors) {
-                    id("InvalidVersionOfGooglePlayServices")
-                    title("InvalidVersionOfGooglePlayServices")
-                    cardStatus(CardUpdateStatus.ContactUpdate)
+                is ExposureNotificationPhase.PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
+                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                        id("InvalidVersionOfGooglePlayServices")
+                        title("InvalidVersionOfGooglePlayServices")
+                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    }
                 }
-            }
-            is ExposureNotificationError -> {
-                statusUpdate(refreshAutomaticHandshakeErrors) {
-                    id("ExposureNotificationError")
-                    title("ExposureNotificationError")
-                    cardStatus(CardUpdateStatus.ContactUpdate)
+                is ExposureNotificationPhase.FrameworkError.Unknown -> {
+                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                        id("FrameworkError.Unknown")
+                        title("FrameworkError.Unknown")
+                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    }
                 }
             }
         }

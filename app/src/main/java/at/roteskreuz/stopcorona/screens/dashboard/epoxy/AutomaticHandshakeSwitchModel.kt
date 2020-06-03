@@ -3,8 +3,9 @@ package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.*
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkRunning
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.WaitingForWantedState
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.utils.string
@@ -17,13 +18,25 @@ abstract class AutomaticHandshakeSwitchModel(
 ) : BaseEpoxyModel<AutomaticHandshakeSwitchModel.Holder>() {
 
     @EpoxyAttribute
-    var state: CombinedExposureNotificationsState = Disabled
+    var phase: ExposureNotificationPhase? = null
 
     override fun Holder.onBind() {
-        switch.isChecked = state is Enabled || state is EnabledWithError
+        switch.isChecked = phase !is WaitingForWantedState
         switch.setOnCheckedChangeListener(null)
-        when (state) {
-            Enabled -> {
+        when (phase) {
+            null,
+            is WaitingForWantedState -> {
+                with(txtState) {
+                    text = string(R.string.main_automatic_handshake_switch_off)
+                    isEnabled = false
+                    isActivated = false
+                }
+                with(switch) {
+                    isActivated = false
+                    isChecked = false
+                }
+            }
+            is FrameworkRunning -> {
                 with(txtState) {
                     text = string(R.string.main_automatic_handshake_switch_on)
                     isEnabled = true
@@ -34,7 +47,7 @@ abstract class AutomaticHandshakeSwitchModel(
                     isChecked = true
                 }
             }
-            is EnabledWithError -> {
+            else -> {
                 with(txtState) {
                     text = string(R.string.main_automatic_handshake_switch_paused)
                     isEnabled = true
@@ -43,17 +56,6 @@ abstract class AutomaticHandshakeSwitchModel(
                 with(switch) {
                     isActivated = false
                     isChecked = true
-                }
-            }
-            Disabled -> {
-                with(txtState) {
-                    text = string(R.string.main_automatic_handshake_switch_off)
-                    isEnabled = false
-                    isActivated = false
-                }
-                with(switch) {
-                    isActivated = false
-                    isChecked = false
                 }
             }
         }

@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -8,14 +9,16 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.github.dmstocking.optional.java.util.Optional
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.api.ApiException
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -39,19 +42,17 @@ class DashboardViewModel(
     }
 
     /**
-     * Holder for the current error state.
-     * Used to check prerequisites to register to Exposure notification framework.
+     * State machine which handles operations depending on the current state.
      */
-    private val prerequisitesErrorSubject = NonNullableBehaviorSubject<Optional<CombinedExposureNotificationsState.EnabledWithError.Prerequisites>>(
-        Optional.ofNullable(null)
-    )
-
-    private val registrationErrorSubject = NonNullableBehaviorSubject<Optional<Throwable>>(
-        Optional.ofNullable(null)
-    )
-
-    private val exposureCheckPhaseSubject = NonNullableBehaviorSubject<ExposureCheckPhase>(
-        ExposureCheckPhase.WaitingForWantedState
+    private val exposureNotificationPhaseSubject = NonNullableBehaviorSubject<ExposureNotificationPhase>(
+        defaultValue = ExposureNotificationPhase.WaitingForWantedState(
+            ExposureNotificationPhase.DependencyHolder(
+                dashboardRepository,
+                googlePlayAvailability,
+                contextInteractor,
+                exposureNotificationRepository
+            )
+        )
     )
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
@@ -75,48 +76,15 @@ class DashboardViewModel(
             userWantsToRegisterAppForExposureNotifications = true
         }
 
-        disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
-            .subscribe { wantedState ->
-                if (wantedState) {
-                    exposureCheckPhaseSubject.onNext(ExposureCheckPhase.CheckPrerequisites)
-                } else {
-                    exposureCheckPhaseSubject.onNext(ExposureCheckPhase.WaitingForWantedState)
-                }
-            }
-
-        disposables += exposureCheckPhaseSubject
-            .subscribe { phase ->
-                when (phase) {
-                    ExposureCheckPhase.WaitingForWantedState -> {
-                        // do nothing
-                    }
-                    ExposureCheckPhase.CheckPrerequisites -> {
-                        val error = checkExposureNotificationPrerequisitesAndGetError()
-                        prerequisitesErrorSubject.onNext(Optional.ofNullable(error))
-                        if (error == null) {
-                            exposureCheckPhaseSubject.onNext(ExposureCheckPhase.RegistrationActing)
-                        }
-                    }
-                    ExposureCheckPhase.RegistrationActing -> {
-                        registerToExposureFramework(userWantsToRegisterAppForExposureNotifications)
-                    }
-                    ExposureCheckPhase.Running -> {
-                        // do nothing
-                    }
-                }
-            }
-
-        disposables += Observables.combineLatest(
-            exposureCheckPhaseSubject,
-            exposureNotificationRepository.observeRegistrationState()
-        )
-            .subscribe { (phase, state) ->
-                if (phase == ExposureCheckPhase.RegistrationActing) {
-                    when (state) {
-                        is State.Error -> {
-                            registrationErrorSubject.onNext(Optional.ofNullable(state.error))
-                        }
-                    }
+        /**
+         * Handle state machine states.
+         */
+        disposables += exposureNotificationPhaseSubject
+            .subscribe { state ->
+                Timber.w("Exposure notification phase = ${state.javaClass.simpleName}")
+                state.onCreate { newState ->
+                    state.onCleared()
+                    exposureNotificationPhaseSubject.onNext(newState)
                 }
             }
     }
@@ -200,65 +168,9 @@ class DashboardViewModel(
         }
     }
 
-    /**
-     * @param register True to start it, false to stop it.
-     */
-    private fun registerToExposureFramework(register: Boolean) {
-        when {
-            register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
-                exposureNotificationRepository.registerAppForExposureNotifications()
-            }
-            register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
-                exposureNotificationRepository.unregisterAppFromExposureNotifications()
-            }
-        }
-    }
-
-    fun observeCombinedExposureNotificationState(): Observable<CombinedExposureNotificationsState> {
-        return Observables.combineLatest(
-            dashboardRepository.observeUserWantsToRegisterAppForExposureNotification(),
-            prerequisitesErrorSubject,
-            exposureNotificationRepository.observeRegistrationState()
-                // ignoring idle and loading states
-                .map { state ->
-                    if (state is State.Error) {
-                        Optional.of(state.error)
-                    } else {
-                        Optional.ofNullable(null)
-                    }
-                },
-            exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
-        ) { wantedState, prerequisitesError, registrationError, runningState ->
-            CombinedExposureNotificationSet(
-                wantedState,
-                prerequisitesError.orElse(null),
-                registrationError.orElse(null),
-                runningState
-            )
-        }
-            .debounce(50, TimeUnit.MILLISECONDS) // some of the values can be changed together
-            .map { combinedExposureNotificationSet ->
-                with(combinedExposureNotificationSet) {
-                    when {
-                        wantedState -> {
-                            when {
-                                prerequisitesError != null -> {
-                                    prerequisitesError
-                                }
-                                registrationError != null -> {
-                                    CombinedExposureNotificationsState.EnabledWithError.ExposureNotificationError(registrationError)
-                                }
-                                else -> {
-                                    CombinedExposureNotificationsState.Enabled
-                                }
-                            }
-                        }
-                        else -> {
-                            CombinedExposureNotificationsState.Disabled
-                        }
-                    }
-                }
-            }
+    fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
+        return exposureNotificationPhaseSubject
+            .debounce(150, TimeUnit.MILLISECONDS) // states might be changing too fast
             .distinctUntilChanged()
     }
 
@@ -266,33 +178,31 @@ class DashboardViewModel(
      * Handles [Activity.RESULT_OK] for a resolution. User accepted opt-in for exposure notification.
      */
     fun onExposureNotificationRegistrationResolutionResultOk() {
-        exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
+        exposureNotificationPhaseSubject.value.let { state ->
+            if (state is ExposureNotificationPhase.FrameworkError.RegisterActionUserApprovalNeeded) {
+                state.onResolutionOk()
+            } else {
+                Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is ok"))
+            }
+        }
     }
 
     /**
      * Handles not [Activity.RESULT_OK] for a resolution. User rejected opt-in for exposure notification.
      */
     fun onExposureNotificationRegistrationResolutionResultNotOk() {
-        exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
-    }
-
-    fun refreshExposureNotificationAppRegisteredState() {
-        if (exposureCheckPhaseSubject.value == ExposureCheckPhase.CheckPrerequisites) {
-            exposureCheckPhaseSubject.onNext(ExposureCheckPhase.CheckPrerequisites) // rerun check
-        } else if (exposureCheckPhaseSubject.value == ExposureCheckPhase.RegistrationActing) {
-            exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
-        } else {
-            throw RuntimeException("Trying to refresh state in wrong phase")
+        exposureNotificationPhaseSubject.value.let { state ->
+            if (state is ExposureNotificationPhase.FrameworkError.RegisterActionUserApprovalNeeded) {
+                state.onResolutionNotOk()
+            } else {
+                Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is not ok"))
+            }
         }
     }
 
-    private fun checkExposureNotificationPrerequisitesAndGetError(): CombinedExposureNotificationsState.EnabledWithError.Prerequisites? {
-        var error: CombinedExposureNotificationsState.EnabledWithError.Prerequisites? = null
-        if (googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext) != ConnectionResult.SUCCESS) {
-            error = CombinedExposureNotificationsState.EnabledWithError.Prerequisites.UnavailableGooglePlayServices
-        }
-        // TODO: 28/05/2020 dusanjencik: We should check also correct version
-        return error
+    override fun onCleared() {
+        exposureNotificationPhaseSubject.value.onCleared()
+        super.onCleared()
     }
 }
 
@@ -338,44 +248,255 @@ sealed class HealthStatusData {
     object NoHealthStatus : HealthStatusData()
 }
 
-data class CombinedExposureNotificationSet(
-    val wantedState: Boolean,
-    val prerequisitesError: CombinedExposureNotificationsState.EnabledWithError.Prerequisites?,
-    val registrationError: Throwable?,
-    val runningState: Boolean
-)
+sealed class ExposureNotificationPhase {
 
-/**
- * Indication for switch.
- */
-sealed class CombinedExposureNotificationsState {
+    data class DependencyHolder(
+        val dashboardRepository: DashboardRepository,
+        val googlePlayAvailability: GoogleApiAvailability,
+        val contextInteractor: ContextInteractor,
+        val exposureNotificationRepository: ExposureNotificationRepository
+    )
 
-    sealed class EnabledWithError : CombinedExposureNotificationsState() {
-        sealed class Prerequisites : EnabledWithError() {
-            /**
-             * Google play services are not available on the phone.
-             */
-            object UnavailableGooglePlayServices : Prerequisites()
+    protected abstract val dependencyHolder: DependencyHolder
 
-            /**
-             * The current Google play services version is not matching Exposure notification minimum version.
-             */
-            object InvalidVersionOfGooglePlayServices : Prerequisites()
+    protected val disposables = CompositeDisposable()
+
+    abstract fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit)
+
+    fun onCleared() {
+        disposables.dispose()
+    }
+
+    /**
+     * Initial state. Waiting until user clicked to enable switch button.
+     */
+    data class WaitingForWantedState(
+        override val dependencyHolder: DependencyHolder
+    ) : ExposureNotificationPhase() {
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            disposables += dependencyHolder.dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                .subscribe { wantedState ->
+                    if (wantedState) {
+                        moveToNextState(CheckPrerequisitesError(dependencyHolder))
+                    }
+                }
+        }
+    }
+
+    /**
+     * Checking valid google play services.
+     */
+    data class CheckPrerequisitesError(
+        override val dependencyHolder: DependencyHolder
+    ) : ExposureNotificationPhase() {
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            with(dependencyHolder) {
+                when {
+                    googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext) != ConnectionResult.SUCCESS -> {
+                        moveToNextState(PrerequisitesError.UnavailableGooglePlayServices(dependencyHolder))
+                    }
+                    // TODO: 28/05/2020 dusanjencik: We should check also correct version
+//                condition -> {
+//                    moveToNextState(PrerequisitesError.InvalidVersionOfGooglePlayServices(dependencyHolder))
+//                }
+                    else -> {
+                        moveToNextState(RegisterToFramework(dependencyHolder, true))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * If prerequisites not met, this is class for explaining the errors.
+     */
+    sealed class PrerequisitesError : ExposureNotificationPhase() {
+
+        private lateinit var moveToNextState: (ExposureNotificationPhase) -> Unit
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            this.moveToNextState = moveToNextState
         }
 
         /**
-         * Error from Exposure notification framework.
+         * Will check prerequisites again.
          */
-        data class ExposureNotificationError(val error: Throwable) : EnabledWithError()
+        fun refresh() {
+            moveToNextState(CheckPrerequisitesError(dependencyHolder))
+        }
+
+        /**
+         * Google play services are not available on the phone.
+         */
+        data class UnavailableGooglePlayServices(
+            override val dependencyHolder: DependencyHolder
+        ) : PrerequisitesError()
+
+        /**
+         * The current Google play services version is not matching Exposure notification minimum version.
+         */
+        data class InvalidVersionOfGooglePlayServices(
+            override val dependencyHolder: DependencyHolder
+        ) : PrerequisitesError()
     }
 
-    object Enabled : CombinedExposureNotificationsState()
-    object Disabled : CombinedExposureNotificationsState()
-}
+    /**
+     * Registering to the exposure notification framework.
+     * @param register True to start it, false to stop it.
+     */
+    data class RegisterToFramework(
+        override val dependencyHolder: DependencyHolder,
+        val register: Boolean
+    ) : ExposureNotificationPhase() {
 
-sealed class ExposureCheckPhase {
-    object WaitingForWantedState : ExposureCheckPhase()
-    object CheckPrerequisites : ExposureCheckPhase()
-    object RegistrationActing : ExposureCheckPhase()
-    object Running : ExposureCheckPhase()
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            with(dependencyHolder) {
+                when {
+                    register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
+                        exposureNotificationRepository.registerAppForExposureNotifications()
+                    }
+                    register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
+                        exposureNotificationRepository.unregisterAppFromExposureNotifications()
+                    }
+                }
+            }
+            moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+        }
+    }
+
+    /**
+     * Checking possible errors from registration process.
+     * @param register True to start it, false to stop it.
+     */
+    data class CheckingFrameworkError(
+        override val dependencyHolder: DependencyHolder,
+        val register: Boolean
+    ) : ExposureNotificationPhase() {
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            with(dependencyHolder) {
+                disposables += exposureNotificationRepository.observeRegistrationState()
+                    .subscribe { state ->
+                        when (state) {
+                            State.Idle -> {
+                                moveToNextState(
+                                    if (register) {
+                                        CheckingFrameworkRunning(dependencyHolder)
+                                    } else {
+                                        WaitingForWantedState(dependencyHolder)
+                                    }
+                                )
+                            }
+                            is State.Error -> {
+                                if (state.error is ApiException) {
+                                    moveToNextState(
+                                        FrameworkError.RegisterActionUserApprovalNeeded(dependencyHolder, state.error as ApiException, register)
+                                    )
+                                } else {
+                                    moveToNextState(FrameworkError.Unknown(dependencyHolder, state.error, register))
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    /**
+     * Errors from exposure notification framework.
+     */
+    sealed class FrameworkError : ExposureNotificationPhase() {
+
+        protected lateinit var moveToNextState: (ExposureNotificationPhase) -> Unit
+        protected abstract val register: Boolean
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            this.moveToNextState = moveToNextState
+        }
+
+        /**
+         * Will refresh exposure notification registration state again.
+         */
+        fun refresh() {
+            moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+        }
+
+        /**
+         * User must confirm the registration app to the framework.
+         * @param register True to start it, false to stop it.
+         */
+        data class RegisterActionUserApprovalNeeded(
+            override val dependencyHolder: DependencyHolder,
+            val apiException: ApiException,
+            override val register: Boolean
+        ) : FrameworkError() {
+
+            fun onResolutionOk() {
+                dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
+                refresh()
+            }
+
+            fun onResolutionNotOk() {
+                dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
+                refresh()
+            }
+        }
+
+        /**
+         * Framework caused some unknown error.
+         * @param register True to start it, false to stop it.
+         */
+        data class Unknown(
+            override val dependencyHolder: DependencyHolder,
+            val exception: Throwable,
+            override val register: Boolean
+        ) : FrameworkError()
+    }
+
+    // TODO: 03/06/2020 dusanjencik: Check bluetooth
+
+    /**
+     * Checking if framework is registered and running.
+     */
+    data class CheckingFrameworkRunning(
+        override val dependencyHolder: DependencyHolder
+    ) : ExposureNotificationPhase() {
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            with(dependencyHolder) {
+                disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+                    .subscribe { realState ->
+                        if (realState) {
+                            moveToNextState(FrameworkRunning(dependencyHolder))
+                        } else {
+                            // TODO: 03/06/2020 dusanjencik: Maybe too fast
+                            moveToNextState(RegisterToFramework(dependencyHolder, false))
+                        }
+                    }
+            }
+        }
+    }
+
+    /**
+     * Framework is registered and running.
+     */
+    data class FrameworkRunning(
+        override val dependencyHolder: DependencyHolder
+    ) : ExposureNotificationPhase() {
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            with(dependencyHolder) {
+                disposables += Observables.combineLatest(
+                    dashboardRepository.observeUserWantsToRegisterAppForExposureNotification(),
+                    exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+                ).subscribe { (wantedState, realState) ->
+                    if (wantedState.not() || realState.not()) {
+                        moveToNextState(RegisterToFramework(dependencyHolder, false))
+                    }
+                }
+            }
+        }
+    }
 }

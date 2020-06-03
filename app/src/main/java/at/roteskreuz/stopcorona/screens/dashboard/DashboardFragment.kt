@@ -11,7 +11,8 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -26,12 +27,9 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 /**
  * Sample dashboard.
@@ -89,12 +87,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = { enable ->
-                viewModel.userWantsToRegisterAppForExposureNotifications = enable
-//                viewModel.checkExposureNotificationPrerequisites(requireContext())
-            },
-            refreshAutomaticHandshakeErrors = {
-                viewModel.refreshExposureNotificationAppRegisteredState()
+            onAutomaticHandshakeEnabled = viewModel::userWantsToRegisterAppForExposureNotifications::set,
+            refreshAutomaticHandshakeErrors = { exposureNotificationPhase ->
+                when (exposureNotificationPhase) {
+                    is PrerequisitesError -> {
+                        exposureNotificationPhase.refresh()
+                    }
+                }
             },
             onShareAppClick = {
                 shareApp()
@@ -155,15 +154,18 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.someoneHasRecoveredHealthStatus = it
             }
 
-        disposables += viewModel.observeCombinedExposureNotificationState()
+        disposables += viewModel.observeExposureNotificationPhase()
             .observeOnMainThread()
-            .subscribe { state ->
-                Timber.w("CombinedState = $state")
-                controller.combinedExposureNotificationsState = state
-                when (state) {
-                    is EnabledWithError -> {
-                        handleCombinedExposureStateError(state)
+            .subscribe { phase ->
+                controller.exposureNotificationPhase = phase
+                when (phase) {
+                    is FrameworkError.RegisterActionUserApprovalNeeded -> {
+                        phase.apiException.status.startResolutionForResult(
+                            requireActivity(),
+                            REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                        )
                     }
+                    is FrameworkError.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
             }
 
@@ -172,6 +174,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     override fun onResume() {
         super.onResume()
+        // TODO: 03/06/2020 dusanjencik: What to refresh?
 //        viewModel.refreshExposureNotificationAppRegisteredState()
     }
 
@@ -187,25 +190,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun handleCombinedExposureStateError(error: EnabledWithError) {
-        when (error) {
-            is EnabledWithError.ExposureNotificationError -> {
-                if (error.error is ApiException) {
-                    if (error.error.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                        error.error.status.startResolutionForResult(
-                            requireActivity(),
-                            REQUEST_CODE_START_EXPOSURE_NOTIFICATION
-                        )
-                    } else {
-                        handleBaseCoronaErrors(error.error)
-                    }
-                } else {
-                    handleBaseCoronaErrors(error.error)
-                }
-            }
         }
     }
 
