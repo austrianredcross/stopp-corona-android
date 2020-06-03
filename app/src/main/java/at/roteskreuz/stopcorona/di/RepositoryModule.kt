@@ -48,8 +48,6 @@ val repositoryModule = module {
 
     single<DashboardRepository> {
         DashboardRepositoryImpl(
-            nearbyRecordDao = get(),
-            exposureNotificationRepository = get(),
             preferences = get()
         )
     }
@@ -95,8 +93,7 @@ val repositoryModule = module {
     single<ExposureNotificationRepository> {
         ExposureNotificationRepositoryImpl(
             appDispatchers = get(),
-            exposureNotificationClient = get(),
-            preferences = get()
+            exposureNotificationClient = get()
         )
     }
 }

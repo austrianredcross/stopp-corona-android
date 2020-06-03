@@ -99,7 +99,7 @@
 	<string name="infection_info_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
-	<string name="infection_info_warning_title">Hinweis</string>
+	<string name="infection_info_warning_title">Achtung</string>
 	<string name="infection_info_warning_headline_single">1 Kontakt mit Coronavirus-Verdacht</string>
 	<string name="infection_info_warning_headline_many">%d Kontakte mit Coronavirus-Verdacht</string>
 	<string name="infection_info_warning_description1_single">Bei einer Ihrer registrierten Begegnungen %s.</string>
@@ -131,11 +131,11 @@
 	<string name="handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
 	<string name="handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
 	<string name="automatic_handshake_dialog_title">So funktioniert es:</string>
-	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und lassen Sie Hintergrundaktivitäten für diese App zu.</string>
-	<string name="automatic_handshake_dialog_description_2">Bluetooth-Signale werden gesendet und von anderen App-Nutzern empfangen.</string>
-	<string name="automatic_handshake_dialog_description_3">Einträge im Kontakt-Tagebuch werden automatisch erstellt (z.B.: wenn andere Geräte mindestens 15 Minuten innerhalb 2 Meter empfangen werden)</string>
-	<string name="automatic_handshake_dialog_description_4">Nachdem nicht alle Geräte und Betriebssysteme unterstützt werden, kontrollieren Sie bitte mittels manuellem Handshake, ob die automatische Eintragung bereits erfolgt ist.</string>
-	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Sie Hintergrundaktivtäten für diese App\nzulassen, damit andere Telefone Ihr Telefon erkennen können. \n\nBitte beachten Sie, dass der automatische Handshake je nach Gerätetyp und Betriebssystem eingeschränkt funktionieren kann. Sollten Sie Einschränkungen feststellen, nutzen Sie bitte den manuellen Handshake.</string>
+	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und aktivieren Sie Bluetooth.</string>
+	<string name="automatic_handshake_dialog_description_2">Ihr Gerät kann über Bluetooth Zufalls-IDs mit anderen App-Nutzern austauschen.</string>
+	<string name="automatic_handshake_dialog_description_3">Die Zufalls-IDs werden im COVID-19 Kontaktprotokoll Ihres Geräts gespeichert.</string>
+	<string name="automatic_handshake_dialog_description_4"><b>Kontakte sind erkrankt</b> \nMithilfe des Kontaktprotokolls können Sie benachrichtig werden, wenn Sie einen möglichen Kontakt mit dem Coronavirus hatten. Es wird eine Empfehlung in einem Algorithmus kalkuliert, wie lange Sie als Vorsichtsmaßnahme in Quarantäne bleiben sollte.\n<b>Sie sind erkrankt</b> \nEbenso können die Zufalls-IDs genutzt werden um andere Nutzer zu benachrichtigen, sollten Sie eine mögliche Infektion melden.</string>
+	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Bluetooth aktiviert ist.</string>
 	<string name="automatic_handshake_dialog_faq">Zu den FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
 	<string name="automatic_handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
@@ -143,7 +143,8 @@
 	<string name="main_automatic_handshake_switch_title">Automatischer Handshake:</string>
 	<string name="main_automatic_handshake_switch_on">aktiv</string>
 	<string name="main_automatic_handshake_switch_off">inaktiv</string>
-	<string name="main_automatic_handshake_description_on">Via Bluetooth versenden und empfangen Sie Signale anderer Apps. Signale über 15 Min. werden als Handshake in Ihrem Kontakt-Tagebuch aufgezeichnet. Bitte kontrollieren Sie die Aufzeichnung mittels manuellem Handshake, da nicht alle Geräte unterstützt werden.</string>
+	<string name="main_automatic_handshake_switch_paused">pausiert</string>
+	<string name="main_automatic_handshake_description_on">Via Bluetooth versenden und empfangen Sie Signale anderer Apps. Die Signale werden im COVID-19 Kontaktprotokoll in Ihrem Gerät aufgezeichnet. Dies geschieht anonym.</string>
 	<string name="main_automatic_handshake_description_off">Aktuell werden keine Ihrer Begegnungen automatisch gespeichert. Bitte aktivieren Sie hierzu den automatischen Handshake.</string>
 	<string name="main_start_manual_handshake">Manuellen Handshake starten</string>
 
@@ -166,7 +167,7 @@
 	<string name="certificate_tan_check_resend_tan_button">TAN erneut senden</string>
 	<string name="certificate_report_status_title">Status melden</string>
 	<string name="certificate_report_status_headline">Wurde Ihre Infektion mit dem Coronavirus medizinisch nachgewiesen?</string>
-	<string name="certificate_report_status_description_1">Es ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden.\n\nIm nächsten Schritt werden alle Personen, mit denen Sie in den letzten 48 Stunden einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.\n\n</string>
+	<string name="certificate_report_status_description_1">Es ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden. Das Melden einer Infektion ist freiwillig.\n\nIm nächsten Schritt werden alle Personen, mit denen Sie in den letzten 48 Stunden einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.</string>
 	<string name="certificate_report_status_description_2">Die Benachrichtigung erfolgt anonym.</string>
 	<string name="certificate_report_status_description_3">Ihre persönlichen Daten werden nicht an Dritte weitergegeben.</string>
 	<string name="certificate_report_status_agreement_description"><b>Ja, eine Corona-Infektion wurde bei mir nachgewiesen</b></string>
@@ -281,7 +282,7 @@
 	<string name="questionnaire_examine_observe_headline_2">Achtung</string>
 	<string name="questionnaire_examine_observe_description">Melden Sie sich bitte telefonisch bei Ihrem behandelnden Arzt, wenn Sie medizinische Hilfe benötigen. Ihr Arzt kann Sie auch telefonisch krank schreiben oder ein Rezept auf Ihre e-card ausstellen.</string>
 	<string name="questionnaire_report_status_headline">Verdacht melden?</string>
-	<string name="questionnaire_report_status_description_1">Im nächsten Schritt werden alle Personen, mit denen Sie in den letzten 48h einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.\n\n\n</string>
+	<string name="questionnaire_report_status_description_1">Melden Sie jetzt einen Verdacht auf Coronavirus. Das Melden eines Verdachts ist freiwillig.\n\nIm nächsten Schritt werden alle Personen, mit denen Sie in den letzten 48h einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.\n\nErlauben Sie jetzt die Benachrichtigung Ihrer Kontakte mit Hilfe der Zufalls-IDs aus dem Kontaktprotokoll.</string>
 	<string name="questionnaire_report_status_description_2">Die Benachrichtigung erfolgt anonym.</string>
 	<string name="questionnaire_report_status_description_3">Ihre persönlichen Daten werden nicht an Dritte weitergegeben.</string>
 	<string name="questionnaire_report_status_agreement">Hiermit bestätige ich, die Angaben wahrheitsgemäß getätigt zu haben.</string>
@@ -378,9 +379,9 @@
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Achtung</string>
-	<string name="contacts_confirmed_one_case_description">Bei einem Ihrer Kontakte wurde eine Corona-Infektion ärztlich festgestellt.</string>
+	<string name="contacts_confirmed_one_case_description">Bei Ihren Kontakten wurden ein oder mehrere Corona-Infektionen gemeldet. </string>
 	<string name="contacts_suspicion_one_case_headline">Hinweis</string>
-	<string name="contacts_suspicion_one_case_description">Bei einem Ihrer Kontakte gibt es den Verdacht einer Corona-Infektion.</string>
+	<string name="contacts_suspicion_one_case_description">Bei Ihren Kontakten wurden ein oder mehrere Verdachte auf eine Corona-Infektion gemeldet.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Achtung</string>
 	<string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>
@@ -418,8 +419,8 @@
 	<string name="revoke_sickness_success_headline">Infektions-Meldung zurückgezogen</string>
 	<string name="revoke_sickness_success_description_1">Danke, dass Sie Ihre Angaben aktualisiert haben und damit erheblich zu einem transparenten Vorgehen und dem Gemeinwohl beitragen.</string>
 	<string name="revoke_sickness_success_description_2">Ihre Kontakte werden anonym benachrichtigt, dass es sich nicht um eine Corona-Infektion gehandelt hat.</string>
-	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
 	<string name="revoke_sickness_success_finish">Zurück zur Startseite</string>
+	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>

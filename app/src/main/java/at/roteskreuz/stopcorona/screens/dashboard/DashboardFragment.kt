@@ -11,6 +11,9 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError
+import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.ExposureNotificationApiException
+import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.Prerequisites
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
@@ -20,16 +23,12 @@ import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuesti
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCertificateReportGuidelinesFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
@@ -91,7 +90,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = ::checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework,
+            onAutomaticHandshakeEnabled = { enable ->
+                viewModel.userWantsToRegisterAppForExposureNotifications = enable
+                viewModel.checkExposureNotificationPrerequisites(requireContext())
+            },
             onShareAppClick = {
                 shareApp()
             },
@@ -151,55 +153,47 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.someoneHasRecoveredHealthStatus = it
             }
 
-        disposables += viewModel.observeExposureNotificationRunningState()
-            .observeOnMainThread()
-            .subscribe { enabled ->
-                controller.automaticHandshakeEnabled = enabled
-            }
-
-        disposables += viewModel.observeCombinedExposureNotificationsState()
-            .observeOnMainThread()
-            .subscribe{
-                controller.combinedExposureNotificationsState = it
-            }
-
-        disposables += viewModel.observeExposureNotificationState()
+        disposables += viewModel.observeCombinedExposureNotificationState()
             .observeOnMainThread()
             .subscribe { state ->
+                controller.combinedExposureNotificationsState = state
                 when (state) {
-                    is State.Error -> {
-                        when (state.error) {
-                            is ApiException -> {
-                                val apiException = state.error as ApiException
-                                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                                    apiException.status.startResolutionForResult(
-                                        requireActivity(),
-                                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
-                                    )
-                                } else {
-                                    handleBaseCoronaErrors(state.error)
-                                }
-                            }
-                            else -> handleBaseCoronaErrors(state.error)
-                        }
+                    is EnabledWithError -> {
+                        handleCombinedExposureStateError(state)
                     }
                 }
             }
 
-        /**
-         * If the user starts the app for the first time the exposure notification framework will be started automatically.
-         */
-        if (viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
-            viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
-            checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(true)
-        }
+//        disposables += viewModel.observeExposureNotificationState()
+//            .observeOnMainThread()
+//            .subscribe { state ->
+//                controller.combinedExposureNotificationsState = state
+//                when (state) {
+//                    is State.Error -> {
+//                        when (state.error) {
+//                            is ApiException -> {
+//                                val apiException = state.error as ApiException
+//                                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+//                                    apiException.status.startResolutionForResult(
+//                                        requireActivity(),
+//                                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+//                                    )
+//                                } else {
+//                                    handleBaseCoronaErrors(state.error)
+//                                }
+//                            }
+//                            else -> handleBaseCoronaErrors(state.error)
+//                        }
+//                    }
+//                }
+//            }
 
         controller.requestModelBuild()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshExposureNotificationAppRegisteredState()
+//        viewModel.refreshExposureNotificationAppRegisteredState()
     }
 
     override fun onDestroyView() {
@@ -217,14 +211,23 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         }
     }
 
-    private fun checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(enableFramework: Boolean) {
-        when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
-            ConnectionResult.SUCCESS -> {
-                // TODO: 28/05/2020 dusanjencik: We should check also correct version
-                viewModel.onRegisterToExposureFramework(enableFramework)
-            }
-            else -> {
+    private fun handleCombinedExposureStateError(error: EnabledWithError) {
+        when (error) {
+            Prerequisites.UnavailableGooglePlayServices -> {
                 GooglePlayServicesNotAvailableDialog().show()
+            }
+            Prerequisites.InvalidVersionOfGooglePlayServices -> {
+                // TODO: 03/06/2020 dusanjencik: display dialog
+            }
+            is ExposureNotificationApiException -> {
+                if (error.error.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+                    error.error.status.startResolutionForResult(
+                        requireActivity(),
+                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                    )
+                } else {
+                    handleBaseCoronaErrors(error.error)
+                }
             }
         }
     }

@@ -1,21 +1,15 @@
 package at.roteskreuz.stopcorona.model.repositories
 
-import android.app.Activity
-import android.content.SharedPreferences
-import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
-import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
-import java.util.prefs.AbstractPreferences
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -27,8 +21,6 @@ interface ExposureNotificationRepository {
      * Get information if the app is registered with the Exposure Notifications framework.
      */
     val isAppRegisteredForExposureNotifications: Boolean
-
-    var userWantsToRegisterAppForExposureNotifications: Boolean
 
     /**
      * Observe information if the app is registered with the Exposure Notifications framework.
@@ -72,20 +64,13 @@ interface ExposureNotificationRepository {
      * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
      */
     fun refreshExposureNotificationAppRegisteredState()
-    fun observeUserWantsToRegisterAppForExposureNotificationsState(): Observable<Boolean>
 }
 
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
-    private val exposureNotificationClient: ExposureNotificationClient,
-    private val preferences: SharedPreferences
+    private val exposureNotificationClient: ExposureNotificationClient
 ) : ExposureNotificationRepository,
     CoroutineScope {
-
-    companion object {
-        private const val PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION =
-            Constants.Prefs.EXPOSURE_NOTIFICATIONS_PREFIX + "wanted_app_exposure_notification_registration_state"
-    }
 
     /**
      * Holds the enabled state, loading or error.
@@ -95,9 +80,6 @@ class ExposureNotificationRepositoryImpl(
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
-
-    override var userWantsToRegisterAppForExposureNotifications: Boolean
-        by preferences.booleanSharedPreferencesProperty(PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION, false)
 
     override var isAppRegisteredForExposureNotifications: Boolean
         get() = frameworkEnabledState.value
@@ -181,9 +163,5 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
             }
-    }
-
-    override fun observeUserWantsToRegisterAppForExposureNotificationsState(): Observable<Boolean> {
-        return preferences.observeBoolean(PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION, false)
     }
 }

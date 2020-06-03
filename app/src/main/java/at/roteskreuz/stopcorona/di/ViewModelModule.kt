@@ -49,7 +49,8 @@ val viewModelModule = module {
             quarantineRepository = get(),
             configurationRepository = get(),
             exposureNotificationRepository = get(),
-            databaseCleanupManager = get()
+            databaseCleanupManager = get(),
+            googlePlayAvailability = get()
         )
     }
 

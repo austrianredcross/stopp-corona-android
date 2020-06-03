@@ -1,15 +1,22 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
+import android.content.Context
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import com.github.dmstocking.optional.java.util.Optional
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.api.ApiException
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
+import java.util.concurrent.TimeUnit
 
 /**
  * Handles the user interaction and provides data for [DashboardFragment].
@@ -21,7 +28,8 @@ class DashboardViewModel(
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
     private val exposureNotificationRepository: ExposureNotificationRepository,
-    private val databaseCleanupManager: DatabaseCleanupManager
+    private val databaseCleanupManager: DatabaseCleanupManager,
+    private val googlePlayAvailability: GoogleApiAvailability
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
@@ -29,11 +37,35 @@ class DashboardViewModel(
         const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
     }
 
+    /**
+     * Holder for the current error state.
+     * Used to check prerequisites to register to Exposure notification framework.
+     */
+    private val prerequisitesErrorSubject = NonNullableBehaviorSubject<Optional<CombinedExposureNotificationsState.EnabledWithError>>(
+        Optional.ofNullable(null)
+    )
+
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
         set(value) {
             dashboardRepository.exposureFrameworkEnabledOnFirstStart = value
         }
+
+    var userWantsToRegisterAppForExposureNotifications: Boolean
+        get() = dashboardRepository.userWantsToRegisterAppForExposureNotifications
+        set(value) {
+            dashboardRepository.userWantsToRegisterAppForExposureNotifications = value
+        }
+
+    init {
+        /**
+         * If the user starts the app for the first time the exposure notification framework will be started automatically.
+         */
+        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
+            wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
+            userWantsToRegisterAppForExposureNotifications = true
+        }
+    }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
         return Observables.combineLatest(
@@ -117,8 +149,7 @@ class DashboardViewModel(
     /**
      * @param register True to start it, false to stop it.
      */
-    fun onRegisterToExposureFramework(register: Boolean) {
-        dashboardRepository.userWantsToRegisterAppForExposureNotifications = enabled
+    private fun onRegisterToExposureFramework(register: Boolean) {
         //TODO: Falko refresh state in exposureNotificationRepository
         when {
             register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
@@ -130,13 +161,25 @@ class DashboardViewModel(
         }
     }
 
-    fun observeCombinedExposureNotficationsState(){
-
+    fun observeCombinedExposureNotificationState(): Observable<CombinedExposureNotificationsState> {
+        return Observables.combineLatest(
+            dashboardRepository.observeUserWantsToRegisterAppForExposureNotification(),
+            prerequisitesErrorSubject
+//            exposureNotificationRepository.observeRegistrationState(),
+//            exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+        )
+            .debounce(50, TimeUnit.MILLISECONDS) // some of the sources can be changed together
+            .map { (wantedState, prerequisitesErrors) -> //, registrationState, registrationStatess ->
+                when {
+                    wantedState && prerequisitesErrors.isPresent -> prerequisitesErrors.get()
+                    wantedState -> CombinedExposureNotificationsState.Enabled
+//                wantedState && registr
+//                wantedState && realState -> CombinedExposureNotificationsState.Enabled
+                    else -> CombinedExposureNotificationsState.Disabled
+                }
+            }
+            .distinctUntilChanged()
     }
-
-    fun observeExposureNotificationRunningState() = exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
-
-    fun observeExposureNotificationState() = exposureNotificationRepository.observeRegistrationState()
 
     /**
      * Handles [Activity.RESULT_OK] for a resolution. User accepted opt-in for exposure notification.
@@ -152,11 +195,20 @@ class DashboardViewModel(
         exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
     }
 
-    fun refreshExposureNotificationAppRegisteredState() {
+    private fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
     }
 
-    fun observeCombinedExposureNotificationsState() = dashboardRepository.observeCombinedExposureNotificationsState()
+    fun checkExposureNotificationPrerequisites(context: Context) {
+        var error: CombinedExposureNotificationsState.EnabledWithError? = null
+        if (googlePlayAvailability.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+            // TODO: 28/05/2020 dusanjencik: We should check also correct version
+            onRegisterToExposureFramework(userWantsToRegisterAppForExposureNotifications)
+        } else {
+            error = CombinedExposureNotificationsState.EnabledWithError.Prerequisites.UnavailableGooglePlayServices
+        }
+        prerequisitesErrorSubject.onNext(Optional.ofNullable(error))
+    }
 }
 
 /**
@@ -201,5 +253,30 @@ sealed class HealthStatusData {
     object NoHealthStatus : HealthStatusData()
 }
 
+/**
+ * Indication for switch.
+ */
+sealed class CombinedExposureNotificationsState {
 
+    sealed class EnabledWithError : CombinedExposureNotificationsState() {
+        sealed class Prerequisites : EnabledWithError() {
+            /**
+             * Google play services are not available on the phone.
+             */
+            object UnavailableGooglePlayServices : EnabledWithError()
 
+            /**
+             * The current Google play services version is not matching Exposure notification minimum version.
+             */
+            object InvalidVersionOfGooglePlayServices : EnabledWithError()
+        }
+
+        /**
+         * Error from Exposure notification framework.
+         */
+        data class ExposureNotificationApiException(val error: ApiException) : EnabledWithError()
+    }
+
+    object Enabled : CombinedExposureNotificationsState()
+    object Disabled : CombinedExposureNotificationsState()
+}

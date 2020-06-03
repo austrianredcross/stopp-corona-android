@@ -72,5 +72,6 @@
     <color name="questionnaire_self_monitoring_circle_tint">@color/white</color>
 
     <color name="switch_background_enabled">@color/blue</color>
+    <color name="switch_background_paused">@color/tangerine</color>
     <color name="switch_background_disabled">@color/gray_3</color>
 </resources>

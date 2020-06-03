@@ -82,13 +82,13 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="AppTheme.ListTime.Small">
+    <style name="AppTheme.ListTime.Small" parent="AppTheme.ListTime">
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textColor">@color/darkGray</item>
     </style>
 
-    <style name="AppTheme.ListTime.Bold">
+    <style name="AppTheme.ListTime.Bold" parent="AppTheme.ListTime">
         <item name="fontFamily">@font/roboto_bold</item>
     </style>
 
