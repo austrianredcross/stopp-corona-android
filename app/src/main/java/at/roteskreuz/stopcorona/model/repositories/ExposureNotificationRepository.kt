@@ -74,7 +74,7 @@ interface ExposureNotificationRepository {
     /**
      * return a pending Intent to the Setting in the system
      */
-    fun settingsPendingIntent(context: Context): PendingIntent;
+    fun settingsPendingIntent(context: Context): PendingIntent
 
     /**
      * return an Intent to the Setting in the system
@@ -131,13 +131,16 @@ class ExposureNotificationRepositoryImpl(
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
                     registeringWithFrameworkState.idle()
+                    bluetoothStateReceiver.unregister(context)
                     return@addOnFailureListener
                 }
                 registeringWithFrameworkState.error(exception) // will be type of ApiException
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregister(context)
             }
             .addOnCanceledListener {
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregister(context)
             }
     }
 
@@ -147,19 +150,23 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.register(context)
             }
             .addOnFailureListener { exception: Exception ->
                 Timber.e(exception, "Error handling resolution ok")
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregister(context)
             }
             .addOnCanceledListener {
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregister(context)
             }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
         registeringWithFrameworkState.idle()
         frameworkEnabledState.onNext(false)
+        bluetoothStateReceiver.unregister(context)
     }
 
     override fun unregisterAppFromExposureNotifications() {
@@ -167,16 +174,17 @@ class ExposureNotificationRepositoryImpl(
             Timber.e(SilentError("Stop called when it is in loading"))
             return
         }
-        bluetoothStateReceiver.unregister(context)
         registeringWithFrameworkState.loading()
         exposureNotificationClient.stop()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregister(context)
             }
             .addOnFailureListener { exception: Exception ->
                 Timber.e(exception, "Unknown error when attempting to start API")
                 registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.register(context)
             }
     }
 
