@@ -113,7 +113,6 @@ class DashboardViewModel(
             .subscribe { (phase, state) ->
                 if (phase == ExposureCheckPhase.RegistrationActing) {
                     when (state) {
-                        State.Idle -> TODO()
                         is State.Error -> {
                             registrationErrorSubject.onNext(Optional.ofNullable(state.error))
                         }
@@ -277,11 +276,16 @@ class DashboardViewModel(
         exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
     }
 
-    //
-//    private fun refreshExposureNotificationAppRegisteredState() {
-//        exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
-//    }
-//
+    fun refreshExposureNotificationAppRegisteredState() {
+        if (exposureCheckPhaseSubject.value == ExposureCheckPhase.CheckPrerequisites) {
+            exposureCheckPhaseSubject.onNext(ExposureCheckPhase.CheckPrerequisites) // rerun check
+        } else if (exposureCheckPhaseSubject.value == ExposureCheckPhase.RegistrationActing) {
+            exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
+        } else {
+            throw RuntimeException("Trying to refresh state in wrong phase")
+        }
+    }
+
     private fun checkExposureNotificationPrerequisitesAndGetError(): CombinedExposureNotificationsState.EnabledWithError.Prerequisites? {
         var error: CombinedExposureNotificationsState.EnabledWithError.Prerequisites? = null
         if (googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext) != ConnectionResult.SUCCESS) {

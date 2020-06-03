@@ -7,6 +7,8 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
+import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.ExposureNotificationError
+import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.Prerequisites
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -29,6 +31,7 @@ class DashboardController(
     private val onSomeoneHasRecoveredCloseClick: () -> Unit,
     private val onQuarantineEndCloseClick: () -> Unit,
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
+    private val refreshAutomaticHandshakeErrors: () -> Unit,
     private val onRevokeSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
@@ -150,22 +153,29 @@ class DashboardController(
         //TODO: Falko new card depending on the errors
         // when(combinedExposureNotificationsState)
 
-//        smallDescription {
-//            id("automatic_handshake_description_enabled")
-//            description(
-//                when {
-//                    ownHealthStatus is HealthStatusData.SicknessCertificate -> {
-//                        context.string(R.string.main_automatic_handshake_description_disabled)
-//                    }
-//                    automaticHandshakeEnabled -> {
-//                        context.string(R.string.main_automatic_handshake_description_on)
-//                    }
-//                    else -> {
-//                        context.string(R.string.main_automatic_handshake_description_off)
-//                    }
-//                }
-//            )
-//        }
+        when (combinedExposureNotificationsState) {
+            Prerequisites.UnavailableGooglePlayServices -> {
+                statusUpdate(refreshAutomaticHandshakeErrors) {
+                    id("UnavailableGooglePlayServices")
+                    title("UnavailableGooglePlayServices")
+                    cardStatus(CardUpdateStatus.ContactUpdate)
+                }
+            }
+            Prerequisites.InvalidVersionOfGooglePlayServices -> {
+                statusUpdate(refreshAutomaticHandshakeErrors) {
+                    id("InvalidVersionOfGooglePlayServices")
+                    title("InvalidVersionOfGooglePlayServices")
+                    cardStatus(CardUpdateStatus.ContactUpdate)
+                }
+            }
+            is ExposureNotificationError -> {
+                statusUpdate(refreshAutomaticHandshakeErrors) {
+                    id("ExposureNotificationError")
+                    title("ExposureNotificationError")
+                    cardStatus(CardUpdateStatus.ContactUpdate)
+                }
+            }
+        }
 
         emptySpace(modelCountBuiltSoFar, 16)
 

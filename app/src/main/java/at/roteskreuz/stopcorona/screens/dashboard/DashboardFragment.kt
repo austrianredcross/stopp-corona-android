@@ -12,9 +12,7 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError
-import at.roteskreuz.stopcorona.screens.dashboard.CombinedExposureNotificationsState.EnabledWithError.Prerequisites
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
-import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
@@ -94,6 +92,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onAutomaticHandshakeEnabled = { enable ->
                 viewModel.userWantsToRegisterAppForExposureNotifications = enable
 //                viewModel.checkExposureNotificationPrerequisites(requireContext())
+            },
+            refreshAutomaticHandshakeErrors = {
+                viewModel.refreshExposureNotificationAppRegisteredState()
             },
             onShareAppClick = {
                 shareApp()
@@ -191,12 +192,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     private fun handleCombinedExposureStateError(error: EnabledWithError) {
         when (error) {
-            Prerequisites.UnavailableGooglePlayServices -> {
-                GooglePlayServicesNotAvailableDialog().show()
-            }
-            Prerequisites.InvalidVersionOfGooglePlayServices -> {
-                // TODO: 03/06/2020 dusanjencik: display dialog
-            }
             is EnabledWithError.ExposureNotificationError -> {
                 if (error.error is ApiException) {
                     if (error.error.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
