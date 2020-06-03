@@ -113,7 +113,7 @@ class DebugExposureNotificationsViewModel(
     }
 
     fun jumpToSystemSettings() {
-        val intent = exposureNotificationRepository.settingsIntent()
+        val intent = exposureNotificationRepository.settingsIntent
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication<Application>().startActivity(intent)
     }
