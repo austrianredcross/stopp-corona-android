@@ -11,18 +11,15 @@ import androidx.core.app.ActivityCompat.startActivityForResult
  */
 class BluetoothRepository(
     private val bluetoothAdapter: BluetoothAdapter
-
 ){
+    val enableBluetoothIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+
     fun isBluetoothEnabled(): Boolean {
         return bluetoothAdapter.isEnabled
     }
 
-    fun enableBluetoothIntent(): Intent {
-        return Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-    }
-
     fun enableBluetoothPendingIntent(context: Context): PendingIntent {
-        val enableBtIntent = enableBluetoothIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val enableBtIntent = enableBluetoothIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return PendingIntent.getActivity(context, 0, enableBtIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 }

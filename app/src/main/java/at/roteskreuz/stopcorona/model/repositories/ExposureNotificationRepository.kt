@@ -79,7 +79,7 @@ interface ExposureNotificationRepository {
     /**
      * return an Intent to the Setting in the system
      */
-    fun settingsIntent(): Intent
+    val settingsIntent: Intent
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -89,6 +89,8 @@ class ExposureNotificationRepositoryImpl(
     private val context: Context
 ) : ExposureNotificationRepository,
     CoroutineScope {
+
+    override val settingsIntent: Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
 
     /**
      * Holds the enabled state, loading or error.
@@ -191,12 +193,8 @@ class ExposureNotificationRepositoryImpl(
             }
     }
 
-    override fun settingsIntent(): Intent{
-        return Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
-    }
-
     override fun settingsPendingIntent(context: Context): PendingIntent {
-        val settingsIntent = settingsIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val settingsIntent = settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 }
