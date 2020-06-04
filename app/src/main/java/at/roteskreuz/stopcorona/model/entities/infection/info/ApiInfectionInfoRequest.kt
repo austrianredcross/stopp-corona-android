@@ -4,6 +4,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.EnumTypeConver
 import com.squareup.moshi.*
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+import java.lang.IllegalArgumentException
 
 /**
  * Describes infection info about user.

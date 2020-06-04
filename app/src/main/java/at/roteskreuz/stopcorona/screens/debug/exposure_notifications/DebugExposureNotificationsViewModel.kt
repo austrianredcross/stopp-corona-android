@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
@@ -213,7 +214,11 @@ class DebugExposureNotificationsViewModel(
     fun uploadKeys(warningType: WarningType) {
         val keys = lastTemporaryExposureKeysSubject.value
         val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
-            ApiTemporaryTracingKeyConverter.convert(tek, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ApiTemporaryTracingKeyConverter.convert(tek, warningType.ordinal)
+            } else {
+                TODO("VERSION.SDK_INT < O")
+            }
         }
         launch {
             try {

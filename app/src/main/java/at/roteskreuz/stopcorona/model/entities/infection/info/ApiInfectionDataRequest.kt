@@ -1,7 +1,10 @@
 package at.roteskreuz.stopcorona.model.entities.infection.info
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import com.squareup.moshi.JsonClass
+import java.util.Base64
 
 /**
  * Describes infection info about user with data gathered from the Exposure SDK.
@@ -25,15 +28,30 @@ data class ApiTemporaryTracingKey(
     val intervalCount: Int,
     val transmissionRisk: Int
 )
+
+class WarningTypeToTransmissionRiscConverter{
+    companion object {
+        fun transmissionRisc(warningType: WarningType): Int {
+            return when(warningType){
+                WarningType.YELLOW -> 6
+                WarningType.RED -> 9
+                WarningType.REVOKE -> 0
+            }
+        }
+    }
+}
+
 class ApiTemporaryTracingKeyConverter{
     companion object TEK{
-        fun convert(tek: TemporaryExposureKey, risc: Int):ApiTemporaryTracingKey{
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun convert(tek: TemporaryExposureKey, warningType: WarningType):ApiTemporaryTracingKey{
+            val base64Key = Base64.getEncoder().encodeToString(tek.keyData)
             return ApiTemporaryTracingKey(
-                key = tek.keyData.toString(),
-                password = tek.keyData.toString(),
+                key = base64Key,
+                password = base64Key,
                 intervalCount = tek.rollingPeriod,
                 intervalNumber = tek.rollingStartIntervalNumber,
-                transmissionRisk = risc
+                transmissionRisk = WarningTypeToTransmissionRiscConverter.transmissionRisc(warningType)
             )
         }
     }
