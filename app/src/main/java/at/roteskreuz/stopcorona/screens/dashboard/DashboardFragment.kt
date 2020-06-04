@@ -11,8 +11,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -93,6 +92,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is PrerequisitesError -> {
                         exposureNotificationPhase.refresh()
                     }
+                    is FrameworkError -> {
+                        exposureNotificationPhase.refresh()
+                    }
                 }
             },
             onShareAppClick = {
@@ -159,7 +161,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { phase ->
                 controller.exposureNotificationPhase = phase
                 when (phase) {
-                    is FrameworkError.RegisterActionUserApprovalNeeded -> {
+                    is RegisterActionUserApprovalNeeded -> {
                         phase.apiException.status.startResolutionForResult(
                             requireActivity(),
                             REQUEST_CODE_START_EXPOSURE_NOTIFICATION

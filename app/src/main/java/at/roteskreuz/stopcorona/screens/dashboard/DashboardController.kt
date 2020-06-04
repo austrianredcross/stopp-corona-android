@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -125,7 +126,7 @@ class DashboardController(
         emptySpace(modelCountBuiltSoFar, 16)
 
         // needed to have two caches of epoxy models because of lottie
-        if (exposureNotificationPhase is ExposureNotificationPhase.FrameworkRunning) {
+        if (exposureNotificationPhase is FrameworkRunning) {
             handshakeImage {
                 id("handshake_image_active")
                 active(true)
@@ -150,21 +151,35 @@ class DashboardController(
 
         if (exposureNotificationPhase != null) {
             when (exposureNotificationPhase) {
-                is ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices -> {
+                is PrerequisitesError.UnavailableGooglePlayServices -> {
                     statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
                         id("UnavailableGooglePlayServices")
                         title("UnavailableGooglePlayServices")
                         cardStatus(CardUpdateStatus.ContactUpdate)
                     }
                 }
-                is ExposureNotificationPhase.PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
+                is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                     statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
                         id("InvalidVersionOfGooglePlayServices")
                         title("InvalidVersionOfGooglePlayServices")
                         cardStatus(CardUpdateStatus.ContactUpdate)
                     }
                 }
-                is ExposureNotificationPhase.FrameworkError.Unknown -> {
+                is FrameworkError.RegistrationNotApproved -> {
+                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                        id("FrameworkError.RegistrationNotApproved")
+                        title("FrameworkError.RegistrationNotApproved")
+                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    }
+                }
+                is FrameworkError.FrameworkStartFailed -> {
+                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                        id("FrameworkError.FrameworkStartFailed")
+                        title("FrameworkError.FrameworkStartFailed")
+                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    }
+                }
+                is FrameworkError.Unknown -> {
                     statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
                         id("FrameworkError.Unknown")
                         title("FrameworkError.Unknown")

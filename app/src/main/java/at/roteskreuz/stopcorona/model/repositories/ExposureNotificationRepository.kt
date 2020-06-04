@@ -5,8 +5,8 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
+import com.google.android.gms.tasks.Task
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
@@ -102,38 +102,13 @@ class ExposureNotificationRepositoryImpl(
         }
         registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
-            .addOnSuccessListener {
-                refreshExposureNotificationAppRegisteredState()
-                registeringWithFrameworkState.idle()
-            }
-            .addOnFailureListener { exception: Exception ->
-                if (exception !is ApiException) {
-                    Timber.e(exception, "Unknown error when attempting to start API")
-                    registeringWithFrameworkState.idle()
-                    return@addOnFailureListener
-                }
-                registeringWithFrameworkState.error(exception) // will be type of ApiException
-                registeringWithFrameworkState.idle()
-            }
-            .addOnCanceledListener {
-                registeringWithFrameworkState.idle()
-            }
+            .sendResultTo(registeringWithFrameworkState)
     }
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
         registeringWithFrameworkState.loading()
         exposureNotificationClient.stop()
-            .addOnSuccessListener {
-                refreshExposureNotificationAppRegisteredState()
-                registeringWithFrameworkState.idle()
-            }
-            .addOnFailureListener { exception: Exception ->
-                Timber.e(exception, "Error handling resolution ok")
-                registeringWithFrameworkState.idle()
-            }
-            .addOnCanceledListener {
-                registeringWithFrameworkState.idle()
-            }
+            .sendResultTo(registeringWithFrameworkState)
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
@@ -148,14 +123,7 @@ class ExposureNotificationRepositoryImpl(
         }
         registeringWithFrameworkState.loading()
         exposureNotificationClient.stop()
-            .addOnSuccessListener {
-                refreshExposureNotificationAppRegisteredState()
-                registeringWithFrameworkState.idle()
-            }
-            .addOnFailureListener { exception: Exception ->
-                Timber.e(exception, "Unknown error when attempting to start API")
-                registeringWithFrameworkState.idle()
-            }
+            .sendResultTo(registeringWithFrameworkState)
     }
 
     override fun refreshExposureNotificationAppRegisteredState() {
@@ -163,5 +131,16 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
             }
+    }
+
+    private fun Task<Void>.sendResultTo(stateObserver: StateObserver) {
+        addOnSuccessListener {
+            refreshExposureNotificationAppRegisteredState()
+            stateObserver.idle()
+        }.addOnFailureListener { exception: Exception ->
+            stateObserver.error(exception)
+        }.addOnCanceledListener {
+            stateObserver.idle()
+        }
     }
 }

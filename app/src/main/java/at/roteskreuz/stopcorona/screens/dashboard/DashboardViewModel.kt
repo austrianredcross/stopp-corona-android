@@ -9,6 +9,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import at.roteskreuz.stopcorona.utils.shareReplayLast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
@@ -16,10 +17,10 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 /**
  * Handles the user interaction and provides data for [DashboardFragment].
@@ -79,7 +80,7 @@ class DashboardViewModel(
         /**
          * Handle state machine states.
          */
-        disposables += exposureNotificationPhaseSubject
+        disposables += observeExposureNotificationPhase()
             .subscribe { state ->
                 Timber.w("Exposure notification phase = ${state.javaClass.simpleName}")
                 state.onCreate { newState ->
@@ -170,8 +171,9 @@ class DashboardViewModel(
 
     fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
         return exposureNotificationPhaseSubject
-            .debounce(150, TimeUnit.MILLISECONDS) // states might be changing too fast
+            .observeOn(Schedulers.newThread()) // needed to have synchronised emits
             .distinctUntilChanged()
+            .shareReplayLast()
     }
 
     /**
@@ -179,7 +181,7 @@ class DashboardViewModel(
      */
     fun onExposureNotificationRegistrationResolutionResultOk() {
         exposureNotificationPhaseSubject.value.let { state ->
-            if (state is ExposureNotificationPhase.FrameworkError.RegisterActionUserApprovalNeeded) {
+            if (state is ExposureNotificationPhase.RegisterActionUserApprovalNeeded) {
                 state.onResolutionOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is ok"))
@@ -192,7 +194,7 @@ class DashboardViewModel(
      */
     fun onExposureNotificationRegistrationResolutionResultNotOk() {
         exposureNotificationPhaseSubject.value.let { state ->
-            if (state is ExposureNotificationPhase.FrameworkError.RegisterActionUserApprovalNeeded) {
+            if (state is ExposureNotificationPhase.RegisterActionUserApprovalNeeded) {
                 state.onResolutionNotOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is not ok"))
@@ -318,6 +320,12 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             this.moveToNextState = moveToNextState
+            disposables += dependencyHolder.dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                .subscribe { wantedState ->
+                    if (wantedState.not()) {
+                        moveToNextState(WaitingForWantedState(dependencyHolder))
+                    }
+                }
         }
 
         /**
@@ -354,10 +362,10 @@ sealed class ExposureNotificationPhase {
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
                 when {
-                    register && exposureNotificationRepository.isAppRegisteredForExposureNotifications.not() -> {
+                    register -> {
                         exposureNotificationRepository.registerAppForExposureNotifications()
                     }
-                    register.not() && exposureNotificationRepository.isAppRegisteredForExposureNotifications -> {
+                    else -> {
                         exposureNotificationRepository.unregisterAppFromExposureNotifications()
                     }
                 }
@@ -377,6 +385,12 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
+                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                    .subscribe { wantedState ->
+                        if (wantedState.not()) {
+                            moveToNextState(WaitingForWantedState(dependencyHolder))
+                        }
+                    }
                 disposables += exposureNotificationRepository.observeRegistrationState()
                     .subscribe { state ->
                         when (state) {
@@ -391,8 +405,9 @@ sealed class ExposureNotificationPhase {
                             }
                             is State.Error -> {
                                 if (state.error is ApiException) {
+                                    // TODO: 04/06/2020 dusanjencik: check 10: at.roteskreuz.stopcorona.stage not enabled
                                     moveToNextState(
-                                        FrameworkError.RegisterActionUserApprovalNeeded(dependencyHolder, state.error as ApiException, register)
+                                        RegisterActionUserApprovalNeeded(dependencyHolder, state.error as ApiException, register)
                                     )
                                 } else {
                                     moveToNextState(FrameworkError.Unknown(dependencyHolder, state.error, register))
@@ -401,6 +416,39 @@ sealed class ExposureNotificationPhase {
                         }
                     }
             }
+        }
+    }
+
+    /**
+     * User must confirm the registration app to the framework.
+     * @param register True to start it, false to stop it.
+     */
+    data class RegisterActionUserApprovalNeeded(
+        override val dependencyHolder: DependencyHolder,
+        val apiException: ApiException,
+        val register: Boolean
+    ) : ExposureNotificationPhase() {
+
+        private lateinit var moveToNextState: (ExposureNotificationPhase) -> Unit
+
+        override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+            this.moveToNextState = moveToNextState
+            disposables += dependencyHolder.dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                .subscribe { wantedState ->
+                    if (wantedState.not()) {
+                        moveToNextState(RegisterToFramework(dependencyHolder, false))
+                    }
+                }
+        }
+
+        fun onResolutionOk() {
+            dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
+            moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+        }
+
+        fun onResolutionNotOk() {
+            dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
+            moveToNextState(FrameworkError.RegistrationNotApproved(dependencyHolder, register))
         }
     }
 
@@ -414,35 +462,36 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             this.moveToNextState = moveToNextState
+            disposables += dependencyHolder.dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                .subscribe { wantedState ->
+                    if (wantedState.not()) {
+                        moveToNextState(RegisterToFramework(dependencyHolder, false))
+                    }
+                }
         }
 
         /**
          * Will refresh exposure notification registration state again.
          */
         fun refresh() {
-            moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+            moveToNextState(RegisterToFramework(dependencyHolder, register))
         }
 
         /**
-         * User must confirm the registration app to the framework.
-         * @param register True to start it, false to stop it.
+         * Registration to the framework has not been approved by user.
          */
-        data class RegisterActionUserApprovalNeeded(
+        data class RegistrationNotApproved(
             override val dependencyHolder: DependencyHolder,
-            val apiException: ApiException,
             override val register: Boolean
-        ) : FrameworkError() {
+        ) : FrameworkError()
 
-            fun onResolutionOk() {
-                dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
-                refresh()
-            }
-
-            fun onResolutionNotOk() {
-                dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
-                refresh()
-            }
-        }
+        /**
+         * Registration to the framework failed.
+         */
+        data class FrameworkStartFailed(
+            override val dependencyHolder: DependencyHolder,
+            override val register: Boolean
+        ) : FrameworkError()
 
         /**
          * Framework caused some unknown error.
@@ -466,13 +515,20 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
-                disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                    .subscribe { wantedState ->
+                        if (wantedState.not()) {
+                            moveToNextState(RegisterToFramework(dependencyHolder, false))
+                        }
+                    }
+                disposables += exposureNotificationRepository.observeRegistrationState()
+                    .filter { it is State.Idle }
+                    .switchMap { exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications() }
                     .subscribe { realState ->
                         if (realState) {
                             moveToNextState(FrameworkRunning(dependencyHolder))
                         } else {
-                            // TODO: 03/06/2020 dusanjencik: Maybe too fast
-                            moveToNextState(RegisterToFramework(dependencyHolder, false))
+                            moveToNextState(FrameworkError.FrameworkStartFailed(dependencyHolder, true))
                         }
                     }
             }
