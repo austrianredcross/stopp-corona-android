@@ -655,6 +655,7 @@ sealed class ExposureNotificationPhase {
                         if (realState) {
                             moveToNextState(FrameworkRunning(dependencyHolder))
                         } else {
+                            // TODO: 04/06/2020 dusanjencik: Sometimes this is called before the framework is ready, why?
                             moveToNextState(FrameworkError.ResolutionDeclined(dependencyHolder, true))
                         }
                     }
