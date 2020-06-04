@@ -1,14 +1,20 @@
 package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
 import android.app.Activity
-import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.lifecycle.AndroidViewModel
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.model.api.ApiInteractor
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
+import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
@@ -16,12 +22,17 @@ import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
+import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.UUID
 
 class DebugExposureNotificationsViewModel(
-    application: Application
-) : AndroidViewModel(application) {
+    appDispatchers : AppDispatchers,
+    private val apiInteractor: ApiInteractor,
+    private val contextInteractor: ContextInteractor
+) : ScopedViewModel(appDispatchers)  {
 
     enum class DebugAction{
         REGISTER_WITH_FRAMEWORK{
@@ -39,9 +50,10 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<Pair<Status,DebugAction>>()
+    private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject(mutableListOf<TemporaryExposureKey>());
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
-        Nearby.getExposureNotificationClient(application);
+        Nearby.getExposureNotificationClient(contextInteractor.applicationContext);
     }
 
     fun checkEnabledState() {
@@ -69,6 +81,10 @@ class DebugExposureNotificationsViewModel(
 
     fun observeResultionErrorReasons(): Observable<String> {
         return exposureNotificationsTextSubject
+    }
+
+    fun observeLastTemporaryExposureKeys(): Observable<MutableList<TemporaryExposureKey>> {
+        return lastTemporaryExposureKeysSubject
     }
 
     /**
@@ -124,11 +140,11 @@ class DebugExposureNotificationsViewModel(
     fun jumpToSystemSettings() {
         val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplication<Application>().startActivity(intent)
+        contextInteractor.applicationContext.startActivity(intent)
     }
 
     fun googlePlayServicesVersion(): String {
-        return getApplication<Application>().getString(
+        return contextInteractor.applicationContext.getString(
             R.string.debug_version_gms,
             getVersionNameForPackage(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE)
         )
@@ -137,12 +153,12 @@ class DebugExposureNotificationsViewModel(
     /** Gets the version name for a specified package. Returns a debug string if not found.  */
     private fun getVersionNameForPackage(packageName: String): String? {
         try {
-            return getApplication<Application>().getPackageManager()
+            return contextInteractor.applicationContext.getPackageManager()
                 .getPackageInfo(packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             Timber.e(e, "Couldn't get the app version")
         }
-        return getApplication<Application>().getString(R.string.debug_version_not_available)
+        return contextInteractor.applicationContext.getString(R.string.debug_version_not_available)
     }
 
     fun resolutionForRegistrationSucceeded(activity: Activity) {
@@ -161,6 +177,8 @@ class DebugExposureNotificationsViewModel(
                 Timber.d("got the list of Temporary Exposure Keys $it")
                 exposureNotificationsTextSubject.onNext("got the list of Temp" +
                     "oraryExposureKeys $it")
+                lastTemporaryExposureKeysSubject.onNext(it)
+
             }
             .addOnFailureListener { exception: Exception? ->
                 if (exception !is ApiException) {
@@ -190,5 +208,26 @@ class DebugExposureNotificationsViewModel(
 
     fun resolutionForRegistrationFailed(resultCode: Int) {
         exposureNotificationsTextSubject.onNext("resolutionForRegistrationFailed with code: $resultCode")
+    }
+
+    fun uploadKeys(warningType: WarningType) {
+        val keys = lastTemporaryExposureKeysSubject.value
+        val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
+            ApiTemporaryTracingKeyConverter.convert(tek, 0)
+        }
+        launch {
+            try {
+                apiInteractor.uploadInfectionData(
+                    convertedValues,
+                    contextInteractor.packageName,
+                    warningType,
+                    ApiVerificationPayload(UUID.randomUUID().toString(),"RED-CROSS")
+                )
+                exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs succeeded")
+            } catch (e:Exception){
+                exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs failed because of $e")
+                Timber.e(e)
+            }
+        }
     }
 }

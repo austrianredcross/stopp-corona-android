@@ -4,10 +4,7 @@ import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfigurationHol
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionInfoRequest
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.PUT
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**
  * Description of REST Api for Retrofit.
@@ -23,6 +20,6 @@ interface ApiDescription {
     @PUT("infection-info")
     suspend fun infectionInfo(@Body infectionInfoRequest: ApiInfectionInfoRequest)
 
-    @PUT("publish")
+    @POST("publish")
     suspend fun publish(@Body infectionDataRequest: ApiInfectionDataRequest)
 }
