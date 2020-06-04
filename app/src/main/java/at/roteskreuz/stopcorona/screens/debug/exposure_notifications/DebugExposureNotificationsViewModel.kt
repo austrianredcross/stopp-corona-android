@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
@@ -31,7 +32,8 @@ import java.util.UUID
 class DebugExposureNotificationsViewModel(
     appDispatchers : AppDispatchers,
     private val apiInteractor: ApiInteractor,
-    private val contextInteractor: ContextInteractor
+    private val contextInteractor: ContextInteractor,
+    private val exposureNotificationRepository: ExposureNotificationRepository
 ) : ScopedViewModel(appDispatchers)  {
 
     enum class DebugAction{
@@ -51,6 +53,7 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<Pair<Status,DebugAction>>()
     private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject(mutableListOf<TemporaryExposureKey>());
+
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
         Nearby.getExposureNotificationClient(contextInteractor.applicationContext);
@@ -138,7 +141,7 @@ class DebugExposureNotificationsViewModel(
     }
 
     fun jumpToSystemSettings() {
-        val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+        val intent = exposureNotificationRepository.getExposureSettingsIntent()
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         contextInteractor.applicationContext.startActivity(intent)
     }
