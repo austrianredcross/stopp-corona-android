@@ -33,9 +33,9 @@ class WarningTypeToTransmissionRiscConverter{
     companion object {
         fun transmissionRisc(warningType: WarningType): Int {
             return when(warningType){
-                WarningType.YELLOW -> 6
-                WarningType.RED -> 9
-                WarningType.REVOKE -> 0
+                WarningType.RED -> 4
+                WarningType.YELLOW -> 5
+                WarningType.REVOKE -> 6
             }
         }
     }

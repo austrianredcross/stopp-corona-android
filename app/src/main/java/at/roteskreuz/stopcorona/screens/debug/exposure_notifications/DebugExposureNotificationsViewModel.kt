@@ -215,7 +215,7 @@ class DebugExposureNotificationsViewModel(
         val keys = lastTemporaryExposureKeysSubject.value
         val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                ApiTemporaryTracingKeyConverter.convert(tek, warningType.ordinal)
+                ApiTemporaryTracingKeyConverter.convert(tek, warningType)
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
