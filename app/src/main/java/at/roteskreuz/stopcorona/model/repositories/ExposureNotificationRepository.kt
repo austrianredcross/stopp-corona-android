@@ -30,11 +30,6 @@ interface ExposureNotificationRepository {
     val isAppRegisteredForExposureNotificationsLastState: Boolean
 
     /**
-     * return an Intent to the Setting in the system
-     */
-    val settingsIntent: Intent
-
-    /**
      * Observe information if the app is registered with the Exposure Notifications framework.
      */
     fun observeAppIsRegisteredForExposureNotifications(): Observable<Boolean>
@@ -78,12 +73,18 @@ interface ExposureNotificationRepository {
     fun refreshExposureNotificationAppRegisteredState()
 
     /**
-     * return a pending Intent to the Setting in the system
+     * Get an Intent to the Exposure notification Setting in the system.
      */
-    fun settingsPendingIntent(context: Context): PendingIntent
+    fun getExposureSettingsIntent(): Intent
 
     /**
-     * blocking function to return the current state of the Exposure Notifications Framework state
+     * Get a pending Intent to the Exposure notification Setting in the system.
+     * Flag for new task.
+     */
+    fun getExposureSettingsPendingIntent(context: Context): PendingIntent
+
+    /**
+     * Get the current (refreshed) state of the Exposure Notifications Framework state.
      */
     suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
 }
@@ -95,8 +96,6 @@ class ExposureNotificationRepositoryImpl(
     private val contextInteractor: ContextInteractor
 ) : ExposureNotificationRepository,
     CoroutineScope {
-
-    override val settingsIntent: Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
 
     /**
      * Holds the enabled state, loading or error.
@@ -194,18 +193,6 @@ class ExposureNotificationRepositoryImpl(
             }
     }
 
-    override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
-        return suspendCancellableCoroutine { cancellableContinuation ->
-            exposureNotificationClient.isEnabled
-                .addOnSuccessListener {
-                    cancellableContinuation.resume(it)
-                }
-                .addOnFailureListener {
-                    cancellableContinuation.resume(false)
-                }
-        }
-    }
-
     override fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
@@ -217,8 +204,22 @@ class ExposureNotificationRepositoryImpl(
             }
     }
 
-    override fun settingsPendingIntent(context: Context): PendingIntent {
-        val settingsIntent = settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    override fun getExposureSettingsIntent(): Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+
+    override fun getExposureSettingsPendingIntent(context: Context): PendingIntent {
+        val settingsIntent = getExposureSettingsIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
+    }
+
+    override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
+        return suspendCancellableCoroutine { cancellableContinuation ->
+            exposureNotificationClient.isEnabled
+                .addOnSuccessListener {
+                    cancellableContinuation.resume(it)
+                }
+                .addOnFailureListener {
+                    cancellableContinuation.resume(false)
+                }
+        }
     }
 }

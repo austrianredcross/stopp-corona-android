@@ -190,7 +190,7 @@ class NotificationsRepositoryImpl(
         buildNotification(
             title = title,
             message = message,
-            pendingIntent = exposureNotificationRepository.settingsPendingIntent(context),
+            pendingIntent = exposureNotificationRepository.getExposureSettingsPendingIntent(context),
             channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
         ).show()
     }

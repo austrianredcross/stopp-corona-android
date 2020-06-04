@@ -10,7 +10,7 @@ import org.koin.standalone.inject
 
 /**
  * Worker to show Bluetooth Notification based if the App is registered as the Exposure Notifications
- * application. Since it involves interaction with the Play Services, we need to run async
+ * application. Since it involves interaction with the Play Services, we need to run async.
  */
 class ExposureNotificationNotifierWorker(
     appContext: Context,
@@ -18,9 +18,9 @@ class ExposureNotificationNotifierWorker(
 ) : CoroutineWorker(appContext, workerParams), KoinComponent {
 
     companion object {
-            private const val TAG = "ExposureNotificationNotifierWorker"
+        private const val TAG = "ExposureNotificationNotifierWorker"
 
-        fun enqueueExposureNotificationNotifierWorker(workManager: WorkManager) {
+        fun enqueueAskForBluetoothIfDisabledAndFrameworkIsEnabled(workManager: WorkManager) {
             val request = OneTimeWorkRequestBuilder<ExposureNotificationNotifierWorker>()
                 .build()
 
@@ -38,7 +38,7 @@ class ExposureNotificationNotifierWorker(
 
     override suspend fun doWork(): Result {
         if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsCurrentState() &&
-            bluetoothRepository.isBluetoothEnabled()) {
+            bluetoothRepository.isBluetoothEnabled().not()) {
             notificationsRepository.displayPleaseActivateBluetoothNotification()
         }
         return Result.success()

@@ -6,17 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.work.WorkManager
-import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
-import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
-import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureNotificationNotifierWorker
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
-import timber.log.Timber
 
 /**
- * Show notifications based on bluetooth state
+ * Show notifications based on bluetooth state.
  */
 class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
 
@@ -27,7 +22,7 @@ class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
     private val workManager: WorkManager by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
-        ExposureNotificationNotifierWorker.enqueueExposureNotificationNotifierWorker(workManager)
+        ExposureNotificationNotifierWorker.enqueueAskForBluetoothIfDisabledAndFrameworkIsEnabled(workManager)
     }
 
     fun register(context: Context) {
@@ -39,10 +34,9 @@ class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
 
     fun unregisterFailSilent(context: Context) {
         try {
-            // it only fails because it is already unregistered. So we can ignore any exception here
             context.unregisterReceiver(this)
         } catch (e:Exception){
-            Timber.e(SilentError(e))
+            // it only fails because it is already unregistered. So we can ignore any exception here
         }
     }
 }
