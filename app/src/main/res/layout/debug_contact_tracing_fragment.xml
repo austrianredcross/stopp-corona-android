@@ -36,6 +36,33 @@
         android:layout_height="wrap_content"
         android:text="Jump to System Settings"
          />
+    <Button
+        android:id="@+id/exposureNotificationsGetTemporaryExposureKeyHistoryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Temporary Exposure Key History"
+        />
+    <Button
+        android:id="@+id/exposureNotificationsUploadTemporaryExposureKeysYellowButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/orange"
+        android:text="No Keys to upload"
+        />
+    <Button
+        android:id="@+id/exposureNotificationsUploadTemporaryExposureKeysRedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/red"
+        android:text="No Keys to upload"
+        />
+    <Button
+        android:id="@+id/exposureNotificationsUploadTemporaryExposureKeysGreenButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Keys to upload"
+        android:backgroundTint="@color/mediumGreen"
+        />
     <Switch
         android:id="@+id/exposureNotificationsMasterSwitch"
         android:layout_width="match_parent"
