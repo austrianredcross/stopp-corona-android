@@ -6,10 +6,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
-import com.google.android.gms.tasks.Task
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
@@ -67,8 +64,6 @@ interface ExposureNotificationRepository {
      * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
      */
     fun refreshExposureNotificationAppRegisteredState()
-
-    fun getTemporaryExposureKeyHistory(): Task<MutableList<TemporaryExposureKey>>
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -168,9 +163,5 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
             }
-    }
-
-    override fun getTemporaryExposureKeyHistory(): Task<MutableList<TemporaryExposureKey>> {
-        return exposureNotificationClient.getTemporaryExposureKeyHistory()
     }
 }

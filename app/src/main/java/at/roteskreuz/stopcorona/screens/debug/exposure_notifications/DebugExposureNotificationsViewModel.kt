@@ -29,8 +29,6 @@ class DebugExposureNotificationsViewModel(
         Nearby.getExposureNotificationClient(application);
     }
 
-    //TODO: move to a ExposureNotificationsRepository
-    //TODO: get inspired by https://github.com/austrianredcross/stopp-corona-android/blob/develop/app/src/main/java/at/roteskreuz/stopcorona/model/repositories/DiscoveryRepository.kt
     fun checkEnabledState() {
         exposureNotificationClient.isEnabled()
             .addOnSuccessListener { enabled: Boolean ->
