@@ -67,8 +67,6 @@ interface ExposureNotificationRepository {
      * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
      */
     fun refreshExposureNotificationAppRegisteredState()
-
-    fun getTemporaryExposureKeyHistory(): Task<MutableList<TemporaryExposureKey>>
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -168,9 +166,5 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
             }
-    }
-
-    override fun getTemporaryExposureKeyHistory(): Task<MutableList<TemporaryExposureKey>> {
-        return exposureNotificationClient.getTemporaryExposureKeyHistory()
     }
 }
