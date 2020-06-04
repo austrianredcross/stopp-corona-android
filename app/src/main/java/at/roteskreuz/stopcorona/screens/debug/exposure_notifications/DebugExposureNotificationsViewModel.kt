@@ -223,9 +223,8 @@ class DebugExposureNotificationsViewModel(
                 exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs succeeded")
             } catch (e:Exception){
                 exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs failed because of $e")
+                Timber.e(e)
             }
-
         }
-
     }
 }
