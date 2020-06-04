@@ -29,8 +29,6 @@ class DebugExposureNotificationsViewModel(
         Nearby.getExposureNotificationClient(application);
     }
 
-    //TODO: move to a ExposureNotificationsRepository
-    //TODO: get inspired by https://github.com/austrianredcross/stopp-corona-android/blob/develop/app/src/main/java/at/roteskreuz/stopcorona/model/repositories/DiscoveryRepository.kt
     fun checkEnabledState() {
         exposureNotificationClient.isEnabled()
             .addOnSuccessListener { enabled: Boolean ->
@@ -135,5 +133,32 @@ class DebugExposureNotificationsViewModel(
 
     fun resolutionSucceeded(activity: Activity) {
         startExposureNotifications(activity)
+    }
+
+    fun getTemporaryExposureKeyHistory() {
+        exposureNotificationClient.temporaryExposureKeyHistory
+            .addOnSuccessListener {
+                Timber.d("got the list of TemporaryExposureKeys $it")
+            }
+            .addOnFailureListener { exception: Exception? ->
+                if (exception !is ApiException) {
+                    Timber.e(exception, "Unknown error when attempting to start API")
+                    exposureNotificationsEnabledSubject.onNext(false)
+                    exposureNotificationsErrorSubject.onNext("Unknown error when attempting to start API: '${exception}'")
+                    return@addOnFailureListener
+                }
+                val apiException = exception
+                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
+                    exposureNotificationsErrorState.loaded(apiException.getStatus())
+                    exposureNotificationsErrorState.idle()
+                    exposureNotificationsErrorSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
+                    exposureNotificationsEnabledSubject.onNext(false)
+                } else {
+                    Timber.e(apiException, "No RESOLUTION_REQUIRED in result")
+                    exposureNotificationsErrorSubject.onNext("No RESOLUTION_REQUIRED in result: '$exception'")
+                    exposureNotificationsEnabledSubject.onNext(false)
+                }
+            }
     }
 }
