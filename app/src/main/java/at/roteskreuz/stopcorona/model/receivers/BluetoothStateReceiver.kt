@@ -37,7 +37,12 @@ class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
         )
     }
 
-    fun unregister(context: Context) {
-        context.unregisterReceiver(this)
+    fun unregisterFailSilent(context: Context) {
+        try {
+            // it only fails because it is already unregistered. So we can ignore any exception here
+            context.unregisterReceiver(this)
+        } catch (e:Exception){
+            Timber.e(SilentError(e))
+        }
     }
 }

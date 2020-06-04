@@ -1,10 +1,8 @@
 package at.roteskreuz.stopcorona.model.repositories
 
 import android.app.PendingIntent
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
-import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -16,9 +14,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.sync.Semaphore
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -141,16 +137,16 @@ class ExposureNotificationRepositoryImpl(
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
                     registeringWithFrameworkState.idle()
-                    bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+                    bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
                     return@addOnFailureListener
                 }
                 registeringWithFrameworkState.error(exception) // will be type of ApiException
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnCanceledListener {
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
     }
 
@@ -165,18 +161,18 @@ class ExposureNotificationRepositoryImpl(
             .addOnFailureListener { exception: Exception ->
                 Timber.e(exception, "Error handling resolution ok")
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnCanceledListener {
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
         registeringWithFrameworkState.idle()
         frameworkEnabledState.onNext(false)
-        bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+        bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
     }
 
     override fun unregisterAppFromExposureNotifications() {
@@ -189,7 +185,7 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.unregister(contextInteractor.applicationContext)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnFailureListener { exception: Exception ->
                 Timber.e(exception, "Unknown error when attempting to start API")
