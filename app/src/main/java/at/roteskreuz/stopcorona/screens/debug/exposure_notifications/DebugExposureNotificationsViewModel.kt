@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -211,11 +212,13 @@ class DebugExposureNotificationsViewModel(
 
     fun uploadKeys(warningType: WarningType) {
         val keys = lastTemporaryExposureKeysSubject.value
+        val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
+            ApiTemporaryTracingKeyConverter.convert(tek, 0)
+        }
         launch {
-            val uploadData = emptyList<ApiTemporaryTracingKey>()
             try {
                 apiInteractor.uploadInfectionData(
-                    uploadData,
+                    convertedValues,
                     contextInteractor.packageName,
                     warningType,
                     ApiVerificationPayload(UUID.randomUUID().toString(),"RED-CROSS")
