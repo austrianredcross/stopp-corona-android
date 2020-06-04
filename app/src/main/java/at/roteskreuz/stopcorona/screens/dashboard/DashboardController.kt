@@ -151,6 +151,7 @@ class DashboardController(
 
         if (exposureNotificationPhase != null) {
             when (exposureNotificationPhase) {
+                // TODO: 04/06/2020 dusanjencik: Add the correct card and update the content appropriately
                 is PrerequisitesError.UnavailableGooglePlayServices -> {
                     statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
                         id("UnavailableGooglePlayServices")
@@ -165,24 +166,17 @@ class DashboardController(
                         cardStatus(CardUpdateStatus.ContactUpdate)
                     }
                 }
-                is FrameworkError.RegistrationNotApproved -> {
-                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
-                        id("FrameworkError.RegistrationNotApproved")
-                        title("FrameworkError.RegistrationNotApproved")
-                        cardStatus(CardUpdateStatus.ContactUpdate)
-                    }
-                }
-                is FrameworkError.FrameworkStartFailed -> {
-                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
-                        id("FrameworkError.FrameworkStartFailed")
-                        title("FrameworkError.FrameworkStartFailed")
-                        cardStatus(CardUpdateStatus.ContactUpdate)
-                    }
-                }
                 is FrameworkError.Unknown -> {
                     statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
                         id("FrameworkError.Unknown")
                         title("FrameworkError.Unknown")
+                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    }
+                }
+                is FrameworkError -> {
+                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                        id("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)
+                        title("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)
                         cardStatus(CardUpdateStatus.ContactUpdate)
                     }
                 }

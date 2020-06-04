@@ -11,7 +11,8 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -36,7 +37,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     companion object {
-        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 1
+        private const val REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED = Constants.Request.REQUEST_DASHBOARD + 1
     }
 
     override val isToolbarVisible: Boolean = true
@@ -161,10 +162,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { phase ->
                 controller.exposureNotificationPhase = phase
                 when (phase) {
-                    is RegisterActionUserApprovalNeeded -> {
-                        phase.apiException.status.startResolutionForResult(
+                    is FrameworkError.ResolutionRequired -> {
+                        phase.exception.status.startResolutionForResult(
                             requireActivity(),
-                            REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
                         )
                     }
                     is FrameworkError.Unknown -> handleBaseCoronaErrors(phase.exception)
@@ -198,7 +199,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
+            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.onExposureNotificationRegistrationResolutionResultOk()
                 } else {
