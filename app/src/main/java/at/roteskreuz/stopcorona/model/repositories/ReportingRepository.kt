@@ -1,27 +1,24 @@
 package at.roteskreuz.stopcorona.model.repositories
 
-import android.util.Base64
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiAddressedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionInfoRequest
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiPersonalData
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion.SCOPE_NAME
+import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.Scope
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import at.roteskreuz.stopcorona.utils.view.safeMap
+import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import org.threeten.bp.ZonedDateTime
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -50,7 +47,8 @@ interface ReportingRepository {
      *
      * @return Returns the messageType  the user sent to his contacts
      */
-    suspend fun uploadReportInformation(): MessageType
+    suspend fun uploadReportInformation(
+        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType
 
     /**
      * Set the validated personal data when a TAN was successfully requested.
@@ -107,12 +105,8 @@ interface ReportingRepository {
 class ReportingRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
-    private val configurationRepository: ConfigurationRepository,
-    private val infectionMessageDao: InfectionMessageDao,
-    private val cryptoRepository: CryptoRepository,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
-    private val databaseCleanupManager: DatabaseCleanupManager
+    private val contextInteractor: ContextInteractor
 ) : Scope(SCOPE_NAME),
     ReportingRepository,
     CoroutineScope {
@@ -140,72 +134,21 @@ class ReportingRepositoryImpl(
         tanUuid = apiInteractor.requestTan(mobileNumber).uuid
     }
 
-    override suspend fun uploadReportInformation(): MessageType {
+    override suspend fun uploadReportInformation(
+        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType {
         return when (messageTypeSubject.value) {
-            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo()
-            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo()
-            else -> uploadInfectionInfo()
+            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo(temporaryExposureKeys)
+            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo(temporaryExposureKeys)
+            else -> uploadInfectionInfo(temporaryExposureKeys)
         }
     }
 
-    private suspend fun uploadInfectionInfo(): MessageType.InfectionLevel {
+    private suspend fun uploadInfectionInfo(
+        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType.InfectionLevel {
         return withContext(coroutineContext) {
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel ?: throw InvalidConfigurationException.InfectionLevelNotSet
 
-            val configuration = configurationRepository.observeConfiguration().blockingFirst()
-            val warnBeforeSymptoms = configuration.warnBeforeSymptoms ?: throw InvalidConfigurationException.NullWarnBeforeSymptoms
-            var thresholdTime = ZonedDateTime.now().minusHours(warnBeforeSymptoms.toLong())
-
-            val infectionMessages = mutableListOf<Pair<ByteArray, InfectionMessageContent>>()
-
-            if (infectionLevel == MessageType.InfectionLevel.Red) {
-                infectionMessages.addAll(
-                    infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
-                        .map { message ->
-                            message.publicKey to InfectionMessageContent(
-                                MessageType.InfectionLevel.Red,
-                                message.timeStamp,
-                                message.uuid
-                            )
-                        }
-                )
-
-                if (infectionMessages.isNotEmpty()) {
-                    infectionMessages.sortByDescending { (_, content) -> content.timeStamp }
-                    thresholdTime = infectionMessages.first().second.timeStamp
-                }
-            } else if (infectionLevel == MessageType.InfectionLevel.Yellow) {
-                val resetMessages = infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
-                    .map { message ->
-                        message.publicKey to InfectionMessageContent(
-                            MessageType.Revoke.Suspicion,
-                            message.timeStamp,
-                            message.uuid
-                        )
-                    }
-
-                infectionMessengerRepository.storeSentInfectionMessages(resetMessages)
-            }
-            // TODO: current_date name.lastname: Comment
-
-            // TODO: 28/05/2020 dusanjencik: How to integrate exposure notifications to infection messages?
-//            infectionMessages.addAll(nearbyRecordDao.observeRecordsRecentThan(thresholdTime)
-//                .blockingFirst()
-//                .map { nearbyRecord ->
-//                    nearbyRecord.publicKey to InfectionMessageContent(infectionLevel, nearbyRecord.timestamp)
-//                }
-//            )
-
-            apiInteractor.setInfectionInfo(
-                ApiInfectionInfoRequest(
-                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
-                    tanDataSubject.value.tan,
-                    encryptInfectionMessages(infectionMessages),
-                    personalDataSubject.value.asApiEntity(infectionLevel.warningType)
-                )
-            )
-
-            infectionMessengerRepository.storeSentInfectionMessages(infectionMessages)
+            uploadData(infectionLevel.warningType, temporaryExposureKeys)
 
             when (infectionLevel) {
                 MessageType.InfectionLevel.Red -> {
@@ -223,34 +166,38 @@ class ReportingRepositoryImpl(
         }
     }
 
-    private suspend fun uploadRevokeSuspicionInfo(): MessageType.Revoke.Suspicion {
-        return withContext(coroutineContext) {
-            val infectionMessages = infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Yellow)
-                .map { message ->
-                    message.publicKey to InfectionMessageContent(
-                        MessageType.Revoke.Suspicion,
-                        message.timeStamp,
-                        message.uuid
-                    )
-                }
-
-            apiInteractor.setInfectionInfo(
-                ApiInfectionInfoRequest(
-                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
-                    tanDataSubject.value.tan,
-                    encryptInfectionMessages(infectionMessages),
-                    personalDataSubject.value.asApiEntity(MessageType.Revoke.Suspicion.warningType)
-                )
+    private suspend fun uploadData(warningType: WarningType,
+        temporaryExposureKeys: List<TemporaryExposureKey>) {
+        apiInteractor.uploadInfectionData(
+            generateApiTracingKeys(temporaryExposureKeys, warningType),
+            contextInteractor.packageName,
+            warningType,
+            ApiVerificationPayload(
+                tanUuid.safeMap(defaultValue = EMPTY_STRING),
+                tanDataSubject.value.tan
             )
+        )
+    }
+
+    private fun generateApiTracingKeys(temporaryExposureKeys: List<TemporaryExposureKey>, warningType: WarningType): List<ApiTemporaryTracingKey> {
+        return temporaryExposureKeys.map {
+            ApiTemporaryTracingKeyConverter.convert(it, warningType)
+        }
+    }
+
+    private suspend fun uploadRevokeSuspicionInfo(
+        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
+        return withContext(coroutineContext) {
+            uploadData(MessageType.Revoke.Suspicion.warningType, temporaryExposureKeys)
 
             quarantineRepository.revokePositiveSelfDiagnose(backup = false)
-            databaseCleanupManager.removeSentYellowMessages()
 
             MessageType.Revoke.Suspicion
         }
     }
 
-    private suspend fun uploadRevokeSicknessInfo(): MessageType.Revoke.Sickness {
+    private suspend fun uploadRevokeSicknessInfo(
+        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType.Revoke.Sickness {
         return withContext(coroutineContext) {
 
             val updateStatus = when {
@@ -258,25 +205,9 @@ class ReportingRepositoryImpl(
                 else -> MessageType.Revoke.Suspicion
             }
 
-            val infectionMessages = infectionMessageDao.getSentInfectionMessagesByMessageType(MessageType.InfectionLevel.Red)
-                .map { message ->
-                    message.publicKey to InfectionMessageContent(
-                        updateStatus,
-                        message.timeStamp,
-                        message.uuid
-                    )
-                }
+            uploadData(updateStatus.warningType, temporaryExposureKeys)
 
-            apiInteractor.setInfectionInfo(
-                ApiInfectionInfoRequest(
-                    tanUuid.safeMap(defaultValue = EMPTY_STRING),
-                    tanDataSubject.value.tan,
-                    encryptInfectionMessages(infectionMessages),
-                    personalDataSubject.value.asApiEntity(updateStatus.warningType)
-                )
-            )
-
-            infectionMessengerRepository.storeSentInfectionMessages(infectionMessages)
+            MessageType.Revoke.Suspicion.warningType
 
             quarantineRepository.revokeMedicalConfirmation()
 
@@ -290,20 +221,6 @@ class ReportingRepositoryImpl(
             }
 
             MessageType.Revoke.Sickness
-        }
-    }
-
-    private fun encryptInfectionMessages(infectionMessages: List<Pair<ByteArray, InfectionMessageContent>>): List<ApiAddressedInfectionMessage> {
-        return infectionMessages.map { (publicKey, infectionMessage) ->
-            Pair(
-                cryptoRepository.encrypt(infectionMessage.toByteArray(), publicKey),
-                cryptoRepository.getPublicKeyPrefix(publicKey)
-            )
-        }.filter { (encryptedInfectionMessage, addressPrefix) ->
-            encryptedInfectionMessage != null
-        }.map { (encryptedInfectionMessage, addressPrefix) ->
-            val encodedEncryptedInfectionMessage = Base64.encodeToString(encryptedInfectionMessage, Base64.NO_WRAP)
-            ApiAddressedInfectionMessage(encodedEncryptedInfectionMessage, addressPrefix)
         }
     }
 
@@ -355,6 +272,7 @@ class ReportingRepositoryImpl(
     }
 
     override fun observePersonalData(): Observable<PersonalData> {
+         personalDataSubject
         return personalDataSubject
     }
 
@@ -378,12 +296,7 @@ data class TanData(val tan: String = EMPTY_STRING, val tanIsFilled: Boolean = fa
 data class PersonalData(
     val mobileNumber: String = EMPTY_STRING,
     val tanSuccessfullyRequested: Boolean = false
-) {
-
-    fun asApiEntity(warningType: WarningType): ApiPersonalData {
-        return ApiPersonalData(EMPTY_STRING, EMPTY_STRING, mobileNumber, EMPTY_STRING, EMPTY_STRING, warningType, EMPTY_STRING)
-    }
-}
+)
 
 /**
  * Automaton definition of the report sending process.

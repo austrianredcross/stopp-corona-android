@@ -3,15 +3,15 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.*
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
+import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -23,6 +23,17 @@ import kotlin.coroutines.resume
  * Repository for managing Exposure notification framework.
  */
 interface ExposureNotificationRepository {
+
+    enum class ResolutionAction{
+        REGISTER_WITH_FRAMEWORK{
+            override fun requestCode(): Int { return  Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1 }
+        },
+        REQUEST_EXPOSURE_KEYS{
+            override fun requestCode(): Int { return  Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 2 }
+        };
+
+        abstract fun requestCode(): Int
+    }
 
     /**
      * Get information if the app is registered with the Exposure Notifications framework.
@@ -87,6 +98,10 @@ interface ExposureNotificationRepository {
      * Get the current (refreshed) state of the Exposure Notifications Framework state.
      */
     suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
+
+    fun getTemporaryExposureKeys()
+
+    fun observeTemporaryExposureKeys(): Observable<DataState<MutableList<TemporaryExposureKey>>>
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -102,6 +117,7 @@ class ExposureNotificationRepositoryImpl(
      */
     private val registeringWithFrameworkState = StateObserver()
     private val frameworkEnabledState = NonNullableBehaviorSubject(false)
+    private val temporaryExposureKeySubject = DataStateObserver<MutableList<TemporaryExposureKey>>()
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
@@ -120,6 +136,10 @@ class ExposureNotificationRepositoryImpl(
         return registeringWithFrameworkState.observe()
     }
 
+    override fun observeTemporaryExposureKeys(): Observable<DataState<MutableList<TemporaryExposureKey>>> {
+        return temporaryExposureKeySubject.observe()
+    }
+
     override fun registerAppForExposureNotifications() {
         if (registeringWithFrameworkState.currentState is State.Loading) {
             Timber.e(SilentError("Start called when it is in loading"))
@@ -128,11 +148,11 @@ class ExposureNotificationRepositoryImpl(
         registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
-                refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
                 bluetoothStateReceiver.register(contextInteractor.applicationContext)
             }
             .addOnFailureListener { exception: Exception ->
+                frameworkEnabledState.onNext(false)
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
                     registeringWithFrameworkState.idle()
@@ -221,5 +241,18 @@ class ExposureNotificationRepositoryImpl(
                     cancellableContinuation.resume(false)
                 }
         }
+    }
+
+    override fun getTemporaryExposureKeys() {
+        temporaryExposureKeySubject.loading()
+        exposureNotificationClient.temporaryExposureKeyHistory
+            .addOnSuccessListener {
+                temporaryExposureKeySubject.loaded(it)
+                temporaryExposureKeySubject.idle()
+            }
+            .addOnFailureListener {
+                temporaryExposureKeySubject.error(it)
+                temporaryExposureKeySubject.idle()
+            }
     }
 }

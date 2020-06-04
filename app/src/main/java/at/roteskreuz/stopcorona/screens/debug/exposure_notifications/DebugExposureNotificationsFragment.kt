@@ -5,10 +5,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -33,9 +35,29 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
 
-        exposureNotificationsUploadTemporaryExposureKeysGreenButton.setOnClickListener { viewModel.uploadKeys(WarningType.REVOKE) }
-        exposureNotificationsUploadTemporaryExposureKeysRedButton.setOnClickListener { viewModel.uploadKeys(WarningType.RED) }
-        exposureNotificationsUploadTemporaryExposureKeysYellowButton.setOnClickListener { viewModel.uploadKeys(WarningType.YELLOW) }
+        val uploadKeylistener = View.OnClickListener(){button ->
+            val tan = exposureNotificationsTanEditText.text.toString()
+            if (tan.isNullOrBlank()){
+                activity?.let { Toast.makeText(activity,"please add TAN", Toast.LENGTH_SHORT)}
+                exposureNotificationsTanEditText.error = "please provide TAN"
+                return@OnClickListener
+            }else {
+                exposureNotificationsTanEditText.error = null
+            }
+            val warningType = when (button) {
+                exposureNotificationsUploadTemporaryExposureKeysGreenButton -> WarningType.REVOKE
+                exposureNotificationsUploadTemporaryExposureKeysRedButton -> WarningType.RED
+                exposureNotificationsUploadTemporaryExposureKeysYellowButton -> WarningType.YELLOW
+                else -> throw IllegalArgumentException()
+            }
+
+            viewModel.uploadKeys(warningType, tan)
+        }
+        exposureNotificationsUploadTemporaryExposureKeysGreenButton.setOnClickListener(uploadKeylistener)
+        exposureNotificationsUploadTemporaryExposureKeysRedButton.setOnClickListener(uploadKeylistener)
+        exposureNotificationsUploadTemporaryExposureKeysYellowButton.setOnClickListener(uploadKeylistener)
+
+        exposureNotificationsTanButton.setOnClickListener { viewModel.requestTan(exposureNotificationsPhoneNumberEditText.text.toString()) }
 
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 
@@ -114,7 +136,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            DebugExposureNotificationsViewModel.DebugAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
+            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
                     activity?.let { viewModel.resolutionForRegistrationSucceeded(it) }
                 }
@@ -122,7 +144,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                     viewModel.resolutionForRegistrationFailed(resultCode)
                 }
             }
-            DebugExposureNotificationsViewModel.DebugAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
+            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForExposureKeyHistorySucceded()
                 }

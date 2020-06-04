@@ -1,13 +1,17 @@
 package at.roteskreuz.stopcorona.screens.reporting.reportStatus
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.SicknessCertificateUploadException
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
 import at.roteskreuz.stopcorona.screens.questionnaire.success.startQuestionnaireReportSuccessFragment
@@ -93,6 +97,21 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
             addOnScrollListener(accurateScrollListener)
         }
 
+        disposables += viewModel.observeResolutionError()
+            .observeOnMainThread()
+            .subscribe { state ->
+                when (state) {
+                    is State.Loading -> {
+                        //TODO think about what to do here
+                    }
+                    is DataState.Loaded -> {
+                        state.data.first.startResolutionForResult(
+                            activity, state.data.second.requestCode()
+                        );
+                    }
+                }
+            }
+
         disposables += viewModel.observeMessageType()
             .observeOnMainThread()
             .subscribe { messageType ->
@@ -154,5 +173,26 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
     override fun overrideOnBackPressed(): Boolean {
         viewModel.goBack()
         return true // the changing of fragments is managing parent activity
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.uploadInfectionInformation()
+                }
+                else {
+                    activity?.let { Toast.makeText(activity, "you are not with the framework", Toast.LENGTH_SHORT).show() }
+                }
+            }
+            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.uploadInfectionInformation()
+                }
+                else {
+                    activity?.let { Toast.makeText(activity, "Could not get the exposure keys", Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
     }
 }
