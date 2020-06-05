@@ -25,21 +25,8 @@ data class ApiTemporaryTracingKey(
     val key: String,
     val password: String,
     val intervalNumber: Int,
-    val intervalCount: Int,
-    val transmissionRisk: Int
+    val intervalCount: Int
 )
-
-class WarningTypeToTransmissionRiscConverter{
-    companion object {
-        fun transmissionRisc(warningType: WarningType): Int {
-            return when(warningType){
-                WarningType.RED -> 4
-                WarningType.YELLOW -> 5
-                WarningType.REVOKE -> 6
-            }
-        }
-    }
-}
 
 class ApiTemporaryTracingKeyConverter{
     companion object TEK{
@@ -50,13 +37,11 @@ class ApiTemporaryTracingKeyConverter{
                 key = base64Key,
                 password = base64Key,
                 intervalCount = tek.rollingPeriod,
-                intervalNumber = tek.rollingStartIntervalNumber,
-                transmissionRisk = WarningTypeToTransmissionRiscConverter.transmissionRisc(warningType)
+                intervalNumber = tek.rollingStartIntervalNumber
             )
         }
     }
 }
-
 
 @JsonClass(generateAdapter = true)
 data class ApiVerificationPayload(
