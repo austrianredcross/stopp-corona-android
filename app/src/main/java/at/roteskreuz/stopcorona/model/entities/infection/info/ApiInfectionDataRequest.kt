@@ -11,7 +11,7 @@ import java.util.Base64
  */
 @JsonClass(generateAdapter = true)
 data class ApiInfectionDataRequest(
-    val temporaryTracingKeys: List<ApiTemporaryTracingKey>,
+    val temporaryExposureKeys: List<ApiTemporaryTracingKey>,
     val regions: List<String>,
     val appPackageName: String,
     val platform: String,
