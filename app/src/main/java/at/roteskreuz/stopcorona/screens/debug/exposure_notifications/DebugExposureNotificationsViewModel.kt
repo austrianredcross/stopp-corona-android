@@ -27,7 +27,6 @@ import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.UUID
 
 class DebugExposureNotificationsViewModel(
     appDispatchers : AppDispatchers,
@@ -211,7 +210,19 @@ class DebugExposureNotificationsViewModel(
         exposureNotificationsTextSubject.onNext("resolutionForRegistrationFailed with code: $resultCode")
     }
 
-    fun uploadKeys(warningType: WarningType) {
+    fun requestTan(mobileNumber: String) {
+        launch {
+            try {
+                apiInteractor.requestTan(mobileNumber)
+                exposureNotificationsTextSubject.onNext("TAN for $mobileNumber was requested")
+            } catch (e:Exception){
+                exposureNotificationsTextSubject.onNext("TAN for  ${mobileNumber} failed because of $e")
+                Timber.e(e)
+            }
+        }
+    }
+
+    fun uploadKeys(warningType: WarningType, tan: String) {
         val keys = lastTemporaryExposureKeysSubject.value
         val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -226,7 +237,7 @@ class DebugExposureNotificationsViewModel(
                     convertedValues,
                     contextInteractor.packageName,
                     warningType,
-                    ApiVerificationPayload(UUID.randomUUID().toString(),"RED-CROSS")
+                    ApiVerificationPayload(tan,"RED-CROSS")
                 )
                 exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs succeeded")
             } catch (e:Exception){

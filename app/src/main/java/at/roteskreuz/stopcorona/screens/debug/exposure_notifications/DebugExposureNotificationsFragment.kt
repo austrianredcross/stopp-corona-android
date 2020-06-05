@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
@@ -33,9 +34,31 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
 
-        exposureNotificationsUploadTemporaryExposureKeysGreenButton.setOnClickListener { viewModel.uploadKeys(WarningType.REVOKE) }
-        exposureNotificationsUploadTemporaryExposureKeysRedButton.setOnClickListener { viewModel.uploadKeys(WarningType.RED) }
-        exposureNotificationsUploadTemporaryExposureKeysYellowButton.setOnClickListener { viewModel.uploadKeys(WarningType.YELLOW) }
+        val uploadKeylistener = View.OnClickListener(){button ->
+            val tan = exposureNotificationsTanEditText.text.toString()
+            if (tan.isNullOrBlank()){
+                activity?.let { Toast.makeText(activity,"please add TAN", Toast.LENGTH_SHORT)}
+                exposureNotificationsTanEditText.error = "please provide TAN"
+                return@OnClickListener
+            }else {
+                exposureNotificationsTanEditText.error = null
+            }
+            val warningType = when (button) {
+                exposureNotificationsUploadTemporaryExposureKeysGreenButton -> WarningType.REVOKE
+                exposureNotificationsUploadTemporaryExposureKeysRedButton -> WarningType.RED
+                exposureNotificationsUploadTemporaryExposureKeysYellowButton -> WarningType.YELLOW
+                else -> throw IllegalArgumentException()
+            }
+
+            viewModel.uploadKeys(warningType, tan)
+        }
+        exposureNotificationsUploadTemporaryExposureKeysGreenButton.setOnClickListener(uploadKeylistener)
+        exposureNotificationsUploadTemporaryExposureKeysRedButton.setOnClickListener(uploadKeylistener)
+        exposureNotificationsUploadTemporaryExposureKeysYellowButton.setOnClickListener(uploadKeylistener)
+
+        exposureNotificationsPhoneNumberEditText.setText("+4915157401235")
+
+        exposureNotificationsTanButton.setOnClickListener { viewModel.requestTan(exposureNotificationsPhoneNumberEditText.text.toString()) }
 
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 

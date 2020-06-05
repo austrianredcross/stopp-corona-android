@@ -63,6 +63,33 @@
         android:text="No Keys to upload"
         android:backgroundTint="@color/mediumGreen"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/exposureNotificationsPhoneNumberEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="phone"
+            android:hint="Phone number 📱"
+            />
+        <Button
+            android:id="@+id/exposureNotificationsTanButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="⬅️Request TAN"/>
+        <EditText
+            android:id="@+id/exposureNotificationsTanEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="textNoSuggestions"
+            android:hint="TAN"/>
+    </LinearLayout>
     <Switch
         android:id="@+id/exposureNotificationsMasterSwitch"
         android:layout_width="match_parent"
