@@ -22,6 +22,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
+import java.util.concurrent.CancellationException
 
 /**
  * Handles the user interaction and provides data for [DashboardFragment].
@@ -279,6 +280,8 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             disposables += dependencyHolder.dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                .subscribeOn(Schedulers.single())
+                .observeOn(Schedulers.single())
                 .subscribe { wantedState ->
                     if (wantedState) {
                         moveToNextState(CheckPrerequisitesError(dependencyHolder))
@@ -362,24 +365,34 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
-                when {
-                    register -> {
-                        if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState.not()) {
-                            exposureNotificationRepository.registerAppForExposureNotifications()
-                            moveToNextState(CheckingFrameworkError(dependencyHolder, register))
-                        } else {
-                            moveToNextState(CheckingFrameworkRunning(dependencyHolder))
+                disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .skip(1) // will skip the last value
+                    .doOnSubscribe {
+                        exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
+                    }
+                    .take(1)
+                    .subscribe { currentFrameworkRegisteredState ->
+                        when {
+                            register -> {
+                                if (currentFrameworkRegisteredState.not()) {
+                                    exposureNotificationRepository.registerAppForExposureNotifications()
+                                    moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+                                } else {
+                                    moveToNextState(CheckingFrameworkRunning(dependencyHolder))
+                                }
+                            }
+                            register.not() -> {
+                                if (currentFrameworkRegisteredState) {
+                                    exposureNotificationRepository.unregisterAppFromExposureNotifications()
+                                    moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+                                } else {
+                                    moveToNextState(WaitingForWantedState(dependencyHolder))
+                                }
+                            }
                         }
                     }
-                    register.not() -> {
-                        if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState) {
-                            exposureNotificationRepository.unregisterAppFromExposureNotifications()
-                            moveToNextState(CheckingFrameworkError(dependencyHolder, register))
-                        } else {
-                            moveToNextState(WaitingForWantedState(dependencyHolder))
-                        }
-                    }
-                }
             }
         }
     }
@@ -395,13 +408,9 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
-                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
-                    .subscribe { wantedState ->
-                        if (wantedState.not()) {
-                            moveToNextState(WaitingForWantedState(dependencyHolder))
-                        }
-                    }
                 disposables += exposureNotificationRepository.observeRegistrationState()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
                     .subscribe { state ->
                         when (state) {
                             State.Idle -> {
@@ -414,62 +423,76 @@ sealed class ExposureNotificationPhase {
                                 )
                             }
                             is State.Error -> {
-                                if (state.error is ApiException) {
-                                    val apiException = state.error as ApiException
-                                    moveToNextState(
-                                        when (apiException.statusCode) {
-                                            CommonStatusCodes.SIGN_IN_REQUIRED -> {
-                                                Timber.e(SilentError("SIGN_IN_REQUIRED", apiException))
-                                                FrameworkError.SignInRequired(dependencyHolder, apiException, register)
+                                when (state.error) {
+                                    is ApiException -> {
+                                        val apiException = state.error as ApiException
+                                        moveToNextState(
+                                            when (apiException.statusCode) {
+                                                CommonStatusCodes.SIGN_IN_REQUIRED -> {
+                                                    Timber.e(SilentError("SIGN_IN_REQUIRED", apiException))
+                                                    FrameworkError.SignInRequired(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.INVALID_ACCOUNT -> {
+                                                    Timber.e(SilentError("INVALID_ACCOUNT", apiException))
+                                                    FrameworkError.InvalidAccount(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.RESOLUTION_REQUIRED -> {
+                                                    FrameworkError.ResolutionRequired(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.NETWORK_ERROR -> {
+                                                    Timber.e(SilentError("NETWORK_ERROR", apiException))
+                                                    FrameworkError.NetworkError(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.INTERNAL_ERROR -> {
+                                                    Timber.e(SilentError("INTERNAL_ERROR", apiException))
+                                                    FrameworkError.InternalError(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.DEVELOPER_ERROR -> {
+                                                    Timber.e(SilentError("DEVELOPER_ERROR", apiException))
+                                                    FrameworkError.DeveloperError(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.ERROR -> {
+                                                    Timber.e(SilentError("ERROR", apiException))
+                                                    FrameworkError.Error(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.INTERRUPTED -> {
+                                                    Timber.e(SilentError("INTERRUPTED", apiException))
+                                                    FrameworkError.Interrupted(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.TIMEOUT -> {
+                                                    Timber.e(SilentError("TIMEOUT", apiException))
+                                                    FrameworkError.Timeout(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.CANCELED -> {
+                                                    Timber.e(SilentError("CANCELED", apiException))
+                                                    FrameworkError.Canceled(dependencyHolder, apiException, register)
+                                                }
+                                                CommonStatusCodes.API_NOT_CONNECTED -> {
+                                                    Timber.e(SilentError("API_NOT_CONNECTED", apiException))
+                                                    FrameworkError.ApiNotConnected(dependencyHolder, apiException, register)
+                                                }
+                                                else -> {
+                                                    FrameworkError.Unknown(dependencyHolder, apiException, register)
+                                                }
                                             }
-                                            CommonStatusCodes.INVALID_ACCOUNT -> {
-                                                Timber.e(SilentError("INVALID_ACCOUNT", apiException))
-                                                FrameworkError.InvalidAccount(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.RESOLUTION_REQUIRED -> {
-                                                FrameworkError.ResolutionRequired(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.NETWORK_ERROR -> {
-                                                Timber.e(SilentError("NETWORK_ERROR", apiException))
-                                                FrameworkError.NetworkError(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.INTERNAL_ERROR -> {
-                                                Timber.e(SilentError("INTERNAL_ERROR", apiException))
-                                                FrameworkError.InternalError(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.DEVELOPER_ERROR -> {
-                                                Timber.e(SilentError("DEVELOPER_ERROR", apiException))
-                                                FrameworkError.DeveloperError(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.ERROR -> {
-                                                Timber.e(SilentError("ERROR", apiException))
-                                                FrameworkError.Error(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.INTERRUPTED -> {
-                                                Timber.e(SilentError("INTERRUPTED", apiException))
-                                                FrameworkError.Interrupted(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.TIMEOUT -> {
-                                                Timber.e(SilentError("TIMEOUT", apiException))
-                                                FrameworkError.Timeout(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.CANCELED -> {
-                                                Timber.e(SilentError("CANCELED", apiException))
-                                                FrameworkError.Canceled(dependencyHolder, apiException, register)
-                                            }
-                                            CommonStatusCodes.API_NOT_CONNECTED -> {
-                                                Timber.e(SilentError("API_NOT_CONNECTED", apiException))
-                                                FrameworkError.ApiNotConnected(dependencyHolder, apiException, register)
-                                            }
-                                            else -> {
-                                                FrameworkError.Unknown(dependencyHolder, apiException, register)
-                                            }
-                                        }
-                                    )
-                                } else {
-                                    moveToNextState(FrameworkError.Unknown(dependencyHolder, state.error, register))
+                                        )
+                                    }
+                                    is CancellationException -> {
+                                        moveToNextState(WaitingForWantedState(dependencyHolder))
+                                    }
+                                    else -> {
+                                        moveToNextState(FrameworkError.Unknown(dependencyHolder, state.error, register))
+                                    }
                                 }
                             }
+                        }
+                    }
+                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { wantedState ->
+                        if (wantedState.not()) {
+                            moveToNextState(WaitingForWantedState(dependencyHolder))
                         }
                     }
             }
@@ -487,6 +510,8 @@ sealed class ExposureNotificationPhase {
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             this.moveToNextState = moveToNextState
             disposables += dependencyHolder.dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                .subscribeOn(Schedulers.single())
+                .observeOn(Schedulers.single())
                 .subscribe { wantedState ->
                     if (wantedState.not()) {
                         moveToNextState(RegisterToFramework(dependencyHolder, false))
@@ -642,21 +667,20 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
-                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
-                    .subscribe { wantedState ->
-                        if (wantedState.not()) {
-                            moveToNextState(RegisterToFramework(dependencyHolder, false))
-                        }
-                    }
-                disposables += exposureNotificationRepository.observeRegistrationState()
-                    .filter { it is State.Idle }
-                    .switchMap { exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications() }
+                disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
                     .subscribe { realState ->
                         if (realState) {
                             moveToNextState(FrameworkRunning(dependencyHolder))
-                        } else {
-                            // TODO: 04/06/2020 dusanjencik: Sometimes this is called before the framework is ready, why?
-                            moveToNextState(FrameworkError.ResolutionDeclined(dependencyHolder, true))
+                        }
+                    }
+                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { wantedState ->
+                        if (wantedState.not()) {
+                            moveToNextState(RegisterToFramework(dependencyHolder, false))
                         }
                     }
             }
@@ -672,14 +696,22 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
-                disposables += Observables.combineLatest(
-                    dashboardRepository.observeUserWantsToRegisterAppForExposureNotification(),
-                    exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
-                ).subscribe { (wantedState, realState) ->
-                    if (wantedState.not() || realState.not()) {
-                        moveToNextState(RegisterToFramework(dependencyHolder, false))
+                disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { wantedState ->
+                        if (wantedState.not()) {
+                            moveToNextState(RegisterToFramework(dependencyHolder, false))
+                        }
                     }
-                }
+                disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { realState ->
+                        if (realState.not()) {
+                            moveToNextState(RegisterToFramework(dependencyHolder, false))
+                        }
+                    }
             }
         }
     }

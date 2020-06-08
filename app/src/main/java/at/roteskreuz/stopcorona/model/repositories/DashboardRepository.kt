@@ -14,7 +14,7 @@ interface DashboardRepository {
     /**
      * Indicate a user intent to register.
      * True still doesn't mean, that the framework is successfully registered,
-     * use [ExposureNotificationRepository.isAppRegisteredForExposureNotifications] instead.
+     * use [ExposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState] instead.
      */
     var userWantsToRegisterAppForExposureNotifications: Boolean
 
@@ -26,7 +26,7 @@ interface DashboardRepository {
     /**
      * Indicate a user intent to register.
      * True still doesn't mean, that the framework is successfully registered,
-     * use [ExposureNotificationRepository.isAppRegisteredForExposureNotifications] instead.
+     * use [ExposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState] instead.
      */
     fun observeUserWantsToRegisterAppForExposureNotification(): Observable<Boolean>
 }

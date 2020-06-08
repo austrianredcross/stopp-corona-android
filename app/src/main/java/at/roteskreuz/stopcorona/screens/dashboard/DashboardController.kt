@@ -173,6 +173,9 @@ class DashboardController(
                         cardStatus(CardUpdateStatus.ContactUpdate)
                     }
                 }
+                is FrameworkError.ResolutionRequired -> {
+                    // ignored, there is displayed a dialog
+                }
                 is FrameworkError -> {
                     statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
                         id("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)

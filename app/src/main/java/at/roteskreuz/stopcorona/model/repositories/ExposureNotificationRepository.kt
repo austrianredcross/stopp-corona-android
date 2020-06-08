@@ -11,11 +11,11 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import com.google.android.gms.tasks.Task
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 
@@ -137,14 +137,14 @@ class ExposureNotificationRepositoryImpl(
                 bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnCanceledListener {
-                registeringWithFrameworkState.idle()
+                registeringWithFrameworkState.error(CancellationException())
                 bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.stop()
+        exposureNotificationClient.start()
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
@@ -155,14 +155,14 @@ class ExposureNotificationRepositoryImpl(
                 bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnCanceledListener {
-                registeringWithFrameworkState.idle()
+                registeringWithFrameworkState.error(CancellationException())
                 bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
-        registeringWithFrameworkState.idle()
         frameworkEnabledState.onNext(false)
+        registeringWithFrameworkState.idle()
         bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
     }
 
@@ -211,17 +211,6 @@ class ExposureNotificationRepositoryImpl(
                 .addOnFailureListener {
                     cancellableContinuation.resume(false)
                 }
-        }
-    }
-
-    private fun Task<Void>.sendResultTo(stateObserver: StateObserver) {
-        addOnSuccessListener {
-            refreshExposureNotificationAppRegisteredState()
-            stateObserver.idle()
-        }.addOnFailureListener { exception: Exception ->
-            stateObserver.error(exception)
-        }.addOnCanceledListener {
-            stateObserver.idle()
         }
     }
 }
