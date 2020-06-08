@@ -49,7 +49,7 @@ class ChangelogManagerImpl(
         title = R.string.changelog_title_v2_0_0,
         description = with(SpannableStringBuilder()) {
             append(contextInteractor.getString(R.string.changelog_description_1_v2_0_0))
-            append(contextInteractor.getBoldSpan(textRes = R.string.changelog_description_2_v2_0_0, colored = true))
+            append(contextInteractor.getBoldSpan(textRes = R.string.changelog_description_2_v2_0_0, colored = true, insertTrailingSpace = false))
             append(contextInteractor.getString(R.string.changelog_description_3_v2_0_0))
         },
         callToAction = R.string.changelog_cta_v2_0_0,
