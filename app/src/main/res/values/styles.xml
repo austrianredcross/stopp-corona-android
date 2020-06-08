@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/rouge</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowBackground">@color/white</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
     </style>
 
     <style name="AppTheme.BrandedLaunch" parent="AppTheme">
@@ -78,5 +79,13 @@
     <style name="AppTheme.AutomaticHandshakeSwitch">
         <item name="android:colorControlActivated">@color/blue</item>
         <item name="android:colorControlNormal">@color/rouge</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundedCornersBottomSheet</item>
+    </style>
+
+    <style name="RoundedCornersBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/shape_changelog_bottom_sheet_background</item>
     </style>
 </resources>

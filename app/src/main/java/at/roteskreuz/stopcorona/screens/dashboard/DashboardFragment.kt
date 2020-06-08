@@ -9,8 +9,10 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.constants.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
@@ -186,6 +188,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         if (viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
             viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(true)
+        }
+
+        if (viewModel.unseenChangelogForVersionAvailable(VERSION_NAME)) {
+            showChangelogBottomSheetFragment()
         }
 
         controller.requestModelBuild()

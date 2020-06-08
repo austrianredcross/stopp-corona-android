@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.manager.ChangelogManager
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -21,7 +22,8 @@ class DashboardViewModel(
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
     private val exposureNotificationRepository: ExposureNotificationRepository,
-    private val databaseCleanupManager: DatabaseCleanupManager
+    private val databaseCleanupManager: DatabaseCleanupManager,
+    private val changelogManager: ChangelogManager
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
@@ -149,6 +151,8 @@ class DashboardViewModel(
     fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
     }
+
+    fun unseenChangelogForVersionAvailable(version: String) = changelogManager.unseenChangelogForVersionAvailable(version)
 }
 
 /**

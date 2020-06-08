@@ -40,7 +40,7 @@
             android:id="@+id/bottomSheet"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:background="@drawable/shape_bottom_sheet"
+            android:background="@drawable/shape_handshake_bottom_sheet"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <Button
