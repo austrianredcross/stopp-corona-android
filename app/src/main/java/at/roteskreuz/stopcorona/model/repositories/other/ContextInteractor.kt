@@ -6,14 +6,12 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.PowerManager
-import android.text.SpannableString
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import at.roteskreuz.stopcorona.skeleton.core.utils.dip
-import at.roteskreuz.stopcorona.utils.getBoldSpan
 import at.roteskreuz.stopcorona.utils.string
 import java.io.File
 import java.util.Locale
@@ -72,17 +70,6 @@ interface ContextInteractor {
      * Get string from resources for specified locale.
      */
     fun getString(locale: Locale, @StringRes stringResId: Int, vararg params: Any): String
-
-    /**
-     * Shortcut via [ContextInteractor] to get a styled string.
-     * More info in [Context.getBoldSpan]
-     */
-    fun getBoldSpan(
-        @StringRes textRes: Int,
-        colored: Boolean = false,
-        insertLeadingSpace: Boolean = true,
-        insertTrailingSpace: Boolean = true
-    ): SpannableString
 
     /**
      * Check if permission is granted.
@@ -144,15 +131,6 @@ class ContextInteractorImpl(
 
     override fun getString(locale: Locale, @StringRes stringResId: Int, vararg params: Any): String {
         return localizedContext(locale).string(stringResId, params)
-    }
-
-    override fun getBoldSpan(
-        @StringRes textRes: Int,
-        colored: Boolean,
-        insertLeadingSpace: Boolean,
-        insertTrailingSpace: Boolean
-    ): SpannableString {
-        return context.getBoldSpan(textRes, colored, insertLeadingSpace, insertTrailingSpace)
     }
 
     override fun checkPermission(permissionName: String): Boolean {

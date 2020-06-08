@@ -42,8 +42,7 @@ internal val persistenceModule = module {
 
     single<ChangelogManager> {
         ChangelogManagerImpl(
-            preferences = get(),
-            contextInteractor = get()
+            preferences = get()
         )
     }
 

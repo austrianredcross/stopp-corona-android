@@ -180,6 +180,5 @@ object Constants {
 
         const val EMPTY_STRING = ""
         const val SPACE = " "
-        const val VERSION_NAME = BuildConfig.VERSION_NAME
     }
 }

@@ -1,12 +1,10 @@
 package at.roteskreuz.stopcorona.model.manager
 
 import android.content.SharedPreferences
-import android.text.SpannableStringBuilder
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Prefs.CHANGELOG_MANAGER_PREFIX
-import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
 
 /**
@@ -29,8 +27,7 @@ interface ChangelogManager {
 }
 
 class ChangelogManagerImpl(
-    preferences: SharedPreferences,
-    private val contextInteractor: ContextInteractor
+    preferences: SharedPreferences
 ) : ChangelogManager {
 
     companion object {
@@ -47,11 +44,11 @@ class ChangelogManagerImpl(
         id = 1,
         versions = listOf("2.0.0"),
         title = R.string.changelog_title_v2_0_0,
-        description = with(SpannableStringBuilder()) {
-            append(contextInteractor.getString(R.string.changelog_description_1_v2_0_0))
-            append(contextInteractor.getBoldSpan(textRes = R.string.changelog_description_2_v2_0_0, colored = true, insertTrailingSpace = false))
-            append(contextInteractor.getString(R.string.changelog_description_3_v2_0_0))
-        },
+        description = listOf(
+            SpanTextWrapper.NoStyle(R.string.changelog_description_1_v2_0_0),
+            SpanTextWrapper.Styled(textRes = R.string.changelog_description_2_v2_0_0, colored = true, insertTrailingSpace = false),
+            SpanTextWrapper.NoStyle(R.string.changelog_description_3_v2_0_0)
+        ),
         callToAction = R.string.changelog_cta_v2_0_0,
         image = R.drawable.ic_changelog
     )
@@ -87,7 +84,19 @@ data class Changelog(
     val id: Int,
     val versions: List<String>,
     @StringRes val title: Int,
-    val description: SpannableStringBuilder,
+    val description: List<SpanTextWrapper>,
     @StringRes val callToAction: Int,
     @DrawableRes val image: Int
 )
+
+sealed class SpanTextWrapper {
+
+    data class NoStyle(@StringRes val textRes: Int) : SpanTextWrapper()
+
+    data class Styled(
+        @StringRes val textRes: Int,
+        val colored: Boolean = false,
+        val insertLeadingSpace: Boolean = true,
+        val insertTrailingSpace: Boolean = true
+    ) : SpanTextWrapper()
+}
