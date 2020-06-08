@@ -13,6 +13,11 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
 interface ChangelogManager {
 
     /**
+     * Checks if there is an unseen changelog for the given [version].
+     */
+    fun unseenChangelogForVersionAvailable(version: String): Boolean
+
+    /**
      * Get the changelog for the given [version].
      *
      * @return null when there is no changelog for the given [version]
@@ -49,13 +54,25 @@ class ChangelogManagerImpl(
     private val hasBeenDisplayed: Boolean
         get() = changelog.id <= lastSeenChangelogId
 
+    override fun unseenChangelogForVersionAvailable(version: String): Boolean {
+        return changelog.versions.contains(convertVersionName(version)) && hasBeenDisplayed.not()
+    }
+
     override fun getChangelogForVersion(version: String): Changelog? {
-        return if (changelog.versions.contains(version) && hasBeenDisplayed.not()) {
+        return if (unseenChangelogForVersionAvailable(convertVersionName(version))) {
             lastSeenChangelogId = changelog.id
             changelog
         } else {
             null
         }
+    }
+
+    /**
+     * Convert the version name which is in this project in the manner of "2.0.0.12-TAG-ID-HASH-FLAVOR"
+     * to only use the first three version-values.
+     */
+    private fun convertVersionName(version: String): String {
+        return version.split("\\.").take(3).joinToString()
     }
 }
 
