@@ -364,7 +364,7 @@ sealed class ExposureNotificationPhase {
             with(dependencyHolder) {
                 when {
                     register -> {
-                        if (exposureNotificationRepository.isAppRegisteredForExposureNotifications.not()) {
+                        if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState.not()) {
                             exposureNotificationRepository.registerAppForExposureNotifications()
                             moveToNextState(CheckingFrameworkError(dependencyHolder, register))
                         } else {
@@ -372,7 +372,7 @@ sealed class ExposureNotificationPhase {
                         }
                     }
                     register.not() -> {
-                        if (exposureNotificationRepository.isAppRegisteredForExposureNotifications) {
+                        if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState) {
                             exposureNotificationRepository.unregisterAppFromExposureNotifications()
                             moveToNextState(CheckingFrameworkError(dependencyHolder, register))
                         } else {
@@ -419,46 +419,46 @@ sealed class ExposureNotificationPhase {
                                     moveToNextState(
                                         when (apiException.statusCode) {
                                             CommonStatusCodes.SIGN_IN_REQUIRED -> {
-                                                Timber.w(SilentError("SIGN_IN_REQUIRED", apiException))
+                                                Timber.e(SilentError("SIGN_IN_REQUIRED", apiException))
                                                 FrameworkError.SignInRequired(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.INVALID_ACCOUNT -> {
-                                                Timber.w(SilentError("INVALID_ACCOUNT", apiException))
+                                                Timber.e(SilentError("INVALID_ACCOUNT", apiException))
                                                 FrameworkError.InvalidAccount(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.RESOLUTION_REQUIRED -> {
                                                 FrameworkError.ResolutionRequired(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.NETWORK_ERROR -> {
-                                                Timber.w(SilentError("NETWORK_ERROR", apiException))
+                                                Timber.e(SilentError("NETWORK_ERROR", apiException))
                                                 FrameworkError.NetworkError(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.INTERNAL_ERROR -> {
-                                                Timber.w(SilentError("INTERNAL_ERROR", apiException))
+                                                Timber.e(SilentError("INTERNAL_ERROR", apiException))
                                                 FrameworkError.InternalError(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.DEVELOPER_ERROR -> {
-                                                Timber.w(SilentError("DEVELOPER_ERROR", apiException))
+                                                Timber.e(SilentError("DEVELOPER_ERROR", apiException))
                                                 FrameworkError.DeveloperError(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.ERROR -> {
-                                                Timber.w(SilentError("ERROR", apiException))
+                                                Timber.e(SilentError("ERROR", apiException))
                                                 FrameworkError.Error(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.INTERRUPTED -> {
-                                                Timber.w(SilentError("INTERRUPTED", apiException))
+                                                Timber.e(SilentError("INTERRUPTED", apiException))
                                                 FrameworkError.Interrupted(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.TIMEOUT -> {
-                                                Timber.w(SilentError("TIMEOUT", apiException))
+                                                Timber.e(SilentError("TIMEOUT", apiException))
                                                 FrameworkError.Timeout(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.CANCELED -> {
-                                                Timber.w(SilentError("CANCELED", apiException))
+                                                Timber.e(SilentError("CANCELED", apiException))
                                                 FrameworkError.Canceled(dependencyHolder, apiException, register)
                                             }
                                             CommonStatusCodes.API_NOT_CONNECTED -> {
-                                                Timber.w(SilentError("API_NOT_CONNECTED", apiException))
+                                                Timber.e(SilentError("API_NOT_CONNECTED", apiException))
                                                 FrameworkError.ApiNotConnected(dependencyHolder, apiException, register)
                                             }
                                             else -> {

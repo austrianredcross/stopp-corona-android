@@ -4,13 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
