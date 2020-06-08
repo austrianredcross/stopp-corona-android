@@ -47,7 +47,7 @@
 	<string name="onboarding_next_button">Continue</string>
 	<string name="onboarding_finish_button">Finished</string>
 	<string name="onboarding_headline_6">Declaration of consent</string>
-	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification numbers [IDs], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning or an all-clear notification.</string>
+	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (random figures [“random-IDs], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of rapid interruption of the corona infection chain. </string>
 	<string name="onboarding_dataprivacy_approval">I consent</string>
 	<string name="onboarding_dataprivacy_description_2_1">I may revoke my consent at any time, whereby revocation does not affect the lawfulness of processing up until the time that consent is revoked. \n\nFurther information can be found in our</string>
 	<string name="onboarding_dataprivacy_description_2_2">privacy policy.</string>
@@ -421,9 +421,11 @@
 	<string name="revoke_sickness_success_description_2">Your contacts will be anonymously notified that it was not a corona infection.</string>
 	<string name="revoke_sickness_success_finish">Back to the start page</string>
 	<string name="revoke_sickness_success_description_3">We wish you all the best for the future!</string>
-	<string name="changelog_title_v2.0.0"></string>
-	<string name="changelog_cta_v2.0.0"></string>
-	<string name="changelog_description_v2.0.0"></string>
+	<string name="changelog_title_v2.0.0">What\'s new?</string>
+	<string name="changelog_cta_v2.0.0">All right!</string>
+	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
+	<string name="changelog_description_2_v2.0.0">Apple and Google COVID-19 API</string>
+	<string name="changelog_description_3_v2.0.0">. The notifications will continue to be exchanged anonymously and therefore the information will be displayed a little bit differently in some places.</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>

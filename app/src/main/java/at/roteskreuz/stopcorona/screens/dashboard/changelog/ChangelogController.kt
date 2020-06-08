@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.dashboard.changelog
 
 import android.content.Context
+import android.text.SpannableString
 import at.roteskreuz.stopcorona.model.manager.Changelog
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
 import at.roteskreuz.stopcorona.screens.base.epoxy.copyText
@@ -37,7 +38,7 @@ class ChangelogController(
 
             copyText {
                 id("changelog_description")
-                text(changelog.description)
+                text(SpannableString(changelog.description))
             }
 
             emptySpace(modelCountBuiltSoFar, 36)

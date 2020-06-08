@@ -47,7 +47,7 @@
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
-	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (eindeutige Kennzahlen [IDs], meine Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet. Darüber hinaus wird mein öffentlicher Schlüssel mit meinen Intensiv-Kontakten zum Zweck der späteren Warnung oder Entwarnung meiner Intensiv-Kontakte ausgetauscht.</string>
+	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (zufällige Kennzahlen [=“zufalls-IDs“], Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet.</string>
 	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
 	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
 	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
@@ -423,7 +423,9 @@
 	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
 	<string name="changelog_title_v2.0.0">Was ist neu?</string>
 	<string name="changelog_cta_v2.0.0">Alles klar!</string>
-	<string name="changelog_description_v2.0.0">Wir nutzen in dieser Version die <bred>Apple und Google COVID-19 API</bred>. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Infos etwas anders dargestellt.</string>
+	<string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
+	<string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 API</string>
+	<string name="changelog_description_3_v2.0.0">. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Infos etwas anders dargestellt.</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>
