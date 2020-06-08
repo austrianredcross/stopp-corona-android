@@ -1,6 +1,11 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
+import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
@@ -9,8 +14,10 @@ import com.google.android.gms.nearby.exposurenotification.ExposureNotificationCl
 import com.google.android.gms.tasks.Task
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
 
 /**
  * Repository for managing Exposure notification framework.
@@ -20,7 +27,7 @@ interface ExposureNotificationRepository {
     /**
      * Get information if the app is registered with the Exposure Notifications framework.
      */
-    val isAppRegisteredForExposureNotifications: Boolean
+    val isAppRegisteredForExposureNotificationsLastState: Boolean
 
     /**
      * Observe information if the app is registered with the Exposure Notifications framework.
@@ -64,11 +71,29 @@ interface ExposureNotificationRepository {
      * Refresh the current app status regarding the observe changes in [observeAppIsRegisteredForExposureNotifications].
      */
     fun refreshExposureNotificationAppRegisteredState()
+
+    /**
+     * Get an Intent to the Exposure notification Setting in the system.
+     */
+    fun getExposureSettingsIntent(): Intent
+
+    /**
+     * Get a pending Intent to the Exposure notification Setting in the system.
+     * Flag for new task.
+     */
+    fun getExposureSettingsPendingIntent(context: Context): PendingIntent
+
+    /**
+     * Get the current (refreshed) state of the Exposure Notifications Framework state.
+     */
+    suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
 }
 
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
-    private val exposureNotificationClient: ExposureNotificationClient
+    private val bluetoothStateReceiver: BluetoothStateReceiver,
+    private val exposureNotificationClient: ExposureNotificationClient,
+    private val contextInteractor: ContextInteractor
 ) : ExposureNotificationRepository,
     CoroutineScope {
 
@@ -81,7 +106,7 @@ class ExposureNotificationRepositoryImpl(
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
 
-    override var isAppRegisteredForExposureNotifications: Boolean
+    override var isAppRegisteredForExposureNotificationsLastState: Boolean
         get() = frameworkEnabledState.value
         private set(value) {
             frameworkEnabledState.onNext(value)
@@ -102,18 +127,43 @@ class ExposureNotificationRepositoryImpl(
         }
         registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
-            .sendResultTo(registeringWithFrameworkState)
+            .addOnSuccessListener {
+                refreshExposureNotificationAppRegisteredState()
+                registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.register(contextInteractor.applicationContext)
+            }
+            .addOnFailureListener { exception: Exception ->
+                registeringWithFrameworkState.error(exception)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
+            }
+            .addOnCanceledListener {
+                registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
+            }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.start()
-            .sendResultTo(registeringWithFrameworkState)
+        exposureNotificationClient.stop()
+            .addOnSuccessListener {
+                refreshExposureNotificationAppRegisteredState()
+                registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.register(contextInteractor.applicationContext)
+            }
+            .addOnFailureListener { exception: Exception ->
+                registeringWithFrameworkState.error(exception)
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
+            }
+            .addOnCanceledListener {
+                registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
+            }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
         registeringWithFrameworkState.idle()
         frameworkEnabledState.onNext(false)
+        bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
     }
 
     override fun unregisterAppFromExposureNotifications() {
@@ -123,7 +173,15 @@ class ExposureNotificationRepositoryImpl(
         }
         registeringWithFrameworkState.loading()
         exposureNotificationClient.stop()
-            .sendResultTo(registeringWithFrameworkState)
+            .addOnSuccessListener {
+                refreshExposureNotificationAppRegisteredState()
+                registeringWithFrameworkState.idle()
+                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
+            }
+            .addOnFailureListener { exception: Exception ->
+                registeringWithFrameworkState.error(exception)
+                bluetoothStateReceiver.register(contextInteractor.applicationContext)
+            }
     }
 
     override fun refreshExposureNotificationAppRegisteredState() {
@@ -131,6 +189,29 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener { enabled: Boolean ->
                 frameworkEnabledState.onNext(enabled)
             }
+            .addOnFailureListener {
+                Timber.e(SilentError(it))
+                frameworkEnabledState.onNext(false)
+            }
+    }
+
+    override fun getExposureSettingsIntent(): Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+
+    override fun getExposureSettingsPendingIntent(context: Context): PendingIntent {
+        val settingsIntent = getExposureSettingsIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
+    }
+
+    override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
+        return suspendCancellableCoroutine { cancellableContinuation ->
+            exposureNotificationClient.isEnabled
+                .addOnSuccessListener {
+                    cancellableContinuation.resume(it)
+                }
+                .addOnFailureListener {
+                    cancellableContinuation.resume(false)
+                }
+        }
     }
 
     private fun Task<Void>.sendResultTo(stateObserver: StateObserver) {

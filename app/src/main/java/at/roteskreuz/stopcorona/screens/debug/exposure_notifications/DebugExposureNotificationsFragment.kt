@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +8,7 @@ import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.constants.Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -20,21 +21,21 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_tracing_fragment) {
 
-    companion object {
-        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION =
-            EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1;
-    }
-
     private var listenerActive: Boolean = false
     private val viewModel: DebugExposureNotificationsViewModel by viewModel()
 
     override val isToolbarVisible: Boolean
         get() = true
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
+
+        exposureNotificationsUploadTemporaryExposureKeysGreenButton.setOnClickListener { viewModel.uploadKeys(WarningType.REVOKE) }
+        exposureNotificationsUploadTemporaryExposureKeysRedButton.setOnClickListener { viewModel.uploadKeys(WarningType.RED) }
+        exposureNotificationsUploadTemporaryExposureKeysYellowButton.setOnClickListener { viewModel.uploadKeys(WarningType.YELLOW) }
 
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 
@@ -52,6 +53,17 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 exposureNotificationsErrorMessage.text = it
             }
 
+        var uploadButtons = listOf(exposureNotificationsUploadTemporaryExposureKeysGreenButton,
+            exposureNotificationsUploadTemporaryExposureKeysRedButton,
+            exposureNotificationsUploadTemporaryExposureKeysYellowButton
+        )
+        disposables+= viewModel.observeLastTemporaryExposureKeys()
+            .observeOnMainThread()
+            .subscribe{keys ->
+                uploadButtons.onEach { it.text = "${keys.size} keys ready to be uploaded" }
+
+            }
+
         disposables += viewModel.observeResolutionError()
             .observeOnMainThread()
             .subscribe { state ->
@@ -60,13 +72,17 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                         //TODO think about what to do here
                     }
                     is DataState.Loaded -> {
-                        state.data.startResolutionForResult(
-                            activity,
-                            REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+                        state.data.first.startResolutionForResult(
+                            activity, state.data.second.requestCode()
+
                         );
                     }
                 }
             }
+
+        exposureNotificationsGetTemporaryExposureKeyHistoryButton.setOnClickListener{
+            viewModel.getTemporaryExposureKeyHistory()
+        }
 
         exposureNotificationsMasterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (listenerActive.not()) {
@@ -98,9 +114,20 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
+            DebugExposureNotificationsViewModel.DebugAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    activity?.let { viewModel.resolutionSucceeded(it) }
+                    activity?.let { viewModel.resolutionForRegistrationSucceeded(it) }
+                }
+                else {
+                    viewModel.resolutionForRegistrationFailed(resultCode)
+                }
+            }
+            DebugExposureNotificationsViewModel.DebugAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.resolutionForExposureKeyHistorySucceded()
+                }
+                else {
+                    viewModel.resolutionForExposureKeyHistoryFailed(resultCode)
                 }
             }
         }

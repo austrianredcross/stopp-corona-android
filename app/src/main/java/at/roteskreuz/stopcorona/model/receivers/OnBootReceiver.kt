@@ -4,20 +4,21 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
+import androidx.work.WorkManager
+import at.roteskreuz.stopcorona.model.workers.ExposureNotificationNotifierWorker
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
 /**
- * Display a notification to start exposure notification listeting when device is booted.
+ * Display a notification to turn on Bluetooth when the app is registered as the Exposure
+ * Notifications application.
  */
-//TODO: discuss onboot notification https://tasks.pxp-x.com/browse/CTAA-1548
 class OnBootReceiver : BroadcastReceiver(), KoinComponent {
 
-    private val notificationsRepository: NotificationsRepository by inject()
+    private val workManager: WorkManager by inject()
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
-    override fun onReceive(context: Context, intent: Intent) {
-        notificationsRepository.displayPleaseActivateAutomaticDetectionNotification()
+    override fun onReceive(context: Context, intent: Intent?) {
+        ExposureNotificationNotifierWorker.enqueueAskForBluetoothIfDisabledAndFrameworkIsEnabled(workManager)
     }
 }

@@ -62,12 +62,7 @@ interface NotificationsRepository {
     /**
      * Display notification when bluetooth is off.
      */
-    fun displayBluetoothIsOffAutomaticDetectionServiceCannotRunNotification()
-
-    /**
-     * Display a request to activate automatic detection again.
-     */
-    fun displayPleaseActivateAutomaticDetectionNotification()
+    fun displayPleaseActivateBluetoothNotification()
 
     /**
      * Hide notification by [id].
@@ -78,7 +73,8 @@ interface NotificationsRepository {
 class NotificationsRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val contextInteractor: ContextInteractor,
-    private val dataPrivacyRepository: DataPrivacyRepository
+    private val dataPrivacyRepository: DataPrivacyRepository,
+    private val exposureNotificationRepository: ExposureNotificationRepository
 ) : NotificationsRepository,
     CoroutineScope {
 
@@ -187,30 +183,14 @@ class NotificationsRepositoryImpl(
         notificationManager.notify(id, notification)
     }
 
-    override fun displayBluetoothIsOffAutomaticDetectionServiceCannotRunNotification() {
+    override fun displayPleaseActivateBluetoothNotification() {
         val title = context.string(R.string.local_notification_bluetooth_is_off_title)
         val message = context.string(R.string.local_notification_bluetooth_is_off_message)
 
         buildNotification(
             title = title,
             message = message,
-            pendingIntent = buildPendingIntentWithActivityStack {
-                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
-            },
-            channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
-        ).show()
-    }
-
-    override fun displayPleaseActivateAutomaticDetectionNotification() {
-        val title = context.string(R.string.local_notification_activate_automatic_handshake_again_title)
-        val message = context.string(R.string.local_notification_activate_automatic_handshake_again_message)
-
-        buildNotification(
-            title = title,
-            message = message,
-            pendingIntent = buildPendingIntentWithActivityStack {
-                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
-            },
+            pendingIntent = exposureNotificationRepository.getExposureSettingsPendingIntent(context),
             channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
         ).show()
     }
