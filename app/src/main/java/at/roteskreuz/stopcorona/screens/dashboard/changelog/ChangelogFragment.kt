@@ -1,22 +1,30 @@
 package at.roteskreuz.stopcorona.screens.dashboard.changelog
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.VERSION_NAME
-import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ChangelogFragment : BaseFragment(R.layout.fragment_changelog) {
+class ChangelogFragment : BottomSheetDialogFragment() {
 
     private val viewModel: ChangelogViewModel by viewModel()
 
     private val controller: ChangelogController by lazy {
         ChangelogController(
             context = requireContext(),
-            onCtaClick = { closeBottomSheet() }
+            onCtaClick = { dismiss() }
         )
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_changelog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,8 +40,8 @@ class ChangelogFragment : BaseFragment(R.layout.fragment_changelog) {
 
         controller.requestModelBuild()
     }
+}
 
-    private fun closeBottomSheet() {
-        // TODO:
-    }
+fun Fragment.showChangelogBottomSheetFragment() {
+    ChangelogFragment().show(requireFragmentManager(), ChangelogFragment::class.java.name)
 }

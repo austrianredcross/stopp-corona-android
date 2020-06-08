@@ -12,6 +12,7 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.Constants.Misc.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
@@ -32,7 +33,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -191,8 +191,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         }
 
         if (viewModel.unseenChangelogForVersionAvailable(VERSION_NAME)) {
-            val bottomSheetBehaviour: BottomSheetBehavior<View> = BottomSheetBehavior.from(bsChangelog)
-            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+            showChangelogBottomSheetFragment()
         }
 
         controller.requestModelBuild()

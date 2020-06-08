@@ -36,20 +36,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/transparentAppBar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <FrameLayout
-        android:id="@+id/bsChangelog"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
-        app:layout_behavior="@string/bottom_sheet_behavior">
-
-        <fragment
-            android:id="@+id/fragmentChangelog"
-            android:name="at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
