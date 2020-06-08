@@ -5,6 +5,7 @@ import android.view.View
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.VERSION_NAME
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ChangelogFragment : BaseFragment(R.layout.fragment_changelog) {
@@ -13,15 +14,26 @@ class ChangelogFragment : BaseFragment(R.layout.fragment_changelog) {
 
     private val controller: ChangelogController by lazy {
         ChangelogController(
-            context = requireContext()
+            context = requireContext(),
+            onCtaClick = { closeBottomSheet() }
         )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        with(contentRecyclerView) {
+            setController(controller)
+        }
+
         with(viewModel.getChangelogForVersion(VERSION_NAME)) {
             controller.changelog = this
         }
+
+        controller.requestModelBuild()
+    }
+
+    private fun closeBottomSheet() {
+        // TODO:
     }
 }

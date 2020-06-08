@@ -1,10 +1,12 @@
 package at.roteskreuz.stopcorona.model.manager
 
 import android.content.SharedPreferences
+import android.text.SpannableString
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Prefs.CHANGELOG_MANAGER_PREFIX
+import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
 
 /**
@@ -27,7 +29,8 @@ interface ChangelogManager {
 }
 
 class ChangelogManagerImpl(
-    preferences: SharedPreferences
+    preferences: SharedPreferences,
+    private val contextInteractor: ContextInteractor
 ) : ChangelogManager {
 
     companion object {
@@ -44,9 +47,9 @@ class ChangelogManagerImpl(
         id = 1,
         versions = listOf("2.0.0", "2.0.1"),
         title = R.string.changelog_title_v2_0_0,
-        description = R.string.changelog_description_v2_0_0,
+        description = SpannableString(contextInteractor.getString(R.string.changelog_description_v2_0_0)),
         callToAction = R.string.changelog_cta_v2_0_0,
-        image = R.drawable.handshake_deactive
+        image = R.drawable.ic_changelog
     )
 
     private var lastSeenChangelogId: Int by preferences.intSharedPreferencesProperty(PREF_LAST_SEEN_CHANGELOG_ID, 0)
@@ -60,7 +63,7 @@ class ChangelogManagerImpl(
 
     override fun getChangelogForVersion(version: String): Changelog? {
         return if (unseenChangelogForVersionAvailable(convertVersionName(version))) {
-            lastSeenChangelogId = changelog.id
+//            lastSeenChangelogId = changelog.id
             changelog
         } else {
             null
@@ -72,7 +75,7 @@ class ChangelogManagerImpl(
      * to only use the first three version-values.
      */
     private fun convertVersionName(version: String): String {
-        return version.split("\\.").take(3).joinToString()
+        return version.split(".").take(3).joinToString(".")
     }
 }
 
@@ -80,7 +83,7 @@ data class Changelog(
     val id: Int,
     val versions: List<String>,
     @StringRes val title: Int,
-    @StringRes val description: Int,
+    val description: SpannableString,
     @StringRes val callToAction: Int,
     @DrawableRes val image: Int
 )
