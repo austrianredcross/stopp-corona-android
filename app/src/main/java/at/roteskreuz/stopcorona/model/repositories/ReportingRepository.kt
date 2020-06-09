@@ -164,7 +164,8 @@ class ReportingRepositoryImpl(
     }
 
     private suspend fun uploadData(warningType: WarningType,
-        temporaryExposureKeys: List<TemporaryExposureKey>) {
+        temporaryExposureKeys: List<TemporaryExposureKey>)
+    {
         apiInteractor.uploadInfectionData(
             temporaryExposureKeys.convertToApiTemporaryTracingKeys(),
             contextInteractor.packageName,
@@ -263,7 +264,7 @@ class ReportingRepositoryImpl(
     }
 
     override fun observePersonalData(): Observable<PersonalData> {
-         personalDataSubject
+        personalDataSubject
         return personalDataSubject
     }
 
