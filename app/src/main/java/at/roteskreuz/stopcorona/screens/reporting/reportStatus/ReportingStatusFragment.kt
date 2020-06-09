@@ -103,7 +103,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                 when (state) {
                     is DataState.Loaded -> {
                         state.data.first.startResolutionForResult(
-                            activity, state.data.second.requestCode()
+                            activity, state.data.second.requestCode
                         );
                     }
                 }
@@ -173,7 +173,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
+            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForRegistrationSucceeded()
                 }
@@ -181,7 +181,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                     viewModel.resolutionForRegistrationFailed()
                 }
             }
-            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
+            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForExposureKeyHistorySucceeded()
                 }

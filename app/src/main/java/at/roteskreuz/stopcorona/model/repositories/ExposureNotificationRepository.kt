@@ -25,15 +25,9 @@ import kotlin.coroutines.resume
  */
 interface ExposureNotificationRepository {
 
-    enum class ResolutionAction{
-        REGISTER_WITH_FRAMEWORK{
-            override fun requestCode(): Int { return  Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1 }
-        },
-        REQUEST_EXPOSURE_KEYS{
-            override fun requestCode(): Int { return  Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 2 }
-        };
-
-        abstract fun requestCode(): Int
+    enum class ResolutionAction(val requestCode: Int) {
+        REGISTER_WITH_FRAMEWORK(Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1),
+        REQUEST_EXPOSURE_KEYS(Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 2);
     }
 
     /**

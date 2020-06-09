@@ -94,9 +94,8 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                     }
                     is DataState.Loaded -> {
                         state.data.first.startResolutionForResult(
-                            activity, state.data.second.requestCode()
-
-                        );
+                            activity, state.data.second.requestCode
+                        )
                     }
                 }
             }
@@ -134,7 +133,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
+            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode -> {
                 if (resultCode == Activity.RESULT_OK) {
                     activity?.let { viewModel.resolutionForRegistrationSucceeded(it) }
                 }
@@ -142,7 +141,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                     viewModel.resolutionForRegistrationFailed(resultCode)
                 }
             }
-            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
+            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForExposureKeyHistorySucceded()
                 }
