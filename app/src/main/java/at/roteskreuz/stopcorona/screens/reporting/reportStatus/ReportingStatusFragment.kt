@@ -104,7 +104,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                     is DataState.Loaded -> {
                         state.data.first.startResolutionForResult(
                             activity, state.data.second.requestCode
-                        );
+                        )
                     }
                 }
             }
