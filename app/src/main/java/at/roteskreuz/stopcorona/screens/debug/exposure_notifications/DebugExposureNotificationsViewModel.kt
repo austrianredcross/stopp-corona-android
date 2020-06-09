@@ -4,14 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.infection.info.convertToApiTemporaryTracingKeys
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
+import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
@@ -27,7 +26,6 @@ import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.UUID
 
 class DebugExposureNotificationsViewModel(
     appDispatchers : AppDispatchers,
@@ -36,23 +34,11 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationRepository: ExposureNotificationRepository
 ) : ScopedViewModel(appDispatchers)  {
 
-    enum class DebugAction{
-        REGISTER_WITH_FRAMEWORK{
-            override fun requestCode(): Int { return  Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1 }
-        },
-        REQUEST_EXPOSURE_KEYS{
-            override fun requestCode(): Int { return  Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 2 }
-        };
-
-        abstract fun requestCode(): Int
-    }
-
-
-
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
-    private val exposureNotificationsErrorState = DataStateObserver<Pair<Status,DebugAction>>()
+    private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
     private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject(mutableListOf<TemporaryExposureKey>());
+    private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
 
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
@@ -78,7 +64,7 @@ class DebugExposureNotificationsViewModel(
         return exposureNotificationsEnabledSubject
     }
 
-    fun observeResolutionError(): Observable<DataState<Pair<Status,DebugAction>>> {
+    fun observeResolutionError(): Observable<DataState<ResolutionType>> {
         return exposureNotificationsErrorState.observe()
     }
 
@@ -96,7 +82,7 @@ class DebugExposureNotificationsViewModel(
     fun startExposureNotifications(activity: Activity) {
         exposureNotificationsErrorState.loading()
         exposureNotificationClient.start()
-            .addOnSuccessListener { unused: Void? ->
+            .addOnSuccessListener {
                 exposureNotificationsEnabledSubject.onNext(true)
                 exposureNotificationsErrorState.idle()
                 exposureNotificationsTextSubject.onNext("")
@@ -111,7 +97,7 @@ class DebugExposureNotificationsViewModel(
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(Pair(exception.status, DebugAction.REGISTER_WITH_FRAMEWORK))
+                    exposureNotificationsErrorState.loaded(ResolutionType.RegisterWithFramework(apiException.status))
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
@@ -128,7 +114,7 @@ class DebugExposureNotificationsViewModel(
      */
     fun stopExposureNotifications() {
         exposureNotificationClient.stop()
-            .addOnSuccessListener { unused: Void? ->
+            .addOnSuccessListener {
                 exposureNotificationsEnabledSubject.onNext(false)
                 exposureNotificationsTextSubject.onNext("app unregistered from exposure notifications")
             }
@@ -181,7 +167,6 @@ class DebugExposureNotificationsViewModel(
                 exposureNotificationsTextSubject.onNext("got the list of Temp" +
                     "oraryExposureKeys $it")
                 lastTemporaryExposureKeysSubject.onNext(it)
-
             }
             .addOnFailureListener { exception: Exception? ->
                 if (exception !is ApiException) {
@@ -193,7 +178,7 @@ class DebugExposureNotificationsViewModel(
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(Pair(exception.status, DebugAction.REQUEST_EXPOSURE_KEYS))
+                    exposureNotificationsErrorState.loaded(ResolutionType.GetExposureKeys(apiException.status))
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
@@ -213,18 +198,29 @@ class DebugExposureNotificationsViewModel(
         exposureNotificationsTextSubject.onNext("resolutionForRegistrationFailed with code: $resultCode")
     }
 
-    fun uploadKeys(warningType: WarningType) {
-        val keys = lastTemporaryExposureKeysSubject.value
-        val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
-            ApiTemporaryTracingKeyConverter.convert(tek, 0)
+    fun requestTan(mobileNumber: String) {
+        launch {
+            try {
+                val tanRequestUUID = apiInteractor.requestTan(mobileNumber).uuid
+                tanRequestUUIDSubject.onNext(tanRequestUUID)
+                exposureNotificationsTextSubject.onNext("TAN for $mobileNumber was requested with UUID $tanRequestUUID")
+
+            } catch (e:Exception){
+                exposureNotificationsTextSubject.onNext("TAN for  ${mobileNumber} failed because of $e")
+                Timber.e(e)
+            }
         }
+    }
+
+    fun uploadKeys(warningType: WarningType, tan: String) {
+        val keys = lastTemporaryExposureKeysSubject.value
         launch {
             try {
                 apiInteractor.uploadInfectionData(
-                    convertedValues,
+                    keys.convertToApiTemporaryTracingKeys(),
                     contextInteractor.packageName,
                     warningType,
-                    ApiVerificationPayload(UUID.randomUUID().toString(),"RED-CROSS")
+                    ApiVerificationPayload(tanRequestUUIDSubject.value, tan)
                 )
                 exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs succeeded")
             } catch (e:Exception){

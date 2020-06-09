@@ -38,12 +38,6 @@ interface ApiInteractor {
     suspend fun getInfectionMessages(addressPrefix: String, fromId: Long? = null): ApiInfectionMessages
 
     /**
-     * Upload infection information about user.
-     * @throws [SicknessCertificateUploadException], [ApiError]
-     */
-    suspend fun setInfectionInfo(infectionInfoRequest: ApiInfectionInfoRequest)
-
-    /**
      * Request the server to send a TAN via text message
      * @throws [ApiError]
      *
@@ -115,24 +109,6 @@ class ApiInteractorImpl(
             checkGeneralErrors {
                 apiDescription.infectionMessages(addressPrefix, fromId)
             }
-        }
-    }
-
-    override suspend fun setInfectionInfo(infectionInfoRequest: ApiInfectionInfoRequest) {
-        withContext(appDispatchers.IO) {
-            dataPrivacyRepository.assertDataPrivacyAccepted()
-            checkGeneralErrors(
-                { httpException ->
-                    when (httpException.code()) {
-                        HTTP_FORBIDDEN -> SicknessCertificateUploadException.TanInvalidException
-                        HTTP_INTERNAL_ERROR -> SicknessCertificateUploadException.BirthdayInvalidException
-                        else -> generalExceptionMapper(httpException)
-                    }
-                },
-                {
-                    apiDescription.infectionInfo(infectionInfoRequest)
-                }
-            )
         }
     }
 

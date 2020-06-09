@@ -3,15 +3,16 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.*
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
+import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
@@ -87,6 +88,18 @@ interface ExposureNotificationRepository {
      * Get the current (refreshed) state of the Exposure Notifications Framework state.
      */
     suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
+
+    /**
+     * Retrieve the TemporaryExposureKey from the Google Exposure Notifications framework
+     * in a blocking manner.
+     */
+    suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
+
+    /**
+     * Register with the Google Exposure Notifications framework in a blocking manner.
+     */
+    //TODO: for Dusan, see if we actually nee the non blocking function
+    suspend fun registerAppForExposureNotificationsNow()
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -128,11 +141,11 @@ class ExposureNotificationRepositoryImpl(
         registeringWithFrameworkState.loading()
         exposureNotificationClient.start()
             .addOnSuccessListener {
-                refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
                 bluetoothStateReceiver.register(contextInteractor.applicationContext)
             }
             .addOnFailureListener { exception: Exception ->
+                frameworkEnabledState.onNext(false)
                 registeringWithFrameworkState.error(exception)
                 bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
@@ -209,7 +222,32 @@ class ExposureNotificationRepositoryImpl(
                     cancellableContinuation.resume(it)
                 }
                 .addOnFailureListener {
+                    Timber.e(SilentError(it))
                     cancellableContinuation.resume(false)
+                }
+        }
+    }
+
+    override suspend fun getTemporaryExposureKeys():List<TemporaryExposureKey> {
+        return suspendCancellableCoroutine { continuation ->
+            exposureNotificationClient.temporaryExposureKeyHistory
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    continuation.cancel(it)
+                }
+        }
+    }
+
+    override suspend fun registerAppForExposureNotificationsNow() {
+        suspendCancellableCoroutine { continuation: CancellableContinuation<Void> ->
+            exposureNotificationClient.start()
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    continuation.cancel(it)
                 }
         }
     }

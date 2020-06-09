@@ -17,12 +17,8 @@ val scopeModule = module {
         ReportingRepositoryImpl(
             appDispatchers = get(),
             apiInteractor = get(),
-            configurationRepository = get(),
-            infectionMessageDao = get(),
-            cryptoRepository = get(),
-            infectionMessengerRepository = get(),
             quarantineRepository = get(),
-            databaseCleanupManager = get()
+            contextInteractor = get()
         )
     }
 
