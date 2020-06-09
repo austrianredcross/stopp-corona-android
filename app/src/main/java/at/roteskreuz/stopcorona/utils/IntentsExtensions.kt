@@ -50,6 +50,17 @@ fun Fragment.startDefaultBrowser(url: String) {
 }
 
 /**
+ * Start Google Play Store detail of the application defined by [packageName].
+ */
+fun Fragment.startGooglePlayStore(packageName: String) {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+    } catch (exc: ActivityNotFoundException) {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+    }
+}
+
+/**
  * Open system settings of this application.
  */
 fun Context.startAppSystemSettings() {

@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
@@ -206,17 +207,16 @@ class DashboardViewModel(
         }
     }
 
-    fun refreshPrerequisitesErrorStatement() {
+    fun refreshPrerequisitesErrorStatement(ignoreErrors: Boolean = false) {
         exposureNotificationPhaseSubject.value.let { state ->
             when (state) {
-                is ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices -> {
+                is ExposureNotificationPhase.PrerequisitesError -> {
                     state.refresh()
                 }
-                is ExposureNotificationPhase.PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
-                    TODO()
-                }
                 else -> {
-                    Timber.e(SilentError("state is not PrerequisitesError"))
+                    if (ignoreErrors.not()) {
+                        Timber.e(SilentError("state is not PrerequisitesError"))
+                    }
                 }
             }
         }
@@ -318,6 +318,7 @@ sealed class ExposureNotificationPhase {
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
                 val status = googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext)
+                val version = googlePlayAvailability.getApkVersion(contextInteractor.applicationContext)
                 moveToNextState(
                     when {
                         status == ConnectionResult.SERVICE_MISSING -> {
@@ -327,8 +328,7 @@ sealed class ExposureNotificationPhase {
                             ServiceUpdating(dependencyHolder, googlePlayAvailability, status)
                         }
                         status == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED -> {
-                            ServiceVersionUpdateRequired(dependencyHolder, googlePlayAvailability,
-                                status)
+                            ServiceVersionUpdateRequired(dependencyHolder, googlePlayAvailability, status)
                         }
                         status == ConnectionResult.SERVICE_DISABLED -> {
                             ServiceDisabled(dependencyHolder, googlePlayAvailability, status)
@@ -337,11 +337,9 @@ sealed class ExposureNotificationPhase {
                             ServiceInvalid(dependencyHolder, googlePlayAvailability, status)
                         }
                         // now status == ConnectionResult.SUCCESS
-
-                        // TODO: 28/05/2020 dusanjencik: We should check also correct version (https://tasks.pxp-x.com/browse/CTAA-1395)
-//                condition -> {
-//                    moveToNextState(PrerequisitesError.InvalidVersionOfGooglePlayServices(dependencyHolder))
-//                }
+                        version < Constants.ExposureNotification.MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION -> {
+                            PrerequisitesError.InvalidVersionOfGooglePlayServices(dependencyHolder)
+                        }
                         else -> {
                             RegisterToFramework(dependencyHolder, true)
                         }
@@ -369,6 +367,13 @@ sealed class ExposureNotificationPhase {
         }
 
         /**
+         * Will check prerequisites again.
+         */
+        fun refresh() {
+            moveToNextState(CheckPrerequisitesError(dependencyHolder))
+        }
+
+        /**
          * Google play services are not available on the phone or there is some error.
          * Some of errors user can resolve.
          */
@@ -376,13 +381,6 @@ sealed class ExposureNotificationPhase {
 
             abstract val googlePlayAvailability: GoogleApiAvailability
             abstract val googlePlayServicesStatusCode: Int
-
-            /**
-             * Will check prerequisites again.
-             */
-            fun refresh() {
-                moveToNextState(CheckPrerequisitesError(dependencyHolder))
-            }
 
             data class ServiceMissing(
                 override val dependencyHolder: DependencyHolder,
@@ -415,31 +413,12 @@ sealed class ExposureNotificationPhase {
             ) : UnavailableGooglePlayServices()
         }
 
-//        /**
-//         * Google play services are not available on the phone.
-//         */
-//        data class UnavailableGooglePlayServices(
-//            override val dependencyHolder: DependencyHolder,
-//            val googlePlayAvailability: GoogleApiAvailability,
-//            val isUserResolvableError: Boolean,
-//            val googlePlayServicesStatusCode: Int
-//        ) : PrerequisitesError()
-
         /**
          * The current Google play services version is not matching Exposure notification minimum version.
          */
         data class InvalidVersionOfGooglePlayServices(
             override val dependencyHolder: DependencyHolder
-        ) : PrerequisitesError() {
-
-            /**
-             * Will request an update and check prerequisites again.
-             */
-            fun refresh() {
-                // TODO: 09/06/2020 dusanjencik: Will be solved in https://tasks.pxp-x.com/browse/CTAA-1395
-//                moveToNextState(CheckPrerequisitesError(dependencyHolder))
-            }
-        }
+        ) : PrerequisitesError()
     }
 
     /**

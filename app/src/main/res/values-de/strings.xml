@@ -68,38 +68,38 @@
 	<string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen.</string>
 	<string name="main_body_report_button">Ärztliche Bestätigung melden</string>
 	<string name="main_play_services_not_available_dialog_title">Gerät unterstützt Google PlayServices nicht</string>
-	<string name="main_play_services_not_available_dialog_message">Für die Funktion von Nearby werden die Google PlayServices benötigt. Derzeit funktioniert der Digitale Handshake leider nicht ohne Google PlayServices. Wir arbeiten an Alternativen.</string>
-	<string name="main_handshake_information_hint">Wann soll ich die Funktion nutzen?</string>
-	<string name="main_handshake_dialog_title">Speichern Sie diese Begegnungen, wenn...</string>
-	<string name="main_handshake_dialog_description_1">... Sie mehr als 15 Minuten Kontakt haben, so dass Ihre Gesichter immer wieder näher als 2 Meter zueinander sind.</string>
-	<string name="main_handshake_dialog_description_2">… Sie mehr als 15 Minuten Kontakt haben und in dieser Zeit in einem kleinen, geschlossenen Raum sind, wie z.B. im PKW, in einem  Zimmer oder im Zug.</string>
-	<string name="main_microphone_explanation_dialog_title">Zugriff auf das Mikrofon</string>
-	<string name="main_microphone_explanation_dialog_description">Für den Digitalen Handshake wird geprüft, ob auch andere Smartphones in der Gegend den Handshake ausgelöst haben. Das funktioniert über Ultraschall. Deshalb kann es sein, dass Ihr Smartphone einen hörbaren Ton von sich gibt. Der Ton wird von anderen Smartphones mit dem Mikrofon aufgezeichnet und andersherum nutzt auch Ihr Smartphone das Mikrofon, um Töne der anderen Geräte wahrzunehmen. Aus diesem Grund wird der Zugriff auf das Mikrofon benötigt.</string>
-	<string name="main_microphone_explanation_dialog_do_not_show_again">Nicht wieder anzeigen</string>
-	<string name="main_status_update_headline">Status Update</string>
-	<string name="main_status_update_contact_sickness_not_confirmed_message">Der Verdachtsfall bei einem oder mehrerer Ihrer Kontakte hat sich nicht bestätigt.</string>
-	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services ist nicht verfügbar.</string>
-	<string name="main_exposure_error_google_play_unavailable_missing_message">Service fehlt.</string>
-	<string name="main_exposure_error_google_play_unavailable_updating_message">Der Service wird gerade aktualisiert.</string>
-	<string name="main_exposure_error_google_play_unavailable_updating_action">Versuch es noch einmal</string>
-	<string name="main_exposure_error_google_play_unavailable_update_required_message">Service erfordert Update.</string>
-	<string name="main_exposure_error_google_play_unavailable_update_required_action">Aktualisieren</string>
-	<string name="main_exposure_error_google_play_unavailable_disabled_message">Der Dienst ist deaktiviert.</string>
-	<string name="main_exposure_error_google_play_unavailable_invalid_message">Service ist ungültig.</string>
-	<string name="main_exposure_error_google_play_unavailable_action">Versuchen Sie zu lösen</string>
-	<string name="main_exposure_error_google_play_wrong_version_title">Die Version von Google Play Services ist alt.</string>
-	<string name="main_exposure_error_google_play_wrong_version_message">Die installierte Version der Google Play Services ist veraltet. Bitte suchen Sie nach Updates.</string>
-	<string name="main_exposure_error_google_play_wrong_version_action_btn">Auf Updates prüfen</string>
+    <string name="main_play_services_not_available_dialog_message">Für die Funktion von Nearby werden die Google PlayServices benötigt. Derzeit funktioniert der Digitale Handshake leider nicht ohne Google PlayServices. Wir arbeiten an Alternativen.</string>
+    <string name="main_handshake_information_hint">Wann soll ich die Funktion nutzen?</string>
+    <string name="main_handshake_dialog_title">Speichern Sie diese Begegnungen, wenn...</string>
+    <string name="main_handshake_dialog_description_1">... Sie mehr als 15 Minuten Kontakt haben, so dass Ihre Gesichter immer wieder näher als 2 Meter zueinander sind.</string>
+    <string name="main_handshake_dialog_description_2">… Sie mehr als 15 Minuten Kontakt haben und in dieser Zeit in einem kleinen, geschlossenen Raum sind, wie z.B. im PKW, in einem  Zimmer oder im Zug.</string>
+    <string name="main_microphone_explanation_dialog_title">Zugriff auf das Mikrofon</string>
+    <string name="main_microphone_explanation_dialog_description">Für den Digitalen Handshake wird geprüft, ob auch andere Smartphones in der Gegend den Handshake ausgelöst haben. Das funktioniert über Ultraschall. Deshalb kann es sein, dass Ihr Smartphone einen hörbaren Ton von sich gibt. Der Ton wird von anderen Smartphones mit dem Mikrofon aufgezeichnet und andersherum nutzt auch Ihr Smartphone das Mikrofon, um Töne der anderen Geräte wahrzunehmen. Aus diesem Grund wird der Zugriff auf das Mikrofon benötigt.</string>
+    <string name="main_microphone_explanation_dialog_do_not_show_again">Nicht wieder anzeigen</string>
+    <string name="main_status_update_headline">Status Update</string>
+    <string name="main_status_update_contact_sickness_not_confirmed_message">Der Verdachtsfall bei einem oder mehrerer Ihrer Kontakte hat sich nicht bestätigt.</string>
+    <string name="main_exposure_error_google_play_unavailable_title">Google Play Services ist nicht verfügbar</string>
+    <string name="main_exposure_error_google_play_unavailable_missing_message">Service fehlt.</string>
+    <string name="main_exposure_error_google_play_unavailable_updating_message">Der Service wird gerade aktualisiert.</string>
+    <string name="main_exposure_error_google_play_unavailable_updating_action">Versuch es noch einmal</string>
+    <string name="main_exposure_error_google_play_unavailable_update_required_message">Service erfordert Update.</string>
+    <string name="main_exposure_error_google_play_unavailable_update_required_action">Aktualisieren</string>
+    <string name="main_exposure_error_google_play_unavailable_disabled_message">Der Dienst ist deaktiviert.</string>
+    <string name="main_exposure_error_google_play_unavailable_invalid_message">Service ist ungültig.</string>
+    <string name="main_exposure_error_google_play_unavailable_action">Versuchen Sie zu lösen</string>
+    <string name="main_exposure_error_google_play_wrong_version_title">Die Version von Google Play Services ist alt</string>
+    <string name="main_exposure_error_google_play_wrong_version_message">Die installierte Version der Google Play Services ist veraltet. Bitte suchen Sie nach Updates. Sie benötigen mindestens die Version 20.18.13, die sich möglicherweise im Beta-Kanal befindet.</string>
+    <string name="main_exposure_error_google_play_wrong_version_action_btn">Gehe zum Play Store</string>
 
-	<!-- Update Information -->
-	<string name="mandatory_update_title">Aktuelle Version herunterladen</string>
-	<string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
-	<string name="mandatory_update_playstore">Zum Play Store</string>
+    <!-- Update Information -->
+    <string name="mandatory_update_title">Aktuelle Version herunterladen</string>
+    <string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
+    <string name="mandatory_update_playstore">Zum Play Store</string>
 
-	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
-	<string name="infection_info_title">Achtung</string>
-	<string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
-	<string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
+    <!-- Contact Sickness_Guidelines for people with proven sick contact -->
+    <string name="infection_info_title">Achtung</string>
+    <string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
+    <string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
 	<string name="infection_info_description1_single">Einer Ihrer registrierten Begegnungen ist %s mit dem Coronavirus infiziert.</string>
 	<string name="infection_info_description_acording_evidence">laut ärztlichem Nachweis</string>
 	<string name="infection_info_description1_many">%d Ihrer registrierten Begegnungen sind %s mit dem Coronavirus infiziert.</string>

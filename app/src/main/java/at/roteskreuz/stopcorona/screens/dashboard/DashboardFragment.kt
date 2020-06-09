@@ -25,6 +25,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
+import at.roteskreuz.stopcorona.utils.startGooglePlayStore
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import io.reactivex.rxkotlin.plusAssign
@@ -99,7 +100,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                         ).show()
                     }
                     is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
-                        exposureNotificationPhase.refresh()
+                        startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
                     }
                     is FrameworkError -> {
                         exposureNotificationPhase.refresh()
@@ -185,8 +186,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     override fun onResume() {
         super.onResume()
-        // TODO: 03/06/2020 dusanjencik: What to refresh?
-//        viewModel.refreshExposureNotificationAppRegisteredState()
+        viewModel.refreshPrerequisitesErrorStatement(ignoreErrors = true)
     }
 
     override fun onDestroyView() {

@@ -78,7 +78,7 @@
 	<string name="main_microphone_explanation_dialog_do_not_show_again">Don\'t show again</string>
 	<string name="main_status_update_headline">Status update</string>
 	<string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
-	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available.</string>
+	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available</string>
 	<string name="main_exposure_error_google_play_unavailable_missing_message">Service is missing.</string>
 	<string name="main_exposure_error_google_play_unavailable_updating_message">Service is just updating.</string>
 	<string name="main_exposure_error_google_play_unavailable_updating_action">Try again</string>
@@ -87,9 +87,9 @@
 	<string name="main_exposure_error_google_play_unavailable_disabled_message">Service is disabled.</string>
 	<string name="main_exposure_error_google_play_unavailable_invalid_message">Service is invalid.</string>
 	<string name="main_exposure_error_google_play_unavailable_action">Try to resolve</string>
-	<string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old.</string>
-	<string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates.</string>
-	<string name="main_exposure_error_google_play_wrong_version_action_btn">Check updates</string>
+	<string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old</string>
+	<string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates. You need version at least 20.18.13 which might be in beta channel.</string>
+	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to Play Store</string>
 
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Download the current version</string>

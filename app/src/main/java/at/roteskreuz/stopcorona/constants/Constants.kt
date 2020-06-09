@@ -62,6 +62,19 @@ object Constants {
     }
 
     /**
+     * Constants related to the exposure notification framework.
+     */
+    object ExposureNotification {
+
+        /**
+         * 20.18.13.xx
+         */
+        const val MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION = 201813000
+
+        const val GOOGLE_PLAY_SERVICES_PACKAGE_NAME = "com.google.android.gms"
+    }
+
+    /**
      * Constants for shared preferences.
      */
     object Prefs {
