@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.constants
 import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.BuildConfig.APPLICATION_ID
 import at.roteskreuz.stopcorona.skeleton.core.constants.BaseAppRequest
+import com.google.android.gms.common.GoogleApiAvailability
 import org.threeten.bp.Duration
 
 /**
@@ -71,7 +72,7 @@ object Constants {
          */
         const val MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION = 201813000
 
-        const val GOOGLE_PLAY_SERVICES_PACKAGE_NAME = "com.google.android.gms"
+        const val GOOGLE_PLAY_SERVICES_PACKAGE_NAME = GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE
     }
 
     /**
