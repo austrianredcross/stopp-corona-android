@@ -179,20 +179,19 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
         when (requestCode) {
             ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    viewModel.uploadData()
+                    viewModel.resolutionForRegistrationSucceeded()
                 }
                 else {
-                    //TODO: coordinate with UX on what to do here. User did not register app with framework
-                    activity?.let { Toast.makeText(activity, "you are not with the framework", Toast.LENGTH_SHORT).show() }
+                    viewModel.resolutionForRegistrationFailed()
                 }
             }
             ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.uploadData()
+                    viewModel.resolutionForExposureKeyHistorySucceeded()
                 }
                 else {
-                    //TODO: coordinate with UX on what to do here. User said no to the system dialog asking for access to the keys
-                    activity?.let { Toast.makeText(activity, "Could not get the exposure keys", Toast.LENGTH_SHORT).show() }
+                    viewModel.resolutionForExposureKeyHistoryFailed()
                 }
             }
         }

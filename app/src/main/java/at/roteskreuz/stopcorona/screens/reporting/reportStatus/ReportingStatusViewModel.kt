@@ -63,6 +63,7 @@ class ReportingStatusViewModel(
                 uploadData(temporaryTracingKeys)
             } catch (apiException: ApiException){
                 if (apiException.statusCode == ExposureNotificationStatusCodes.DEVELOPER_ERROR) {
+                    Timber.e(apiException, "Error, DEVELOPER_ERROR in result")
                     exposureNotificationsErrorState.loaded(
                         Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
                 }
@@ -75,7 +76,6 @@ class ReportingStatusViewModel(
             } catch (exception: java.lang.Exception) {
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
-                    //TODO make sure this is handled
                     uploadReportDataStateObserver.error(exception)
                 }
             }
@@ -112,6 +112,22 @@ class ReportingStatusViewModel(
 
     fun observeResolutionError(): Observable<DataState<Pair<Status, ExposureNotificationRepository.ResolutionAction>>> {
         return exposureNotificationsErrorState.observe()
+    }
+
+    fun resolutionForRegistrationSucceeded() {
+        uploadData()
+    }
+
+    fun resolutionForRegistrationFailed() {
+        Timber.e(SilentError("User declined app registration with Exposure Notification Framework"))
+    }
+
+    fun resolutionForExposureKeyHistorySucceeded() {
+        uploadData()
+    }
+
+    fun resolutionForExposureKeyHistoryFailed() {
+        Timber.e(SilentError("User declined app access to the TemporaryExposureKeys from the  Exposure Notification Framework"))
     }
 }
 
