@@ -101,9 +101,6 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
             .observeOnMainThread()
             .subscribe { state ->
                 when (state) {
-                    is State.Loading -> {
-                        //TODO think about what to do here
-                    }
                     is DataState.Loaded -> {
                         state.data.first.startResolutionForResult(
                             activity, state.data.second.requestCode()
@@ -175,7 +172,6 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
         return true // the changing of fragments is managing parent activity
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
@@ -187,13 +183,13 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
             }
             ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    viewModel.uploadData()
                     viewModel.resolutionForExposureKeyHistorySucceeded()
                 }
                 else {
                     viewModel.resolutionForExposureKeyHistoryFailed()
                 }
             }
+            else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
 }

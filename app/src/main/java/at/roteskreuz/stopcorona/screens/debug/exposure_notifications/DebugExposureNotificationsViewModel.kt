@@ -160,14 +160,6 @@ class DebugExposureNotificationsViewModel(
         getTemporaryExposureKeyHistory()
     }
 
-    suspend fun asyncGetTemporaryExposureKeyHistory(): MutableList<TemporaryExposureKey>{
-        return suspendCoroutine {continuation ->
-            exposureNotificationClient.temporaryExposureKeyHistory
-                .addOnSuccessListener { continuation.resume(it) }
-                .addOnFailureListener{ continuation.resumeWithException(it) }
-        }
-    }
-
     fun getTemporaryExposureKeyHistory() {
         exposureNotificationClient.temporaryExposureKeyHistory
             .addOnSuccessListener {

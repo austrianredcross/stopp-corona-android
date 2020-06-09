@@ -35,7 +35,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
 
-        val uploadKeylistener = View.OnClickListener(){button ->
+        val uploadKeylistener = View.OnClickListener {button ->
             val tan = exposureNotificationsTanEditText.text.toString()
             if (tan.isNullOrBlank()){
                 activity?.let { Toast.makeText(activity,"please add TAN", Toast.LENGTH_SHORT)}
@@ -83,7 +83,6 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
             .observeOnMainThread()
             .subscribe{keys ->
                 uploadButtons.onEach { it.text = "${keys.size} keys ready to be uploaded" }
-
             }
 
         disposables += viewModel.observeResolutionError()
@@ -134,7 +133,6 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
@@ -151,6 +149,9 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 else {
                     viewModel.resolutionForExposureKeyHistoryFailed(resultCode)
                 }
+            }
+            else -> {
+                super.onActivityResult(requestCode, resultCode, data)
             }
         }
     }

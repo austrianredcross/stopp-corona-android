@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
@@ -100,6 +101,8 @@ interface ExposureNotificationRepository {
     suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
 
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
+
+    suspend fun registerAppForExposureNotificationsNow()
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -231,6 +234,7 @@ class ExposureNotificationRepositoryImpl(
                     cancellableContinuation.resume(it)
                 }
                 .addOnFailureListener {
+                    Timber.e(SilentError(it))
                     cancellableContinuation.resume(false)
                 }
         }
@@ -239,6 +243,18 @@ class ExposureNotificationRepositoryImpl(
     override suspend fun getTemporaryExposureKeys():List<TemporaryExposureKey> {
         return suspendCancellableCoroutine { continuation ->
             exposureNotificationClient.temporaryExposureKeyHistory
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    continuation.cancel(it)
+                }
+        }
+    }
+
+    override suspend fun registerAppForExposureNotificationsNow() {
+        suspendCancellableCoroutine { continuation: CancellableContinuation<Void> ->
+            exposureNotificationClient.start()
                 .addOnSuccessListener {
                     continuation.resume(it)
                 }

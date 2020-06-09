@@ -11,14 +11,12 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
-import io.reactivex.rxkotlin.plusAssign
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
@@ -51,34 +49,59 @@ class ReportingStatusViewModel(
     }
 
     fun uploadData() {
-        if(uploadReportDataStateObserver.currentState is State.Loading){
+        if (uploadReportDataStateObserver.currentState is State.Loading) {
             Timber.e(SilentError("We are already uploading data."))
             return
         }
-
         uploadReportDataStateObserver.loading()
         launch {
             try {
+                if (checkIfAppIsRegistered().not()) {
+                    uploadReportDataStateObserver.idle()
+                    return@launch
+                }
                 val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
                 uploadData(temporaryTracingKeys)
-            } catch (apiException: ApiException){
-                if (apiException.statusCode == ExposureNotificationStatusCodes.DEVELOPER_ERROR) {
-                    Timber.e(apiException, "Error, DEVELOPER_ERROR in result")
-                    exposureNotificationsErrorState.loaded(
-                        Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
-                }
-                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    Timber.e(apiException, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(
-                        Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS))
+            } catch (apiException: ApiException) {
+                when (apiException.statusCode) {
+                    ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
+                        Timber.e(apiException, "Expected Error, RESOLUTION_REQUIRED in result - attempt to handle it")
+                        exposureNotificationsErrorState.loaded(
+                            Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS))
+                    }
+                    else -> {
+                        uploadReportDataStateObserver.error(apiException)
+                        return@launch
+                    }
                 }
                 uploadReportDataStateObserver.idle()
             } catch (exception: java.lang.Exception) {
-                if (exception !is ApiException) {
-                    Timber.e(exception, "Unknown error when attempting to start API")
-                    uploadReportDataStateObserver.error(exception)
+                Timber.e(exception, "Unknown error when attempting to start API")
+                uploadReportDataStateObserver.error(exception)
+            }
+        }
+    }
+
+    private suspend fun checkIfAppIsRegistered(): Boolean {
+        val appIsRegistered = exposureNotificationRepository.isAppRegisteredForExposureNotificationsCurrentState()
+        if (appIsRegistered) {
+            return true
+        } else {
+            try {
+                exposureNotificationRepository.registerAppForExposureNotificationsNow()
+            } catch (apiException: ApiException) {
+                when (apiException.statusCode) {
+                    ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
+                        Timber.e(apiException, "Expected Error, RESOLUTION_REQUIRED in result when registering - attempt to handle it")
+                        exposureNotificationsErrorState.loaded(
+                            Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
+                    }
+                    else -> {
+                        uploadReportDataStateObserver.error(apiException)
+                    }
                 }
             }
+            return false
         }
     }
 
@@ -115,11 +138,18 @@ class ReportingStatusViewModel(
     }
 
     fun resolutionForRegistrationSucceeded() {
-        uploadData()
+        uploadReportDataStateObserver.loading()
+        launch {
+            //we need to do this as the framework is slow and does not know about the resolution yet
+            Thread.sleep(2000)
+            uploadReportDataStateObserver.idle()
+            uploadData()
+        }
     }
 
     fun resolutionForRegistrationFailed() {
         Timber.e(SilentError("User declined app registration with Exposure Notification Framework"))
+        uploadReportDataStateObserver.idle()
     }
 
     fun resolutionForExposureKeyHistorySucceeded() {
@@ -128,6 +158,7 @@ class ReportingStatusViewModel(
 
     fun resolutionForExposureKeyHistoryFailed() {
         Timber.e(SilentError("User declined app access to the TemporaryExposureKeys from the  Exposure Notification Framework"))
+        uploadReportDataStateObserver.idle()
     }
 }
 
