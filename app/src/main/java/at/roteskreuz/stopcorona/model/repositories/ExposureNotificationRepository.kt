@@ -99,9 +99,7 @@ interface ExposureNotificationRepository {
      */
     suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
 
-    fun getTemporaryExposureKeys()
-
-    fun observeTemporaryExposureKeys(): Observable<DataState<MutableList<TemporaryExposureKey>>>
+    suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -117,7 +115,6 @@ class ExposureNotificationRepositoryImpl(
      */
     private val registeringWithFrameworkState = StateObserver()
     private val frameworkEnabledState = NonNullableBehaviorSubject(false)
-    private val temporaryExposureKeySubject = DataStateObserver<MutableList<TemporaryExposureKey>>()
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
@@ -134,10 +131,6 @@ class ExposureNotificationRepositoryImpl(
 
     override fun observeRegistrationState(): Observable<State> {
         return registeringWithFrameworkState.observe()
-    }
-
-    override fun observeTemporaryExposureKeys(): Observable<DataState<MutableList<TemporaryExposureKey>>> {
-        return temporaryExposureKeySubject.observe()
     }
 
     override fun registerAppForExposureNotifications() {
@@ -243,16 +236,15 @@ class ExposureNotificationRepositoryImpl(
         }
     }
 
-    override fun getTemporaryExposureKeys() {
-        temporaryExposureKeySubject.loading()
-        exposureNotificationClient.temporaryExposureKeyHistory
-            .addOnSuccessListener {
-                temporaryExposureKeySubject.loaded(it)
-                temporaryExposureKeySubject.idle()
-            }
-            .addOnFailureListener {
-                temporaryExposureKeySubject.error(it)
-                temporaryExposureKeySubject.idle()
-            }
+    override suspend fun getTemporaryExposureKeys():List<TemporaryExposureKey> {
+        return suspendCancellableCoroutine { continuation ->
+            exposureNotificationClient.temporaryExposureKeyHistory
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    continuation.cancel(it)
+                }
+        }
     }
 }

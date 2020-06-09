@@ -35,64 +35,22 @@ class ReportingStatusViewModel(
     private val uploadReportDataStateObserver = DataStateObserver<MessageType>()
     private val exposureNotificationsErrorState = DataStateObserver<Pair<Status, ExposureNotificationRepository.ResolutionAction>>()
 
+    private suspend fun uploadData(temporaryTracingKeys: List<TemporaryExposureKey>) {
+        try {
+            val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
+            uploadReportDataStateObserver.loaded(reportedInfectionLevel)
+        } catch (ex: Exception) {
+            uploadReportDataStateObserver.error(ex)
+        } finally {
+            uploadReportDataStateObserver.idle()
+        }
+    }
+
     fun setUserAgreement(agreement: Boolean) {
         reportingRepository.setUserAgreement(agreement)
     }
 
-    fun uploadInfectionInformation() {
-        exposureNotificationsErrorState.loading()
-        disposables += exposureNotificationRepository.observeTemporaryExposureKeys()
-            .observeOnMainThread()
-            .subscribe{
-                when (it){
-                    is DataState.Loaded ->{
-                        uploadData(it.data)
-                        exposureNotificationsErrorState.idle()
-                    }
-                    is State.Loading -> { /**nothing to do here**/ }
-                    is State.Error -> {
-
-                        val exception = it.error
-                        if (exception !is ApiException) {
-                            Timber.e(exception, "Unknown error when attempting to start API")
-                            return@subscribe
-                        }
-                        val apiException = exception
-                        if (apiException.statusCode == ExposureNotificationStatusCodes.DEVELOPER_ERROR) {
-                            disposables += exposureNotificationRepository.observeRegistrationState()
-                                .subscribe{registrationWithFrameworkState ->
-                                    when (registrationWithFrameworkState) {
-                                        is State.Error -> {
-                                            when (registrationWithFrameworkState.error) {
-                                                is ApiException -> {
-                                                    val apiException = registrationWithFrameworkState.error as ApiException
-                                                    exposureNotificationsErrorState.loaded(
-                                                        Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            exposureNotificationRepository.registerAppForExposureNotifications()
-                            exposureNotificationsErrorState.idle()
-                            return@subscribe
-                        }
-                        if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                            Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                            exposureNotificationsErrorState.loaded(Pair(exception.status, ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS))
-                            exposureNotificationsErrorState.idle()
-                        } else {
-                            Timber.e(apiException, "No RESOLUTION_REQUIRED in result")
-                        }
-                    }
-                }
-
-
-            }
-        exposureNotificationRepository.getTemporaryExposureKeys()
-    }
-
-    fun uploadData(temporaryTracingKeys: List<TemporaryExposureKey>) {
+    fun uploadData() {
         if(uploadReportDataStateObserver.currentState is State.Loading){
             Timber.e(SilentError("We are already uploading data."))
             return
@@ -101,12 +59,25 @@ class ReportingStatusViewModel(
         uploadReportDataStateObserver.loading()
         launch {
             try {
-                val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
-                uploadReportDataStateObserver.loaded(reportedInfectionLevel)
-            } catch (ex: Exception) {
-                uploadReportDataStateObserver.error(ex)
-            } finally {
+                val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
+                uploadData(temporaryTracingKeys)
+            } catch (apiException: ApiException){
+                if (apiException.statusCode == ExposureNotificationStatusCodes.DEVELOPER_ERROR) {
+                    exposureNotificationsErrorState.loaded(
+                        Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
+                }
+                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+                    Timber.e(apiException, "Error, RESOLUTION_REQUIRED in result")
+                    exposureNotificationsErrorState.loaded(
+                        Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS))
+                }
                 uploadReportDataStateObserver.idle()
+            } catch (exception: java.lang.Exception) {
+                if (exception !is ApiException) {
+                    Timber.e(exception, "Unknown error when attempting to start API")
+                    //TODO make sure this is handled
+                    uploadReportDataStateObserver.error(exception)
+                }
             }
         }
     }

@@ -55,7 +55,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
         ReportingStatusController(
             context = requireContext(),
             onAgreementCheckboxChange = viewModel::setUserAgreement,
-            onSendReportClick = viewModel::uploadInfectionInformation
+            onSendReportClick = viewModel::uploadData
         )
     }
 
@@ -179,17 +179,19 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
         when (requestCode) {
             ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    viewModel.uploadInfectionInformation()
+                    viewModel.uploadData()
                 }
                 else {
+                    //TODO: coordinate with UX on what to do here. User did not register app with framework
                     activity?.let { Toast.makeText(activity, "you are not with the framework", Toast.LENGTH_SHORT).show() }
                 }
             }
             ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode() -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    viewModel.uploadInfectionInformation()
+                    viewModel.uploadData()
                 }
                 else {
+                    //TODO: coordinate with UX on what to do here. User said no to the system dialog asking for access to the keys
                     activity?.let { Toast.makeText(activity, "Could not get the exposure keys", Toast.LENGTH_SHORT).show() }
                 }
             }
