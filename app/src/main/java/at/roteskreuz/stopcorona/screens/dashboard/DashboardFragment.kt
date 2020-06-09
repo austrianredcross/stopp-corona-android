@@ -12,9 +12,9 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
-import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
+import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment

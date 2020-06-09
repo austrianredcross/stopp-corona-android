@@ -48,16 +48,16 @@
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
 	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (zufällige Kennzahlen [=“zufalls-IDs“], Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet.</string>
-	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
-	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
-	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
-	<string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
-	<string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
+    <string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
+    <string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
+    <string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
+    <string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
+    <string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
 
-	<!-- Dashboard -->
-	<string name="main_headline">Gemeinsam gegen das Coronavirus</string>
-	<string name="main_body_contact_title">Digitaler Handshake</string>
-	<string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
+    <!-- Dashboard -->
+    <string name="main_headline">Gemeinsam gegen das Coronavirus</string>
+    <string name="main_body_contact_title">Digitaler Handshake</string>
+    <string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
     <string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
     <string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
     <string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
@@ -119,15 +119,15 @@
     <string name="contact_sickness_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben \nist.</string>
     <string name="infection_info_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 
-	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
-	<string name="infection_info_warning_title">Achtung</string>
-	<string name="infection_info_warning_headline_single">1 Kontakt mit Coronavirus-Verdacht</string>
-	<string name="infection_info_warning_headline_many">%d Kontakte mit Coronavirus-Verdacht</string>
-	<string name="infection_info_warning_description1_single">Bei einer Ihrer registrierten Begegnungen %s.</string>
-	<string name="infection_info_warning_explanation">gibt es den Verdacht auf eine Corona-Infektion</string>
-	<string name="infection_info_warning_description1_many">Bei %d Ihrer registrierten Begegnungen %s.</string>
-	<string name="infection_info_warning_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
-	<string name="infection_info_warning_quarantine_end">Bleiben Sie dort bitte bis %s</string>
+    <!-- Contact Sickness_Guidelines for people with probably sick contact -->
+    <string name="infection_info_warning_title">Achtung</string>
+    <string name="infection_info_warning_headline_single">1 Kontakt mit Coronavirus-Verdacht</string>
+    <string name="infection_info_warning_headline_many">%d Kontakte mit Coronavirus-Verdacht</string>
+    <string name="infection_info_warning_description1_single">Bei einer Ihrer registrierten Begegnungen %s.</string>
+    <string name="infection_info_warning_explanation">gibt es den Verdacht auf eine Corona-Infektion</string>
+    <string name="infection_info_warning_description1_many">Bei %d Ihrer registrierten Begegnungen %s.</string>
+    <string name="infection_info_warning_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
+    <string name="infection_info_warning_quarantine_end">Bleiben Sie dort bitte bis %s</string>
 	<string name="contact_sickness__warning_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben \nist.</string>
 	<string name="infection_info_warning_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 
