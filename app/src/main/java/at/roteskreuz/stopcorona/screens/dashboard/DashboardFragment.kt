@@ -9,8 +9,10 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.constants.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
@@ -180,6 +182,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is FrameworkError.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
             }
+
+        if (viewModel.unseenChangelogForVersionAvailable(VERSION_NAME)) {
+            showChangelogBottomSheetFragment()
+        }
 
         controller.requestModelBuild()
     }

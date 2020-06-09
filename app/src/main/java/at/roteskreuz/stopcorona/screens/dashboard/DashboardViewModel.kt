@@ -4,6 +4,7 @@ import android.app.Activity
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.manager.ChangelogManager
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -38,7 +39,8 @@ class DashboardViewModel(
     private val configurationRepository: ConfigurationRepository,
     exposureNotificationRepository: ExposureNotificationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager,
-    googlePlayAvailability: GoogleApiAvailability
+    googlePlayAvailability: GoogleApiAvailability,
+    private val changelogManager: ChangelogManager
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
@@ -221,6 +223,8 @@ class DashboardViewModel(
         exposureNotificationPhaseSubject.value.onCleared()
         super.onCleared()
     }
+
+    fun unseenChangelogForVersionAvailable(version: String) = changelogManager.unseenChangelogForVersionAvailable(version)
 }
 
 /**

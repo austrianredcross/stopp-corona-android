@@ -5,10 +5,7 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.db.DefaultDatabase
-import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
-import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManagerImpl
-import at.roteskreuz.stopcorona.model.manager.PreferencesMigrationManager
-import at.roteskreuz.stopcorona.model.manager.PreferencesMigrationManagerImpl
+import at.roteskreuz.stopcorona.model.manager.*
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
@@ -40,6 +37,12 @@ internal val persistenceModule = module {
             appDispatchers = get(),
             configurationRepository = get(),
             infectionMessageDao = get()
+        )
+    }
+
+    single<ChangelogManager> {
+        ChangelogManagerImpl(
+            preferences = get()
         )
     }
 
