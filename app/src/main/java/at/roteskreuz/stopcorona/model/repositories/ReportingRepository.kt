@@ -2,10 +2,7 @@ package at.roteskreuz.stopcorona.model.repositories
 
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.infection.info.*
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion.SCOPE_NAME
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -169,7 +166,7 @@ class ReportingRepositoryImpl(
     private suspend fun uploadData(warningType: WarningType,
         temporaryExposureKeys: List<TemporaryExposureKey>) {
         apiInteractor.uploadInfectionData(
-            generateApiTracingKeys(temporaryExposureKeys, warningType),
+            temporaryExposureKeys.convertToApiTemporaryTracingKeys(),
             contextInteractor.packageName,
             warningType,
             ApiVerificationPayload(
@@ -177,12 +174,6 @@ class ReportingRepositoryImpl(
                 tanDataSubject.value.tan
             )
         )
-    }
-
-    private fun generateApiTracingKeys(temporaryExposureKeys: List<TemporaryExposureKey>, warningType: WarningType): List<ApiTemporaryTracingKey> {
-        return temporaryExposureKeys.map {
-            ApiTemporaryTracingKeyConverter.convert(it, warningType)
-        }
     }
 
     private suspend fun uploadRevokeSuspicionInfo(

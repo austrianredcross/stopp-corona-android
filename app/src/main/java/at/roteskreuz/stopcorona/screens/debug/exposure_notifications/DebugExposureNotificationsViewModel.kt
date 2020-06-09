@@ -5,10 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKeyConverter
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.infection.info.*
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -225,13 +222,10 @@ class DebugExposureNotificationsViewModel(
 
     fun uploadKeys(warningType: WarningType, tan: String) {
         val keys = lastTemporaryExposureKeysSubject.value
-        val convertedValues:List<ApiTemporaryTracingKey> = keys.map {tek ->
-            ApiTemporaryTracingKeyConverter.convert(tek, warningType)
-        }
         launch {
             try {
                 apiInteractor.uploadInfectionData(
-                    convertedValues,
+                    keys.convertToApiTemporaryTracingKeys(),
                     contextInteractor.packageName,
                     warningType,
                     ApiVerificationPayload(tanRequestUUIDSubject.value, tan)

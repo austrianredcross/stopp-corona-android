@@ -32,22 +32,23 @@ data class ApiVerificationPayload(
     val authorization: String
 )
 
-class ApiTemporaryTracingKeyConverter{
-    companion object TEK{
-        fun convert(tek: TemporaryExposureKey, warningType: WarningType):ApiTemporaryTracingKey{
-            val base64Key = Base64.encodeToString(tek.keyData, Base64.NO_WRAP)
-            return ApiTemporaryTracingKey(
-                key = base64Key,
-                password = base64Key,
-                /**
-                 * rollingStartIntervalNumber = A number describing when a key starts.
-                 * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10). */
-                intervalNumber = tek.rollingStartIntervalNumber,
-                /**
-                 * rollingPeriod = A number describing how long a key is valid.
-                 * It is expressed in increments of 10 minutes (e.g. 144 for 24 hours). */
-                intervalCount = tek.rollingPeriod + 1
-            )
-        }
-    }
+fun List<TemporaryExposureKey>.convertToApiTemporaryTracingKeys(): List<ApiTemporaryTracingKey>{
+    return this.map { it.convertToApiTemporaryTracingKey() }
+}
+
+fun TemporaryExposureKey.convertToApiTemporaryTracingKey(): ApiTemporaryTracingKey{
+    val base64Key = Base64.encodeToString(this.keyData, Base64.NO_WRAP)
+    return ApiTemporaryTracingKey(
+        key = base64Key,
+        password = base64Key,
+        /**
+         * rollingStartIntervalNumber = A number describing when a key starts.
+         * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10). */
+        intervalNumber = this.rollingStartIntervalNumber,
+        /**
+         * rollingPeriod = A number describing how long a key is valid.
+         * It is expressed in increments of 10 minutes (e.g. 144 for 24 hours). */
+        //TODO: fix this after https://github.com/google/exposure-notifications-android/issues/30 / https://tasks.pxp-x.com/browse/CTAA-1561 are resolved
+        intervalCount = if (this.rollingPeriod == 0)  144 else this.rollingPeriod
+    )
 }
