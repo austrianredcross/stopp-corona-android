@@ -33,13 +33,13 @@ import java.util.concurrent.CancellationException
 class DashboardViewModel(
     appDispatchers: AppDispatchers,
     private val dashboardRepository: DashboardRepository,
-    private val contextInteractor: ContextInteractor,
+    contextInteractor: ContextInteractor,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
-    private val exposureNotificationRepository: ExposureNotificationRepository,
+    exposureNotificationRepository: ExposureNotificationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager,
-    private val googlePlayAvailability: GoogleApiAvailability
+    googlePlayAvailability: GoogleApiAvailability
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
