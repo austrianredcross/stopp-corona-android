@@ -165,8 +165,10 @@ class ReportingRepositoryImpl(
         }
     }
 
-    private suspend fun uploadData(warningType: WarningType,
-        temporaryExposureKeys: List<TemporaryExposureKey>) {
+    private suspend fun uploadData(
+        warningType: WarningType,
+        temporaryExposureKeys: List<TemporaryExposureKey>
+    ) {
         apiInteractor.uploadInfectionData(
             temporaryExposureKeys.convertToApiTemporaryTracingKeys(),
             contextInteractor.packageName,
@@ -179,7 +181,8 @@ class ReportingRepositoryImpl(
     }
 
     private suspend fun uploadRevokeSuspicionInfo(
-        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
+        temporaryExposureKeys: List<TemporaryExposureKey>
+    ): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
             uploadData(MessageType.Revoke.Suspicion.warningType, temporaryExposureKeys)
 
@@ -190,7 +193,8 @@ class ReportingRepositoryImpl(
     }
 
     private suspend fun uploadRevokeSicknessInfo(
-        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType.Revoke.Sickness {
+        temporaryExposureKeys: List<TemporaryExposureKey>
+    ): MessageType.Revoke.Sickness {
         return withContext(coroutineContext) {
 
             val updateStatus = when {
