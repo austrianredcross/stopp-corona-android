@@ -4,14 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.SicknessCertificateUploadException
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
-import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
 import at.roteskreuz.stopcorona.screens.questionnaire.success.startQuestionnaireReportSuccessFragment
@@ -41,6 +40,8 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
 
     companion object {
         const val CURRENT_SCREEN = 3
+        private const val REQUEST_CODE_REGISTER_WITH_FRAMEWORK = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 1
+        private const val REQUEST_CODE_REQUEST_EXPOSURE_KEYS = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 2
     }
 
     private val viewModel: ReportingStatusViewModel by viewModel()
@@ -102,9 +103,14 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
             .subscribe { state ->
                 when (state) {
                     is DataState.Loaded -> {
-                        state.data.first.startResolutionForResult(
-                            activity, state.data.second.requestCode
-                        )
+                       when (state.data) {
+                           is ResolutionType.RegisterWithFramework -> {
+                               state.data.status.startResolutionForResult(activity, REQUEST_CODE_REGISTER_WITH_FRAMEWORK)
+                           }
+                           is ResolutionType.GetExposureKeys -> {
+                               state.data.status.startResolutionForResult(activity, REQUEST_CODE_REQUEST_EXPOSURE_KEYS)
+                           }
+                       }
                     }
                 }
             }
@@ -173,7 +179,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK.requestCode -> {
+            REQUEST_CODE_REGISTER_WITH_FRAMEWORK -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForRegistrationSucceeded()
                 }
@@ -181,7 +187,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                     viewModel.resolutionForRegistrationFailed()
                 }
             }
-            ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS.requestCode -> {
+            REQUEST_CODE_REQUEST_EXPOSURE_KEYS -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForExposureKeyHistorySucceeded()
                 }

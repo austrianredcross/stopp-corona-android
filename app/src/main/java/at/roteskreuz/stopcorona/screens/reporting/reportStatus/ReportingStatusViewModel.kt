@@ -31,7 +31,7 @@ class ReportingStatusViewModel(
     private val exposureNotificationRepository: ExposureNotificationRepository
 ) : ScopedViewModel(appDispatchers) {
     private val uploadReportDataStateObserver = DataStateObserver<MessageType>()
-    private val exposureNotificationsErrorState = DataStateObserver<Pair<Status, ExposureNotificationRepository.ResolutionAction>>()
+    private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
 
     private suspend fun uploadData(temporaryTracingKeys: List<TemporaryExposureKey>) {
         try {
@@ -66,8 +66,7 @@ class ReportingStatusViewModel(
                 when (apiException.statusCode) {
                     ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
                         Timber.e(apiException, "Expected Error, RESOLUTION_REQUIRED in result - attempt to handle it")
-                        exposureNotificationsErrorState.loaded(
-                            Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS))
+                        exposureNotificationsErrorState.loaded(ResolutionType.GetExposureKeys(apiException.status))
                     }
                     else -> {
                         uploadReportDataStateObserver.error(apiException)
@@ -93,8 +92,7 @@ class ReportingStatusViewModel(
                 when (apiException.statusCode) {
                     ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
                         Timber.e(apiException, "Expected Error, RESOLUTION_REQUIRED in result when registering - attempt to handle it")
-                        exposureNotificationsErrorState.loaded(
-                            Pair(apiException.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
+                        exposureNotificationsErrorState.loaded(ResolutionType.RegisterWithFramework(apiException.status))
                     }
                     else -> {
                         uploadReportDataStateObserver.error(apiException)
@@ -133,7 +131,7 @@ class ReportingStatusViewModel(
         return reportingRepository.observeMessageType()
     }
 
-    fun observeResolutionError(): Observable<DataState<Pair<Status, ExposureNotificationRepository.ResolutionAction>>> {
+    fun observeResolutionError(): Observable<DataState<ResolutionType>> {
         return exposureNotificationsErrorState.observe()
     }
 
@@ -168,3 +166,10 @@ data class ReportingStatusData(
     val dateOfFirstSelfDiagnose: ZonedDateTime?,
     val dateOfFirstMedicalConfirmation: ZonedDateTime?
 )
+
+sealed class ResolutionType{
+    abstract val status: Status
+
+    data class RegisterWithFramework(override val status: Status): ResolutionType()
+    data class GetExposureKeys(override val status: Status):ResolutionType()
+}

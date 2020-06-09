@@ -141,7 +141,7 @@ object Constants {
         private const val OFFSET = BaseAppRequest.OFFSET
 
         const val REQUEST_DASHBOARD = APP_BASE_REQUEST + (1 shl OFFSET)
-        const val EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT = APP_BASE_REQUEST + (2 shl OFFSET)
+        const val REQUEST_REPORTING_STATUS_FRAGMENT = APP_BASE_REQUEST + (2 shl OFFSET)
     }
 
     /**

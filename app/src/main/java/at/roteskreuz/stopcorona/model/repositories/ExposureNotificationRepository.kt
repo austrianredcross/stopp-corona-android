@@ -25,11 +25,6 @@ import kotlin.coroutines.resume
  */
 interface ExposureNotificationRepository {
 
-    enum class ResolutionAction(val requestCode: Int) {
-        REGISTER_WITH_FRAMEWORK(Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 1),
-        REQUEST_EXPOSURE_KEYS(Constants.Request.EXPOSURE_NOTIFICATION_DEBUG_FRAGMENT + 2);
-    }
-
     /**
      * Get information if the app is registered with the Exposure Notifications framework.
      */

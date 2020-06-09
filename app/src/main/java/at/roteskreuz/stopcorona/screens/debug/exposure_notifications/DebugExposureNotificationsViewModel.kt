@@ -10,6 +10,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.info.convertToApiTemporaryTracingKeys
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
+import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
@@ -35,7 +36,7 @@ class DebugExposureNotificationsViewModel(
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
-    private val exposureNotificationsErrorState = DataStateObserver<Pair<Status, ExposureNotificationRepository.ResolutionAction>>()
+    private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
     private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject(mutableListOf<TemporaryExposureKey>());
     private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
 
@@ -63,7 +64,7 @@ class DebugExposureNotificationsViewModel(
         return exposureNotificationsEnabledSubject
     }
 
-    fun observeResolutionError(): Observable<DataState<Pair<Status, ExposureNotificationRepository.ResolutionAction>>> {
+    fun observeResolutionError(): Observable<DataState<ResolutionType>> {
         return exposureNotificationsErrorState.observe()
     }
 
@@ -96,7 +97,7 @@ class DebugExposureNotificationsViewModel(
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(Pair(exception.status, ExposureNotificationRepository.ResolutionAction.REGISTER_WITH_FRAMEWORK))
+                    exposureNotificationsErrorState.loaded(ResolutionType.RegisterWithFramework(apiException.status))
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
@@ -177,7 +178,7 @@ class DebugExposureNotificationsViewModel(
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(Pair(exception.status, ExposureNotificationRepository.ResolutionAction.REQUEST_EXPOSURE_KEYS))
+                    exposureNotificationsErrorState.loaded(ResolutionType.GetExposureKeys(apiException.status))
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
