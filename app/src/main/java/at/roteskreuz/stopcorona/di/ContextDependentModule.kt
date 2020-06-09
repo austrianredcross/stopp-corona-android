@@ -11,6 +11,7 @@ import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractorImpl
 import at.roteskreuz.stopcorona.model.repositories.other.OfflineSyncer
 import at.roteskreuz.stopcorona.model.repositories.other.OfflineSyncerImpl
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.Nearby
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
@@ -66,5 +67,9 @@ internal val contextDependentModule = module {
 
     single {
         Nearby.getExposureNotificationClient(androidContext())
+    }
+
+    single {
+        GoogleApiAvailability.getInstance()
     }
 }

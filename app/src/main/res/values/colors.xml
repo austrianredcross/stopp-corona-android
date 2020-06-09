@@ -32,6 +32,9 @@
     <color name="dialog_stroke">#e5e5e5</color>
     <color name="bottom_sheet_stroke">#e5e5e5</color>
 
+    <!-- Dashboard -->
+    <color name="dashboard_exposure_notification_error_card_background">@color/gray_3</color>
+
     <!-- Gallery -->
     <color name="gallery_indicator_active">@color/rouge</color>
     <color name="gallery_indicator_inactive">@color/brownGrey</color>
@@ -73,5 +76,6 @@
     <color name="questionnaire_self_monitoring_circle_tint">@color/white</color>
 
     <color name="switch_background_enabled">@color/blue</color>
+    <color name="switch_background_paused">@color/tangerine</color>
     <color name="switch_background_disabled">@color/gray_3</color>
 </resources>
