@@ -89,8 +89,16 @@ interface ExposureNotificationRepository {
      */
     suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
 
+    /**
+     * Retrieve the TemporaryExposureKey from the Google Exposure Notifications framework
+     * in a blocking manner.
+     */
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
 
+    /**
+     * Register with the Google Exposure Notifications framework in a blocking manner.
+     */
+    //TODO: for Dusan, see if we actually nee the non blocking function
     suspend fun registerAppForExposureNotificationsNow()
 }
 

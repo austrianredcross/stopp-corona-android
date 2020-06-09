@@ -45,7 +45,8 @@ interface ReportingRepository {
      * @return Returns the messageType  the user sent to his contacts
      */
     suspend fun uploadReportInformation(
-        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType
+        temporaryExposureKeys: List<TemporaryExposureKey>
+    ): MessageType
 
     /**
      * Set the validated personal data when a TAN was successfully requested.
@@ -132,8 +133,8 @@ class ReportingRepositoryImpl(
     }
 
     override suspend fun uploadReportInformation(
-        temporaryExposureKeys: List<TemporaryExposureKey>)
-        : MessageType {
+        temporaryExposureKeys: List<TemporaryExposureKey>
+    ): MessageType {
         return when (messageTypeSubject.value) {
             MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo(temporaryExposureKeys)
             MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo(temporaryExposureKeys)
