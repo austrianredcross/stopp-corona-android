@@ -82,7 +82,7 @@
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Download the current version</string>
 	<string name="mandatory_update_message">This version is no longer supported. Download the current version to continue using the app. </string>
-	<string name="mandatory_update_playstore">Go to Play Store</string>
+	<string name="mandatory_update_playstore">Check availability</string>
 
 	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
 	<string name="infection_info_title">Attention</string>
