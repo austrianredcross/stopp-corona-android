@@ -504,6 +504,7 @@ sealed class ExposureNotificationPhase {
                                                     FrameworkError.InvalidAccount(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.RESOLUTION_REQUIRED -> {
+                                                    // no logging of error, this state is expect-able
                                                     FrameworkError.ResolutionRequired(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.NETWORK_ERROR -> {
