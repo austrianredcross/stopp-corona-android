@@ -25,8 +25,8 @@
 	<string name="onboarding_headline_1">Willkommen!</string>
 	<string name="onboarding_copy_1_1">Mit der Installation der Stopp Corona App helfen Sie dabei, die</string>
 	<string name="onboarding_copy_1_2">Ausbreitung</string>
-	<string name="onboarding_copy_1_3">des neuartigen Coronavirus zu</string>
-	<string name="onboarding_copy_1_4">verlangsamen.</string>
+	<string name="onboarding_copy_1_3">des Coronavirus zu bekämpfen und die Zahl der</string>
+	<string name="onboarding_copy_1_4">Neuinfektionen niedrig zu halten.</string>
 	<string name="onboarding_copy_1_5"></string>
 	<string name="onboarding_headline_2">Digitaler Handshake</string>
 	<string name="onboarding_copy_2_1">Nutzen Sie den digitalen Handshake um</string>
@@ -47,65 +47,88 @@
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
-	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (eindeutige Kennzahlen [IDs], meine Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet. Darüber hinaus wird mein öffentlicher Schlüssel mit meinen Intensiv-Kontakten zum Zweck der späteren Warnung oder Entwarnung meiner Intensiv-Kontakte ausgetauscht.</string>
-	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
-	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
-	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
-	<string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
-	<string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
+	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (zufällige Kennzahlen [=“zufalls-IDs“], Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet.</string>
+    <string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
+    <string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
+    <string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
+    <string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
+    <string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
 
-	<!-- Dashboard -->
-	<string name="main_headline">Gemeinsam gegen das Coronavirus</string>
-	<string name="main_body_contact_title">Digitaler Handshake</string>
-	<string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
-	<string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
-	<string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
-	<string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
-	<string name="main_body_feeling_title">Wie fühlen Sie sich heute?</string>
-	<string name="main_body_feeling_description">Erhalten Sie eine Einschätzung zu Ihrem Gesundheitszustand.</string>
-	<string name="main_button_feel_today_button">Symptome abprüfen</string>
-	<string name="main_body_report_title">Corona-Infektion melden</string>
-	<string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen.</string>
-	<string name="main_body_report_button">Ärztliche Bestätigung melden</string>
-	<string name="main_play_services_not_available_dialog_title">Gerät unterstützt Google PlayServices nicht</string>
-	<string name="main_play_services_not_available_dialog_message">Für die Funktion von Nearby werden die Google PlayServices benötigt. Derzeit funktioniert der Digitale Handshake leider nicht ohne Google PlayServices. Wir arbeiten an Alternativen.</string>
-	<string name="main_handshake_information_hint">Wann soll ich die Funktion nutzen?</string>
-	<string name="main_handshake_dialog_title">Speichern Sie diese Begegnungen, wenn...</string>
-	<string name="main_handshake_dialog_description_1">... Sie mehr als 15 Minuten Kontakt haben, so dass Ihre Gesichter immer wieder näher als 2 Meter zueinander sind.</string>
-	<string name="main_handshake_dialog_description_2">… Sie mehr als 15 Minuten Kontakt haben und in dieser Zeit in einem kleinen, geschlossenen Raum sind, wie z.B. im PKW, in einem  Zimmer oder im Zug.</string>
-	<string name="main_microphone_explanation_dialog_title">Zugriff auf das Mikrofon</string>
-	<string name="main_microphone_explanation_dialog_description">Für den Digitalen Handshake wird geprüft, ob auch andere Smartphones in der Gegend den Handshake ausgelöst haben. Das funktioniert über Ultraschall. Deshalb kann es sein, dass Ihr Smartphone einen hörbaren Ton von sich gibt. Der Ton wird von anderen Smartphones mit dem Mikrofon aufgezeichnet und andersherum nutzt auch Ihr Smartphone das Mikrofon, um Töne der anderen Geräte wahrzunehmen. Aus diesem Grund wird der Zugriff auf das Mikrofon benötigt.</string>
-	<string name="main_microphone_explanation_dialog_do_not_show_again">Nicht wieder anzeigen</string>
-	<string name="main_status_update_headline">Status Update</string>
-	<string name="main_status_update_contact_sickness_not_confirmed_message">Der Verdachtsfall bei einem oder mehrerer Ihrer Kontakte hat sich nicht bestätigt.</string>
+    <!-- Dashboard -->
+    <string name="main_headline">Gemeinsam gegen das Coronavirus</string>
+    <string name="main_body_contact_title">Digitaler Handshake</string>
+    <string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
+    <string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
+    <string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
+    <string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
+    <string name="main_body_feeling_title">Wie fühlen Sie sich heute?</string>
+    <string name="main_body_feeling_description">Erhalten Sie eine Einschätzung zu Ihrem Gesundheitszustand.</string>
+    <string name="main_button_feel_today_button">Symptome abprüfen</string>
+    <string name="main_body_report_title">Corona-Infektion melden</string>
+    <string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen.</string>
+    <string name="main_body_report_button">Ärztliche Bestätigung melden</string>
+    <string name="main_play_services_not_available_dialog_title">Gerät unterstützt Google PlayServices nicht</string>
+    <string name="main_play_services_not_available_dialog_message">Für die Funktion von Nearby werden die Google PlayServices benötigt. Derzeit funktioniert der Digitale Handshake leider nicht ohne Google PlayServices. Wir arbeiten an Alternativen.</string>
+    <string name="main_handshake_information_hint">Wann soll ich die Funktion nutzen?</string>
+    <string name="main_handshake_dialog_title">Speichern Sie diese Begegnungen, wenn...</string>
+    <string name="main_handshake_dialog_description_1">... Sie mehr als 15 Minuten Kontakt haben, so dass Ihre Gesichter immer wieder näher als 2 Meter zueinander sind.</string>
+    <string name="main_handshake_dialog_description_2">… Sie mehr als 15 Minuten Kontakt haben und in dieser Zeit in einem kleinen, geschlossenen Raum sind, wie z.B. im PKW, in einem  Zimmer oder im Zug.</string>
+    <string name="main_microphone_explanation_dialog_title">Zugriff auf das Mikrofon</string>
+    <string name="main_microphone_explanation_dialog_description">Für den Digitalen Handshake wird geprüft, ob auch andere Smartphones in der Gegend den Handshake ausgelöst haben. Das funktioniert über Ultraschall. Deshalb kann es sein, dass Ihr Smartphone einen hörbaren Ton von sich gibt. Der Ton wird von anderen Smartphones mit dem Mikrofon aufgezeichnet und andersherum nutzt auch Ihr Smartphone das Mikrofon, um Töne der anderen Geräte wahrzunehmen. Aus diesem Grund wird der Zugriff auf das Mikrofon benötigt.</string>
+    <string name="main_microphone_explanation_dialog_do_not_show_again">Nicht wieder anzeigen</string>
+    <string name="main_status_update_headline">Status Update</string>
+    <string name="main_status_update_contact_sickness_not_confirmed_message">Der Verdachtsfall bei einem oder mehrerer Ihrer Kontakte hat sich nicht bestätigt.</string>
+    <string name="main_exposure_error_google_play_unavailable_title">Google Play Services ist nicht verfügbar</string>
+    <string name="main_exposure_error_google_play_unavailable_missing_message">Service fehlt.</string>
+    <string name="main_exposure_error_google_play_unavailable_updating_message">Der Service wird gerade aktualisiert.</string>
+    <string name="main_exposure_error_google_play_unavailable_updating_action">Versuch es noch einmal</string>
+    <string name="main_exposure_error_google_play_unavailable_update_required_message">Service erfordert Update.</string>
+    <string name="main_exposure_error_google_play_unavailable_update_required_action">Aktualisieren</string>
+    <string name="main_exposure_error_google_play_unavailable_disabled_message">Der Dienst ist deaktiviert.</string>
+    <string name="main_exposure_error_google_play_unavailable_invalid_message">Service ist ungültig.</string>
+    <string name="main_exposure_error_google_play_unavailable_action">Versuchen Sie zu lösen</string>
+    <string name="main_exposure_error_google_play_wrong_version_title">Die Version von Google Play Services ist alt</string>
+    <string name="main_exposure_error_google_play_wrong_version_message">Die installierte Version der Google Play Services ist veraltet. Bitte suchen Sie nach Updates. Sie benötigen mindestens die Version 20.18.13, die sich möglicherweise im Beta-Kanal befindet.</string>
+    <string name="main_exposure_error_google_play_wrong_version_action_btn">Gehe zum Play Store</string>
+    <string name="main_exposure_error_title">Belichtungsbenachrichtigungsfehler</string>
+    <string name="main_exposure_error_sign_in_message">Anmeldung erforderlich.</string>
+    <string name="main_exposure_error_invalid_account_message">Ungültiger Account.</string>
+    <string name="main_exposure_error_declined_message">Framework wurde nicht registriert.</string>
+    <string name="main_exposure_error_network_error_message">Netzwerkfehler.</string>
+    <string name="main_exposure_error_internal_message">Interner Fehler. Im Rahmen der Expositionsbenachrichtigung ist ein Fehler aufgetreten.</string>
+    <string name="main_exposure_error_developer_message">Wir haben hier einen Fehler gemacht. Eine Ausnahme wurde protokolliert, wir werden sie in der späteren Version der App beheben. Entschuldigen Sie die Unannehmlichkeiten.</string>
+    <string name="main_exposure_error_action">Versuch es noch einmal</string>
 
-	<!-- Update Information -->
-	<string name="mandatory_update_title">Aktuelle Version herunterladen</string>
-	<string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
-	<string name="mandatory_update_playstore">Zum Play Store</string>
+    <!-- Update Information -->
+    <string name="mandatory_update_title">Aktuelle Version herunterladen</string>
+    <string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
+    <string name="mandatory_update_playstore">Zum Play Store</string>
 
-	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
-	<string name="infection_info_title">Achtung</string>
-	<string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
-	<string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
-	<string name="infection_info_description1_single">Einer Ihrer registrierten Begegnungen ist %s mit dem Coronavirus infiziert.</string>
-	<string name="infection_info_description_acording_evidence">laut ärztlichem Nachweis</string>
-	<string name="infection_info_description1_many">%d Ihrer registrierten Begegnungen sind %s mit dem Coronavirus infiziert.</string>
-	<string name="infection_info_handshake_took_place_single">Handshake fand statt:</string>
-	<string name="infection_info_handshake_took_place_many">Handshakes fanden statt:</string>
-	<string name="infection_info_handshake_took_place_format">%s, %s und %s Uhr</string>
-	<string name="infection_info_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
-	<string name="infection_info_quarantine_end">Bleiben Sie dort bitte bis %s</string>
-	<string name="infection_info_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
+    <!-- Contact Sickness_Guidelines for people with proven sick contact -->
+    <string name="infection_info_title">Achtung</string>
+    <string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
+    <string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
+    <string name="infection_info_description1_single">Einer Ihrer registrierten Begegnungen ist %s mit dem Coronavirus infiziert.</string>
+    <string name="infection_info_description_acording_evidence">laut ärztlichem Nachweis</string>
+    <string name="infection_info_description1_many">%d Ihrer registrierten Begegnungen sind %s mit dem Coronavirus infiziert.</string>
+    <string name="infection_info_handshake_took_place_single">Handshake fand statt:</string>
+    <string name="infection_info_handshake_took_place_many">Handshakes fanden statt:</string>
+    <string name="infection_info_handshake_took_place_format">%s, %s und %s Uhr</string>
+    <string name="infection_info_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
+    <string name="infection_info_quarantine_end">Bleiben Sie dort bitte bis %s</string>
+    <string name="contact_sickness_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben \nist.</string>
+    <string name="infection_info_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 
-	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
-	<string name="infection_info_warning_title">Hinweis</string>
-	<string name="infection_info_warning_headline_single">1 Kontakt mit Coronavirus-Verdacht</string>
-	<string name="infection_info_warning_headline_many">%d Kontakte mit Coronavirus-Verdacht</string>
-	<string name="infection_info_warning_description1_single">Bei einer Ihrer registrierten Begegnungen %s.</string>
-	<string name="infection_info_warning_explanation">gibt es den Verdacht auf eine Corona-Infektion</string>
-	<string name="infection_info_warning_description1_many">Bei %d Ihrer registrierten Begegnungen %s.</string>
-	<string name="infection_info_warning_go_to_quarantine">Begeben Sie sich als Vorsichtsmaßnahme in Quarantäne</string>
+    <!-- Contact Sickness_Guidelines for people with probably sick contact -->
+    <string name="infection_info_warning_title">Achtung</string>
+    <string name="infection_info_warning_headline_single">1 Kontakt mit Coronavirus-Verdacht</string>
+    <string name="infection_info_warning_headline_many">%d Kontakte mit Coronavirus-Verdacht</string>
+    <string name="infection_info_warning_description1_single">Bei einer Ihrer registrierten Begegnungen %s.</string>
+    <string name="infection_info_warning_explanation">gibt es den Verdacht auf eine Corona-Infektion</string>
+    <string name="infection_info_warning_description1_many">Bei %d Ihrer registrierten Begegnungen %s.</string>
+    <string name="infection_info_warning_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
+    <string name="infection_info_warning_quarantine_end">Bleiben Sie dort bitte bis %s</string>
+	<string name="contact_sickness__warning_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben \nist.</string>
 	<string name="infection_info_warning_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 
 	<!-- Handshake -->
@@ -130,12 +153,12 @@
 	<string name="handshake_dialog_faq">Zu den FAQs</string>
 	<string name="handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
 	<string name="handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
-	<string name="automatic_handshake_dialog_title">So funktioniert es:</string>
-	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und lassen Sie Hintergrundaktivitäten für diese App zu.</string>
-	<string name="automatic_handshake_dialog_description_2">Bluetooth-Signale werden gesendet und von anderen App-Nutzern empfangen.</string>
-	<string name="automatic_handshake_dialog_description_3">Einträge im Kontakt-Tagebuch werden automatisch erstellt (z.B.: wenn andere Geräte mindestens 15 Minuten innerhalb 2 Meter empfangen werden)</string>
-	<string name="automatic_handshake_dialog_description_4">Nachdem nicht alle Geräte und Betriebssysteme unterstützt werden, kontrollieren Sie bitte mittels manuellem Handshake, ob die automatische Eintragung bereits erfolgt ist.</string>
-	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Sie Hintergrundaktivtäten für diese App\nzulassen, damit andere Telefone Ihr Telefon erkennen können. \n\nBitte beachten Sie, dass der automatische Handshake je nach Gerätetyp und Betriebssystem eingeschränkt funktionieren kann. Sollten Sie Einschränkungen feststellen, nutzen Sie bitte den manuellen Handshake.</string>
+	<string name="automatic_handshake_dialog_title">So funktioniert es</string>
+	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und aktivieren Sie Bluetooth.</string>
+	<string name="automatic_handshake_dialog_description_2">Ihr Gerät kann über Bluetooth Zufalls-IDs mit anderen App-Nutzern austauschen.</string>
+	<string name="automatic_handshake_dialog_description_3">Die Zufalls-IDs werden im COVID-19 Kontaktprotokoll Ihres Geräts gespeichert.</string>
+	<string name="automatic_handshake_dialog_description_4"><b>Kontakte sind erkrankt</b> \nMithilfe des Kontaktprotokolls können Sie benachrichtig werden, wenn Sie einen möglichen Kontakt mit dem Coronavirus hatten. Es wird eine Empfehlung in einem Algorithmus kalkuliert, wie lange Sie als Vorsichtsmaßnahme in Quarantäne bleiben sollten.\n<b>Sie sind erkrankt</b> \nEbenso können die Zufalls-IDs genutzt werden um andere Nutzer zu benachrichtigen, sollten Sie eine mögliche Infektion melden.</string>
+	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Bluetooth aktiviert ist.</string>
 	<string name="automatic_handshake_dialog_faq">Zu den FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
 	<string name="automatic_handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
@@ -143,7 +166,8 @@
 	<string name="main_automatic_handshake_switch_title">Automatischer Handshake:</string>
 	<string name="main_automatic_handshake_switch_on">aktiv</string>
 	<string name="main_automatic_handshake_switch_off">inaktiv</string>
-	<string name="main_automatic_handshake_description_on">Via Bluetooth versenden und empfangen Sie Signale anderer Apps. Signale über 15 Min. werden als Handshake in Ihrem Kontakt-Tagebuch aufgezeichnet. Bitte kontrollieren Sie die Aufzeichnung mittels manuellem Handshake, da nicht alle Geräte unterstützt werden.</string>
+	<string name="main_automatic_handshake_switch_paused">pausiert</string>
+	<string name="main_automatic_handshake_description_on">Via Bluetooth versenden und empfangen Sie Signale anderer Corona-Apps. Signale über 5 Minuten werden im COVID-19 Kontaktprotokoll in Ihrem Gerät aufgezeichnet. Dies geschieht anonym mittels zufällig erzeugter IDs.</string>
 	<string name="main_automatic_handshake_description_off">Aktuell werden keine Ihrer Begegnungen automatisch gespeichert. Bitte aktivieren Sie hierzu den automatischen Handshake.</string>
 	<string name="main_start_manual_handshake">Manuellen Handshake starten</string>
 
@@ -166,12 +190,12 @@
 	<string name="certificate_tan_check_resend_tan_button">TAN erneut senden</string>
 	<string name="certificate_report_status_title">Status melden</string>
 	<string name="certificate_report_status_headline">Wurde Ihre Infektion mit dem Coronavirus medizinisch nachgewiesen?</string>
-	<string name="certificate_report_status_description_1">Es ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden.\n\nIm nächsten Schritt werden alle Personen, mit denen Sie in den letzten 48 Stunden einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.\n\n</string>
+	<string name="certificate_report_status_description_1">Es ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden. Das Melden einer Infektion ist freiwillig.\n\nIm nächsten Schritt wird Zugriff auf die gespeicherten Zufalls-IDs angefragt. Wir werden dann alle Personen anonym benachrichtigen, mit denen Sie in den letzten 3 Tagen einen digitalen Handshake ausgetauscht haben. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt. Kontakte von heute können Sie systembedingt erst morgen benachrichtigen.\n\nErlauben Sie jetzt die Benachrichtigung Ihrer Kontakte mit Hilfe der Zufalls-IDs aus dem Kontaktprotokoll.</string>
 	<string name="certificate_report_status_description_2">Die Benachrichtigung erfolgt anonym.</string>
 	<string name="certificate_report_status_description_3">Ihre persönlichen Daten werden nicht an Dritte weitergegeben.</string>
-	<string name="certificate_report_status_agreement_description"><b>Ja, eine Corona-Infektion wurde bei mir nachgewiesen</b></string>
+	<string name="certificate_report_status_agreement_description"><b>Ja, eine COVID-19 Infektion wurde bei mir nachgewiesen</b></string>
 	<string name="certificate_report_status_agreement_label">Hiermit bestätige ich, die Angaben wahrheitsgemäß getätigt zu haben.</string>
-	<string name="certificate_report_status_button">Corona-Infektion bestätigen</string>
+	<string name="certificate_report_status_button">Infektion bestätigen</string>
 	<string name="certificate_report_status_invalid_tan_error">Die TAN ist nicht korrekt</string>
 	<string name="certificate_report_status_invalid_tan_error_description">Bitte prüfen Sie die TAN und geben Sie sie erneut ein.</string>
 	<string name="certificate_report_status_invalid_birth_date_error">Geburtsdatum ist ungültig</string>
@@ -268,7 +292,7 @@
 	<string name="questionnaire_hint_recommendation_3">Halten Sie Kontakt über elektronische Medien.</string>
 	<string name="questionnaire_hint_recommendation_4">Wenn Sie sich krank fühlen, bleiben Sie bitte zuhause.</string>
 	<string name="questionnaire_examine_title">Symptome prüfen</string>
-	<string name="questionnaire_examine_headling_1">Die von Ihnen beschriebenen Symptom können bei einer Corona-Infektion auftreten.</string>
+	<string name="questionnaire_examine_headling_1">Die von Ihnen beschriebenen Symptome können bei einer Corona-Infektion auftreten.</string>
 	<string name="questionnaire_examine_headling_2">Bitte melden Sie im nächsten Schritt den Verdacht, um andere zu schützen.</string>
 	<string name="questionnaire_examine_description">Ihre Meldung hilft, dass sich die Infektionen nicht weiter verbreiten können. Ihre engen Kontakte könnten sich unbemerkt angesteckt haben und das Virus bereits weitergeben. Daher ist es wichtig, dass diese Personen informiert werden und sich von anderen Menschen fernhalten.</string>
 	<string name="questionnaire_examine_btn_text">Zur anonymen Benachrichtigung</string>
@@ -281,7 +305,7 @@
 	<string name="questionnaire_examine_observe_headline_2">Achtung</string>
 	<string name="questionnaire_examine_observe_description">Melden Sie sich bitte telefonisch bei Ihrem behandelnden Arzt, wenn Sie medizinische Hilfe benötigen. Ihr Arzt kann Sie auch telefonisch krank schreiben oder ein Rezept auf Ihre e-card ausstellen.</string>
 	<string name="questionnaire_report_status_headline">Verdacht melden?</string>
-	<string name="questionnaire_report_status_description_1">Im nächsten Schritt werden alle Personen, mit denen Sie in den letzten 48h einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.\n\n\n</string>
+	<string name="questionnaire_report_status_description_1">Melden Sie jetzt einen Verdacht auf Coronavirus. Das Melden eines Verdachts ist freiwillig.\n\nIm nächsten Schritt werden alle Personen, mit denen Sie in den letzten 3 Tagen einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt.\n\nErlauben Sie jetzt die Benachrichtigung Ihrer Kontakte mit Hilfe der Zufalls-IDs aus dem Kontaktprotokoll.</string>
 	<string name="questionnaire_report_status_description_2">Die Benachrichtigung erfolgt anonym.</string>
 	<string name="questionnaire_report_status_description_3">Ihre persönlichen Daten werden nicht an Dritte weitergegeben.</string>
 	<string name="questionnaire_report_status_agreement">Hiermit bestätige ich, die Angaben wahrheitsgemäß getätigt zu haben.</string>
@@ -362,9 +386,9 @@
 
 	<!-- Notifications -->
 	<string name="local_notification_sick_contact_headline">Kontakt meldet Corona-Erkrankung</string>
-	<string name="local_notification_sick_contact_message">Begeben Sie sich in Quarantäne und halten Sie min. 2m Abstand zu gesunden Menschen</string>
+	<string name="local_notification_sick_contact_message">Begeben Sie sich in Quarantäne und halten Sie min. 2m Abstand zu gesunden Menschen.</string>
 	<string name="local_notification_suspected_sick_contact_headline">Kontakt mit Verdacht auf Corona-Infektion</string>
-	<string name="local_notification_suspected_sick_contact_message">Begeben Sie sich als Vorsichtsmaßnahme in Quarantäne. Halten Sie räumlich Abstand von Ihrem gesunden Umfeld</string>
+	<string name="local_notification_suspected_sick_contact_message">Begeben Sie sich als Vorsichtsmaßnahme in Quarantäne. Halten Sie räumlich Abstand von Ihrem gesunden Umfeld.</string>
 	<string name="local_notification_self_retest_headline">Wie fühlen Sie sich heute?</string>
 	<string name="local_notification_someone_has_recovered_headline">Jemand hat sich erholt.</string>
 	<string name="local_notification_quarantine_end_headline">Sie können die Quarantäne beenden!</string>
@@ -378,9 +402,9 @@
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Achtung</string>
-	<string name="contacts_confirmed_one_case_description">Bei einem Ihrer Kontakte wurde eine Corona-Infektion ärztlich festgestellt.</string>
+	<string name="contacts_confirmed_one_case_description">Bei Ihren Kontakten wurde eine oder mehrere Corona-Infektionen gemeldet. </string>
 	<string name="contacts_suspicion_one_case_headline">Hinweis</string>
-	<string name="contacts_suspicion_one_case_description">Bei einem Ihrer Kontakte gibt es den Verdacht einer Corona-Infektion.</string>
+	<string name="contacts_suspicion_one_case_description">Bei Ihren Kontakten wurde ein oder mehrere Verdachte auf eine Corona-Infektion gemeldet.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Achtung</string>
 	<string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>
@@ -418,8 +442,13 @@
 	<string name="revoke_sickness_success_headline">Infektions-Meldung zurückgezogen</string>
 	<string name="revoke_sickness_success_description_1">Danke, dass Sie Ihre Angaben aktualisiert haben und damit erheblich zu einem transparenten Vorgehen und dem Gemeinwohl beitragen.</string>
 	<string name="revoke_sickness_success_description_2">Ihre Kontakte werden anonym benachrichtigt, dass es sich nicht um eine Corona-Infektion gehandelt hat.</string>
-	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
 	<string name="revoke_sickness_success_finish">Zurück zur Startseite</string>
+	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
+	<string name="changelog_title_v2.0.0">Was ist neu?</string>
+	<string name="changelog_cta_v2.0.0">Alles klar!</string>
+	<string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
+	<string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 Schnittstelle</string>
+	<string name="changelog_description_3_v2.0.0">. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Informationen anders dargestellt.</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>

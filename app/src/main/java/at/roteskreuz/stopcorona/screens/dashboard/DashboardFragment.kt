@@ -9,10 +9,13 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.constants.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
+import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
-import at.roteskreuz.stopcorona.screens.dashboard.dialog.GooglePlayServicesNotAvailableDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
@@ -20,17 +23,13 @@ import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuesti
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCertificateReportGuidelinesFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
+import at.roteskreuz.stopcorona.utils.startGooglePlayStore
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,7 +40,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     companion object {
-        private const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = Constants.Request.REQUEST_DASHBOARD + 1
+        private const val REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED = Constants.Request.REQUEST_DASHBOARD + 1
+        private const val REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION = Constants.Request.REQUEST_DASHBOARD + 2
     }
 
     override val isToolbarVisible: Boolean = true
@@ -91,7 +91,24 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
-            onAutomaticHandshakeEnabled = ::checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework,
+            onAutomaticHandshakeEnabled = viewModel::userWantsToRegisterAppForExposureNotifications::set,
+            onExposureNotificationErrorActionClick = { exposureNotificationPhase ->
+                when (exposureNotificationPhase) {
+                    is PrerequisitesError.UnavailableGooglePlayServices -> {
+                        exposureNotificationPhase.googlePlayAvailability.getErrorDialog(
+                            requireActivity(),
+                            exposureNotificationPhase.googlePlayServicesStatusCode,
+                            REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION
+                        ).show()
+                    }
+                    is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
+                        startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
+                    }
+                    is FrameworkError -> {
+                        exposureNotificationPhase.refresh()
+                    }
+                }
+            },
             onShareAppClick = {
                 shareApp()
             },
@@ -151,41 +168,23 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.someoneHasRecoveredHealthStatus = it
             }
 
-        disposables += viewModel.observeExposureNotificationRunningState()
+        disposables += viewModel.observeExposureNotificationPhase()
             .observeOnMainThread()
-            .subscribe { enabled ->
-                controller.automaticHandshakeEnabled = enabled
-            }
-
-        disposables += viewModel.observeExposureNotificationState()
-            .observeOnMainThread()
-            .subscribe { state ->
-                when (state) {
-                    is State.Error -> {
-                        when (state.error) {
-                            is ApiException -> {
-                                val apiException = state.error as ApiException
-                                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                                    apiException.status.startResolutionForResult(
-                                        requireActivity(),
-                                        REQUEST_CODE_START_EXPOSURE_NOTIFICATION
-                                    )
-                                } else {
-                                    handleBaseCoronaErrors(state.error)
-                                }
-                            }
-                            else -> handleBaseCoronaErrors(state.error)
-                        }
+            .subscribe { phase ->
+                controller.exposureNotificationPhase = phase
+                when (phase) {
+                    is FrameworkError.ResolutionRequired -> {
+                        phase.exception.status.startResolutionForResult(
+                            requireActivity(),
+                            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
+                        )
                     }
+                    is FrameworkError.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
             }
 
-        /**
-         * If the user starts the app for the first time the exposure notification framework will be started automatically.
-         */
-        if (viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
-            viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
-            checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(true)
+        if (viewModel.unseenChangelogForVersionAvailable(VERSION_NAME)) {
+            showChangelogBottomSheetFragment()
         }
 
         controller.requestModelBuild()
@@ -193,7 +192,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshExposureNotificationAppRegisteredState()
+        viewModel.refreshPrerequisitesErrorStatement(ignoreErrors = true)
     }
 
     override fun onDestroyView() {
@@ -211,26 +210,19 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         }
     }
 
-    private fun checkPlayServicesAvailabilityAndRegisterToExposureNotificationFramework(enableFramework: Boolean) {
-        when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext())) {
-            ConnectionResult.SUCCESS -> {
-                // TODO: 28/05/2020 dusanjencik: We should check also correct version
-                viewModel.onRegisterToExposureFramework(enableFramework)
-            }
-            else -> {
-                GooglePlayServicesNotAvailableDialog().show()
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> {
+            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.onExposureNotificationRegistrationResolutionResultOk()
                 } else {
                     viewModel.onExposureNotificationRegistrationResolutionResultNotOk()
+                }
+            }
+            REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.refreshPrerequisitesErrorStatement()
                 }
             }
         }

@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.constants
 import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.BuildConfig.APPLICATION_ID
 import at.roteskreuz.stopcorona.skeleton.core.constants.BaseAppRequest
+import com.google.android.gms.common.GoogleApiAvailability
 import org.threeten.bp.Duration
 
 /**
@@ -62,6 +63,19 @@ object Constants {
     }
 
     /**
+     * Constants related to the exposure notification framework.
+     */
+    object ExposureNotification {
+
+        /**
+         * 20.18.13.xx
+         */
+        const val MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION = 201813000
+
+        const val GOOGLE_PLAY_SERVICES_PACKAGE_NAME = GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE
+    }
+
+    /**
      * Constants for shared preferences.
      */
     object Prefs {
@@ -79,6 +93,7 @@ object Constants {
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
+        const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
     }
 
     /**

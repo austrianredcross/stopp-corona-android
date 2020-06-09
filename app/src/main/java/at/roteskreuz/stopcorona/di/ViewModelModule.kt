@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.di
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
+import at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogViewModel
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
@@ -48,11 +49,14 @@ val viewModelModule = module {
         DashboardViewModel(
             appDispatchers = get(),
             dashboardRepository = get(),
+            contextInteractor = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get(),
             configurationRepository = get(),
             exposureNotificationRepository = get(),
-            databaseCleanupManager = get()
+            databaseCleanupManager = get(),
+            googlePlayAvailability = get(),
+            changelogManager = get()
         )
     }
 
@@ -184,6 +188,13 @@ val viewModelModule = module {
         QuestionnaireHintViewModel(
             appDispatchers = get(),
             quarantineRepository = get()
+        )
+    }
+
+    viewModel {
+        ChangelogViewModel(
+            appDispatchers = get(),
+            changelogManager = get()
         )
     }
 }

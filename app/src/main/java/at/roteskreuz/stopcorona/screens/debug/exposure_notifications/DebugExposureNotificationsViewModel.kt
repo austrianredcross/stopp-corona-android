@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.infection.info.*
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.infection.info.convertToApiTemporaryTracingKeys
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -23,9 +25,6 @@ import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class DebugExposureNotificationsViewModel(
     appDispatchers : AppDispatchers,
