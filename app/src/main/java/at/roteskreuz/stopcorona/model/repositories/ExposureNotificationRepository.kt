@@ -198,14 +198,20 @@ class ExposureNotificationRepositoryImpl(
     }
 
     override fun refreshExposureNotificationAppRegisteredState() {
-        exposureNotificationClient.isEnabled
-            .addOnSuccessListener { enabled: Boolean ->
-                frameworkEnabledState.onNext(enabled)
-            }
-            .addOnFailureListener {
-                Timber.e(SilentError(it))
-                frameworkEnabledState.onNext(false)
-            }
+        try {
+            exposureNotificationClient.isEnabled
+                .addOnSuccessListener { enabled: Boolean ->
+                    frameworkEnabledState.onNext(enabled)
+                }
+                .addOnFailureListener {
+                    Timber.e(SilentError(it))
+                    frameworkEnabledState.onNext(false)
+                }.addOnCompleteListener {
+                    Timber.d("it completed")
+                }
+        } catch (ex: java.lang.Exception) {
+            Timber.d(SilentError(ex))
+        }
     }
 
     override fun getExposureSettingsIntent(): Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)

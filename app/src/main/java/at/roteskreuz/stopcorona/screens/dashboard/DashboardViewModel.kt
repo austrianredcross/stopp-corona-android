@@ -88,6 +88,7 @@ class DashboardViewModel(
          */
         disposables += observeExposureNotificationPhase()
             .subscribe { state ->
+                Timber.d("current state is $state")
                 state.onCreate { newState ->
                     state.onCleared()
                     exposureNotificationPhaseSubject.onNext(newState)
@@ -494,6 +495,9 @@ sealed class ExposureNotificationPhase {
                             }
                             is State.Error -> {
                                 when (state.error) {
+                                    is com.google.android.gms.common.api.UnsupportedApiCallException -> {
+                                        Timber.e(SilentError(state.error))
+                                    }
                                     is ApiException -> {
                                         val apiException = state.error as ApiException
                                         moveToNextState(
