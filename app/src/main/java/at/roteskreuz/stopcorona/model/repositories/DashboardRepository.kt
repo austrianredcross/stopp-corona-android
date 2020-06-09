@@ -51,12 +51,4 @@ class DashboardRepositoryImpl(
     override fun observeUserWantsToRegisterAppForExposureNotification(): Observable<Boolean> {
         return preferences.observeBoolean(PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION, false)
     }
-
-//    override fun refreshCombinedExposureNotificationsState() {
-//        TODO("Not yet implemented")
-//        // refresh the state, do what it takes
-//        //not this exposureNotificationRepository.refreshExposureNotificationAppRegisteredState()
-//        //check errors
-//        // trigger register when all is fine
-//    }
 }

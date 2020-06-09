@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import at.roteskreuz.stopcorona.utils.shareReplayLast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
@@ -87,7 +86,6 @@ class DashboardViewModel(
          */
         disposables += observeExposureNotificationPhase()
             .subscribe { state ->
-                Timber.w("Exposure notification phase = ${state.javaClass.simpleName}")
                 state.onCreate { newState ->
                     state.onCleared()
                     exposureNotificationPhaseSubject.onNext(newState)
@@ -175,10 +173,7 @@ class DashboardViewModel(
     }
 
     fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
-        return exposureNotificationPhaseSubject
-            .observeOn(Schedulers.newThread()) // needed to have synchronised emits
-            .distinctUntilChanged()
-            .shareReplayLast()
+        return exposureNotificationPhaseSubject.distinctUntilChanged()
     }
 
     /**
@@ -270,6 +265,10 @@ sealed class HealthStatusData {
     object NoHealthStatus : HealthStatusData()
 }
 
+/**
+ * State machine to manage state of the exposure notification framework and checking all dependencies
+ * needed for running.
+ */
 sealed class ExposureNotificationPhase {
 
     data class DependencyHolder(
