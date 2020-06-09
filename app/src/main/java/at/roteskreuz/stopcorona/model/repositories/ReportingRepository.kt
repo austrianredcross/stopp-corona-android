@@ -199,8 +199,6 @@ class ReportingRepositoryImpl(
 
             uploadData(updateStatus.warningType, temporaryExposureKeys)
 
-            MessageType.Revoke.Suspicion.warningType
-
             quarantineRepository.revokeMedicalConfirmation()
 
             when (updateStatus) {
@@ -264,7 +262,6 @@ class ReportingRepositoryImpl(
     }
 
     override fun observePersonalData(): Observable<PersonalData> {
-        personalDataSubject
         return personalDataSubject
     }
 
