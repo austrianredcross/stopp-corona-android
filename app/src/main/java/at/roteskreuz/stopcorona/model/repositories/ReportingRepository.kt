@@ -132,7 +132,8 @@ class ReportingRepositoryImpl(
     }
 
     override suspend fun uploadReportInformation(
-        temporaryExposureKeys: List<TemporaryExposureKey>): MessageType {
+        temporaryExposureKeys: List<TemporaryExposureKey>)
+        : MessageType {
         return when (messageTypeSubject.value) {
             MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo(temporaryExposureKeys)
             MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo(temporaryExposureKeys)
@@ -164,8 +165,7 @@ class ReportingRepositoryImpl(
     }
 
     private suspend fun uploadData(warningType: WarningType,
-        temporaryExposureKeys: List<TemporaryExposureKey>)
-    {
+        temporaryExposureKeys: List<TemporaryExposureKey>) {
         apiInteractor.uploadInfectionData(
             temporaryExposureKeys.convertToApiTemporaryTracingKeys(),
             contextInteractor.packageName,
