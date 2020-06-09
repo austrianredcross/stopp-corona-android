@@ -8,6 +8,7 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -30,7 +31,7 @@ class DashboardController(
     private val onSomeoneHasRecoveredCloseClick: () -> Unit,
     private val onQuarantineEndCloseClick: () -> Unit,
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
-    private val refreshAutomaticHandshakeErrors: (ExposureNotificationPhase) -> Unit,
+    private val onExposureNotificationErrorActionClick: (ExposureNotificationPhase) -> Unit,
     private val onRevokeSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
@@ -149,25 +150,62 @@ class DashboardController(
 
         emptySpace(modelCountBuiltSoFar, 16)
 
-        if (exposureNotificationPhase != null) {
-            when (exposureNotificationPhase) {
-                // TODO: 04/06/2020 dusanjencik: Add the correct card and update the content appropriately
+        exposureNotificationPhase?.let { phase ->
+            when (phase) {
                 is PrerequisitesError.UnavailableGooglePlayServices -> {
-                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
-                        id("UnavailableGooglePlayServices")
-                        title("UnavailableGooglePlayServices")
-                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                        id("unavailable_google_play_services")
+                        title(context.string(R.string.main_exposure_error_google_play_unavailable_title))
+                        fun addTryToResolveButtonIfPossible() {
+                            if (phase.googlePlayAvailability.isUserResolvableError(phase.googlePlayServicesStatusCode)) {
+                                action(context.string(R.string.main_exposure_error_google_play_unavailable_action))
+                            }
+                        }
+                        when (phase) {
+                            is ServiceMissing -> {
+                                description(context.string(R.string.main_exposure_error_google_play_unavailable_missing_message))
+                                addTryToResolveButtonIfPossible()
+                            }
+                            is ServiceUpdating -> {
+                                description(context.string(R.string.main_exposure_error_google_play_unavailable_updating_message))
+                                action(context.string(R.string.main_exposure_error_google_play_unavailable_updating_action))
+                            }
+                            is ServiceVersionUpdateRequired -> {
+                                description(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_message))
+                                action(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_action))
+                            }
+                            is ServiceDisabled -> {
+                                description(context.string(R.string.main_exposure_error_google_play_unavailable_disabled_message))
+                                addTryToResolveButtonIfPossible()
+                            }
+                            is ServiceInvalid -> {
+                                description(context.string(R.string.main_exposure_error_google_play_unavailable_invalid_message))
+                                addTryToResolveButtonIfPossible()
+                            }
+                        }
                     }
+
+                    emptySpace(modelCountBuiltSoFar, 16)
                 }
                 is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
-                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
-                        id("InvalidVersionOfGooglePlayServices")
-                        title("InvalidVersionOfGooglePlayServices")
-                        cardStatus(CardUpdateStatus.ContactUpdate)
+                    exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                        id("invalid_google_play_services_version")
+                        title(context.string(R.string.main_exposure_error_google_play_wrong_version_title))
+                        description(context.string(R.string.main_exposure_error_google_play_wrong_version_message))
+                        action(context.string(R.string.main_exposure_error_google_play_wrong_version_action_btn))
                     }
+
+                    emptySpace(modelCountBuiltSoFar, 16)
                 }
                 is FrameworkError.Unknown -> {
-                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                    exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                        id("unknown")
+                        title("Unknown")
+                        description("description")
+                    }
+
+                    emptySpace(modelCountBuiltSoFar, 16)
+                    statusUpdate({ onExposureNotificationErrorActionClick(phase) }) {
                         id("FrameworkError.Unknown")
                         title("FrameworkError.Unknown")
                         cardStatus(CardUpdateStatus.ContactUpdate)
@@ -177,16 +215,16 @@ class DashboardController(
                     // ignored, there is displayed a dialog
                 }
                 is FrameworkError -> {
-                    statusUpdate({ refreshAutomaticHandshakeErrors(exposureNotificationPhase!!) }) {
+                    exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
                         id("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)
                         title("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)
-                        cardStatus(CardUpdateStatus.ContactUpdate)
+                        description("description")
                     }
+
+                    emptySpace(modelCountBuiltSoFar, 16)
                 }
             }
         }
-
-        emptySpace(modelCountBuiltSoFar, 16)
 
         additionalInformation(onAutomaticHandshakeInformationClick) {
             id("handshake_additional_information")

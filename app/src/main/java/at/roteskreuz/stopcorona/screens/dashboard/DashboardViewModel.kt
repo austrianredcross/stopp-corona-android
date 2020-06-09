@@ -1,10 +1,12 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
+import android.app.Activity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
@@ -204,6 +206,22 @@ class DashboardViewModel(
         }
     }
 
+    fun refreshPrerequisitesErrorStatement() {
+        exposureNotificationPhaseSubject.value.let { state ->
+            when (state) {
+                is ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices -> {
+                    state.refresh()
+                }
+                is ExposureNotificationPhase.PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
+                    TODO()
+                }
+                else -> {
+                    Timber.e(SilentError("state is not PrerequisitesError"))
+                }
+            }
+        }
+    }
+
     override fun onCleared() {
         exposureNotificationPhaseSubject.value.onCleared()
         super.onCleared()
@@ -299,18 +317,36 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
-                when {
-                    googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext) != ConnectionResult.SUCCESS -> {
-                        moveToNextState(PrerequisitesError.UnavailableGooglePlayServices(dependencyHolder))
-                    }
-                    // TODO: 28/05/2020 dusanjencik: We should check also correct version
+                val status = googlePlayAvailability.isGooglePlayServicesAvailable(contextInteractor.applicationContext)
+                moveToNextState(
+                    when {
+                        status == ConnectionResult.SERVICE_MISSING -> {
+                            ServiceMissing(dependencyHolder, googlePlayAvailability, status)
+                        }
+                        status == ConnectionResult.SERVICE_UPDATING -> {
+                            ServiceUpdating(dependencyHolder, googlePlayAvailability, status)
+                        }
+                        status == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED -> {
+                            ServiceVersionUpdateRequired(dependencyHolder, googlePlayAvailability,
+                                status)
+                        }
+                        status == ConnectionResult.SERVICE_DISABLED -> {
+                            ServiceDisabled(dependencyHolder, googlePlayAvailability, status)
+                        }
+                        status == ConnectionResult.SERVICE_INVALID -> {
+                            ServiceInvalid(dependencyHolder, googlePlayAvailability, status)
+                        }
+                        // now status == ConnectionResult.SUCCESS
+
+                        // TODO: 28/05/2020 dusanjencik: We should check also correct version (https://tasks.pxp-x.com/browse/CTAA-1395)
 //                condition -> {
 //                    moveToNextState(PrerequisitesError.InvalidVersionOfGooglePlayServices(dependencyHolder))
 //                }
-                    else -> {
-                        moveToNextState(RegisterToFramework(dependencyHolder, true))
+                        else -> {
+                            RegisterToFramework(dependencyHolder, true)
+                        }
                     }
-                }
+                )
             }
         }
     }
@@ -320,7 +356,7 @@ sealed class ExposureNotificationPhase {
      */
     sealed class PrerequisitesError : ExposureNotificationPhase() {
 
-        private lateinit var moveToNextState: (ExposureNotificationPhase) -> Unit
+        protected lateinit var moveToNextState: (ExposureNotificationPhase) -> Unit
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             this.moveToNextState = moveToNextState
@@ -333,25 +369,77 @@ sealed class ExposureNotificationPhase {
         }
 
         /**
-         * Will check prerequisites again.
+         * Google play services are not available on the phone or there is some error.
+         * Some of errors user can resolve.
          */
-        fun refresh() {
-            moveToNextState(CheckPrerequisitesError(dependencyHolder))
+        sealed class UnavailableGooglePlayServices : PrerequisitesError() {
+
+            abstract val googlePlayAvailability: GoogleApiAvailability
+            abstract val googlePlayServicesStatusCode: Int
+
+            /**
+             * Will check prerequisites again.
+             */
+            fun refresh() {
+                moveToNextState(CheckPrerequisitesError(dependencyHolder))
+            }
+
+            data class ServiceMissing(
+                override val dependencyHolder: DependencyHolder,
+                override val googlePlayAvailability: GoogleApiAvailability,
+                override val googlePlayServicesStatusCode: Int
+            ) : UnavailableGooglePlayServices()
+
+            data class ServiceUpdating(
+                override val dependencyHolder: DependencyHolder,
+                override val googlePlayAvailability: GoogleApiAvailability,
+                override val googlePlayServicesStatusCode: Int
+            ) : UnavailableGooglePlayServices()
+
+            data class ServiceVersionUpdateRequired(
+                override val dependencyHolder: DependencyHolder,
+                override val googlePlayAvailability: GoogleApiAvailability,
+                override val googlePlayServicesStatusCode: Int
+            ) : UnavailableGooglePlayServices()
+
+            data class ServiceDisabled(
+                override val dependencyHolder: DependencyHolder,
+                override val googlePlayAvailability: GoogleApiAvailability,
+                override val googlePlayServicesStatusCode: Int
+            ) : UnavailableGooglePlayServices()
+
+            data class ServiceInvalid(
+                override val dependencyHolder: DependencyHolder,
+                override val googlePlayAvailability: GoogleApiAvailability,
+                override val googlePlayServicesStatusCode: Int
+            ) : UnavailableGooglePlayServices()
         }
 
-        /**
-         * Google play services are not available on the phone.
-         */
-        data class UnavailableGooglePlayServices(
-            override val dependencyHolder: DependencyHolder
-        ) : PrerequisitesError()
+//        /**
+//         * Google play services are not available on the phone.
+//         */
+//        data class UnavailableGooglePlayServices(
+//            override val dependencyHolder: DependencyHolder,
+//            val googlePlayAvailability: GoogleApiAvailability,
+//            val isUserResolvableError: Boolean,
+//            val googlePlayServicesStatusCode: Int
+//        ) : PrerequisitesError()
 
         /**
          * The current Google play services version is not matching Exposure notification minimum version.
          */
         data class InvalidVersionOfGooglePlayServices(
             override val dependencyHolder: DependencyHolder
-        ) : PrerequisitesError()
+        ) : PrerequisitesError() {
+
+            /**
+             * Will request an update and check prerequisites again.
+             */
+            fun refresh() {
+                // TODO: 09/06/2020 dusanjencik: Will be solved in https://tasks.pxp-x.com/browse/CTAA-1395
+//                moveToNextState(CheckPrerequisitesError(dependencyHolder))
+            }
+        }
     }
 
     /**

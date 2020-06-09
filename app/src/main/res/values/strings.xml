@@ -47,7 +47,7 @@
 	<string name="onboarding_next_button">Continue</string>
 	<string name="onboarding_finish_button">Finished</string>
 	<string name="onboarding_headline_6">Declaration of consent</string>
-	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification numbers [IDs], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning or an all-clear notification.</string>
+	<string name="onboarding_dataprivacy_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (random figures [“random-IDs], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of rapid interruption of the corona infection chain. </string>
 	<string name="onboarding_dataprivacy_approval">I consent</string>
 	<string name="onboarding_dataprivacy_description_2_1">I may revoke my consent at any time, whereby revocation does not affect the lawfulness of processing up until the time that consent is revoked. \n\nFurther information can be found in our</string>
 	<string name="onboarding_dataprivacy_description_2_2">privacy policy.</string>
@@ -78,6 +78,18 @@
 	<string name="main_microphone_explanation_dialog_do_not_show_again">Don\'t show again</string>
 	<string name="main_status_update_headline">Status update</string>
 	<string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
+	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available.</string>
+	<string name="main_exposure_error_google_play_unavailable_missing_message">Service is missing.</string>
+	<string name="main_exposure_error_google_play_unavailable_updating_message">Service is just updating.</string>
+	<string name="main_exposure_error_google_play_unavailable_updating_action">Try again</string>
+	<string name="main_exposure_error_google_play_unavailable_update_required_message">Service requires update.</string>
+	<string name="main_exposure_error_google_play_unavailable_update_required_action">Update</string>
+	<string name="main_exposure_error_google_play_unavailable_disabled_message">Service is disabled.</string>
+	<string name="main_exposure_error_google_play_unavailable_invalid_message">Service is invalid.</string>
+	<string name="main_exposure_error_google_play_unavailable_action">Try to resolve</string>
+	<string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old.</string>
+	<string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates.</string>
+	<string name="main_exposure_error_google_play_wrong_version_action_btn">Check updates</string>
 
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Download the current version</string>
@@ -96,6 +108,7 @@
 	<string name="infection_info_handshake_took_place_format">%s, between %s and %s o`clock</string>
 	<string name="infection_info_go_to_quarantine">Self-quarantine immediately</string>
 	<string name="infection_info_quarantine_end">Please stay quarantined until %s</string>
+	<string name="contact_sickness_guidelines_quarantine_rule"></string>
 	<string name="infection_info_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
@@ -105,7 +118,9 @@
 	<string name="infection_info_warning_description1_single">One of your registered encounters %s.</string>
 	<string name="infection_info_warning_explanation">is suspected to have contracted corona.</string>
 	<string name="infection_info_warning_description1_many">%d of your registered encounters %s.</string>
-	<string name="infection_info_warning_go_to_quarantine">Self-quarantine as a precaution</string>
+	<string name="infection_info_warning_go_to_quarantine">Self-quarantine immediately</string>
+	<string name="infection_info_warning_quarantine_end">Please stay quarantined until %s</string>
+	<string name="contact_sickness__warning_guidelines_quarantine_rule"></string>
 	<string name="infection_info_warning_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
 
 	<!-- Handshake -->
@@ -130,7 +145,7 @@
 	<string name="handshake_dialog_faq">Go to the FAQs</string>
 	<string name="handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
 	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 1 meter distance.</string>
-	<string name="automatic_handshake_dialog_title">Here’s how it works:</string>
+	<string name="automatic_handshake_dialog_title">Here’s how it works</string>
 	<string name="automatic_handshake_dialog_description_1">Activate the automatic handshake in the app and allow background activities for this app.</string>
 	<string name="automatic_handshake_dialog_description_2">Bluetooth signals are sent and received by other app users.</string>
 	<string name="automatic_handshake_dialog_description_3">Entries in the contact diary are created automatically (e.g.: if other devices are received at least 15 minutes within 2 meters)</string>
@@ -144,7 +159,7 @@
 	<string name="main_automatic_handshake_switch_on">active</string>
 	<string name="main_automatic_handshake_switch_off">inactive</string>
 	<string name="main_automatic_handshake_switch_paused">paused</string>
-	<string name="main_automatic_handshake_description_on">You can send and receive signals from other apps via Bluetooth. Signals over 15 minutes are recorded as handshake in your contact diary. Please check the recording by manual handshake, as not all devices are supported.</string>
+	<string name="main_automatic_handshake_description_on">You can send and receive signals from other apps via Bluetooth. Signals over 5 minutes are recorded as handshake in your contact diary. Please check the recording by manual handshake, as not all devices are supported.</string>
 	<string name="main_automatic_handshake_description_off">None of your encounters are currently saved automatically. Please activate the automatic handshake.</string>
 	<string name="main_start_manual_handshake">Start manual handshake</string>
 
@@ -167,10 +182,10 @@
 	<string name="certificate_tan_check_resend_tan_button">Resend TAN</string>
 	<string name="certificate_report_status_title">Report status</string>
 	<string name="certificate_report_status_headline">Has your corona infection been medically proven?</string>
-	<string name="certificate_report_status_description_1">It is important that only clearly confirmed infections are reported.\n\nIn the next step, all people with whom you have exchanged a digital handshake in the last 48 hours will be notified anonymously. This will protect others and slow the spread of the virus.</string>
+	<string name="certificate_report_status_description_1">It is important that only clearly confirmed infections are reported.\n\nIn the next step, all people with whom you have exchanged a digital handshake in the last 3 days will be notified anonymously. This will protect others and slow the spread of the virus.</string>
 	<string name="certificate_report_status_description_2">The notification is anonymous.</string>
 	<string name="certificate_report_status_description_3">Your personal data will not be passed on to third parties.</string>
-	<string name="certificate_report_status_agreement_description"><b>Yes, I have been diagnosed with a corona infection.</b></string>
+	<string name="certificate_report_status_agreement_description"><b>Yes, I have been diagnosed with a Covid-19 infection.</b></string>
 	<string name="certificate_report_status_agreement_label">I hereby confirm to have provided all information truthfully.</string>
 	<string name="certificate_report_status_button">Report infection</string>
 	<string name="certificate_report_status_invalid_tan_error">TAN is incorrect</string>
@@ -282,7 +297,7 @@
 	<string name="questionnaire_examine_observe_headline_2">Attention</string>
 	<string name="questionnaire_examine_observe_description">Please contact your attending physician by phone if you need medical assistance. Your doctor can also sign you off sick or issue a prescription using your e-card.</string>
 	<string name="questionnaire_report_status_headline">Report suspicion?</string>
-	<string name="questionnaire_report_status_description_1">In the next step, all persons with whom you have exchanged a digital handshake within the last 48 hours will be notified anonymously. This way you protect others and the further spread of the virus is slowed down.\n\n\n</string>
+	<string name="questionnaire_report_status_description_1">In the next step, all persons with whom you have exchanged a digital handshake within the last 3 days will be notified anonymously. This way you protect others and the further spread of the virus is slowed down.\n\n\n</string>
 	<string name="questionnaire_report_status_description_2">The notification is anonymous.</string>
 	<string name="questionnaire_report_status_description_3">Your personal data will not be passed on to third parties.</string>
 	<string name="questionnaire_report_status_agreement">I hereby confirm to have provided all information truthfully.</string>
@@ -365,7 +380,7 @@
 	<string name="local_notification_sick_contact_headline">Contact with corona infection</string>
 	<string name="local_notification_sick_contact_message">Please go into self-quarantine and keep at least 2m distance to healthy people.</string>
 	<string name="local_notification_suspected_sick_contact_headline">Contact with suspected corona infection</string>
-	<string name="local_notification_suspected_sick_contact_message">Self-quarantine as a precaution. Keep a safe distance from your healthy environment</string>
+	<string name="local_notification_suspected_sick_contact_message">Self-quarantine as a precaution. Keep a safe distance from your healthy environment.</string>
 	<string name="local_notification_self_retest_headline">How do you feel today?</string>
 	<string name="local_notification_someone_has_recovered_headline">Someone has recovered.</string>
 	<string name="local_notification_quarantine_end_headline">You may terminate the quarantine!</string>
@@ -421,6 +436,11 @@
 	<string name="revoke_sickness_success_description_2">Your contacts will be anonymously notified that it was not a corona infection.</string>
 	<string name="revoke_sickness_success_finish">Back to the start page</string>
 	<string name="revoke_sickness_success_description_3">We wish you all the best for the future!</string>
+	<string name="changelog_title_v2.0.0">What\'s new?</string>
+	<string name="changelog_cta_v2.0.0">All right!</string>
+	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
+	<string name="changelog_description_2_v2.0.0">Apple and Google COVID-19 API</string>
+	<string name="changelog_description_3_v2.0.0">. The notifications will continue to be exchanged anonymously and therefore the information will be displayed differently in some places.</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>

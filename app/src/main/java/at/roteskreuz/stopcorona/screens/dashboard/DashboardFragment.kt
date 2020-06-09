@@ -38,6 +38,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     companion object {
         private const val REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED = Constants.Request.REQUEST_DASHBOARD + 1
+        private const val REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION = Constants.Request.REQUEST_DASHBOARD + 2
     }
 
     override val isToolbarVisible: Boolean = true
@@ -88,9 +89,16 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
             onAutomaticHandshakeEnabled = viewModel::userWantsToRegisterAppForExposureNotifications::set,
-            refreshAutomaticHandshakeErrors = { exposureNotificationPhase ->
+            onExposureNotificationErrorActionClick = { exposureNotificationPhase ->
                 when (exposureNotificationPhase) {
-                    is PrerequisitesError -> {
+                    is PrerequisitesError.UnavailableGooglePlayServices -> {
+                        exposureNotificationPhase.googlePlayAvailability.getErrorDialog(
+                            requireActivity(),
+                            exposureNotificationPhase.googlePlayServicesStatusCode,
+                            REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION
+                        ).show()
+                    }
+                    is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                         exposureNotificationPhase.refresh()
                     }
                     is FrameworkError -> {
@@ -204,6 +212,11 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     viewModel.onExposureNotificationRegistrationResolutionResultOk()
                 } else {
                     viewModel.onExposureNotificationRegistrationResolutionResultNotOk()
+                }
+            }
+            REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.refreshPrerequisitesErrorStatement()
                 }
             }
         }
