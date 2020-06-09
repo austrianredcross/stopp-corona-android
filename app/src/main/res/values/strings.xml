@@ -80,26 +80,34 @@
 	<string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
 	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available</string>
 	<string name="main_exposure_error_google_play_unavailable_missing_message">Service is missing.</string>
-	<string name="main_exposure_error_google_play_unavailable_updating_message">Service is just updating.</string>
-	<string name="main_exposure_error_google_play_unavailable_updating_action">Try again</string>
-	<string name="main_exposure_error_google_play_unavailable_update_required_message">Service requires update.</string>
-	<string name="main_exposure_error_google_play_unavailable_update_required_action">Update</string>
-	<string name="main_exposure_error_google_play_unavailable_disabled_message">Service is disabled.</string>
-	<string name="main_exposure_error_google_play_unavailable_invalid_message">Service is invalid.</string>
-	<string name="main_exposure_error_google_play_unavailable_action">Try to resolve</string>
-	<string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old</string>
-	<string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates. You need version at least 20.18.13 which might be in beta channel.</string>
-	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to Play Store</string>
+    <string name="main_exposure_error_google_play_unavailable_updating_message">Service is just updating.</string>
+    <string name="main_exposure_error_google_play_unavailable_updating_action">Try again</string>
+    <string name="main_exposure_error_google_play_unavailable_update_required_message">Service requires update.</string>
+    <string name="main_exposure_error_google_play_unavailable_update_required_action">Update</string>
+    <string name="main_exposure_error_google_play_unavailable_disabled_message">Service is disabled.</string>
+    <string name="main_exposure_error_google_play_unavailable_invalid_message">Service is invalid.</string>
+    <string name="main_exposure_error_google_play_unavailable_action">Try to resolve</string>
+    <string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old</string>
+    <string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates. You need version at least 20.18.13 which might be in beta channel.</string>
+    <string name="main_exposure_error_google_play_wrong_version_action_btn">Go to Play Store</string>
+    <string name="main_exposure_error_title">Exposure notification error</string>
+    <string name="main_exposure_error_sign_in_message">Sign-in is required.</string>
+    <string name="main_exposure_error_invalid_account_message">Invalid account.</string>
+    <string name="main_exposure_error_declined_message">Framework was not registered.</string>
+    <string name="main_exposure_error_network_error_message">Network error.</string>
+    <string name="main_exposure_error_internal_message">Internal error. Something went wrong in the exposure notification framework.</string>
+    <string name="main_exposure_error_developer_message">We made some mistake here. An exception was logged, we will fix it in the later version of the app. Sorry for the inconvenience.</string>
+    <string name="main_exposure_error_action">Try again</string>
 
-	<!-- Update Information -->
-	<string name="mandatory_update_title">Download the current version</string>
-	<string name="mandatory_update_message">This version is no longer supported. Download the current version to continue using the app. </string>
-	<string name="mandatory_update_playstore">Go to Play Store</string>
+    <!-- Update Information -->
+    <string name="mandatory_update_title">Download the current version</string>
+    <string name="mandatory_update_message">This version is no longer supported. Download the current version to continue using the app. </string>
+    <string name="mandatory_update_playstore">Go to Play Store</string>
 
-	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
-	<string name="infection_info_title">Attention</string>
-	<string name="infection_info_headline_single">1 infected contact detected</string>
-	<string name="infection_info_headline_many">%d infected contacts detected</string>
+    <!-- Contact Sickness_Guidelines for people with proven sick contact -->
+    <string name="infection_info_title">Attention</string>
+    <string name="infection_info_headline_single">1 infected contact detected</string>
+    <string name="infection_info_headline_many">%d infected contacts detected</string>
 	<string name="infection_info_description1_single">One of your registered encounters is %s infected with the coronavirus.</string>
 	<string name="infection_info_description_acording_evidence">according to medical evidence</string>
 	<string name="infection_info_description1_many">%d of your registered encounters are %s infected with the coronavirus.</string>

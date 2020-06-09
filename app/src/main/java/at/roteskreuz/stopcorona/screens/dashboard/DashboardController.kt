@@ -197,31 +197,46 @@ class DashboardController(
 
                     emptySpace(modelCountBuiltSoFar, 16)
                 }
-                is FrameworkError.Unknown -> {
-                    exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                        id("unknown")
-                        title("Unknown")
-                        description("description")
-                    }
-
-                    emptySpace(modelCountBuiltSoFar, 16)
-                    statusUpdate({ onExposureNotificationErrorActionClick(phase) }) {
-                        id("FrameworkError.Unknown")
-                        title("FrameworkError.Unknown")
-                        cardStatus(CardUpdateStatus.ContactUpdate)
-                    }
-                }
-                is FrameworkError.ResolutionRequired -> {
-                    // ignored, there is displayed a dialog
-                }
                 is FrameworkError -> {
-                    exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                        id("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)
-                        title("FrameworkError." + exposureNotificationPhase!!.javaClass.simpleName)
-                        description("description")
-                    }
+                    fun exposureNotificationError(description: String) {
+                        exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                            id("exposure_notification_framework_error")
+                            title(context.string(R.string.main_exposure_error_title))
+                            description(description)
+                            action(context.string(R.string.main_exposure_error_action))
+                        }
 
-                    emptySpace(modelCountBuiltSoFar, 16)
+                        emptySpace(modelCountBuiltSoFar, 16)
+                    }
+                    when (phase) {
+                        is FrameworkError.SignInRequired -> {
+                            exposureNotificationError(context.string(R.string.main_exposure_error_sign_in_message))
+                        }
+                        is FrameworkError.InvalidAccount -> {
+                            exposureNotificationError(context.string(R.string.main_exposure_error_invalid_account_message))
+                        }
+                        is FrameworkError.ResolutionRequired -> {
+                            // ignored, there is displayed a dialog
+                        }
+                        is FrameworkError.ResolutionDeclined -> {
+                            exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
+                        }
+                        is FrameworkError.NetworkError,
+                        is FrameworkError.Interrupted,
+                        is FrameworkError.Timeout,
+                        is FrameworkError.Canceled -> {
+                            exposureNotificationError(context.string(R.string.main_exposure_error_network_error_message))
+                        }
+                        is FrameworkError.InternalError,
+                        is FrameworkError.Error,
+                        is FrameworkError.Unknown -> {
+                            exposureNotificationError(context.string(R.string.main_exposure_error_internal_message))
+                        }
+                        is FrameworkError.DeveloperError,
+                        is FrameworkError.ApiNotConnected -> {
+                            exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
+                        }
+                    }
                 }
             }
         }
