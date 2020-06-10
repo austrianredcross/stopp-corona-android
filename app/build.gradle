@@ -148,8 +148,9 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
-    //TODO: https://tasks.pxp-x.com/browse/CTAA-1499 bring back the normal dependency via maven
-    implementation 'com.google.android.gms:play-services-base:17.2.1'
+    // see https://tasks.pxp-x.com/browse/CTAA-1499 and https://github.com/google/exposure-notifications-android/issues/23
+    // we keep the unreliable file dependency with manual play-services-base
+    implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
     // When upgrading, please check if `android.jetifier.blacklist=bcprov-jdk15on` in
