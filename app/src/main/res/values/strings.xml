@@ -90,6 +90,8 @@
 	<string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old</string>
 	<string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates. You need version at least 20.18.13 which might be in beta channel.</string>
 	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to Play Store</string>
+	<string name="main_exposure_error_bluetooth_not_supported_title">Bluetooth is not supported</string>
+	<string name="main_exposure_error_bluetooth_not_supported_message">Bluetooth adapter in this device is not supported by Exposure notification framework.</string>
 	<string name="main_exposure_error_title">Exposure notification error</string>
 	<string name="main_exposure_error_sign_in_message">Sign-in is required.</string>
 	<string name="main_exposure_error_invalid_account_message">Invalid account.</string>
