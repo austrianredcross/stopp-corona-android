@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.*
+import at.roteskreuz.stopcorona.model.entities.infection.tracking_keys.IndexOfTrackingKeysArchive
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
@@ -43,12 +44,18 @@ interface ApiInteractor {
         diagnosisType: WarningType,
         verificationPayload: ApiVerificationPayload
     )
+
+    /**
+     * retrieve listing of Tracking Keys archives
+     */
+    suspend fun getIndexOfTrackingKeysArchive(): IndexOfTrackingKeysArchive
 }
 
 class ApiInteractorImpl(
     private val appDispatchers: AppDispatchers,
     private val apiDescription: ApiDescription,
     private val tanApiDescription: TanApiDescription,
+    private val trackingKeysDescription: TrackingKeysDescription,
     private val dataPrivacyRepository: DataPrivacyRepository
 ) : ApiInteractor,
     ExceptionMapperHelper {
@@ -91,6 +98,14 @@ class ApiInteractorImpl(
         }
     }
 
+    override suspend fun getIndexOfTrackingKeysArchive(): IndexOfTrackingKeysArchive {
+        return withContext(appDispatchers.IO) {
+            dataPrivacyRepository.assertDataPrivacyAccepted()
+            checkGeneralErrors {
+                trackingKeysDescription.indexOfTrackingKeysArchives()
+            }
+        }
+    }
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()

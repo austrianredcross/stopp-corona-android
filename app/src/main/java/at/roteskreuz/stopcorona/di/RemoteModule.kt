@@ -11,10 +11,7 @@ import at.roteskreuz.stopcorona.constants.isBeta
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.defaultCertificatePinnerTag
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.tanCertificatePinnerTag
-import at.roteskreuz.stopcorona.model.api.ApiDescription
-import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.api.ApiInteractorImpl
-import at.roteskreuz.stopcorona.model.api.TanApiDescription
+import at.roteskreuz.stopcorona.model.api.*
 import at.roteskreuz.stopcorona.model.entities.infection.info.LocalDateNotIsoAdapter
 import at.roteskreuz.stopcorona.skeleton.core.di.createApi
 import at.roteskreuz.stopcorona.skeleton.core.di.createMoshi
@@ -101,11 +98,20 @@ val remoteModule = module {
         )
     }
 
+    single {
+        createApi<TrackingKeysDescription>(
+            baseUrl = Constants.API.BASE_URL_TRACKING_KEYS,
+            okHttpClient = createOkHttpClient(),
+            moshi = get()
+        )
+    }
+
     single<ApiInteractor> {
         ApiInteractorImpl(
             appDispatchers = get(),
             apiDescription = get(),
             tanApiDescription = get(),
+            trackingKeysDescription = get(),
             dataPrivacyRepository = get()
         )
     }
