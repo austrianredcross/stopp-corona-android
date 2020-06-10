@@ -12,7 +12,9 @@ import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.Prer
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.skeleton.core.utils.subscribeOnNewThread
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import at.roteskreuz.stopcorona.utils.shareReplayLast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
@@ -63,6 +65,11 @@ class DashboardViewModel(
             )
         )
     )
+
+    private val exposureNotificationPhaseObservable = exposureNotificationPhaseSubject
+        .subscribeOnNewThread() // needed to have sync emits
+        .distinctUntilChanged()
+        .shareReplayLast()
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
@@ -178,7 +185,7 @@ class DashboardViewModel(
     }
 
     fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
-        return exposureNotificationPhaseSubject.distinctUntilChanged()
+        return exposureNotificationPhaseObservable
     }
 
     /**
@@ -347,6 +354,9 @@ sealed class ExposureNotificationPhase {
                         version < Constants.ExposureNotification.MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION -> {
                             PrerequisitesError.InvalidVersionOfGooglePlayServices(dependencyHolder)
                         }
+                        bluetoothRepository.bluetoothSupported.not() -> {
+                            PrerequisitesError.BluetoothNotSupported(dependencyHolder)
+                        }
                         else -> {
                             RegisterToFramework(dependencyHolder, true)
                         }
@@ -424,6 +434,13 @@ sealed class ExposureNotificationPhase {
          * The current Google play services version is not matching Exposure notification minimum version.
          */
         data class InvalidVersionOfGooglePlayServices(
+            override val dependencyHolder: DependencyHolder
+        ) : PrerequisitesError()
+
+        /**
+         * Bluetooth adapter doesn't exist or is not supported by exposure notification framework.
+         */
+        data class BluetoothNotSupported(
             override val dependencyHolder: DependencyHolder
         ) : PrerequisitesError()
     }

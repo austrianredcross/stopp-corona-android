@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.model.repositories
 
 import android.bluetooth.BluetoothAdapter
+import android.os.Build
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
@@ -11,9 +12,14 @@ import io.reactivex.Observable
 interface BluetoothRepository {
 
     /**
-     * @return True if bluetooth is enabled.
+     * Return true if bluetooth adapter exists and is supported by exposure notification framework.
      */
-    fun isBluetoothEnabled(): Boolean
+    val bluetoothSupported: Boolean
+
+    /**
+     * Return true if bluetooth is enabled, otherwise false.
+     */
+    val bluetoothEnabled: Boolean
 
     /**
      * Observe true if bluetooth is enabled.
@@ -28,16 +34,23 @@ interface BluetoothRepository {
 }
 
 class BluetoothRepositoryImpl(
-    private val bluetoothAdapter: BluetoothAdapter
+    private val bluetoothAdapter: BluetoothAdapter?
 ) : BluetoothRepository {
 
     private val enabledStateSubject = NonNullableBehaviorSubject(
-        bluetoothAdapter.isEnabled
+        bluetoothAdapter?.isEnabled == true
     )
+    override val bluetoothSupported: Boolean
+        get() = bluetoothAdapter != null && if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bluetoothAdapter.isLe2MPhySupported
+        } else {
+            true
+        }
 
-    override fun isBluetoothEnabled(): Boolean {
-        return bluetoothAdapter.isEnabled.also { enabledStateSubject.onNext(it) }
-    }
+    override val bluetoothEnabled: Boolean
+        get() = (bluetoothSupported && bluetoothAdapter?.isEnabled == true).also {
+            enabledStateSubject.onNext(it)
+        }
 
     override fun observeBluetoothEnabledState(): Observable<Boolean> {
         return enabledStateSubject

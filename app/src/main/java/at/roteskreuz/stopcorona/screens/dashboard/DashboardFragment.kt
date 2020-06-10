@@ -15,7 +15,6 @@ import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
-import at.roteskreuz.stopcorona.screens.dashboard.dialog.AutomaticHandshakeExplanationDialog
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
@@ -57,7 +56,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         DashboardController(
             context = requireContext(),
             onAutomaticHandshakeInformationClick = {
-                AutomaticHandshakeExplanationDialog().show()
+                startHandshakeExplanationFragment()
             },
             onFeelingClick = {
                 startQuestionnaireFragment()
