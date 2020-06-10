@@ -10,22 +10,22 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
-import kotlinx.android.synthetic.main.saved_ids_fragment.*
+import kotlinx.android.synthetic.main.info_delete_exposure_keys_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Screen to inform the user about how he can delete his exposure keys.
  */
-class SavedIDsFragment : BaseFragment(R.layout.saved_ids_fragment) {
+class InfoDeleteExposureKeysFragment : BaseFragment(R.layout.info_delete_exposure_keys_fragment) {
 
     override val isToolbarVisible: Boolean = true
 
-    private val viewModel: SavedIDsViewModel by viewModel()
+    private val viewModel: InfoDeleteExposureKeysViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btnDisplayAppSettings.setOnClickListener {
+        btnDisplayExposureNotificationsSettings.setOnClickListener {
             displayExposureNotificationsSettings()
         }
     }
@@ -37,7 +37,7 @@ class SavedIDsFragment : BaseFragment(R.layout.saved_ids_fragment) {
     }
 
     override fun getTitle(): String? {
-        return getString(R.string.saved_IDs_title)
+        return getString(R.string.info_delete_exposure_keys_title)
     }
 
     private fun displayExposureNotificationsSettings() {
@@ -47,7 +47,7 @@ class SavedIDsFragment : BaseFragment(R.layout.saved_ids_fragment) {
         } else {
             Toast.makeText(
                 requireContext(),
-                R.string.saved_IDs_notification_exposure_settings_cannot_be_opened,
+                R.string.info_delete_exposure_keys_settings_cannot_be_opened,
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -55,8 +55,8 @@ class SavedIDsFragment : BaseFragment(R.layout.saved_ids_fragment) {
 
 }
 
-fun Fragment.startSavedIDsFragment() {
+fun Fragment.startInfoDeleteExposureKeysFragment() {
     startFragmentActivity<CoronaPortraitBaseActivity>(
-        fragmentName = SavedIDsFragment::class.java.name
+        fragmentName = InfoDeleteExposureKeysFragment::class.java.name
     )
 }

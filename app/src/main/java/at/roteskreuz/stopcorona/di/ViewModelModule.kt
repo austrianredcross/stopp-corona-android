@@ -17,7 +17,7 @@ import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ReportingStatusVi
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.CertificateReportGuidelinesViewModel
 import at.roteskreuz.stopcorona.screens.reporting.tanCheck.ReportingTanCheckViewModel
 import at.roteskreuz.stopcorona.screens.routing.RouterViewModel
-import at.roteskreuz.stopcorona.screens.savedIDs.SavedIDsViewModel
+import at.roteskreuz.stopcorona.screens.savedIDs.InfoDeleteExposureKeysViewModel
 import at.roteskreuz.stopcorona.screens.webView.WebViewViewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -200,7 +200,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        SavedIDsViewModel(
+        InfoDeleteExposureKeysViewModel(
             appDispatchers = get(),
             exposureNotificationRepository = get()
         )

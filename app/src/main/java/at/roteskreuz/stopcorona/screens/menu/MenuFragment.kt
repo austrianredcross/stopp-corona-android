@@ -15,7 +15,7 @@ import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.startOnboardingFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
-import at.roteskreuz.stopcorona.screens.savedIDs.startSavedIDsFragment
+import at.roteskreuz.stopcorona.screens.savedIDs.startInfoDeleteExposureKeysFragment
 import at.roteskreuz.stopcorona.screens.webView.startWebView
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -60,7 +60,7 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
                 startDefaultBrowser(url)
             },
             onSavedIdsClick = {
-                startSavedIDsFragment()
+                startInfoDeleteExposureKeysFragment()
             },
             onOpenSourceLicenceClick = {
                 OssLicensesMenuActivity.setActivityTitle(getString(R.string.start_menu_item_2_1_open_source_licenses))

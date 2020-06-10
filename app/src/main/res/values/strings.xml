@@ -97,6 +97,8 @@
 	<string name="main_exposure_error_network_error_message">Network error.</string>
 	<string name="main_exposure_error_internal_message">Internal error. Something went wrong in the exposure notification framework.</string>
 	<string name="main_exposure_error_developer_message">We made some mistake here. An exception was logged, we will fix it in the later version of the app. Sorry for the inconvenience.</string>
+	<string name="main_exposure_error_bluetooth_off_message">Bluetooth is off. To proper functioning of exposure notifications, you need to enable Bluetooth.</string>
+	<string name="main_exposure_error_bluetooth_off_action">Enable</string>
 	<string name="main_exposure_error_action">Try again</string>
 
 	<!-- Update Information -->
@@ -461,12 +463,13 @@
 	<string name="revoke_sickness_success_description_2">Your contacts will be anonymously notified that it was not a corona infection.</string>
 	<string name="revoke_sickness_success_finish">Back to the start page</string>
 	<string name="revoke_sickness_success_description_3">We wish you all the best for the future!</string>
-	<string name="saved_IDs_title"></string>
-	<string name="saved_IDs_subtitle"></string>
-	<string name="saved_IDs_description"></string>
-	<string name="saved_IDs_delete_subtitle"></string>
-	<string name="saved_IDs_delete_description"></string>
-	<string name="saved_IDs_delete_button"></string>
+	<string name="info_delete_exposure_keys_title">Spotted random IDs</string>
+	<string name="info_delete_exposure_keys_subtitle">This app stores random IDs</string>
+	<string name="info_delete_exposure_keys_description">This app stores random IDs of contacts who also use the app. They will be notified should you report sick or suspected. The random IDs are automatically deleted after 14 days.</string>
+	<string name="info_delete_exposure_keys_delete_subtitle">Would you like to delete the random IDs now?</string>
+	<string name="info_delete_exposure_keys_delete_description">If you delete the random IDs, they cannot be notified if you register as ill or suspect.\nOpen the app settings. There you will find a link below to the settings of the COVID contact protocol. You can delete the random IDs in the settings of the COVID-19 contact protocol.</string>
+	<string name="info_delete_exposure_keys_delete_button">Open app settings</string>
+	<string name="info_delete_exposure_keys_settings_cannot_be_opened">The notifications settings cannot be opened.</string>
 	<string name="changelog_title_v2.0.0">What\'s new?</string>
 	<string name="changelog_cta_v2.0.0">All right!</string>
 	<string name="changelog_description_1_v2.0.0">In this version we use the</string>

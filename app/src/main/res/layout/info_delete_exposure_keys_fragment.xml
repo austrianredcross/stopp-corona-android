@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
-                    android:text="@string/saved_IDs_subtitle"
+                    android:text="@string/info_delete_exposure_keys_subtitle"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -54,7 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
-                    android:text="@string/saved_IDs_description"
+                    android:text="@string/info_delete_exposure_keys_description"
                     app:layout_constraintTop_toBottomOf="@id/txtSavedIDsTitle" />
 
                 <TextView
@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
-                    android:text="@string/saved_IDs_delete_subtitle"
+                    android:text="@string/info_delete_exposure_keys_delete_subtitle"
                     app:layout_constraintTop_toBottomOf="@id/txtSavedIDsDescription" />
 
                 <TextView
@@ -72,17 +72,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
-                    android:text="@string/saved_IDs_delete_description"
+                    android:text="@string/info_delete_exposure_keys_delete_description"
                     app:layout_constraintTop_toBottomOf="@id/txtSavedIDsDeleteSubtitle" />
 
                 <Button
-                    android:id="@+id/btnDisplayAppSettings"
+                    android:id="@+id/btnDisplayExposureNotificationsSettings"
                     style="@style/AppTheme.ButtonLargeType1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
                     android:layout_marginBottom="60dp"
-                    android:text="@string/saved_IDs_delete_button"
+                    android:text="@string/info_delete_exposure_keys_delete_button"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtSavedIDsDeleteDescription" />
             </androidx.constraintlayout.widget.ConstraintLayout>

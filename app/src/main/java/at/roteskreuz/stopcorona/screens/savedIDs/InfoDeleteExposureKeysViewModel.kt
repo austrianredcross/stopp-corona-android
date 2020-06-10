@@ -5,7 +5,7 @@ import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepositor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 
-class SavedIDsViewModel(
+class InfoDeleteExposureKeysViewModel(
     appDispatchers: AppDispatchers,
     private val exposureNotificationRepository: ExposureNotificationRepository
 ) : ScopedViewModel(appDispatchers) {
