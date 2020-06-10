@@ -76,15 +76,6 @@
             android:name=".screens.dashboard.DashboardActivity"
             android:screenOrientation="portrait" />
 
-        <!-- Firebase cloud messaging -->
-        <service
-            android:name=".model.services.StopCoronaFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
         <receiver
             android:name=".model.receivers.OnBootReceiver"
             android:enabled="true"
