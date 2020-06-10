@@ -10,7 +10,10 @@
         android:id="@+id/cardViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="24dp">
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="10dp">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -29,9 +32,9 @@
                     android:layout_marginStart="@dimen/onboarding_headline_margin_horizontal"
                     android:layout_marginTop="@dimen/onboarding_headline_top_margin"
                     android:layout_marginEnd="@dimen/onboarding_headline_margin_horizontal"
-                    android:textSize="@dimen/onboarding_headline"
                     android:gravity="center"
                     android:textColor="@color/onboarding_headline"
+                    android:textSize="@dimen/onboarding_headline"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -42,8 +45,8 @@
                     style="@style/AppTheme.Copy"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/onboarding_content_margin_top"
                     android:layout_marginStart="@dimen/onboarding_content_margin_horizontal"
+                    android:layout_marginTop="@dimen/onboarding_content_margin_top"
                     android:layout_marginEnd="@dimen/onboarding_content_margin_horizontal"
                     android:layout_marginBottom="@dimen/onboarding_content_margin_bottom"
                     android:textSize="@dimen/onboarding_body"
@@ -55,12 +58,12 @@
                 <ImageView
                     android:id="@+id/imgHero"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/onboarding_image_margin_bottom"
                     android:scaleType="centerInside"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/txtDescription"
+                    app:layout_constraintStart_toStartOf="@id/txtDescription"
                     app:layout_constraintTop_toBottomOf="@id/txtDescription"
                     app:layout_constraintVertical_bias="1"
                     tools:src="@drawable/onboarding_hero_1" />
