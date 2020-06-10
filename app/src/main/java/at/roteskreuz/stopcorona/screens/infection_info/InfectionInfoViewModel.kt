@@ -2,7 +2,6 @@ package at.roteskreuz.stopcorona.screens.infection_info
 
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers

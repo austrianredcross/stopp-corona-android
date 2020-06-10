@@ -34,7 +34,6 @@ class DashboardViewModel(
     appDispatchers: AppDispatchers,
     private val dashboardRepository: DashboardRepository,
     contextInteractor: ContextInteractor,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository,
     exposureNotificationRepository: ExposureNotificationRepository,
@@ -42,11 +41,6 @@ class DashboardViewModel(
     googlePlayAvailability: GoogleApiAvailability,
     private val changelogManager: ChangelogManager
 ) : ScopedViewModel(appDispatchers) {
-
-    companion object {
-        const val DEFAULT_RED_WARNING_QUARANTINE = 336 // hours
-        const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
-    }
 
     /**
      * State machine which handles operations depending on the current state.
@@ -95,35 +89,10 @@ class DashboardViewModel(
             }
     }
 
+    private val tempHealthStatusDataSubject = NonNullableBehaviorSubject<HealthStatusData>(HealthStatusData.NoHealthStatus)
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
-        return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
-            quarantineRepository.observeQuarantineState(),
-            configurationRepository.observeConfiguration()
-        ).map { (infectionMessageList, quarantineStatus, configuration) ->
-            val filteredInfectionMessages = infectionMessageList.filter { it.messageType != MessageType.Revoke.Suspicion }
-            Triple(filteredInfectionMessages, quarantineStatus, configuration)
-        }.map { (infectionMessageList, quarantineStatus, configuration) ->
-            if (infectionMessageList.isNotEmpty()) {
-                val redWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
-                    (configuration.redWarningQuarantine ?: DEFAULT_RED_WARNING_QUARANTINE).toLong()
-                )
-                val yellowWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
-                    (configuration.yellowWarningQuarantine ?: DEFAULT_YELLOW_WARNING_QUARANTINE).toLong()
-                )
-                HealthStatusData.ContactsSicknessInfo(
-                    infectionMessageList
-                        .filter { it.timeStamp > redWarningQuarantineThreshold }
-                        .count { it.messageType == MessageType.InfectionLevel.Red },
-                    infectionMessageList
-                        .filter { it.timeStamp > yellowWarningQuarantineThreshold }
-                        .count { it.messageType == MessageType.InfectionLevel.Yellow },
-                    quarantineStatus
-                )
-            } else {
-                HealthStatusData.NoHealthStatus
-            }
-        }
+        //TODO: bring back the contact health status based on the Exposure Notification Framework
+        return tempHealthStatusDataSubject
     }
 
     fun observeOwnHealthStatus(): Observable<HealthStatusData> {
@@ -156,19 +125,11 @@ class DashboardViewModel(
     }
 
     fun observeSomeoneHasRecoveredStatus(): Observable<HealthStatusData> {
-        return infectionMessengerRepository.observeSomeoneHasRecoveredMessage()
-            .map { shouldShow ->
-                if (shouldShow) {
-                    HealthStatusData.SomeoneHasRecovered
-                } else {
-                    HealthStatusData.NoHealthStatus
-                }
-            }
+        //TODO: bring back the contact health status based on the Exposure Notification Framework
+        return tempHealthStatusDataSubject
     }
 
     fun someoneHasRecoveredSeen() {
-        infectionMessengerRepository.someoneHasRecoveredMessageSeen()
-
         launch {
             databaseCleanupManager.removeReceivedGreenMessages()
         }
