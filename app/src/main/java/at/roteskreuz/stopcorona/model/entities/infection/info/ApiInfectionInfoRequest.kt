@@ -4,38 +4,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.EnumTypeConver
 import com.squareup.moshi.*
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
-
-/**
- * Describes infection info about user.
- */
-@JsonClass(generateAdapter = true)
-data class ApiInfectionInfoRequest(
-    val uuid: String,
-    val authorization: String,
-    @field:Json(name = "infection-messages")
-    val infectionMessages: List<ApiAddressedInfectionMessage>,
-    @field:Json(name = "personal-data")
-    val personalData: ApiPersonalData
-)
-
-@JsonClass(generateAdapter = true)
-data class ApiAddressedInfectionMessage(
-    val message: String,
-    val addressPrefix: String
-)
-
-@JsonClass(generateAdapter = true)
-data class ApiPersonalData(
-    val name: String?,
-    @field:Json(name = "date-of-birth")
-    val dateOfBirth: String?,
-    @field:Json(name = "mobile-number")
-    val mobileNumber: String?,
-    val city: String?,
-    val street: String?,
-    val type: WarningType,
-    val zip: String?
-)
+import java.lang.IllegalArgumentException
 
 enum class WarningType {
     @field:Json(name = "yellow-warning")

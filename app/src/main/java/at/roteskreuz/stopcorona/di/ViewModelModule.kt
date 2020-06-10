@@ -143,7 +143,8 @@ val viewModelModule = module {
         ReportingStatusViewModel(
             appDispatchers = get(),
             reportingRepository = get(),
-            quarantineRepository = get()
+            quarantineRepository = get(),
+            exposureNotificationRepository = get()
         )
     }
 

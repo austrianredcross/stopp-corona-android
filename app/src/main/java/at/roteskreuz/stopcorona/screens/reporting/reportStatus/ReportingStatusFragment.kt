@@ -1,10 +1,13 @@
 package at.roteskreuz.stopcorona.screens.reporting.reportStatus
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.SicknessCertificateUploadException
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
@@ -37,6 +40,8 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
 
     companion object {
         const val CURRENT_SCREEN = 3
+        private const val REQUEST_CODE_REGISTER_WITH_FRAMEWORK = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 1
+        private const val REQUEST_CODE_REQUEST_EXPOSURE_KEYS = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 2
     }
 
     private val viewModel: ReportingStatusViewModel by viewModel()
@@ -51,7 +56,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
         ReportingStatusController(
             context = requireContext(),
             onAgreementCheckboxChange = viewModel::setUserAgreement,
-            onSendReportClick = viewModel::uploadInfectionInformation
+            onSendReportClick = viewModel::uploadData
         )
     }
 
@@ -92,6 +97,23 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
             layoutManager = LinearLayoutManagerAccurateOffset(requireContext(), accurateScrollListener)
             addOnScrollListener(accurateScrollListener)
         }
+
+        disposables += viewModel.observeResolutionError()
+            .observeOnMainThread()
+            .subscribe { state ->
+                when (state) {
+                    is DataState.Loaded -> {
+                       when (state.data) {
+                           is ResolutionType.RegisterWithFramework -> {
+                               state.data.status.startResolutionForResult(activity, REQUEST_CODE_REGISTER_WITH_FRAMEWORK)
+                           }
+                           is ResolutionType.GetExposureKeys -> {
+                               state.data.status.startResolutionForResult(activity, REQUEST_CODE_REQUEST_EXPOSURE_KEYS)
+                           }
+                       }
+                    }
+                }
+            }
 
         disposables += viewModel.observeMessageType()
             .observeOnMainThread()
@@ -154,5 +176,26 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
     override fun overrideOnBackPressed(): Boolean {
         viewModel.goBack()
         return true // the changing of fragments is managing parent activity
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_CODE_REGISTER_WITH_FRAMEWORK -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.resolutionForRegistrationSucceeded()
+                }
+                else {
+                    viewModel.resolutionForRegistrationFailed()
+                }
+            }
+            REQUEST_CODE_REQUEST_EXPOSURE_KEYS -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.resolutionForExposureKeyHistorySucceeded()
+                }
+                else {
+                    viewModel.resolutionForExposureKeyHistoryFailed()
+                }
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }
