@@ -70,54 +70,54 @@
 	<string name="main_play_services_not_available_dialog_title">Device does not support Google PlayServices</string>
 	<string name="main_play_services_not_available_dialog_message">Google PlayServices are needed to use the feature Nearby. At the moment the digital handshake only works with Google PlayServices. We are working on alternative methods. </string>
 	<string name="main_handshake_information_hint">When should I use this feature?</string>
-    <string name="main_handshake_dialog_title">Save encounters if ... </string>
-    <string name="main_handshake_dialog_description_1">... you have personal contact for more than 15 minutes and are unable to maintain a distance of 2 meters at all times. </string>
-    <string name="main_handshake_dialog_description_2">... you have personal contact for more than 15 minutes and are in a small, closed space such as a car, a room or on the train. </string>
-    <string name="main_microphone_explanation_dialog_title">Access to the microphone</string>
-    <string name="main_microphone_explanation_dialog_description">For the digital handshake, it is checked whether other smartphones in the area have also triggered the handshake. This works via ultrasound. Therefore it is possible that your smartphone emits an audible sound. The sound is recorded by other smartphones with the microphone, and vice versa, your smartphone also uses the microphone to pick up sounds from other devices. For this reason, access to the microphone is required.</string>
-    <string name="main_microphone_explanation_dialog_do_not_show_again">Don\'t show again</string>
-    <string name="main_status_update_headline">Status update</string>
-    <string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
-    <string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available</string>
-    <string name="main_exposure_error_google_play_unavailable_missing_message">Service is missing.</string>
-    <string name="main_exposure_error_google_play_unavailable_updating_message">Service is just updating.</string>
-    <string name="main_exposure_error_google_play_unavailable_updating_action">Try again</string>
-    <string name="main_exposure_error_google_play_unavailable_update_required_message">Service requires update.</string>
-    <string name="main_exposure_error_google_play_unavailable_update_required_action">Update</string>
-    <string name="main_exposure_error_google_play_unavailable_disabled_message">Service is disabled.</string>
-    <string name="main_exposure_error_google_play_unavailable_invalid_message">Service is invalid.</string>
-    <string name="main_exposure_error_google_play_unavailable_action">Try to resolve</string>
-    <string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old</string>
-    <string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates. You need version at least 20.18.13 which might be in beta channel.</string>
-    <string name="main_exposure_error_google_play_wrong_version_action_btn">Go to Play Store</string>
-    <string name="main_exposure_error_title">Exposure notification error</string>
-    <string name="main_exposure_error_sign_in_message">Sign-in is required.</string>
-    <string name="main_exposure_error_invalid_account_message">Invalid account.</string>
-    <string name="main_exposure_error_declined_message">Framework was not registered.</string>
-    <string name="main_exposure_error_network_error_message">Network error.</string>
-    <string name="main_exposure_error_internal_message">Internal error. Something went wrong in the exposure notification framework.</string>
-    <string name="main_exposure_error_developer_message">We made some mistake here. An exception was logged, we will fix it in the later version of the app. Sorry for the inconvenience.</string>
-    <string name="main_exposure_error_action">Try again</string>
+	<string name="main_handshake_dialog_title">Save encounters if ... </string>
+	<string name="main_handshake_dialog_description_1">... you have personal contact for more than 15 minutes and are unable to maintain a distance of 2 meters at all times. </string>
+	<string name="main_handshake_dialog_description_2">... you have personal contact for more than 15 minutes and are in a small, closed space such as a car, a room or on the train. </string>
+	<string name="main_microphone_explanation_dialog_title">Access to the microphone</string>
+	<string name="main_microphone_explanation_dialog_description">For the digital handshake, it is checked whether other smartphones in the area have also triggered the handshake. This works via ultrasound. Therefore it is possible that your smartphone emits an audible sound. The sound is recorded by other smartphones with the microphone, and vice versa, your smartphone also uses the microphone to pick up sounds from other devices. For this reason, access to the microphone is required.</string>
+	<string name="main_microphone_explanation_dialog_do_not_show_again">Don\'t show again</string>
+	<string name="main_status_update_headline">Status update</string>
+	<string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
+	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available</string>
+	<string name="main_exposure_error_google_play_unavailable_missing_message">Service is missing.</string>
+	<string name="main_exposure_error_google_play_unavailable_updating_message">Service is just updating.</string>
+	<string name="main_exposure_error_google_play_unavailable_updating_action">Try again</string>
+	<string name="main_exposure_error_google_play_unavailable_update_required_message">Service requires update.</string>
+	<string name="main_exposure_error_google_play_unavailable_update_required_action">Update</string>
+	<string name="main_exposure_error_google_play_unavailable_disabled_message">Service is disabled.</string>
+	<string name="main_exposure_error_google_play_unavailable_invalid_message">Service is invalid.</string>
+	<string name="main_exposure_error_google_play_unavailable_action">Try to resolve</string>
+	<string name="main_exposure_error_google_play_wrong_version_title">Google Play Services version is old</string>
+	<string name="main_exposure_error_google_play_wrong_version_message">The installed google play services version is outdated. Please check for updates. You need version at least 20.18.13 which might be in beta channel.</string>
+	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to Play Store</string>
+	<string name="main_exposure_error_title">Exposure notification error</string>
+	<string name="main_exposure_error_sign_in_message">Sign-in is required.</string>
+	<string name="main_exposure_error_invalid_account_message">Invalid account.</string>
+	<string name="main_exposure_error_declined_message">Framework was not registered.</string>
+	<string name="main_exposure_error_network_error_message">Network error.</string>
+	<string name="main_exposure_error_internal_message">Internal error. Something went wrong in the exposure notification framework.</string>
+	<string name="main_exposure_error_developer_message">We made some mistake here. An exception was logged, we will fix it in the later version of the app. Sorry for the inconvenience.</string>
+	<string name="main_exposure_error_action">Try again</string>
 
-    <!-- Update Information -->
-    <string name="mandatory_update_title">Download the current version</string>
-    <string name="mandatory_update_message">This version is no longer supported. Download the current version to continue using the app. </string>
-    <string name="mandatory_update_playstore">Go to Play Store</string>
+	<!-- Update Information -->
+	<string name="mandatory_update_title">Download the current version</string>
+	<string name="mandatory_update_message">This version is no longer supported. Download the current version to continue using the app. </string>
+	<string name="mandatory_update_playstore">Go to Play Store</string>
 
-    <!-- Contact Sickness_Guidelines for people with proven sick contact -->
-    <string name="infection_info_title">Attention</string>
-    <string name="infection_info_headline_single">1 infected contact detected</string>
-    <string name="infection_info_headline_many">%d infected contacts detected</string>
-    <string name="infection_info_description1_single">One of your registered encounters is %s infected with the coronavirus.</string>
-    <string name="infection_info_description_acording_evidence">according to medical evidence</string>
-    <string name="infection_info_description1_many">%d of your registered encounters are %s infected with the coronavirus.</string>
-    <string name="infection_info_handshake_took_place_single">Handshake took place:</string>
-    <string name="infection_info_handshake_took_place_many">Handshakes took place:</string>
-    <string name="infection_info_handshake_took_place_format">%s, between %s and %s o`clock</string>
-    <string name="infection_info_go_to_quarantine">Self-quarantine immediately</string>
-    <string name="infection_info_quarantine_end">Please stay quarantined until %s</string>
-    <string name="contact_sickness_guidelines_quarantine_rule"></string>
-    <string name="infection_info_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
+	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
+	<string name="infection_info_title">Attention</string>
+	<string name="infection_info_headline_single">1 infected contact detected</string>
+	<string name="infection_info_headline_many">%d infected contacts detected</string>
+	<string name="infection_info_description1_single">One of your registered encounters is %s infected with the coronavirus.</string>
+	<string name="infection_info_description_acording_evidence">according to medical evidence</string>
+	<string name="infection_info_description1_many">%d of your registered encounters are %s infected with the coronavirus.</string>
+	<string name="infection_info_handshake_took_place_single">Handshake took place:</string>
+	<string name="infection_info_handshake_took_place_many">Handshakes took place:</string>
+	<string name="infection_info_handshake_took_place_format">%s, between %s and %s o`clock</string>
+	<string name="infection_info_go_to_quarantine">Self-quarantine immediately</string>
+	<string name="infection_info_quarantine_end">Please stay quarantined until %s</string>
+	<string name="contact_sickness_guidelines_quarantine_rule"></string>
+	<string name="infection_info_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
 	<string name="infection_info_warning_title">Attention</string>
@@ -189,19 +189,26 @@
 	<string name="certificate_tan_check_tan_label">TAN</string>
 	<string name="certificate_tan_check_resend_tan_button">Resend TAN</string>
 	<string name="certificate_report_status_title">Report status</string>
+	<string name="certificate_report_status_title_extra"></string>
 	<string name="certificate_report_status_headline">Has your corona infection been medically proven?</string>
+	<string name="certificate_report_status_headline_extra"></string>
 	<string name="certificate_report_status_description_1">It is important that only clearly confirmed infections are reported.\n\nIn the next step, all people with whom you have exchanged a digital handshake in the last 3 days will be notified anonymously. This will protect others and slow the spread of the virus.</string>
+	<string name="certificate_report_status_description_1_extra"></string>
 	<string name="certificate_report_status_description_2">The notification is anonymous.</string>
 	<string name="certificate_report_status_description_3">Your personal data will not be passed on to third parties.</string>
 	<string name="certificate_report_status_agreement_description"><b>Yes, I have been diagnosed with a Covid-19 infection.</b></string>
 	<string name="certificate_report_status_agreement_label">I hereby confirm to have provided all information truthfully.</string>
 	<string name="certificate_report_status_button">Report infection</string>
+	<string name="certificate_report_status_button_extra"></string>
 	<string name="certificate_report_status_invalid_tan_error">TAN is incorrect</string>
 	<string name="certificate_report_status_invalid_tan_error_description">Please make sure the entered TAN is correct.</string>
 	<string name="certificate_report_status_invalid_birth_date_error">Date of birth is invalid</string>
 	<string name="certificate_report_status_invalid_birth_date_error_description">Please make sure you enter your date of birth in the correct format.</string>
 	<string name="sickness_certificate_confirmation_title">Infection reported</string>
+	<string name="sickness_certificate_confirmation_title_extra"></string>
 	<string name="sickness_certificate_confirmation_headline">Infection reported</string>
+	<string name="sickness_certificate_confirmation_headline_extra"></string>
+	<string name="sickness_certificate_confirmation_description1_extra"></string>
 	<string name="sickness_certificate_confirmation_description1">Thank you for reporting your infection and for contributing significantly to the common good.</string>
 	<string name="sickness_certificate_confirmation_description2">Your contacts were notified anonymously.</string>
 	<string name="sickness_certificate_confirmation_description3">We wish you a speedy recovery!</string>
@@ -240,6 +247,8 @@
 	<string name="sickness_certificate_attest_description">Please remain in quarantine. You have officially declared yourself ill with the coronavirus.</string>
 	<string name="sickness_certificate_attest_button">Self-quarantine</string>
 	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>
+	<string name="sickness_certificate_attest_info_update"></string>
+	<string name="sickness_certificate_attest_update"></string>
 
 	<!-- Start Menu -->
 	<string name="start_menu_headline_1">Info</string>
@@ -256,6 +265,7 @@
 	<string name="start_menu_item_2_1_open_source_licenses">Open Source Licenses</string>
 	<string name="start_menu_item_2_2_data_privacy">Data privacy</string>
 	<string name="start_menu_item_2_3_imprint">Imprint</string>
+	<string name="start_menu_item_2_4_saved_ids">Saved IDs</string>
 	<string name="start_menu_item_version">Version: %s</string>
 	<string name="start_menu_headline_3">Functions</string>
 	<string name="start_menu_item_3_1">Start handshake manually</string>
@@ -305,13 +315,18 @@
 	<string name="questionnaire_examine_observe_headline_2">Attention</string>
 	<string name="questionnaire_examine_observe_description">Please contact your attending physician by phone if you need medical assistance. Your doctor can also sign you off sick or issue a prescription using your e-card.</string>
 	<string name="questionnaire_report_status_headline">Report suspicion?</string>
-	<string name="questionnaire_report_status_description_1">In the next step, all persons with whom you have exchanged a digital handshake within the last 3 days will be notified anonymously. This way you protect others and the further spread of the virus is slowed down.\n\n\n</string>
+	<string name="questionnaire_report_status_headline_extra"></string>
+	<string name="questionnaire_report_status_description_1">In the next step, all persons with whom you have exchanged a digital handshake within the last 2 days will be notified anonymously. This way you protect others and the further spread of the virus is slowed down.\n\n\n</string>
+	<string name="questionnaire_report_status_description_1_extra"></string>
 	<string name="questionnaire_report_status_description_2">The notification is anonymous.</string>
 	<string name="questionnaire_report_status_description_3">Your personal data will not be passed on to third parties.</string>
 	<string name="questionnaire_report_status_agreement">I hereby confirm to have provided all information truthfully.</string>
 	<string name="questionnaire_report_status_button">Report a suspected infection</string>
+	<string name="questionnaire_report_status_button_extra"></string>
 	<string name="questionnaire_report_success_headline">Suspected infection reported</string>
+	<string name="questionnaire_report_success_headline_extra"></string>
 	<string name="questionnaire_report_success_description">Thank you for reporting your suspected infection and for contributing significantly to the common good.</string>
+	<string name="questionnaire_report_success_description_extra"></string>
 	<string name="questionnaire_report_success_next_steps">Next steps</string>
 	<string name="questionnaire_report_success_next_steps_content">Please inform your doctor or the hospital by phone so that you\n • can be tested for coronavirus \n • can get Medical treatment</string>
 	<string name="questionnaire_report_success_next_steps_phone_contact">If this is not possible, please call this number: <b>%s</b></string>
@@ -338,6 +353,8 @@
 	<string name="self_testing_symptoms_description">You have completed the questionnaire and your symptoms are unclear.</string>
 	<string name="self_testing_symptoms_button">Next steps</string>
 	<string name="self_testing_symptoms_secondary_button">Reassess symptoms</string>
+	<string name="self_testing_symptoms_warning_info_update"></string>
+	<string name="self_testing_symptoms_warning_button_update"></string>
 
 	<!-- Self Testing (Detail screens) -->
 	<string name="questionnaire_guideline_title">Suspected infection </string>
@@ -444,6 +461,12 @@
 	<string name="revoke_sickness_success_description_2">Your contacts will be anonymously notified that it was not a corona infection.</string>
 	<string name="revoke_sickness_success_finish">Back to the start page</string>
 	<string name="revoke_sickness_success_description_3">We wish you all the best for the future!</string>
+	<string name="saved_IDs_title"></string>
+	<string name="saved_IDs_subtitle"></string>
+	<string name="saved_IDs_description"></string>
+	<string name="saved_IDs_delete_subtitle"></string>
+	<string name="saved_IDs_delete_description"></string>
+	<string name="saved_IDs_delete_button"></string>
 	<string name="changelog_title_v2.0.0">What\'s new?</string>
 	<string name="changelog_cta_v2.0.0">All right!</string>
 	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
