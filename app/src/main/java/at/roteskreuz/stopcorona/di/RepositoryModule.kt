@@ -17,15 +17,6 @@ val repositoryModule = module {
         )
     }
 
-    single<PushMessagingRepository> {
-        PushMessagingRepositoryImpl(
-            firebaseMessaging = get(),
-            cryptoRepository = get(),
-            dataPrivacyRepository = get(),
-            infectionMessengerRepository = get()
-        )
-    }
-
     @Suppress("DEPRECATION")
     single<CryptoRepository> {
         CryptoRepositoryImpl(
@@ -53,22 +44,7 @@ val repositoryModule = module {
             preferences = get()
         )
     }
-
-
-    single<InfectionMessengerRepository> {
-        InfectionMessengerRepositoryImpl(
-            appDispatchers = get(),
-            apiInteractor = get(),
-            infectionMessageDao = get(),
-            cryptoRepository = get(),
-            notificationsRepository = get(),
-            preferences = get(),
-            quarantineRepository = get(),
-            workManager = get(),
-            databaseCleanupManager = get()
-        )
-    }
-
+    
     single<NotificationsRepository> {
         NotificationsRepositoryImpl(
             appDispatchers = get(),

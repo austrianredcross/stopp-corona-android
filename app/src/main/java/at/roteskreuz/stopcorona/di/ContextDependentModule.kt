@@ -9,8 +9,6 @@ import at.roteskreuz.stopcorona.model.assets.AssetInteractorImpl
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractorImpl
-import at.roteskreuz.stopcorona.model.repositories.other.OfflineSyncer
-import at.roteskreuz.stopcorona.model.repositories.other.OfflineSyncerImpl
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.Nearby
 import org.koin.android.ext.koin.androidContext
@@ -38,19 +36,6 @@ internal val contextDependentModule = module {
     @Suppress("DEPRECATION")
     single {
         KeyPairGeneratorSpec.Builder(androidContext())
-    }
-
-    single<OfflineSyncer>(createOnStart = true) {
-        OfflineSyncerImpl(
-            appDispatchers = get(),
-            contextInteractor = get(),
-            sharedPreferences = get(),
-            processLifecycleOwner = ProcessLifecycleOwner.get(),
-            configurationRepository = get(),
-            dataPrivacyRepository = get(),
-            infectionMessengerRepository = get(),
-            pushMessagingRepository = get()
-        )
     }
 
     single {

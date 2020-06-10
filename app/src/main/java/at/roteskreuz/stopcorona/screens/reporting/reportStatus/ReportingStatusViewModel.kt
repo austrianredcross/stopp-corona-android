@@ -139,6 +139,7 @@ class ReportingStatusViewModel(
         uploadReportDataStateObserver.loading()
         launch {
             //we need to do this as the framework is slow and does not know about the resolution yet
+            //TODO: state is not updated after even this sleep and there is no progress dialog
             Thread.sleep(2000)
             uploadReportDataStateObserver.idle()
             uploadData()

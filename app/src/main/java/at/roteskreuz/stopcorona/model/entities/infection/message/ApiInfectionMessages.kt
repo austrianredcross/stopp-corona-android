@@ -14,20 +14,6 @@ import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
 import java.util.UUID
 
-/**
- * Describes infection messages.
- */
-@JsonClass(generateAdapter = true)
-data class ApiInfectionMessages(
-    @field:Json(name = "infection-messages")
-    val infectionMessages: List<ApiInfectionMessage>?
-)
-
-@JsonClass(generateAdapter = true)
-data class ApiInfectionMessage(
-    val id: Long,
-    val message: String
-)
 
 /**
  * Message types informing about different states.
