@@ -1,9 +1,9 @@
 package at.roteskreuz.stopcorona.model.repositories
 
-import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
-import android.content.Intent
+import at.roteskreuz.stopcorona.model.managers.BluetoothManager
+import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import io.reactivex.Observable
 
 /**
  * Wrapper for Bluetooth related functionality.
@@ -16,29 +16,34 @@ interface BluetoothRepository {
     fun isBluetoothEnabled(): Boolean
 
     /**
-     * Get an intent to display dialog to enable bluetooth.
+     * Observe true if bluetooth is enabled.
+     * To have an updates, [BluetoothManager] had to start listening before calling this method.
      */
-    fun getEnableBluetoothIntent(): Intent
+    fun observeBluetoothEnabledState(): Observable<Boolean>
 
     /**
-     * Get a pending intent to display dialog to enable bluetooth.
-     * Flag for new task.
+     * Update enabled state of the bluetooth to be observed by [observeBluetoothEnabledState].
      */
-    fun getEnableBluetoothPendingIntent(context: Context): PendingIntent
+    fun updateEnabledState(enabled: Boolean)
 }
 
 class BluetoothRepositoryImpl(
     private val bluetoothAdapter: BluetoothAdapter
 ) : BluetoothRepository {
 
+    private val enabledStateSubject = NonNullableBehaviorSubject(
+        bluetoothAdapter.isEnabled
+    )
+
     override fun isBluetoothEnabled(): Boolean {
-        return bluetoothAdapter.isEnabled
+        return bluetoothAdapter.isEnabled.also { enabledStateSubject.onNext(it) }
     }
 
-    override fun getEnableBluetoothIntent(): Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+    override fun observeBluetoothEnabledState(): Observable<Boolean> {
+        return enabledStateSubject
+    }
 
-    override fun getEnableBluetoothPendingIntent(context: Context): PendingIntent {
-        val enableBtIntent = getEnableBluetoothIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        return PendingIntent.getActivity(context, 0, enableBtIntent, PendingIntent.FLAG_ONE_SHOT)
+    override fun updateEnabledState(enabled: Boolean) {
+        enabledStateSubject.onNext(enabled)
     }
 }

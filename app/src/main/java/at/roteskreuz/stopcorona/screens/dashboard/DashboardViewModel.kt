@@ -4,8 +4,8 @@ import android.app.Activity
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.manager.ChangelogManager
-import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
+import at.roteskreuz.stopcorona.model.managers.ChangelogManager
+import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
@@ -40,7 +40,8 @@ class DashboardViewModel(
     exposureNotificationRepository: ExposureNotificationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager,
     googlePlayAvailability: GoogleApiAvailability,
-    private val changelogManager: ChangelogManager
+    private val changelogManager: ChangelogManager,
+    bluetoothRepository: BluetoothRepository
 ) : ScopedViewModel(appDispatchers) {
 
     companion object {
@@ -57,7 +58,8 @@ class DashboardViewModel(
                 dashboardRepository,
                 googlePlayAvailability,
                 contextInteractor,
-                exposureNotificationRepository
+                exposureNotificationRepository,
+                bluetoothRepository
             )
         )
     )
@@ -88,6 +90,7 @@ class DashboardViewModel(
          */
         disposables += observeExposureNotificationPhase()
             .subscribe { state ->
+                Timber.d("Current exposure notification state is ${state.javaClass.simpleName}")
                 state.onCreate { newState ->
                     state.onCleared()
                     exposureNotificationPhaseSubject.onNext(newState)
@@ -279,7 +282,8 @@ sealed class ExposureNotificationPhase {
         val dashboardRepository: DashboardRepository,
         val googlePlayAvailability: GoogleApiAvailability,
         val contextInteractor: ContextInteractor,
-        val exposureNotificationRepository: ExposureNotificationRepository
+        val exposureNotificationRepository: ExposureNotificationRepository,
+        val bluetoothRepository: BluetoothRepository
     )
 
     protected abstract val dependencyHolder: DependencyHolder
@@ -593,7 +597,7 @@ sealed class ExposureNotificationPhase {
         /**
          * Will refresh exposure notification registration state again.
          */
-        fun refresh() {
+        open fun refresh() {
             moveToNextState(RegisterToFramework(dependencyHolder, register))
         }
 
@@ -725,9 +729,30 @@ sealed class ExposureNotificationPhase {
             val exception: Throwable,
             override val register: Boolean
         ) : FrameworkError()
-    }
 
-    // TODO: 03/06/2020 dusanjencik: Check bluetooth
+        /**
+         * Bluetooth is not enabled.
+         */
+        data class BluetoothNotEnabled(
+            override val dependencyHolder: DependencyHolder
+        ) : FrameworkError() {
+
+            override val register: Boolean
+                get() = throw IllegalAccessException("Not used in this context")
+
+            override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+                super.onCreate(moveToNextState)
+                disposables += dependencyHolder.bluetoothRepository.observeBluetoothEnabledState()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { enabled ->
+                        if (enabled) {
+                            moveToNextState(CheckingFrameworkRunning(dependencyHolder))
+                        }
+                    }
+            }
+        }
+    }
 
     /**
      * Checking if framework is registered and running.
@@ -738,6 +763,14 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
+                disposables += bluetoothRepository.observeBluetoothEnabledState()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { enabled ->
+                        if (enabled.not()) {
+                            moveToNextState(FrameworkError.BluetoothNotEnabled(dependencyHolder))
+                        }
+                    }
                 disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
                     .subscribeOn(Schedulers.single())
                     .observeOn(Schedulers.single())
@@ -767,6 +800,14 @@ sealed class ExposureNotificationPhase {
 
         override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
             with(dependencyHolder) {
+                disposables += bluetoothRepository.observeBluetoothEnabledState()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(Schedulers.single())
+                    .subscribe { enabled ->
+                        if (enabled.not()) {
+                            moveToNextState(FrameworkError.BluetoothNotEnabled(dependencyHolder))
+                        }
+                    }
                 disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()
                     .subscribeOn(Schedulers.single())
                     .observeOn(Schedulers.single())

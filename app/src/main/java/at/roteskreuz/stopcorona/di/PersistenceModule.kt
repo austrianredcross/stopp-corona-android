@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.db.DefaultDatabase
-import at.roteskreuz.stopcorona.model.manager.*
+import at.roteskreuz.stopcorona.model.managers.*
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module

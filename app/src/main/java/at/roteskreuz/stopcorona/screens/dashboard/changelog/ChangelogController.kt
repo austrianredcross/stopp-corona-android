@@ -3,8 +3,8 @@ package at.roteskreuz.stopcorona.screens.dashboard.changelog
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import at.roteskreuz.stopcorona.model.manager.Changelog
-import at.roteskreuz.stopcorona.model.manager.SpanTextWrapper
+import at.roteskreuz.stopcorona.model.managers.Changelog
+import at.roteskreuz.stopcorona.model.managers.SpanTextWrapper
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
 import at.roteskreuz.stopcorona.screens.base.epoxy.copyText
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace

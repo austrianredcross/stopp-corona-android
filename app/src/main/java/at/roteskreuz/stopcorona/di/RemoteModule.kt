@@ -16,6 +16,9 @@ import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.api.ApiInteractorImpl
 import at.roteskreuz.stopcorona.model.api.TanApiDescription
 import at.roteskreuz.stopcorona.model.entities.infection.info.LocalDateNotIsoAdapter
+import at.roteskreuz.stopcorona.model.managers.BluetoothManager
+import at.roteskreuz.stopcorona.model.managers.BluetoothManagerImpl
+import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
 import at.roteskreuz.stopcorona.skeleton.core.di.createApi
 import at.roteskreuz.stopcorona.skeleton.core.di.createMoshi
 import at.roteskreuz.stopcorona.skeleton.core.di.createOkHttpClient
@@ -112,5 +115,12 @@ val remoteModule = module {
 
     single {
         FirebaseMessaging.getInstance()
+    }
+
+    single<BluetoothManager> {
+        BluetoothManagerImpl(
+            contextInteractor = get(),
+            bluetoothStateReceiver = get<BluetoothStateReceiver>()
+        )
     }
 }
