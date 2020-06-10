@@ -99,8 +99,8 @@ val remoteModule = module {
     }
 
     single {
-        createApi<TrackingKeysDescription>(
-            baseUrl = Constants.API.BASE_URL_TRACKING_KEYS,
+        createApi<ContentDeliveryNetworkDescription>(
+            baseUrl = Constants.API.BASE_URL_CDN,
             okHttpClient = createOkHttpClient(),
             moshi = get()
         )
@@ -111,7 +111,7 @@ val remoteModule = module {
             appDispatchers = get(),
             apiDescription = get(),
             tanApiDescription = get(),
-            trackingKeysDescription = get(),
+            contentDeliveryNetworkDescription = get(),
             dataPrivacyRepository = get()
         )
     }

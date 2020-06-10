@@ -2,7 +2,6 @@ package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfigurationHolder
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
-import at.roteskreuz.stopcorona.model.entities.infection.tracking_keys.IndexOfTrackingKeysArchive
 import retrofit2.http.*
 
 /**
