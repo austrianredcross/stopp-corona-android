@@ -4,6 +4,8 @@ import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import io.reactivex.Observable
 
 /**
  * Wrapper for Bluetooth related functionality.
@@ -11,9 +13,15 @@ import android.content.Intent
 interface BluetoothRepository {
 
     /**
-     * @return True if bluetooth is enabled.
+     * Observe true if bluetooth is enabled.
+     * To have an updates,
      */
-    fun isBluetoothEnabled(): Boolean
+    fun observeBluetoothEnabledState(): Observable<Boolean>
+
+    /**
+     * Update enabled state of the bluetooth to be observed by [observeBluetoothEnabledState].
+     */
+    fun updateEnabledState(enabled: Boolean)
 
     /**
      * Get an intent to display dialog to enable bluetooth.
@@ -28,11 +36,19 @@ interface BluetoothRepository {
 }
 
 class BluetoothRepositoryImpl(
-    private val bluetoothAdapter: BluetoothAdapter
+    bluetoothAdapter: BluetoothAdapter
 ) : BluetoothRepository {
 
-    override fun isBluetoothEnabled(): Boolean {
-        return bluetoothAdapter.isEnabled
+    private val enabledStateSubject = NonNullableBehaviorSubject(
+        bluetoothAdapter.isEnabled
+    )
+
+    override fun observeBluetoothEnabledState(): Observable<Boolean> {
+        return enabledStateSubject
+    }
+
+    override fun updateEnabledState(enabled: Boolean) {
+        enabledStateSubject.onNext(enabled)
     }
 
     override fun getEnableBluetoothIntent(): Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)

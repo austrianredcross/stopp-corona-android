@@ -6,7 +6,7 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.*
-import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
+import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State

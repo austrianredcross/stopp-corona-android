@@ -104,6 +104,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                         startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
                     }
+                    is FrameworkError.BluetoothNotEnabled -> {
+                        startActivity(exposureNotificationPhase.enableBluetoothIntent)
+                    }
                     is FrameworkError -> {
                         exposureNotificationPhase.refresh()
                     }

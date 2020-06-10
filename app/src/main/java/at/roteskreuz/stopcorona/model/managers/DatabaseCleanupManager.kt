@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.model.manager
+package at.roteskreuz.stopcorona.model.managers
 
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType

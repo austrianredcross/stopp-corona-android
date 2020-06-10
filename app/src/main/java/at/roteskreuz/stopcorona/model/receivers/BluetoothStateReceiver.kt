@@ -5,38 +5,42 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.work.WorkManager
-import at.roteskreuz.stopcorona.model.workers.ExposureNotificationNotifierWorker
+import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
 /**
- * Show notifications based on bluetooth state.
+ * Update [BluetoothRepository] state with the enabled state.
  */
-class BluetoothStateReceiver : BroadcastReceiver(), KoinComponent {
+class BluetoothStateReceiver : BroadcastReceiver(), Registrable, KoinComponent {
 
     companion object {
         private const val ACTION = BluetoothAdapter.ACTION_STATE_CHANGED
     }
 
-    private val workManager: WorkManager by inject()
+    private val bluetoothRepository: BluetoothRepository by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
-        ExposureNotificationNotifierWorker.enqueueAskForBluetoothIfDisabledAndFrameworkIsEnabled(workManager)
+        if (intent?.action == ACTION) {
+            when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
+                BluetoothAdapter.STATE_ON -> {
+                    bluetoothRepository.updateEnabledState(true)
+                }
+                else -> {
+                    bluetoothRepository.updateEnabledState(false)
+                }
+            }
+        }
     }
 
-    fun register(context: Context) {
+    override fun register(context: Context) {
         context.registerReceiver(
             this,
             IntentFilter(ACTION)
         )
     }
 
-    fun unregisterFailSilent(context: Context) {
-        try {
-            context.unregisterReceiver(this)
-        } catch (e:Exception){
-            // it only fails because it is already unregistered. So we can ignore any exception here
-        }
+    override fun unregister(context: Context) {
+        context.unregisterReceiver(this)
     }
 }

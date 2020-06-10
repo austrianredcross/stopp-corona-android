@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.model.manager
+package at.roteskreuz.stopcorona.model.managers
 
 import android.content.SharedPreferences
 import at.roteskreuz.stopcorona.constants.Constants
