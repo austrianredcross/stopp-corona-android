@@ -29,7 +29,6 @@ val viewModelModule = module {
     viewModel {
         DebugViewModel(
             appDispatchers = get(),
-            infectionMessengerRepository = get(),
             notificationsRepository = get(),
             quarantineRepository = get(),
             infectionMessageDao = get()
@@ -50,7 +49,6 @@ val viewModelModule = module {
             appDispatchers = get(),
             dashboardRepository = get(),
             contextInteractor = get(),
-            infectionMessengerRepository = get(),
             quarantineRepository = get(),
             configurationRepository = get(),
             exposureNotificationRepository = get(),
@@ -62,9 +60,7 @@ val viewModelModule = module {
 
     viewModel {
         InfectionInfoViewModel(
-            appDispatchers = get(),
-            infectionMessengerRepository = get(),
-            quarantineRepository = get()
+            appDispatchers = get()
         )
     }
 
