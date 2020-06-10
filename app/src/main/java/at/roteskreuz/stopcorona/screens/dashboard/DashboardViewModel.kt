@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
-import android.content.Intent
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
@@ -735,8 +734,7 @@ sealed class ExposureNotificationPhase {
          * Bluetooth is not enabled.
          */
         data class BluetoothNotEnabled(
-            override val dependencyHolder: DependencyHolder,
-            val enableBluetoothIntent: Intent = dependencyHolder.bluetoothRepository.getEnableBluetoothIntent()
+            override val dependencyHolder: DependencyHolder
         ) : FrameworkError() {
 
             override val register: Boolean

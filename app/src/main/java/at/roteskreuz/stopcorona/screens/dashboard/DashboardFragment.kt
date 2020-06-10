@@ -27,6 +27,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
+import at.roteskreuz.stopcorona.utils.startDialogToEnableBluetooth
 import at.roteskreuz.stopcorona.utils.startGooglePlayStore
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
@@ -105,7 +106,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                         startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
                     }
                     is FrameworkError.BluetoothNotEnabled -> {
-                        startActivity(exposureNotificationPhase.enableBluetoothIntent)
+                        startDialogToEnableBluetooth()
                     }
                     is FrameworkError -> {
                         exposureNotificationPhase.refresh()

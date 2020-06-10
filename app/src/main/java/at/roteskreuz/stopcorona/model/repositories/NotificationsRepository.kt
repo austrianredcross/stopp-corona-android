@@ -60,6 +60,11 @@ interface NotificationsRepository {
     fun updateAndDisplayCoronaAutomaticDetectionNotification(id: Int)
 
     /**
+     * Display notification when bluetooth is off.
+     */
+    fun displayPleaseActivateBluetoothNotification()
+
+    /**
      * Hide notification by [id].
      */
     fun hideNotification(id: Int)
@@ -176,6 +181,20 @@ class NotificationsRepositoryImpl(
         val notification = getCoronaAutomaticDetectionNotification()
 
         notificationManager.notify(id, notification)
+    }
+
+    override fun displayPleaseActivateBluetoothNotification() {
+        val title = context.string(R.string.local_notification_bluetooth_is_off_title)
+        val message = context.string(R.string.local_notification_bluetooth_is_off_message)
+
+        buildNotification(
+            title = title,
+            message = message,
+            pendingIntent = buildPendingIntentWithActivityStack {
+                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
+            },
+            channelId = NotificationChannels.CHANNEL_AUTOMATIC_DETECTION
+        ).show()
     }
 
     override fun hideNotification(id: Int) {
