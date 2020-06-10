@@ -23,7 +23,6 @@ import at.roteskreuz.stopcorona.skeleton.core.di.createApi
 import at.roteskreuz.stopcorona.skeleton.core.di.createMoshi
 import at.roteskreuz.stopcorona.skeleton.core.di.createOkHttpClient
 import at.roteskreuz.stopcorona.skeleton.core.model.api.addHeaders
-import com.google.firebase.messaging.FirebaseMessaging
 import okhttp3.Cache
 import okhttp3.CertificatePinner
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
@@ -111,10 +110,6 @@ val remoteModule = module {
             tanApiDescription = get(),
             dataPrivacyRepository = get()
         )
-    }
-
-    single {
-        FirebaseMessaging.getInstance()
     }
 
     single<BluetoothManager> {
