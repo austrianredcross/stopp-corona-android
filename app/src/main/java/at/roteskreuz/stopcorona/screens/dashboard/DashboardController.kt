@@ -8,8 +8,9 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.Critical
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.Critical.*
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.*
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.NotCritical
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.*
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
@@ -156,117 +157,10 @@ class DashboardController(
         exposureNotificationPhase?.let { phase ->
             when (phase) {
                 is PrerequisitesError -> {
-                    when (phase) {
-                        is UnavailableGooglePlayServices -> {
-                            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                                id("unavailable_google_play_services")
-                                title(context.string(R.string.main_exposure_error_google_play_unavailable_title))
-                                fun addTryToResolveButtonIfPossible() {
-                                    if (phase.googlePlayAvailability.isUserResolvableError(phase.googlePlayServicesStatusCode)) {
-                                        action(context.string(R.string.main_exposure_error_google_play_unavailable_action))
-                                    }
-                                }
-                                when (phase) {
-                                    is ServiceMissing -> {
-                                        description(context.string(R.string.main_exposure_error_google_play_unavailable_missing_message))
-                                        addTryToResolveButtonIfPossible()
-                                    }
-                                    is ServiceUpdating -> {
-                                        description(context.string(R.string.main_exposure_error_google_play_unavailable_updating_message))
-                                        action(context.string(R.string.main_exposure_error_google_play_unavailable_updating_action))
-                                    }
-                                    is ServiceVersionUpdateRequired -> {
-                                        description(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_message))
-                                        action(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_action))
-                                    }
-                                    is ServiceDisabled -> {
-                                        description(context.string(R.string.main_exposure_error_google_play_unavailable_disabled_message))
-                                        addTryToResolveButtonIfPossible()
-                                    }
-                                    is ServiceInvalid -> {
-                                        description(context.string(R.string.main_exposure_error_google_play_unavailable_invalid_message))
-                                        addTryToResolveButtonIfPossible()
-                                    }
-                                }
-                            }
-
-                            emptySpace(modelCountBuiltSoFar, 16)
-                        }
-                        is InvalidVersionOfGooglePlayServices -> {
-                            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                                id("invalid_google_play_services_version")
-                                title(context.string(R.string.main_exposure_error_google_play_wrong_version_title))
-                                description(context.string(R.string.main_exposure_error_google_play_wrong_version_message))
-                                action(context.string(R.string.main_exposure_error_google_play_wrong_version_action_btn))
-                            }
-
-                            emptySpace(modelCountBuiltSoFar, 16)
-                        }
-                        is BluetoothNotSupported -> {
-                            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                                id("bluetooth_not_supported")
-                                title(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
-                                description(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
-                            }
-
-                            emptySpace(modelCountBuiltSoFar, 16)
-                        }
-                    }
+                    buildPrerequisitesErrorCard(phase)
                 }
                 is FrameworkError -> {
-                    fun exposureNotificationError(description: String) {
-                        exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                            id("exposure_notification_framework_error")
-                            title(context.string(R.string.main_exposure_error_title))
-                            description(description)
-                            action(context.string(R.string.main_exposure_error_action))
-                        }
-
-                        emptySpace(modelCountBuiltSoFar, 16)
-                    }
-                    when (phase) {
-                        is Critical -> {
-                            when (phase) {
-                                is SignInRequired -> {
-                                    exposureNotificationError(context.string(R.string.main_exposure_error_sign_in_message))
-                                }
-                                is InvalidAccount -> {
-                                    exposureNotificationError(context.string(R.string.main_exposure_error_invalid_account_message))
-                                }
-                                is ResolutionRequired -> {
-                                    // ignored, there is displayed a dialog
-                                }
-                                is ResolutionDeclined -> {
-                                    exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
-                                }
-                                is NetworkError,
-                                is Interrupted,
-                                is Timeout,
-                                is Canceled -> {
-                                    exposureNotificationError(context.string(R.string.main_exposure_error_network_error_message))
-                                }
-                                is InternalError,
-                                is Error,
-                                is Unknown -> {
-                                    exposureNotificationError(context.string(R.string.main_exposure_error_internal_message))
-                                }
-                                is DeveloperError,
-                                is ApiNotConnected -> {
-                                    exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
-                                }
-                            }
-                        }
-                        is NotCritical.BluetoothNotEnabled -> {
-                            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                                id("exposure_notification_framework_error")
-                                title(context.string(R.string.main_exposure_error_title))
-                                description(context.string(R.string.main_exposure_error_bluetooth_off_message))
-                                action(context.string(R.string.main_exposure_error_bluetooth_off_action))
-                            }
-
-                            emptySpace(modelCountBuiltSoFar, 16)
-                        }
-                    }
+                    buildExposureFrameworkErrorCard(phase)
                 }
             }
         }
@@ -337,6 +231,127 @@ class DashboardController(
             }
         } else {
             emptySpace(modelCountBuiltSoFar, 40)
+        }
+    }
+
+    /**
+     * Display an error card if some of exposure prerequisites checks failed.
+     */
+    private fun buildPrerequisitesErrorCard(phase: ExposureNotificationPhase) {
+        when (phase) {
+            is UnavailableGooglePlayServices -> {
+                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                    id("unavailable_google_play_services")
+                    title(context.string(R.string.main_exposure_error_google_play_unavailable_title))
+                    fun addTryToResolveButtonIfPossible() {
+                        if (phase.googlePlayAvailability.isUserResolvableError(phase.googlePlayServicesStatusCode)) {
+                            action(context.string(R.string.main_exposure_error_google_play_unavailable_action))
+                        }
+                    }
+                    when (phase) {
+                        is ServiceMissing -> {
+                            description(context.string(R.string.main_exposure_error_google_play_unavailable_missing_message))
+                            addTryToResolveButtonIfPossible()
+                        }
+                        is ServiceUpdating -> {
+                            description(context.string(R.string.main_exposure_error_google_play_unavailable_updating_message))
+                            action(context.string(R.string.main_exposure_error_google_play_unavailable_updating_action))
+                        }
+                        is ServiceVersionUpdateRequired -> {
+                            description(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_message))
+                            action(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_action))
+                        }
+                        is ServiceDisabled -> {
+                            description(context.string(R.string.main_exposure_error_google_play_unavailable_disabled_message))
+                            addTryToResolveButtonIfPossible()
+                        }
+                        is ServiceInvalid -> {
+                            description(context.string(R.string.main_exposure_error_google_play_unavailable_invalid_message))
+                            addTryToResolveButtonIfPossible()
+                        }
+                    }
+                }
+
+                emptySpace(modelCountBuiltSoFar, 16)
+            }
+            is InvalidVersionOfGooglePlayServices -> {
+                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                    id("invalid_google_play_services_version")
+                    title(context.string(R.string.main_exposure_error_google_play_wrong_version_title))
+                    description(context.string(R.string.main_exposure_error_google_play_wrong_version_message))
+                    action(context.string(R.string.main_exposure_error_google_play_wrong_version_action_btn))
+                }
+
+                emptySpace(modelCountBuiltSoFar, 16)
+            }
+            is BluetoothNotSupported -> {
+                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                    id("bluetooth_not_supported")
+                    title(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
+                    description(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
+                }
+
+                emptySpace(modelCountBuiltSoFar, 16)
+            }
+        }
+    }
+
+    /**
+     * Display an error card if exposure framework has an error.
+     */
+    private fun buildExposureFrameworkErrorCard(phase: ExposureNotificationPhase) {
+        fun exposureNotificationError(description: String) {
+            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                id("exposure_notification_framework_error")
+                title(context.string(R.string.main_exposure_error_title))
+                description(description)
+                action(context.string(R.string.main_exposure_error_action))
+            }
+
+            emptySpace(modelCountBuiltSoFar, 16)
+        }
+        when (phase) {
+            is Critical -> {
+                when (phase) {
+                    is SignInRequired -> {
+                        exposureNotificationError(context.string(R.string.main_exposure_error_sign_in_message))
+                    }
+                    is InvalidAccount -> {
+                        exposureNotificationError(context.string(R.string.main_exposure_error_invalid_account_message))
+                    }
+                    is ResolutionRequired -> {
+                        // ignored, there is displayed a dialog
+                    }
+                    is ResolutionDeclined -> {
+                        exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
+                    }
+                    is NetworkError,
+                    is Interrupted,
+                    is Timeout,
+                    is Canceled -> {
+                        exposureNotificationError(context.string(R.string.main_exposure_error_network_error_message))
+                    }
+                    is InternalError,
+                    is Error,
+                    is Unknown -> {
+                        exposureNotificationError(context.string(R.string.main_exposure_error_internal_message))
+                    }
+                    is DeveloperError,
+                    is ApiNotConnected -> {
+                        exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
+                    }
+                }
+            }
+            is NotCritical.BluetoothNotEnabled -> {
+                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                    id("exposure_notification_framework_error")
+                    title(context.string(R.string.main_exposure_error_title))
+                    description(context.string(R.string.main_exposure_error_bluetooth_off_message))
+                    action(context.string(R.string.main_exposure_error_bluetooth_off_action))
+                }
+
+                emptySpace(modelCountBuiltSoFar, 16)
+            }
         }
     }
 
