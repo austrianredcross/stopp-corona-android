@@ -22,9 +22,6 @@
                         android:id="@+id/debugMenuNotificationSelfRetest"
                         android:title="Self test" />
                     <item
-                        android:id="@+id/debugMenuNotificationSomeoneRecovered"
-                        android:title="Someone is recovered" />
-                    <item
                         android:id="@+id/debugMenuNotificationEndQuarantine"
                         android:title="End of quarantine" />
                 </menu>
@@ -34,21 +31,11 @@
                 android:title="InfectionMessages">
                 <menu>
                     <item
-                        android:id="@+id/debugMenuInfectionMessagesOutgoingRed"
-                        android:title="Outgoing Red" />
-                    <item
-                        android:id="@+id/debugMenuInfectionMessagesOutgoingYellow"
-                        android:title="Outgoing Yellow" />
-
-                    <item
                         android:id="@+id/debugMenuInfectionMessagesIncomingRed"
                         android:title="Incoming Red" />
                     <item
                         android:id="@+id/debugMenuInfectionMessagesIncomingYellow"
                         android:title="Incoming Yellow" />
-                    <item
-                        android:id="@+id/debugMenuInfectionMessagesIncomingGreen"
-                        android:title="Incoming Green" />
                 </menu>
             </item>
             <item

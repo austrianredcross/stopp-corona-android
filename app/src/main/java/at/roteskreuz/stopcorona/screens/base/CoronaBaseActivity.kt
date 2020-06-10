@@ -48,10 +48,6 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 debugViewModel.displaySelfRetestNotification()
                 true
             }
-            R.id.debugMenuNotificationSomeoneRecovered -> {
-                debugViewModel.displaySomeoneHasRecoveredNotification()
-                true
-            }
             R.id.debugMenuNotificationEndQuarantine -> {
                 debugViewModel.displayEndQuarantineNotification()
                 true
@@ -61,24 +57,12 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 Toast.makeText(this, quarantineStatus.toString(), Toast.LENGTH_LONG).show()
                 true
             }
-            R.id.debugMenuInfectionMessagesOutgoingRed -> {
-                debugViewModel.addOutgoingMessageRed()
-                true
-            }
-            R.id.debugMenuInfectionMessagesOutgoingYellow -> {
-                debugViewModel.addOutgoingMessageYellow()
-                true
-            }
             R.id.debugMenuInfectionMessagesIncomingRed -> {
                 debugViewModel.addIncomingMessageRed()
                 true
             }
             R.id.debugMenuInfectionMessagesIncomingYellow -> {
                 debugViewModel.addIncomingMessageYellow()
-                true
-            }
-            R.id.debugMenuInfectionMessagesIncomingGreen -> {
-                debugViewModel.addIncomingMessageGreen()
                 true
             }
             R.id.debugExposureNotifications -> {
