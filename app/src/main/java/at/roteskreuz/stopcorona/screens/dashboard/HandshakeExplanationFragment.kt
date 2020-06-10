@@ -12,6 +12,9 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.utils.startDefaultBrowser
 import kotlinx.android.synthetic.main.fragment_handshake_explanation.*
 
+/**
+ * Screen with handshake explanation steps.
+ */
 class HandshakeExplanationFragment : BaseFragment(R.layout.fragment_handshake_explanation) {
 
     override val isToolbarVisible = true
