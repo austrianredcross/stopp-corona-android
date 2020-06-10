@@ -186,7 +186,7 @@ class DashboardViewModel(
      */
     fun onExposureNotificationRegistrationResolutionResultOk() {
         exposureNotificationPhaseSubject.value.let { state ->
-            if (state is ExposureNotificationPhase.FrameworkError.ResolutionRequired) {
+            if (state is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
                 state.onResolutionOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is ok"))
@@ -199,7 +199,7 @@ class DashboardViewModel(
      */
     fun onExposureNotificationRegistrationResolutionResultNotOk() {
         exposureNotificationPhaseSubject.value.let { state ->
-            if (state is ExposureNotificationPhase.FrameworkError.ResolutionRequired) {
+            if (state is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
                 state.onResolutionNotOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is not ok"))
@@ -504,50 +504,50 @@ sealed class ExposureNotificationPhase {
                                             when (apiException.statusCode) {
                                                 CommonStatusCodes.SIGN_IN_REQUIRED -> {
                                                     Timber.e(SilentError("SIGN_IN_REQUIRED", apiException))
-                                                    FrameworkError.SignInRequired(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.SignInRequired(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.INVALID_ACCOUNT -> {
                                                     Timber.e(SilentError("INVALID_ACCOUNT", apiException))
-                                                    FrameworkError.InvalidAccount(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.InvalidAccount(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.RESOLUTION_REQUIRED -> {
                                                     // no logging of error, this state is expect-able
-                                                    FrameworkError.ResolutionRequired(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.ResolutionRequired(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.NETWORK_ERROR -> {
                                                     Timber.e(SilentError("NETWORK_ERROR", apiException))
-                                                    FrameworkError.NetworkError(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.NetworkError(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.INTERNAL_ERROR -> {
                                                     Timber.e(SilentError("INTERNAL_ERROR", apiException))
-                                                    FrameworkError.InternalError(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.InternalError(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.DEVELOPER_ERROR -> {
                                                     Timber.e(SilentError("DEVELOPER_ERROR", apiException))
-                                                    FrameworkError.DeveloperError(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.DeveloperError(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.ERROR -> {
                                                     Timber.e(SilentError("ERROR", apiException))
-                                                    FrameworkError.Error(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.Error(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.INTERRUPTED -> {
                                                     Timber.e(SilentError("INTERRUPTED", apiException))
-                                                    FrameworkError.Interrupted(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.Interrupted(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.TIMEOUT -> {
                                                     Timber.e(SilentError("TIMEOUT", apiException))
-                                                    FrameworkError.Timeout(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.Timeout(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.CANCELED -> {
                                                     Timber.e(SilentError("CANCELED", apiException))
-                                                    FrameworkError.Canceled(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.Canceled(dependencyHolder, apiException, register)
                                                 }
                                                 CommonStatusCodes.API_NOT_CONNECTED -> {
                                                     Timber.e(SilentError("API_NOT_CONNECTED", apiException))
-                                                    FrameworkError.ApiNotConnected(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.ApiNotConnected(dependencyHolder, apiException, register)
                                                 }
                                                 else -> {
-                                                    FrameworkError.Unknown(dependencyHolder, apiException, register)
+                                                    FrameworkError.Critical.Unknown(dependencyHolder, apiException, register)
                                                 }
                                             }
                                         )
@@ -556,7 +556,7 @@ sealed class ExposureNotificationPhase {
                                         moveToNextState(WaitingForWantedState(dependencyHolder))
                                     }
                                     else -> {
-                                        moveToNextState(FrameworkError.Unknown(dependencyHolder, state.error, register))
+                                        moveToNextState(FrameworkError.Critical.Unknown(dependencyHolder, state.error, register))
                                     }
                                 }
                             }
@@ -602,154 +602,166 @@ sealed class ExposureNotificationPhase {
         }
 
         /**
-         * Framework [ApiException] of [CommonStatusCodes.SIGN_IN_REQUIRED].
+         * Framework cannot be started with this error.
          */
-        data class SignInRequired(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
+        sealed class Critical {
 
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.INVALID_ACCOUNT].
-         */
-        data class InvalidAccount(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.SIGN_IN_REQUIRED].
+             */
+            data class SignInRequired(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
 
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.RESOLUTION_REQUIRED].
-         * User must confirm the registration app to the framework.
-         */
-        data class ResolutionRequired(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError() {
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.INVALID_ACCOUNT].
+             */
+            data class InvalidAccount(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
 
-            fun onResolutionOk() {
-                dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
-                moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.RESOLUTION_REQUIRED].
+             * User must confirm the registration app to the framework.
+             */
+            data class ResolutionRequired(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError() {
+
+                fun onResolutionOk() {
+                    dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
+                    moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+                }
+
+                fun onResolutionNotOk() {
+                    dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
+                    moveToNextState(ResolutionDeclined(dependencyHolder, register))
+                }
             }
 
-            fun onResolutionNotOk() {
-                dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
-                moveToNextState(ResolutionDeclined(dependencyHolder, register))
-            }
+            /**
+             * Registration dialog to the framework was declined by user.
+             */
+            data class ResolutionDeclined(
+                override val dependencyHolder: DependencyHolder,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.NETWORK_ERROR].
+             */
+            data class NetworkError(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.INTERNAL_ERROR].
+             */
+            data class InternalError(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.DEVELOPER_ERROR].
+             */
+            data class DeveloperError(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.ERROR].
+             */
+            data class Error(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.INTERRUPTED].
+             */
+            data class Interrupted(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.TIMEOUT].
+             */
+            data class Timeout(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.CANCELED].
+             */
+            data class Canceled(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework [ApiException] of [CommonStatusCodes.API_NOT_CONNECTED].
+             */
+            data class ApiNotConnected(
+                override val dependencyHolder: DependencyHolder,
+                val exception: ApiException,
+                override val register: Boolean
+            ) : FrameworkError()
+
+            /**
+             * Framework caused some unknown error.
+             * @param register True to start it, false to stop it.
+             */
+            data class Unknown(
+                override val dependencyHolder: DependencyHolder,
+                val exception: Throwable,
+                override val register: Boolean
+            ) : FrameworkError()
         }
 
         /**
-         * Registration dialog to the framework was declined by user.
+         * Framework can be started with this error, but it might not work properly at this time.
          */
-        data class ResolutionDeclined(
-            override val dependencyHolder: DependencyHolder,
-            override val register: Boolean
-        ) : FrameworkError()
+        sealed class NotCritical {
 
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.NETWORK_ERROR].
-         */
-        data class NetworkError(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
+            /**
+             * Bluetooth is not enabled.
+             */
+            data class BluetoothNotEnabled(
+                override val dependencyHolder: DependencyHolder
+            ) : FrameworkError() {
 
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.INTERNAL_ERROR].
-         */
-        data class InternalError(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
+                override val register: Boolean
+                    get() = throw IllegalAccessException("Not used in this context")
 
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.DEVELOPER_ERROR].
-         */
-        data class DeveloperError(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.ERROR].
-         */
-        data class Error(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.INTERRUPTED].
-         */
-        data class Interrupted(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.TIMEOUT].
-         */
-        data class Timeout(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.CANCELED].
-         */
-        data class Canceled(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Framework [ApiException] of [CommonStatusCodes.API_NOT_CONNECTED].
-         */
-        data class ApiNotConnected(
-            override val dependencyHolder: DependencyHolder,
-            val exception: ApiException,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Framework caused some unknown error.
-         * @param register True to start it, false to stop it.
-         */
-        data class Unknown(
-            override val dependencyHolder: DependencyHolder,
-            val exception: Throwable,
-            override val register: Boolean
-        ) : FrameworkError()
-
-        /**
-         * Bluetooth is not enabled.
-         */
-        data class BluetoothNotEnabled(
-            override val dependencyHolder: DependencyHolder
-        ) : FrameworkError() {
-
-            override val register: Boolean
-                get() = throw IllegalAccessException("Not used in this context")
-
-            override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
-                super.onCreate(moveToNextState)
-                disposables += dependencyHolder.bluetoothRepository.observeBluetoothEnabledState()
-                    .subscribeOn(Schedulers.single())
-                    .observeOn(Schedulers.single())
-                    .subscribe { enabled ->
-                        if (enabled) {
-                            moveToNextState(CheckingFrameworkRunning(dependencyHolder))
+                override fun onCreate(moveToNextState: (ExposureNotificationPhase) -> Unit) {
+                    super.onCreate(moveToNextState)
+                    disposables += dependencyHolder.bluetoothRepository.observeBluetoothEnabledState()
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(Schedulers.single())
+                        .subscribe { enabled ->
+                            if (enabled) {
+                                moveToNextState(CheckingFrameworkRunning(dependencyHolder))
+                            }
                         }
-                    }
+                }
             }
         }
     }
@@ -768,7 +780,7 @@ sealed class ExposureNotificationPhase {
                     .observeOn(Schedulers.single())
                     .subscribe { enabled ->
                         if (enabled.not()) {
-                            moveToNextState(FrameworkError.BluetoothNotEnabled(dependencyHolder))
+                            moveToNextState(FrameworkError.NotCritical.BluetoothNotEnabled(dependencyHolder))
                         }
                     }
                 disposables += exposureNotificationRepository.observeAppIsRegisteredForExposureNotifications()
@@ -805,7 +817,7 @@ sealed class ExposureNotificationPhase {
                     .observeOn(Schedulers.single())
                     .subscribe { enabled ->
                         if (enabled.not()) {
-                            moveToNextState(FrameworkError.BluetoothNotEnabled(dependencyHolder))
+                            moveToNextState(FrameworkError.NotCritical.BluetoothNotEnabled(dependencyHolder))
                         }
                     }
                 disposables += dashboardRepository.observeUserWantsToRegisterAppForExposureNotification()

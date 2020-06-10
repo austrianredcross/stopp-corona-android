@@ -8,6 +8,7 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
+import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.Critical.*
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
@@ -209,34 +210,38 @@ class DashboardController(
                         emptySpace(modelCountBuiltSoFar, 16)
                     }
                     when (phase) {
-                        is FrameworkError.SignInRequired -> {
-                            exposureNotificationError(context.string(R.string.main_exposure_error_sign_in_message))
+                        is FrameworkError.Critical -> {
+                            when (phase) {
+                                is SignInRequired -> {
+                                    exposureNotificationError(context.string(R.string.main_exposure_error_sign_in_message))
+                                }
+                                is InvalidAccount -> {
+                                    exposureNotificationError(context.string(R.string.main_exposure_error_invalid_account_message))
+                                }
+                                is ResolutionRequired -> {
+                                    // ignored, there is displayed a dialog
+                                }
+                                is ResolutionDeclined -> {
+                                    exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
+                                }
+                                is NetworkError,
+                                is Interrupted,
+                                is Timeout,
+                                is Canceled -> {
+                                    exposureNotificationError(context.string(R.string.main_exposure_error_network_error_message))
+                                }
+                                is InternalError,
+                                is Error,
+                                is Unknown -> {
+                                    exposureNotificationError(context.string(R.string.main_exposure_error_internal_message))
+                                }
+                                is DeveloperError,
+                                is ApiNotConnected -> {
+                                    exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
+                                }
+                            }
                         }
-                        is FrameworkError.InvalidAccount -> {
-                            exposureNotificationError(context.string(R.string.main_exposure_error_invalid_account_message))
-                        }
-                        is FrameworkError.ResolutionRequired -> {
-                            // ignored, there is displayed a dialog
-                        }
-                        is FrameworkError.ResolutionDeclined -> {
-                            exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
-                        }
-                        is FrameworkError.NetworkError,
-                        is FrameworkError.Interrupted,
-                        is FrameworkError.Timeout,
-                        is FrameworkError.Canceled -> {
-                            exposureNotificationError(context.string(R.string.main_exposure_error_network_error_message))
-                        }
-                        is FrameworkError.InternalError,
-                        is FrameworkError.Error,
-                        is FrameworkError.Unknown -> {
-                            exposureNotificationError(context.string(R.string.main_exposure_error_internal_message))
-                        }
-                        is FrameworkError.DeveloperError,
-                        is FrameworkError.ApiNotConnected -> {
-                            exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
-                        }
-                        is FrameworkError.BluetoothNotEnabled -> {
+                        is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                             exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
                                 id("exposure_notification_framework_error")
                                 title(context.string(R.string.main_exposure_error_title))

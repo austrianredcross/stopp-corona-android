@@ -105,7 +105,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                         startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
                     }
-                    is FrameworkError.BluetoothNotEnabled -> {
+                    is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                         startDialogToEnableBluetooth()
                     }
                     is FrameworkError -> {
@@ -177,13 +177,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { phase ->
                 controller.exposureNotificationPhase = phase
                 when (phase) {
-                    is FrameworkError.ResolutionRequired -> {
+                    is FrameworkError.Critical.ResolutionRequired -> {
                         phase.exception.status.startResolutionForResult(
                             requireActivity(),
                             REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
                         )
                     }
-                    is FrameworkError.Unknown -> handleBaseCoronaErrors(phase.exception)
+                    is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
             }
 
