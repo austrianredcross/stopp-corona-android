@@ -4,11 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.model.api.ApiDescription
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.info.convertToApiTemporaryTracingKeys
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -20,11 +16,9 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -158,7 +152,7 @@ class DebugExposureNotificationsTrackingKeysViewModel(
     fun downloadTracingKeysIndex() {
         launch {
             try {
-                val archive = apiInteractor.getIndexOfTrackingKeysArchive()
+                val archive = apiInteractor.getIndexOfExposureKeysArchive()
                 exposureNotificationsTextSubject.onNext("got the archive $archive")
             } catch (exception: java.lang.Exception) {
                 Timber.e(SilentError(exception))

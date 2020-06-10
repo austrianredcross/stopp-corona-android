@@ -46,9 +46,9 @@ interface ApiInteractor {
     )
 
     /**
-     * retrieve listing of Tracking Keys archives
+     * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfTrackingKeysArchive(): IndexOfExposureKeysArchive
+    suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive
 }
 
 class ApiInteractorImpl(
@@ -98,7 +98,7 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun getIndexOfTrackingKeysArchive(): IndexOfExposureKeysArchive {
+    override suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()
             checkGeneralErrors {

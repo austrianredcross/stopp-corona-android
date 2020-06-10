@@ -4,7 +4,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.tracking_keys.IndexOfEx
 import retrofit2.http.GET
 
 /**
- * Description of API for downloading the trackging key archives
+ * Description of API for downloading the exposure key archives
  */
 interface ContentDeliveryNetworkDescription {
 
