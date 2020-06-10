@@ -97,6 +97,8 @@
 	<string name="main_exposure_error_network_error_message">Netzwerkfehler.</string>
 	<string name="main_exposure_error_internal_message">Interner Fehler. Im Rahmen der Expositionsbenachrichtigung ist ein Fehler aufgetreten.</string>
 	<string name="main_exposure_error_developer_message">Wir haben hier einen Fehler gemacht. Eine Ausnahme wurde protokolliert, wir werden sie in der späteren Version der App beheben. Entschuldigen Sie die Unannehmlichkeiten.</string>
+	<string name="main_exposure_error_bluetooth_off_message">Bluetooth ist ausgeschaltet. Damit die Belichtungsbenachrichtigungen ordnungsgemäß funktionieren, müssen Sie Bluetooth aktivieren.</string>
+	<string name="main_exposure_error_bluetooth_off_action">Aktivieren</string>
 	<string name="main_exposure_error_action">Versuch es noch einmal</string>
 
 	<!-- Update Information -->
@@ -413,15 +415,15 @@
 	<string name="local_notification_automatic_handshake_title">Der automatische Handshake wird ausgeführt.</string>
 	<string name="local_notification_bluetooth_is_off_title">Der automatische Handshake wurde gestoppt.</string>
 	<string name="local_notification_bluetooth_is_off_message">Schalten Sie bitte die Bluetooth-Funktion ein und starten Sie den Handshake in der App neu. </string>
-	<string name="local_notification_automatic_handshake_message">Vielen Dank, dass Sie uns bei der Eindämmung des Corona-Virus helfen.</string>
+	<string name="local_notification_automatic_handshake_message">Vielen Dank, dass Sie uns bei der Eindämmung des Coronavirus helfen.</string>
 	<string name="local_notification_activate_automatic_handshake_again_title">Bitte aktivieren Sie den automatischen Handshake wieder</string>
-	<string name="local_notification_activate_automatic_handshake_again_message">Und helfen Sie weiter bei der Eindämmung des Corona-Virus.</string>
+	<string name="local_notification_activate_automatic_handshake_again_message">Und helfen Sie weiter bei der Eindämmung des Coronavirus.</string>
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Achtung</string>
 	<string name="contacts_confirmed_one_case_description">Bei Ihren Kontakten wurde eine oder mehrere Corona-Infektionen gemeldet. </string>
 	<string name="contacts_suspicion_one_case_headline">Hinweis</string>
-	<string name="contacts_suspicion_one_case_description">Bei Ihren Kontakten wurde ein oder mehrere Verdachte auf eine Corona-Infektion gemeldet.</string>
+	<string name="contacts_suspicion_one_case_description">Bei einem oder mehrere Ihrer Kontakte wurde der Verdacht auf eine Corona-Infektion gemeldet.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Achtung</string>
 	<string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>
@@ -435,7 +437,7 @@
 	<string name="contacts_quarantine_day_many">Quarantäne-Tage</string>
 	<string name="revoke_suspicion_title">Status melden</string>
 	<string name="revoke_suspicion_headline">Entwarnung geben</string>
-	<string name="revoke_suspicion_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Symptome einer Corona-Infektion bei Ihnen aufgetreten sind.\n\nWenn durch\n• einen Laborbefund oder\n• einen Arzt\nbestätigt wurde, dass Sie nicht an dem Corona-Virus erkrankt sind, informieren Sie bitte umgehend Ihre Kontakte mit dieser Entwarnung.\n\nIm nächsten Schritt fragen wir dafür Zugriff auf die gespeicherten Zufalls-IDs an. Den Zugriff benötigen wir, um Ihre zuvor benachrichtigten Kontakte über die Entwarnung zu informieren.</string>
+	<string name="revoke_suspicion_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Symptome einer Corona-Infektion bei Ihnen aufgetreten sind.\n\nWenn durch\n• einen Laborbefund oder\n• einen Arzt\nbestätigt wurde, dass Sie nicht an dem Coronavirus erkrankt sind, informieren Sie bitte umgehend Ihre Kontakte mit dieser Entwarnung.\n\nIm nächsten Schritt fragen wir dafür Zugriff auf die gespeicherten Zufalls-IDs an. Den Zugriff benötigen wir, um Ihre zuvor benachrichtigten Kontakte über die Entwarnung zu informieren.</string>
 	<string name="revoke_suspicion_approval">Hiermit bestätige ich, die Angaben wahrheitsgemäß getätigt zu haben.</string>
 	<string name="revoke_suspicion_action">Entwarnung bestätigen</string>
 	<string name="revoke_suspicion_success_headline">Entwarnung bestätigt</string>
@@ -457,26 +459,27 @@
 	<string name="revoke_sickness_report_approval">Hiermit bestätige ich den Widerruf meiner Krankmeldung.</string>
 	<string name="revoke_sickness_report_action">Infektions-Meldung zurückziehen</string>
 	<string name="revoke_sickness_success_headline">Infektions-Meldung zurückgezogen</string>
-	<string name="revoke_sickness_success_description_1">Danke, dass Sie Ihre Angaben aktualisiert haben und damit erheblich zu einem transparenten Vorgehen und dem Gemeinwohl beitragen.</string>
-	<string name="revoke_sickness_success_description_2">Ihre Kontakte werden anonym benachrichtigt, dass es sich nicht um eine Corona-Infektion gehandelt hat.</string>
-	<string name="revoke_sickness_success_finish">Zurück zur Startseite</string>
-	<string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
-	<string name="saved_IDs_title">Gespeicherte Zufalls-IDs</string>
-	<string name="saved_IDs_subtitle">Diese App speichert Zufalls-IDs</string>
-	<string name="saved_IDs_description">Diese App speichert Zufalls-IDs von Kontakten, die auch die App nutzen. Diese werden benachrichtigt, sollten Sie sich als krank oder einen Verdacht melden. Die Zufalls-IDs werden automatisch nach 14 Tagen gelöscht.</string>
-	<string name="saved_IDs_delete_subtitle">Möchten Sie jetzt die Zufalls-IDs löschen?</string>
-	<string name="saved_IDs_delete_description">Sollten Sie die Zufalls-IDs löschen, können diese nicht benachrichtigt werden, wenn Sie sich als erkrankt oder einen Verdacht melden.\nÖffnen Sie die App-Einstellungen. Dort finden Sie unten einen Link zu den Einstellungen des COVID-Kontaktprotokolls. Bei den Einstellungen des COVID-19 Kontaktprotokolls können Sie die Zufalls-IDs löschen.</string>
-	<string name="saved_IDs_delete_button">App-Einstellungen öffnen</string>
-	<string name="changelog_title_v2.0.0">Was ist neu?</string>
-	<string name="changelog_cta_v2.0.0">Alles klar!</string>
-	<string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
-	<string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 Schnittstelle</string>
-	<string name="changelog_description_3_v2.0.0">. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Informationen anders dargestellt.\n\nBegegnungen, die Sie vor dem Update auf diese Version als Handshake gespeichert haben, sind aus technischen Gründen nicht mehr gespeichert und können leider nicht mehr benachrichtigt werden.</string>
-	<string name="handshake_code_00">Meise</string>
-	<string name="handshake_code_01">Tukan</string>
-	<string name="handshake_code_02">Gämse</string>
-	<string name="handshake_code_03">Amsel</string>
-	<string name="handshake_code_04">Echse</string>
+    <string name="revoke_sickness_success_description_1">Danke, dass Sie Ihre Angaben aktualisiert haben und damit erheblich zu einem transparenten Vorgehen und dem Gemeinwohl beitragen.</string>
+    <string name="revoke_sickness_success_description_2">Ihre Kontakte werden anonym benachrichtigt, dass es sich nicht um eine Corona-Infektion gehandelt hat.</string>
+    <string name="revoke_sickness_success_finish">Zurück zur Startseite</string>
+    <string name="revoke_sickness_success_description_3">Wir wünschen Ihnen weiterhin alles Gute!</string>
+    <string name="saved_IDs_title">Gespeicherte Zufalls-IDs</string>
+    <string name="saved_IDs_subtitle">Diese App speichert Zufalls-IDs</string>
+    <string name="saved_IDs_description">Diese App speichert Zufalls-IDs von Kontakten, die auch die App nutzen. Diese werden benachrichtigt, sollten Sie sich als krank oder einen Verdacht melden. Die Zufalls-IDs werden automatisch nach 14 Tagen gelöscht.</string>
+    <string name="saved_IDs_delete_subtitle">Möchten Sie jetzt die Zufalls-IDs löschen?</string>
+    <string name="saved_IDs_delete_description">Sollten Sie die Zufalls-IDs löschen, können diese nicht benachrichtigt werden, wenn Sie sich als erkrankt oder einen Verdacht melden.\nÖffnen Sie die App-Einstellungen. Dort finden Sie unten einen Link zu den Einstellungen des COVID-Kontaktprotokolls. Bei den Einstellungen des COVID-19 Kontaktprotokolls können Sie die Zufalls-IDs löschen.</string>
+    <string name="saved_IDs_delete_button">App-Einstellungen öffnen</string>
+    <string name="saved_IDs_notification_exposure_settings_cannot_be_opened">Die Benachrichtigungseinstellungen können nicht geöffnet werden.</string>
+    <string name="changelog_title_v2.0.0">Was ist neu?</string>
+    <string name="changelog_cta_v2.0.0">Alles klar!</string>
+    <string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
+    <string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 Schnittstelle</string>
+    <string name="changelog_description_3_v2.0.0">. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Informationen anders dargestellt.\n\nBegegnungen, die Sie vor dem Update auf diese Version als Handshake gespeichert haben, sind aus technischen Gründen nicht mehr gespeichert und können leider nicht mehr benachrichtigt werden.</string>
+    <string name="handshake_code_00">Meise</string>
+    <string name="handshake_code_01">Tukan</string>
+    <string name="handshake_code_02">Gämse</string>
+    <string name="handshake_code_03">Amsel</string>
+    <string name="handshake_code_04">Echse</string>
 	<string name="handshake_code_05">Krake</string>
 	<string name="handshake_code_06">Renke</string>
 	<string name="handshake_code_07">Bobak</string>

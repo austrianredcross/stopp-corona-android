@@ -3,11 +3,11 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
-import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.*
+import at.roteskreuz.stopcorona.model.managers.BluetoothManager
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
@@ -104,29 +104,28 @@ interface ExposureNotificationRepository {
 
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
-    private val bluetoothStateReceiver: BluetoothStateReceiver,
-    private val exposureNotificationClient: ExposureNotificationClient,
-    private val contextInteractor: ContextInteractor
+    private val bluetoothManager: BluetoothManager,
+    private val exposureNotificationClient: ExposureNotificationClient
 ) : ExposureNotificationRepository,
     CoroutineScope {
 
     /**
-     * Holds the enabled state, loading or error.
+     * Holds loading or error or ok state as idle.
      */
     private val registeringWithFrameworkState = StateObserver()
-    private val frameworkEnabledState = NonNullableBehaviorSubject(false)
+    private val frameworkEnabledStateSubject = NonNullableBehaviorSubject(false)
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
 
     override var isAppRegisteredForExposureNotificationsLastState: Boolean
-        get() = frameworkEnabledState.value
+        get() = frameworkEnabledStateSubject.value
         private set(value) {
-            frameworkEnabledState.onNext(value)
+            frameworkEnabledStateSubject.onNext(value)
         }
 
     override fun observeAppIsRegisteredForExposureNotifications(): Observable<Boolean> {
-        return frameworkEnabledState
+        return frameworkEnabledStateSubject
     }
 
     override fun observeRegistrationState(): Observable<State> {
@@ -142,16 +141,13 @@ class ExposureNotificationRepositoryImpl(
         exposureNotificationClient.start()
             .addOnSuccessListener {
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.register(contextInteractor.applicationContext)
             }
             .addOnFailureListener { exception: Exception ->
-                frameworkEnabledState.onNext(false)
+                frameworkEnabledStateSubject.onNext(false)
                 registeringWithFrameworkState.error(exception)
-                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnCanceledListener {
                 registeringWithFrameworkState.error(CancellationException())
-                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
     }
 
@@ -161,22 +157,18 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.register(contextInteractor.applicationContext)
             }
             .addOnFailureListener { exception: Exception ->
                 registeringWithFrameworkState.error(exception)
-                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnCanceledListener {
                 registeringWithFrameworkState.error(CancellationException())
-                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
-        frameworkEnabledState.onNext(false)
+        refreshExposureNotificationAppRegisteredState()
         registeringWithFrameworkState.idle()
-        bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
     }
 
     override fun unregisterAppFromExposureNotifications() {
@@ -189,22 +181,26 @@ class ExposureNotificationRepositoryImpl(
             .addOnSuccessListener {
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
-                bluetoothStateReceiver.unregisterFailSilent(contextInteractor.applicationContext)
             }
             .addOnFailureListener { exception: Exception ->
                 registeringWithFrameworkState.error(exception)
-                bluetoothStateReceiver.register(contextInteractor.applicationContext)
             }
     }
 
     override fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
-                frameworkEnabledState.onNext(enabled)
+                if (enabled) {
+                    bluetoothManager.startListeningForChanges()
+                } else {
+                    bluetoothManager.stopListeningForChanges()
+                }
+                frameworkEnabledStateSubject.onNext(enabled)
             }
             .addOnFailureListener {
+                bluetoothManager.stopListeningForChanges()
                 Timber.e(SilentError(it))
-                frameworkEnabledState.onNext(false)
+                frameworkEnabledStateSubject.onNext(false)
             }
     }
 
@@ -228,7 +224,7 @@ class ExposureNotificationRepositoryImpl(
         }
     }
 
-    override suspend fun getTemporaryExposureKeys():List<TemporaryExposureKey> {
+    override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
         return suspendCancellableCoroutine { continuation ->
             exposureNotificationClient.temporaryExposureKeyHistory
                 .addOnSuccessListener {
