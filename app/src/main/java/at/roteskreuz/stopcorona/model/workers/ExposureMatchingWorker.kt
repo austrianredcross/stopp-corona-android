@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.*
 import at.roteskreuz.stopcorona.utils.minus
 import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 import java.util.concurrent.TimeUnit
@@ -60,12 +61,15 @@ class ExposureMatchingWorker(
         }
     }
 
+    private val workManager: WorkManager by inject()
+
     override suspend fun doWork(): Result {
         // TODO mihbat 10-Jun: Run the exposure matching algorithm described in
         //  ticket https://tasks.pxp-x.com/browse/CTAA-1360 .
-        //  At the end of the exposure matching algorithm, please schedule the
-        //  next exposure matching ExposureMatchingWorker.enqueueNextExposureMatching(workManger)
 
+
+        // Schedule the next exposure matching work.
+        enqueueNextExposureMatching(workManager)
         return Result.success()
     }
 }
