@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.manager.ChangelogManager
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.*
+import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus.Free
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -89,7 +90,9 @@ class DashboardViewModel(
             }
     }
 
-    private val tempHealthStatusDataSubject = NonNullableBehaviorSubject<HealthStatusData>(HealthStatusData.NoHealthStatus)
+    private val tempHealthStatusDataSubject = NonNullableBehaviorSubject<HealthStatusData>(
+        HealthStatusData.ContactsSicknessInfo(quarantineStatus = Free(selfMonitoring = false))
+    )
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
         //TODO: bring back the contact health status based on the Exposure Notification Framework
         return tempHealthStatusDataSubject
@@ -106,7 +109,7 @@ class DashboardViewModel(
                             else -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
                         }
                     }
-                    is QuarantineStatus.Free -> {
+                    is Free -> {
                         when {
                             quarantineStatus.selfMonitoring -> HealthStatusData.SelfTestingSymptomsMonitoring
                             else -> HealthStatusData.NoHealthStatus
