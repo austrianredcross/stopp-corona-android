@@ -7,11 +7,13 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import kotlinx.android.synthetic.main.info_delete_exposure_keys_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 /**
  * Screen to inform the user about how he can delete his exposure keys.
@@ -50,6 +52,7 @@ class InfoDeleteExposureKeysFragment : BaseFragment(R.layout.info_delete_exposur
                 R.string.info_delete_exposure_keys_settings_cannot_be_opened,
                 Toast.LENGTH_SHORT
             ).show()
+            Timber.e(SilentError("Exposure notifications settings intent could not be resolved."))
         }
     }
 
