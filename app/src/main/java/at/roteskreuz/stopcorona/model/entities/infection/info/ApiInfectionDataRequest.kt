@@ -48,7 +48,6 @@ fun TemporaryExposureKey.convertToApiTemporaryTracingKey(): ApiTemporaryTracingK
         /**
          * rollingPeriod = A number describing how long a key is valid.
          * It is expressed in increments of 10 minutes (e.g. 144 for 24 hours). */
-        //TODO: fix this after https://github.com/google/exposure-notifications-android/issues/30 / https://tasks.pxp-x.com/browse/CTAA-1561 are resolved
-        intervalCount = if (this.rollingPeriod == 0)  144 else this.rollingPeriod
+        intervalCount = this.rollingPeriod
     )
 }
