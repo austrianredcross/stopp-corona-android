@@ -8,6 +8,7 @@ import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.*
 import at.roteskreuz.stopcorona.model.manager.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
+import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
@@ -68,6 +69,11 @@ interface InfectionMessengerRepository {
      * Hide the message someone has recovered.
      */
     fun someoneHasRecoveredMessageSeen()
+
+    /**
+     * Enqueue periodic work to run the exposure matching algorithm.
+     */
+    fun enqueuePeriodExposureMatching()
 }
 
 class InfectionMessengerRepositoryImpl(
@@ -187,5 +193,9 @@ class InfectionMessengerRepositoryImpl(
 
     override fun someoneHasRecoveredMessageSeen() {
         someoneHasRecovered = false
+    }
+
+    override fun enqueuePeriodExposureMatching() {
+        ExposureMatchingWorker.enqueuePeriodExposureMatching(workManager)
     }
 }

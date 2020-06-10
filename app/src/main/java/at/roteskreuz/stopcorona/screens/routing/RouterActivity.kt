@@ -60,6 +60,8 @@ class RouterActivity : FragmentActivity(), KoinComponent {
             }
         }
 
+        viewModel.enqueuePeriodExposureMatching()
+
         if (skipSplashscreenDelay) {
             routeInternal()
             finishAffinity()

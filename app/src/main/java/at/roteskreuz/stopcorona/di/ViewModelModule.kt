@@ -71,7 +71,8 @@ val viewModelModule = module {
     viewModel {
         RouterViewModel(
             appDispatchers = get(),
-            onboardingRepository = get()
+            onboardingRepository = get(),
+            infectionMessengerRepository = get()
         )
     }
 
