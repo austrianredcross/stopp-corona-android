@@ -22,6 +22,7 @@ class MenuController(
     private val context: Context,
     private val onOnboardingClick: () -> Unit,
     private val onExternalLinkClick: (url: String) -> Unit,
+    private val onSavedIdsClick: () -> Unit,
     private val onOpenSourceLicenceClick: () -> Unit,
     private val onPrivacyDataClick: () -> Unit,
     private val onImprintClick: () -> Unit,
@@ -85,6 +86,11 @@ class MenuController(
         headlineH2 {
             id("headline_legal")
             title(context.string(R.string.start_menu_headline_2))
+        }
+
+        menuItem(onSavedIdsClick) {
+            id("saved_ids")
+            title(context.string(R.string.start_menu_item_2_4_saved_ids))
         }
 
         menuItem(onOpenSourceLicenceClick) {
