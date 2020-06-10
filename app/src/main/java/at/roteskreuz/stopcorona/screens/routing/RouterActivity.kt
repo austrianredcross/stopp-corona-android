@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
+import at.roteskreuz.stopcorona.model.repositories.other.OfflineSyncer
 import at.roteskreuz.stopcorona.screens.dashboard.startDashboardActivity
 import at.roteskreuz.stopcorona.screens.onboarding.startOnboardingFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -67,6 +68,9 @@ class RouterActivity : FragmentActivity(), KoinComponent {
 
             // Postpone routing until all databases are populated
             activityScope?.launch {
+                val offlineSyncer = get<OfflineSyncer>()
+                offlineSyncer.awaitDatabasePopulation()
+
                 delay(SCREEN_DISPLAY_DURATION) // splashscreen is displayed
 
                 routeInternal()
