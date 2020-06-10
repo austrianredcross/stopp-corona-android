@@ -57,6 +57,8 @@ android {
             buildConfigField "String", "BASE_URL", '"dummy"'
             buildConfigField "String", "HOSTNAME_TAN", '"dummy"'
             buildConfigField "String", "BASE_URL_TAN", '"dummy"'
+            buildConfigField "String", "HOSTNAME_CDN", '"dummy"'
+            buildConfigField "String", "BASE_URL_CDN", '"dummy"'
             buildConfigField "String[]", "CERTIFICATE_CHAIN", '{}'
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", '{}'
             buildConfigField "String", "AUTHORIZATION_VALUE", '"dummy"'
