@@ -1,6 +1,6 @@
 package at.roteskreuz.stopcorona.model.api
 
-import at.roteskreuz.stopcorona.model.entities.infection.tracking_keys.IndexOfExposureKeysArchive
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfExposureKeysArchive
 import retrofit2.http.GET
 
 /**

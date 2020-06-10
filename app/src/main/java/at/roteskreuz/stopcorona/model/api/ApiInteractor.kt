@@ -2,7 +2,7 @@ package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.*
-import at.roteskreuz.stopcorona.model.entities.infection.tracking_keys.IndexOfExposureKeysArchive
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfExposureKeysArchive
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository

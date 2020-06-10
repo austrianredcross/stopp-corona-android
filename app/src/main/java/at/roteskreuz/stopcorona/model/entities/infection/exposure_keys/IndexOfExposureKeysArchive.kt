@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.model.entities.infection.tracking_keys
+package at.roteskreuz.stopcorona.model.entities.infection.exposure_keys
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
