@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfExposureKeysArchive
 import at.roteskreuz.stopcorona.model.entities.infection.info.*
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
@@ -55,12 +56,18 @@ interface ApiInteractor {
         diagnosisType: WarningType,
         verificationPayload: ApiVerificationPayload
     )
+
+    /**
+     * retrieve listing of exposure key archives
+     */
+    suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive
 }
 
 class ApiInteractorImpl(
     private val appDispatchers: AppDispatchers,
     private val apiDescription: ApiDescription,
     private val tanApiDescription: TanApiDescription,
+    private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
     private val dataPrivacyRepository: DataPrivacyRepository
 ) : ApiInteractor,
     ExceptionMapperHelper {
@@ -112,6 +119,14 @@ class ApiInteractorImpl(
         }
     }
 
+    override suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive {
+        return withContext(appDispatchers.IO) {
+            dataPrivacyRepository.assertDataPrivacyAccepted()
+            checkGeneralErrors {
+                contentDeliveryNetworkDescription.indexOfTrackingKeysArchives()
+            }
+        }
+    }
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()

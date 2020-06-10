@@ -11,10 +11,7 @@ import at.roteskreuz.stopcorona.constants.isBeta
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.defaultCertificatePinnerTag
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.tanCertificatePinnerTag
-import at.roteskreuz.stopcorona.model.api.ApiDescription
-import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.api.ApiInteractorImpl
-import at.roteskreuz.stopcorona.model.api.TanApiDescription
+import at.roteskreuz.stopcorona.model.api.*
 import at.roteskreuz.stopcorona.model.entities.infection.info.LocalDateNotIsoAdapter
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.model.managers.BluetoothManagerImpl
@@ -104,11 +101,20 @@ val remoteModule = module {
         )
     }
 
+    single {
+        createApi<ContentDeliveryNetworkDescription>(
+            baseUrl = Constants.API.BASE_URL_CDN,
+            okHttpClient = createOkHttpClient(),
+            moshi = get()
+        )
+    }
+
     single<ApiInteractor> {
         ApiInteractorImpl(
             appDispatchers = get(),
             apiDescription = get(),
             tanApiDescription = get(),
+            contentDeliveryNetworkDescription = get(),
             dataPrivacyRepository = get()
         )
     }
