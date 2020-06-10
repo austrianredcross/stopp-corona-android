@@ -61,6 +61,15 @@ fun Fragment.startGooglePlayStore(packageName: String) {
 }
 
 /**
+ * Display dialog to enable bluetooth.
+ */
+fun Fragment.startDialogToEnableBluetooth() {
+    startActivity(
+        Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+    )
+}
+
+/**
  * Open system settings of this application.
  */
 fun Context.startAppSystemSettings() {

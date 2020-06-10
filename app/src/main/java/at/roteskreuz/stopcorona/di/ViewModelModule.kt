@@ -57,7 +57,8 @@ val viewModelModule = module {
             exposureNotificationRepository = get(),
             databaseCleanupManager = get(),
             googlePlayAvailability = get(),
-            changelogManager = get()
+            changelogManager = get(),
+            bluetoothRepository = get()
         )
     }
 

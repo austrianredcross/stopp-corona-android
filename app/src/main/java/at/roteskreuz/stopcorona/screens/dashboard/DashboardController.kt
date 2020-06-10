@@ -236,6 +236,16 @@ class DashboardController(
                         is FrameworkError.ApiNotConnected -> {
                             exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
                         }
+                        is FrameworkError.BluetoothNotEnabled -> {
+                            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                                id("exposure_notification_framework_error")
+                                title(context.string(R.string.main_exposure_error_title))
+                                description(context.string(R.string.main_exposure_error_bluetooth_off_message))
+                                action(context.string(R.string.main_exposure_error_bluetooth_off_action))
+                            }
+
+                            emptySpace(modelCountBuiltSoFar, 16)
+                        }
                     }
                 }
             }
