@@ -71,9 +71,9 @@ interface InfectionMessengerRepository {
     fun someoneHasRecoveredMessageSeen()
 
     /**
-     * Enqueue periodic work to run the exposure matching algorithm.
+     * Enqueue the next work request to run the exposure matching algorithm.
      */
-    fun enqueuePeriodExposureMatching()
+    fun enqueueNextExposureMatching()
 }
 
 class InfectionMessengerRepositoryImpl(
@@ -195,7 +195,7 @@ class InfectionMessengerRepositoryImpl(
         someoneHasRecovered = false
     }
 
-    override fun enqueuePeriodExposureMatching() {
-        ExposureMatchingWorker.enqueuePeriodExposureMatching(workManager)
+    override fun enqueueNextExposureMatching() {
+        ExposureMatchingWorker.enqueueNextExposureMatching(workManager)
     }
 }

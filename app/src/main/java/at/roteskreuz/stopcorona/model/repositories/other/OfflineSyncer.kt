@@ -122,7 +122,8 @@ class OfflineSyncerImpl(
      */
     private fun CoroutineScope.populateDatabasesAsync(): List<Deferred<Unit>> {
         return listOf(
-            async { runPopulationAndLogExceptions { configurationRepository.populateConfigurationIfEmpty() } }
+            async { runPopulationAndLogExceptions { configurationRepository.populateConfigurationIfEmpty() } },
+            async { runPopulationAndLogExceptions { infectionMessengerRepository.enqueueNextExposureMatching() } }
         )
     }
 

@@ -2,7 +2,9 @@ package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
 import androidx.work.*
+import at.roteskreuz.stopcorona.utils.minus
 import org.koin.standalone.KoinComponent
+import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
@@ -21,32 +23,48 @@ class ExposureMatchingWorker(
         /**
          * Enqueue periodic work to run the exposure matching algorithm.
          */
-        fun enqueuePeriodExposureMatching(workManager: WorkManager) {
+        fun enqueueNextExposureMatching(workManager: WorkManager) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()
 
-            val request = PeriodicWorkRequestBuilder<ExposureMatchingWorker>(
-                1, TimeUnit.HOURS,
-                30, TimeUnit.MINUTES
-            ).setConstraints(constraints)
+            val request = OneTimeWorkRequestBuilder<ExposureMatchingWorker>()
+                .setConstraints(constraints)
+                .setInitialDelay(computeDelayUntilNextRun().seconds, TimeUnit.SECONDS)
                 .addTag(TAG)
                 .build()
 
-            workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, request)
+            workManager.enqueueUniqueWork(TAG, ExistingWorkPolicy.REPLACE, request)
+        }
+
+        /**
+         * Compute delay until the next possible hourly run in the 7:30 - 21:30 interval.
+         */
+        private fun computeDelayUntilNextRun(): Duration {
+            val nextPossibleRun = ZonedDateTime.now().plusHours(1).withMinute(30)
+            val plannedRun = when {
+                // If is after 21:30, schedule for next day at 7:30.
+                nextPossibleRun.isAfter(ZonedDateTime.now().withHour(21).withMinute(30)) -> {
+                    ZonedDateTime.now().plusDays(1).withHour(7).withMinute(30)
+                }
+                // If is before 7:30, schedule for current day at 7:30.
+                nextPossibleRun.isBefore(ZonedDateTime.now().withHour(7).withMinute(30)) -> {
+                    ZonedDateTime.now().withHour(7).withMinute(30)
+                }
+                // Otherwise the possible run is in 7:30 - 9:30 and can be scheduled as it is.
+                else -> {
+                    nextPossibleRun
+                }
+            }
+            return plannedRun.minus(ZonedDateTime.now())
         }
     }
 
     override suspend fun doWork(): Result {
-        if (ZonedDateTime.now().isBefore(ZonedDateTime.now().withHour(7).withMinute(30))
-            || ZonedDateTime.now().isAfter(ZonedDateTime.now().withHour(21).withMinute(30))
-        ) {
-            // The exposure matching is not run outside of the 7:30 - 21:30 interval.
-            return Result.success()
-        }
-
         // TODO mihbat 10-Jun: Run the exposure matching algorithm described in
         //  ticket https://tasks.pxp-x.com/browse/CTAA-1360 .
+        //  At the end of the exposure matching algorithm, please schedule the
+        //  next exposure matching ExposureMatchingWorker.enqueueNextExposureMatching(workManger)
 
         return Result.success()
     }
