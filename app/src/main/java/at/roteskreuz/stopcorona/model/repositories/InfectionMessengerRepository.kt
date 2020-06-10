@@ -28,7 +28,7 @@ import kotlin.coroutines.CoroutineContext
  */
 interface InfectionMessengerRepository {
 
-    /**x
+    /**
      * Enqueue download and processing infection messages.
      */
     fun enqueueDownloadingNewMessages()
