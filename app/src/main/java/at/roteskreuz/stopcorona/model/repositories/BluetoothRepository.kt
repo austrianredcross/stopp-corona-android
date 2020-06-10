@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.model.repositories
 
 import android.bluetooth.BluetoothAdapter
+import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
 
@@ -16,7 +17,7 @@ interface BluetoothRepository {
 
     /**
      * Observe true if bluetooth is enabled.
-     * To have an updates,
+     * To have an updates, [BluetoothManager] had to start listening before calling this method.
      */
     fun observeBluetoothEnabledState(): Observable<Boolean>
 

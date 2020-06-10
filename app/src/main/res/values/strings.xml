@@ -469,6 +469,7 @@
 	<string name="saved_IDs_delete_subtitle">Would you like to delete the random IDs now?</string>
 	<string name="saved_IDs_delete_description">If you delete the random IDs, they cannot be notified if you register as ill or suspect.\nOpen the app settings. There you will find a link below to the settings of the COVID contact protocol. You can delete the random IDs in the settings of the COVID-19 contact protocol.</string>
 	<string name="saved_IDs_delete_button">Open app settings</string>
+	<string name="saved_IDs_notification_exposure_settings_cannot_be_opened">The notifications settings cannot be opened.</string>
 	<string name="changelog_title_v2.0.0">What\'s new?</string>
 	<string name="changelog_cta_v2.0.0">All right!</string>
 	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
