@@ -26,7 +26,7 @@
 <h1>2.&nbsp;&nbsp;&nbsp;&nbsp; What is the purpose of this app?</h1>
 <p>The main function of this app is to enable you to record contacts with other people, so&nbsp;</p>
 <ul>
-<li>you can inform your contacts if you are ill or suspect to be ill</li>
+<li>you can inform your contacts if you are ill or suspect to be sick</li>
 <li>you will be informed if one of your contacts has reported sick</li>
 <li>you will receive an all-clear notice if one of your contacts revokes his or her sick report</li>
 </ul>
@@ -35,22 +35,41 @@
 <p>&nbsp;</p>
 <p>You will also find links in the app that lead to information about the COVID-19 virus and contact points that you can contact for help. There is also a questionnaire where you can enter any symptoms you may have and get an answer as to whether these symptoms indicate that you are infected with the COVID-19 disease. Within this app no decisions solely based on automated processing are made.</p>
 <p>&nbsp;</p>
-<p><strong>We expressly point out that the functions and information provided cannot replace the advice of a doctor. In case of any questions about the disease and therapy, we recommend to contact a doctor. We do not make any therapy recommendations when using the app.</strong></p>
+<p><strong>We expressly point out that the functions and information provided cannot replace the advice of a doctor. In case of any questions about the disease and therapy, we recommend contacting a doctor. We do not make any therapy recommendations when using the app.</strong></p>
 <p>&nbsp;</p>
 <p>In order to give you even more details about how the app, we have set up a page for you where we offer answers to frequently asked questions (FAQ):&nbsp; https://www.roteskreuz.at/site/faq-app-stopp-corona/</p>
+<p>&nbsp;</p>
 <h1>3.&nbsp;&nbsp;&nbsp;&nbsp; What is personal data?</h1>
 <p>Personal data includes any information which relates to an identified or identifiable natural person. During the development of this app, we placed great emphasis on processing as little personal data as possible from you. Because: the less data we process from you, the higher the protection of your privacy and the lower the risk of a data breach.</p>
-<p>When first using the app, it is not necessary to enter any personal data. With the installation, your device (=smartphone) is only assigned a unique, randomly generated key (&ldquo;ID&rdquo;), which is transmitted to the server we use. Additionally, further randomly generated IDs are created for technical processing in order to provide the services. These IDs are a so-called pseudonymous data. This means that we cannot make any reference to you without gathering any further information. In addition to "normal" personal data, there is also the colloquially called "sensitive" data. According to the GDPR, these are called "special categories of personal data" (see Art. 9 GDPR). Health data is a type of such sensitive data. These must be handled with even more caution.</p>
-<p>We then inform you about the functions of the app in which we process which data and what the legal basis is for us to do so.</p>
+<p>When first using the app, it is not necessary to enter any personal data. Within the operating system of your device a unique, randomly set chains of numbers (&ldquo;random IDs&rdquo;) will be generated that the app will use and send to our server in case you report sick.</p>
+<p>Specifically, two random-IDs are created:</p>
+<ol>
+<li>TEK (= temporary exposure key) &ndash; one per day</li>
+<li>RPI (=rolling proximity identifier) &ndash; this is derived from the TEK and regularly changed in short intervals</li>
+</ol>
+<p>As long as you have not reported an infection or suspicion of an infection, both the above-mentioned random-IDs remain anonymous data. When reporting an infection or suspicion thereof, your TEK will become a so-called pseudonymous data. This means, that we cannot identify you with it. But an identification cannot be ruled out completely. The faint possibility remains, that contacts of a person who has reported sick can remember all the contacts in the past few days and will be able to make the connection on who the reporting person is. According to the strict case law (s. ECJ case Breyer) all data will be treated as personal. As provider of the app we cannot identify any users and their contacts though.</p>
+<p>&nbsp;</p>
+<p>In addition to "normal" personal data, there is also the colloquially called "sensitive" data. According to the GDPR, these are called "special categories of personal data" (see Art. 9 GDPR). Health data is a type of such sensitive data. These must be handled with even more caution.</p>
+<p>In the following sections we inform you about what data we process within the functions of the app and what the legal basis for doing so is.</p>
+<p>&nbsp;</p>
 <h1><strong>4.&nbsp;&nbsp; </strong>Which personal data of yours are processed?</h1>
 <p>Depending on your specific use of the functions of the app, we process the following data:</p>
 <h2>4.1 Data collected when the app is downloaded</h2>
 <p>If you download the app from the app store (e.g. Google Play Store or Apple App Store), you will have to enter data there (e.g. user name, email address). This will then be transmitted to the app store and processed along with other information such as the customer number of your account, the time of the download and the individual device code. This data is processed exclusively by the respective app store and is beyond our control and we are not the controller for this processing. Data protection information can be found directly at Google and Apple: https://policies.google.com/privacy or https://support.apple.com/de-at/HT210584 .</p>
 <p>&nbsp;</p>
-<h2>4.2 Data that is processed when the app is installed</h2>
-<p>As already mentioned above, you do not have to enter any personal data to use the app. However, you - or your smartphone - receive a unique, randomly generated key figure (&ldquo;ID&rdquo;) by the app, which is transmitted to the server we use.</p>
-<p>The app will also create an asymmetric key pair on your device for the purpose of being able to receive messages addressed to you. The public key is exchanged during the digital handshake. The private key is used to decrypt messages for the intended user (sick-alert or take back of sick warning). Only by being in possession of the private key is it possible for the user to decrypt and read messages (sick-alerts or all-clear messages) addressed to him or her by another person with whom a handshake was exchanged.</p>
-<p>The processing of your personal data takes place on the basis of your express consent (Art. 6 Para. 1 lit. a and Art. 9 Para. 2 lit. a GDPR). You can only use the app if you give this consent, which you will be asked to start with. If you change your mind, you can withdraw your consent at any time. As long as you haven't sent a sick report, you can easily do so by uninstalling or deleting the Stop Corona app. This means that we no longer have any personal data from you. Additionally, you can partially revoke consent by deactivating the automated &ldquo;digital handshake&rdquo; within the app. This does not affect the lawfulness of processing until revocation.</p>
+<h2>4.2 Data that is processed after the app is installed</h2>
+<p>As already mentioned above, you do not have to enter any personal data to use the app. The app is built to technically not enable identification of users, locations or devices. Solely random IDs are generated and exchanged for recording a contact. Specifically, there are two different random IDs that are generated within the operating system of your device:</p>
+<p>&nbsp;</p>
+<ol>
+<li>TEK (= temporary exposure key) &ndash; one per day</li>
+<li>RPI (= rolling proximity identifier) &ndash; this is derived from the TEL and generated new in short intervals (approx. every 10 Minutes)</li>
+</ol>
+<p>&nbsp;</p>
+<p>This data is generated and processed on the level of the operating system of the device as part of the so-called &ldquo;Exposure Notification API&rdquo; (s. chapter 5.3.2). We are only in control of this processing, as we use the interface of the provider. Your legal relationship with the provider of your operating system (Android or Apple) is based on their terms and conditions.</p>
+<p>&nbsp;</p>
+<p>The app will create one security code per TEK, that will be stored on the device for 14 days. When sending an infection report, the security code will be sent to the server to authenticate the report.</p>
+<p>&nbsp;</p>
+<p>The processing of your personal data within the app is based on your explicit consent (Art. 6 Para. 1 lit. a and Art. 9 Para. 2 lit. a GDPR). You can only use the app if you give this consent, which you will be asked to start with. If you change your mind, you can withdraw your consent at any time. As long as you haven't sent a sick report, you can easily do so by uninstalling or deleting the Stop Corona app. This means that we no longer have any personal data from you. Additionally, you can partially revoke consent by deactivating the automated &ldquo;digital handshake&rdquo;. This does not affect the lawfulness of processing until revocation.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h2>4.3 Data required for the technical provision of the app</h2>
@@ -65,10 +84,12 @@
 <p>The data will be deleted as soon as they are no longer required for the purpose of their collection. This is the case with the data collected for the purpose of provision of the app when the respective session has ended.</p>
 <p>&nbsp;</p>
 <h2>4.4 Data that are processed in the digital handshake</h2>
-<p>The <strong>automatic digital handshake is</strong> activated by default between Android devices. Technically this is handled with the help of p2pkit from Uepaa AG (Switzerland). p2pkit creates randomly generated keys ("p2pID") before the handshake is carried out. These are transmitted along with time information, the device model and operating system information to the servers of Uepaa AG.Additionally, the public key is sent to their server for the handshake partner to collect it. &nbsp;A functional description of p2pkit can be found under point 5.3.3 of this document.</p>
-<p>If you or your handshake partner who is Android user have deactivated the automatic digital handshake, or if an iOS device is involved in the digital handshake, the <strong>manual digital handshake</strong> is used. With deactivation, all processing of the automated handshake will cease. However, the tokens already shared with your previous handshake partners will stay in your local storage.</p>
-<p>The manual handshake is technically processed using Google Nearby. This process does not require an internet connection for communication between Android devices and does not transfer any data to third parties.</p>
-<p>If an iOS device is involved in the manual digital handshake, Google Nearby creates a randomly generated key figure (&ldquo;token&rdquo;) that is exchanged between the handshake partners. This token is then used by the handshake partner to collect the public key of the handshake partner via the Google Cloud Platform. A functional description of Google Nearby is provided under point 5.3.4 of this document.</p>
+<p>The RPI (=rolling proximity identifier) is a constantly changing contact number (random ID) of your app that will be transmitted via Bluetooth when in contact with another device that has the activated the app. The RPI will be stored in the device of the contact-person. Due to the transmission via Bluetooth the RPI is detectable in the surrounding. The RPI changes together with the MAC address of BLE (Bluetooth Low Energy) stack approximately every 10 minutes. It will be used for the exchange with other app users. Due to the continuously changing random IDs, it is impossible to track the location of an app user throughout the day. Therefore, the risk is no higher as when using the Bluetooth-function of the device for any other functionality.</p>
+<p>&nbsp;</p>
+<p>If an app user reports an infection or suspicion thereof, the people he or she was in contact with within the past few days should be warned. The specific timeframe for warning is based on epidemiological considerations and can reach up to 14 days. Currently (June 2020), the contacts of the current day including the past 2 days will be informed. The app will send the TEKs of these days to our server. From there every app user will collect the total TEK list once per day and derive the RPIs. By comparing the derived RPIs with the RPIs stored in the device you will be able to determine, whether you were in contact with the person that has reported sick.</p>
+<p>&nbsp;</p>
+<p>Additionally, encrypted metadata (associated encrypted metadata - AEM) will be processed for determining of the protocol-version and the transmission power for a better approximation of distance measuring. Like the Rolling Proximity Identifier (RPI), the encrypted metadata will change in the same interval of approximately 10 minutes to not allow for a wireless tracking of devices throughout the day.</p>
+<p>&nbsp;</p>
 <p>The legal basis in both cases is your consent (Art. 6 Para. 1 a GDPR and Art. 9 Para. 2 a GDPR). You can only use this function if you give your consent.</p>
 <h2>4.5 Data that are processed in the event of reporting sick</h2>
 <p>There are two ways to report sick:</p>
@@ -78,7 +99,7 @@
 <li>if you use the symptom checker (= questionnaire) and based on the results think that you are probably sick</li>
 </ul>
 <p>&nbsp;</p>
-<p>Immediately after your report, all persons with whom you have made a digital handshake via the app within the last 54 hours beforehand will be informed.</p>
+<p>Immediately after your report, all persons with whom you have made a digital handshake via the app within the past days (s. chapter 4.4) will be informed.</p>
 <p>&nbsp;</p>
 <p>In both cases, you must provide your phone number before submitting the report.</p>
 <p>There are several reasons for this:</p>
@@ -87,58 +108,52 @@
 <li>We can also contact you on the phone number for any assistance you may need.</li>
 </ol>
 <p>&nbsp;</p>
-<p>The TAN and the telephone number go through the SMS gateway from us and then to the server of World-Direct (s. chapter 5.3.1). Your medical certificate or the results of the symptom checker will not be sent.</p>
-<p>We use the Firebase Cloud Messaging service to send the messages. You can find information on this in chapter 5.3.2.</p>
+<p>Immediately after your notification of illness, your contacts of the past days (s. chapter 4.4) will be informed that one of your &ldquo;handshake&rdquo; contacts is considered infected including the time, when the contact took place. This gives your contacts the opportunity to warn other people with whom they have been in contact with after this time. Your telephone number will never be disclosed to your contacts.</p>
 <p>&nbsp;</p>
-<p>Immediately after your notification of illness, your contacts of the past 54 days will be informed that one of your &ldquo;handshake&rdquo; contacts is considered infected including the hour, when the contact took place. This gives your contacts the opportunity to warn other people with whom they have been in contact with after this time. Your telephone number will never be disclosed to your contacts.</p>
-<p>&nbsp;</p>
-<p>The transmission of your sickness report and your telephone number is voluntary. This data processing is justified by your consent (Art. 6 (1) (a) GDPR and Art. 9 (2) (a) GDPR). However, you can only use the sick notification function - and thus the notification of your contacts - if you give your consent. You can revoke your consent at any time, whereby the revocation does not affect the legality of the processing until revoked. Please be aware, that we will not delete your telephone number or sick notice immediately after revoking your consent, but will store it based on a different legal basis:We will then keep the telephone number for 30 days as a measure to be able to follow up, in case the specific suspicion of improper and / or unlawful use arises. This is a necessary processing to assert, exercise or defend legal claims, which is justified by Art. 6 Para. 1 lit. f and Art. 9 Para. 2 lit. f GDPR.</p>
+<p>The transmission of your sickness report and your telephone number is voluntary. This data processing is justified by your consent (Art. 6 (1) (a) GDPR and Art. 9 (2) (a) GDPR). However, you can only use the sick notification function - and thus the notification of your contacts - if you give your consent. You can revoke your consent at any time, whereby the revocation does not affect the legality of the processing until revoked. Please be aware, that we will not delete your telephone number or sick notice immediately after revoking your consent, but will store it based on a different legal basis: We will then keep the telephone number for 30 days as a measure to be able to follow up, in case the specific suspicion of improper and / or unlawful use arises. This is a necessary processing to assert, exercise or defend legal claims, which is justified by Art. 6 Para. 1 lit. f and Art. 9 Para. 2 lit. f GDPR.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h2>4.6 Data that will be processed in the event of an all-clear notification</h2>
-<p>If you sent a warning message to your contacts of the past 54 hours, after using the Symptom Checker, and it turns out that it fortunately was a "false alarm", because for example a COVID 19 test showed that you are not infected, then you can use the "all-clear" function. This will lead to your previously alarmed handshake partners being informed about this status update.</p>
+<p>If you sent a warning message to your contacts, after using the Symptom Checker, and it turns out that it fortunately was a "false alarm", because for example a COVID 19 test showed that you are not infected, then you can use the "all-clear" function. This will lead to your previously alarmed handshake partners being informed about this status update.</p>
 <p>&nbsp;</p>
 <p>The legal basis for this processing is again your consent (Art. 6 Para. 1 lit. a and Art. 9 Para. 2 lit. a GDPR) that you gave us when installing the app. You are entitled to revoke your consent at any time, whereby the revocation does not affect the legality of the processing until revoked.</p>
 <p>If you do not give your consent, this function cannot be used, and your contacts will not receive notification of the all-clear.</p>
-<p>We use the Firebase Cloud Messaging service to send the messages. You can find information on this in point 5.3.2.</p>
 <p>&nbsp;</p>
 <h2>4.7 Data processed when a sick report is revoked</h2>
-<p>&nbsp;</p>
-<p>If you have sent a sick message to your contacts of the last 54 hours in the course of using the app, but this was a "false alarm" (=an erroneous message), then you can use the function "revocation of sick message". As a result, the contacts you have previously notified, will receive a message with the revocation of your sick report.</p>
+<p>If you have sent a sick message to your contacts, but this was a "false alarm" (=an erroneous message), then you can use the function "revocation of sick message". As a result, the contacts you have previously notified, will receive a message with the revocation of your sick report.</p>
 <p>&nbsp;</p>
 <p>For this you must provide your phone number before submitting the message. With this we want to prevent abuse. To validate your phone number, a TAN will be sent to your mobile phone, which you will need to enter into the registration form to continue.</p>
 <p>&nbsp;</p>
-<p>The TAN and the phone number are transmitted via our SMS gateway and then to the server. Your phone number is stored only on the World-Direct server (see chapter 5.3.1.). Your medical certificate or the results of the symptom checker will not be transmitted. We use the Firebase Cloud Messaging service to send messages. For more information, see chapter 5.3.2.</p>
+<p>The TAN and the phone number are transmitted via our SMS gateway and then to the server. Your phone number is stored only on the World-Direct server (see chapter 5.3.1.). Your medical certificate or the results of the symptom checker will not be transmitted.</p>
 <p>&nbsp;</p>
-<p>The legal basis for this processing is consent (Art.&nbsp; 6 abs.&nbsp; 1 lit.&nbsp; a and Art.&nbsp; 9 sec. 2 lit.&nbsp; a GDPR) that you gave us when you installed the app. You can revoke this consent at any time, whereby the revocation does not affect the legality of the processing until the revocation.</p>
+<p>The legal basis for this processing is consent (Art.&nbsp; 6 abs.&nbsp; 1 lit. a and Art.&nbsp; 9 sec. 2 lit.&nbsp; a GDPR) that you gave us when you installed the app. You can revoke this consent at any time, whereby the revocation does not affect the legality of the processing until the revocation.</p>
 <p>&nbsp;</p>
-<p>Please note, however, that despite a revocation, we do not immediately delete your telephone number and the revocation of the sick report, as we rely on a different legal basis for further processing: We will keep the telephone number for 30 days if suspicion of abusive and/or unlawful use arises. This is a necessary processing for the assertion, exercise or defence of legal claims, which are justified by Article 6 (1) lit. f and Art. f GDPR.</p>
+<p>Please note, however, that despite a revocation, we do not immediately delete your telephone number and the revocation of the sick report, as we rely on a different legal basis for further processing: We will keep the telephone number for 30 days if suspicion of abusive and/or unlawful use arises. This is a necessary processing for the assertion, exercise or defense of legal claims, which are justified by Article 6 (1) lit. f and Art. f GDPR.</p>
 <p>&nbsp;</p>
-<p>If you do not allow the revocation of the sick message, this function cannot be used and your contacts will not receive a notification of the revocation</p>
-<p>We use the Firebase Cloud Messaging service to send messages. For more information, see chapter 5.3.2.</p>
+<p>If you do not allow the revocation of the sick message, this function cannot be used, and your contacts will not receive a notification of the revocation.</p>
 <p>&nbsp;</p>
 <h2>4.8 Data processed in the course of recommending the app</h2>
 <p>If you recommend the app to your friends or acquaintances, this is done through the respective sharing function of your operating system. In the course of submitting a recommendation, you select an application that will release the link to the Stop Corona app (E-Mail, Signal, Whatsapp, etc.). This processing is carried out exclusively by you and is outside our sphere of influence, which is why we are not the controller for this processing.</p>
 <p><span style="text-decoration: line-through;">&nbsp;</span></p>
 <h2>4.9 Data that we process for statistical purposes</h2>
 <p>As of the Stopp Corona app version 1.1.3. (21<sup>st</sup> of April 2020) we will not process data for statistical purposes. In further versions though, we will count the number of messages and handshakes and the number of installations of the app. With whom the contacts took place is not recorded.</p>
-<p>This quantitative data is processed without the possibility of traceability to your person, thus in an anonymised and aggregated form, for statistical purposes. The legal basis for this is Section 7 (1) 2 DSG in conjunction with Art. 6 (1) lit. a and Art. 9 Para. 2 lit. a GDPR.</p>
+<p>This quantitative data is processed without the possibility of traceability to your person, thus in an anonymized and aggregated form, for statistical purposes. The legal basis for this is Section 7 (1) 2 DSG in conjunction with Art. 6 (1) lit. a and Art. 9 Para. 2 lit. a GDPR.</p>
 <p>&nbsp;</p>
 <h1>5.&nbsp;&nbsp;&nbsp;&nbsp; Do we share your data?</h1>
 <p>Your personal data will not be transmitted without your prior consent in addition to the cases explicitly mentioned in this data protection information. The data you provide by using the app will be passed on within the Austrian Red Cross for internal administrative purposes insofar as necessary. Your personal data may be transmitted in the following cases:</p>
 <p>&nbsp;</p>
 <h2>5.1 Abuse and law enforcement</h2>
-<p>If it is necessary to investigate any illegal or improper use of the app or for legal prosecution, personal data will be forwarded to law enforcement or other authorities and, if necessary, to damaged third parties or legal advisers. However, this shall only happen if there are any indications of illegal or abusive behaviour; in the defence against such behaviour is also our legitimate interest. Therefore, we rely on Art. 6 (1) (f) GDPR in conjunction with Art. 9 (2) (f) GDPR.</p>
+<p>If it is necessary to investigate any illegal or improper use of the app or for legal prosecution, personal data will be forwarded to law enforcement or other authorities and, if necessary, to damaged third parties or legal advisers. However, this shall only happen if there are any indications of illegal or abusive behavior; in the defense against such behavior is also our legitimate interest. Therefore, we rely on Art. 6 (1) (f) GDPR in conjunction with Art. 9 (2) (f) GDPR.</p>
 <p>&nbsp;</p>
 <h2>5.2 Epidemic Act</h2>
 <p>For the transmission of any information about specific cases of infection to the health authorities, Art. 9 (2) (i) GDPR in conjunction with &sect; 10 (2, DPA a corresponding legal basis. The current epidemic shall be considered as a catastrophe in accordance with &sect; 10 (1) GDPR. In addition, at the request of the district administrative authorities, the person responsible may be required to provide information on suspected cases and infections in accordance with &sect; 5 (3) of the 1950 Epidemic Act.</p>
 <p>&nbsp;</p>
-<p style="word-wrap: break-word;">We point out that, in accordance with Section 5(3) of the Epidemic Act, all persons, such as in particular doctors, laboratories, employers, family members and personnel of community institutions who could contribute to registrations, are obliged to provide information at the <strong>request</strong> of a district administration authority&nbsp; (https://www.help.gv.at/Portal.Node/hlpd/public/content/behoerden.html).&nbsp; Even if such a transfer of data (telephone number) by the Red Cross to the responsible district administration authority is not intended and is not technically implemented, we may be forced to hand over their telephone number. Should such a case arise, the legal basis is Art 6 sec. 1 lit c iVm Art. 9 sec. 2 lit i GDPR.</p>
+<p style="word-wrap: break-word;">We point out that, in accordance with Section 5(3) of the Epidemic Act, all persons, such as in particular doctors, laboratories, employers, family members and personnel of community institutions who could contribute to registrations, are obliged to provide information at the <strong>request</strong> of a district administration authority&nbsp; (https://www.help.gv.at/Portal.Node/hlpd/public/content/behoerden.html).&nbsp; Even if such a transfer of data (telephone number) by the Red Cross to the responsible district administration authority is not intended and is not technically implemented, we may be forced to hand over their telephone number. Should such a case arise, the legal basis is Art 6 sec. 1 lit c I combination with Art. 9 sec. 2 lit i GDPR.</p>
 <p>&nbsp;</p>
 <p><strong>If you have any questions about who shall be informed in case of any infections or suspected cases, please contact the health authorities. The &ldquo;Symptom Checker&rdquo; (questionnaire) reports a suspicion of the disease only to the Red Cross and not to authorities or other bodies.&nbsp; </strong></p>
 <p><strong>&nbsp;</strong></p>
 <h2>5.3 Processors and external services</h2>
-<p>We rely on external service providers for the provision of our service, who are referred to as processors according to the GDPR. Any disclosure of the personal data shall be justified by the fact that we have carefully selected our external service providers as processors within the framework of Art. 28 (1) GDPR, regularly checked them and contractually obliged to process all personal data exclusively in accordance with our instructions.</p>
+<p>We rely on external service providers for the provision of our service, who are referred to as processors according to the GDPR. Any disclosure of the personal data shall be justified by the fact that we have carefully selected our external service providers as processors within the framework of Art. 28 (1) GDPR, regularly checked them and contractually obliged them to process all personal data exclusively in accordance with our instructions.</p>
 <p>&nbsp;</p>
 <p>Specifically, these are:</p>
 <p>&nbsp;</p>
@@ -149,43 +164,22 @@
 <p style="word-wrap: break-word;">Microsoft will potentially use further processors s. https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RE2JOJ1</p>
 <p>For the storage of the telephone number we use the Austrian hosting service World-Direct eBusiness solutions GmbH, Lassallestrasse 9, 1020 Vienna as our processor.</p>
 <p>&nbsp;</p>
-<h3>5.3.2 Push notifications via "Firebase Cloud Messaging"</h3>
-<p>In order to enable the sending of push notifications, a &ldquo;Firebase Cloud Messaging Registration Token&rdquo; is created when the app is started for the first time, which uniquely identifies the app installation on your device. The token is used to recognise the message destination. The messages are sent via the Google Firebase Cloud Messaging service, which is provided by Google, Inc. Mountain View, USA, so that a part of the corresponding data processing carried out by Google on our behalf takes place in the USA. Further information on Google Firebase Cloud Messaging can be found at https://firebase.google.com/products/cloud-messaging/ .</p>
-<p>For Apple smartphones (iOS): Firebase Cloud Messaging will forward push notifications for iOS devices to &ldquo;Apple Push Notification Service&rdquo;.</p>
-<p>&nbsp;</p>
-<h3>5.3.3 p2pkit</h3>
-<p>The automatic digital handshake is technically implemented by the p2pkit. This enables spatial distances between potential handshake partners to be determined (discovery function) and sent to these messages (messaging function).</p>
-<p>The discovery function uses Bluetooth and WiFi Direct. The Bluetooth function does not pair with other devices, but compares the received signal strengths of the devices with each other. If these are similar, it can be concluded that they are close together.</p>
-<p>As part of the messaging function, devices exchange pseudonymous tokens using the infrastructure of Uepaa AG, which uses Amazon Web Services (AWS) as a subcontractor. Neither Uepaa AG nor Accenture GmbH save your IP address. In the course of the discovery function and the messaging function, the following will be processed by Uepaa AG:</p>
-<ul>
-<li>time stamp</li>
-<li>app ID (unique identifier of the p2pkit service)</li>
-<li>user ID (unique pseudonym of the user, which is used only in the context of the automatic handshake)</li>
-<li>operating system and operating system version of the device</li>
-<li>device model</li>
-<li>p2pkit version</li>
-</ul>
-<p>&nbsp;</p>
-<p>Uepaa AG is developer and provider of p2pkit</p>
-<p>Uepaa AG, Sonnhaldenstrasse 17, CH-8032 Zurich, Switzerland</p>
-<p>&nbsp;</p>
-<p>As a hosting service provider, Uepaa AG uses Amazon's cloud service, called Amazon Web Services (AWS).</p>
-<p>&nbsp;</p>
-<h3>5.3.4 Google Nearby &ndash; external service</h3>
-<p>Google Nearby uses the WiFi, Bluetooth and ultrasound functions of your device to determine spatial distances between potential handshake partners and to exchange data. In this case, your device emits ultrasound sounds that are inaudible to humans and are registered by the microphones of other users in your area. This process does not require an internet connection for communication between Android devices and does not transfer any data to third parties because the necessary communication ultimately takes place directly via Bluetooth (Nearby Connections API). If an iOS device is involved in the digital handshake, a randomly generated key figure (&ldquo;token&rdquo;) is generated in the course of the handshake, which is compared by the handshake partners using the Google Cloud Platform (Nearby Messages API). Google Nearby is a service that is used by users at the end device. The controller for data protection is Google, Inc. Mountain View, USA. Part of the corresponding data processing carried out by Google on our behalf takes place in the USA. &nbsp;Further information on Google Firebase Cloud Messaging can be found at https://firebase.google.com/products/cloud-messaging/ and in Google's privacy policy at http://www.google.de/intl/de/policies/privacy.</p>
+<h3>5.3.2 Exposure Notification Framework by Google and Apple &ndash; external services (not processors)</h3>
+<p>The technical interfaces for providing the automated digital handshape were developed specifically for kinds of apps such as ours is by Google and Apple and are called &ldquo;Exposure Notification Framework&rdquo;. For further information on the Apple framework s. https://www.apple.com/covid19/contacttracing and for Google s. https://www.google.com/covid19/exposurenotifications.</p>
+<p>This interface already exists on the level of your operating system as part of the so-called &ldquo;Exposure Notification API&rdquo;, if you have updated your operating system to the newest version. A direct legal relationship exists between the providers of the operating system with the users based on the terms and conditions. Since the app doesn&rsquo;t transmit any data to Apple or Google they are not considered processors under this context.</p>
 <p>&nbsp;</p>
 <h2>5.4 Transfer to third countries</h2>
-<p>We also process data in countries outside the European Economic Area (&ldquo;EEA&rdquo;). This applies to the (sub) order processors Uepa, Google, Microsoft and Amazon mentioned above. For the United States, the European Commission made a decision on 26/07/2000 that an appropriate level of data protection exists under the regulations of the EU-US Privacy Shield (adequacy decision, Art. 45 (3) GDPR).</p>
-<p>For the United States, the European Commission made a decision on 12 July 2016 that an appropriate level of data protection exists under the regulations of the EU-US Privacy Shield (adequacy decision, Art. 45 (3) GDPR). Google, Microsoft and Amazon are companies certified according to the EU-US Privacy Shield.</p>
-<p>In this context, we would like to point out that, due to the encryption of the data, it is not possible to identify data subjects for the processors. Such information cannot be derived from the processing context. In particular, the notification of illness of a user (an ID) is always sent to all end devices with an installed app, whereby the ID of the infected person is encrypted and may only be decrypted by those participants who have carried out a digital handshake. The digital handshake results in the exchanges of the private key.</p>
+<p>We also process data in countries outside the European Economic Area (&ldquo;EEA&rdquo;). This applies to the sub-processor Microsoft mentioned above.</p>
+<p>For the United States, the European Commission ruled on 12 July 2016 that an appropriate level of data protection exists under the regulations of the EU-US Privacy Shield (adequacy decision, Art. 45 (3) GDPR). Microsoft is a company certified according to the EU-US Privacy Shield.</p>
 <p>&nbsp;</p>
 <h2>5.5 Transfer to other App users</h2>
-<p>In connection with the use of the Stopp Corona App, data is transmitted to individual app users, which is necessary for the app to function. Pseudonymised tokens (user IDs) of other app users are collected via the terminal devices when a digital handshake is performed or suspicious cases, illnesses or all-clear are reported.&nbsp; The legal basis for this is Art. 6 para. 1 lit. a and Art. 9 para. 2 lit. a GDPR (consent). However, we would like to point out that after revoking your consent (by deleting the Stopp Corona App), we have no possibility to delete tokens directly from other devices, as we cannot assign these tokens to a person or a specific device.</p>
+<p>In connection with the use of the app, data is transmitted to individual app users, which is necessary for the app to function. The above mentioned pseudonymized random IDs of other app users are collected via the devices when a digital handshake is performed or suspicious cases, illnesses or all-clear are reported.</p>
+<p>The legal basis for this is Art. 6 para. 1 lit. a and Art. 9 para. 2 lit. a GDPR (consent). However, we would like to point out that after revoking your consent (by deleting the Stopp Corona App), we have no possibility to delete random IDs directly from other devices, as we cannot assign these random IDs to a person or a specific device.</p>
 <p>&nbsp;</p>
 <h1>6.&nbsp;&nbsp;&nbsp;&nbsp; When do we delete your data?</h1>
-<p>We delete or anonymise your personal data as soon as it is no longer required for the purposes for which we collected or used it in accordance with the above paragraphs. You can delete the data (tokens) stored locally on your end device by uninstalling or deleting the Stopp Corona App. Metadata stored by Uepaa AG (see point 5.3.3) is automatically deleted after 14 days. Data on the terminal device for the digital handshake with intensive contacts are deleted in the device after 7 days.&nbsp;&nbsp;</p>
-<p>As soon as a notification of illness has been submitted, your data will be stored for 30 days after the notification. If it is necessary to clarify an illegal or abusive use of the app or for legal prosecution and if there are any specific indications of illegal or abusive behaviour, your data will be stored for a period of up to three years after the notification of illness has been submitted.</p>
-<p>Otherwise we will delete all data after the epidemic ends. Due to the fact that an end is currently not foreseeable, no specific time of deletion can be provided. The Red Cross is part of the Austrian crisis unit and will therefore make an appropriate and transparent decision in close consultation with the authorities and announce when the purpose of the application has been fulfilled. We all hope that this will happen as soon as possible and that we can make a contribution, not least through the Stopp Corona app.</p>
+<p>We delete or anonymize your personal data as soon as it is no longer required for the purposes for which we collected or used it in accordance with the above paragraphs. You can delete the data (random IDs) stored locally on your end device by uninstalling or deleting the app. Data on the device for the digital handshake with other devices are deleted from your device after 14 days.</p>
+<p>As soon as a notification of sickness has been submitted, your data will be stored for 30 days after the notification. If it is necessary to clarify an illegal or abusive use of the app or for legal prosecution and if there are any specific indications of illegal or abusive behavior, your data will be stored for a period of up to three years after the notification of illness has been submitted.</p>
+<p>Otherwise we will delete all data after the epidemic ends. Since an end is currently not foreseeable, no specific time of deletion can be provided. The Red Cross is part of the Austrian crisis unit and will make an appropriate and transparent decision in close consultation with the authorities and announce when the purpose of the application has been fulfilled. We all hope that this will happen as soon as possible and that we can make a contribution with the app.</p>
 <p><span style="text-decoration: line-through;">&nbsp;</span></p>
 <h1>7.&nbsp;&nbsp;&nbsp;&nbsp; What rights do you have?</h1>
 <p>&nbsp;</p>
@@ -201,7 +195,7 @@
 <h2>7.4 Right to restriction of processing</h2>
 <p>You have the right to request that we restrict the processing pursuant to Art. 18 GDPR. This right exists in particular if the accuracy of the personal data between the user and us is controversial, for the duration required by the verification of the correctness and in case that the user requests a restricted processing instead of the deletion if there is an existing right to deletion; furthermore, in the event that the data are no longer required for the purposes pursued by us, but the user needs them to assert, exercise or defend legal claims.</p>
 <h2>7.5 Right to data portability</h2>
-<p>You have the right to receive from us the personal data relating to you that you have provided to us in a structured, common, machine-readable format pursuant to Art. 20 GDPR.</p>
+<p>In principal, you have the right to receive from us the personal data relating to you that you have provided to us in a structured, common, machine-readable format pursuant to Art. 20 GDPR. Since we don&rsquo;t have any personal data of yours on our servers, other that the telephone number if you have reported sick, this right practically will not be of high relevance.</p>
 <h2>7.6 Right to object</h2>
 <p>For all the data processing that we carry out on the basis of Art. 6 para. 1 letter f GDPR (see 5.3.1- 5.3.4), you have the right to object in accordance with Art. 21 para. 1 GDPR. This means that you can object to data processing for reasons arising from your particular situation at any time. However, an objection only leads to the omission of processing if the objection is justified by special reasons. We will no longer process the personal data unless we can prove compelling reasons for processing worthy of protection which outweigh your interests, rights and freedoms, or unless the processing serves to assert, exercise or defend legal claims. In this case, please send your objection to datenschutz@roteskreuz.at , contact us by phone at +43 1 58900-955 or by post to Austrian Red Cross, General Secretariat - Data Protection, Wiedner Hauptstrasse 32, 1040 Vienna.</p>
 <h2>7.7 Right of complaint</h2>
@@ -223,6 +217,6 @@
 <p>&nbsp;</p>
 <h1>9.&nbsp;&nbsp;&nbsp;&nbsp; How up to date is the data protection information?</h1>
 <p>We always keep this data protection declaration up to date. Therefore, we reserve the right to change it from time to time and to maintain changes in the collection, processing or use of your data. The current version of the data protection information can always be found within the app at privacy or at https://www.roteskreuz.at/site/faq-app-stopp-corona/datenschutzinformation-zur-stopp-corona-app (German Version)</p>
-<p>Status: 8<sup>th</sup> of May 2020</p>
+<p>Status: 10<sup>th</sup> of June 2020</p>
 </body>
 </html>
