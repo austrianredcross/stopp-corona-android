@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import org.threeten.bp.LocalDate
@@ -14,22 +15,23 @@ import org.threeten.bp.LocalDate
  * Handles the user interaction and provides data for [InfectionInfoFragment].
  */
 class InfectionInfoViewModel(
-    appDispatchers: AppDispatchers,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
-    private val quarantineRepository: QuarantineRepository
+    appDispatchers: AppDispatchers
 ) : ScopedViewModel(appDispatchers) {
 
+    private val tempHealthStatusDataSubject = NonNullableBehaviorSubject(InfectedContactsViewState(emptyList(), LocalDate.now()))
     fun observeInfectedContacts(): Observable<InfectedContactsViewState> {
-        return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
-            quarantineRepository.observeQuarantineState()
-        ).map { (messages, quarantineStatus) ->
-            InfectedContactsViewState(
-                messages = messages,
-                quarantinedUntil = if (quarantineStatus is QuarantineStatus.Jailed.Limited) quarantineStatus.end.toLocalDate()
-                else null
-            )
-        }
+        //TODO: bring back the on the Exposure Notification Framework
+        return tempHealthStatusDataSubject
+//        return Observables.combineLatest(
+//            infectionMessengerRepository.observeReceivedInfectionMessages(),
+//            quarantineRepository.observeQuarantineState()
+//        ).map { (messages, quarantineStatus) ->
+//            InfectedContactsViewState(
+//                messages = messages,
+//                quarantinedUntil = if (quarantineStatus is QuarantineStatus.Jailed.Limited) quarantineStatus.end.toLocalDate()
+//                else null
+//            )
+//        }
     }
 }
 
