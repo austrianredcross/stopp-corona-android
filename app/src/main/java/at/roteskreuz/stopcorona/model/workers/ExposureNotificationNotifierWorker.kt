@@ -38,7 +38,7 @@ class ExposureNotificationNotifierWorker(
 
     override suspend fun doWork(): Result {
         if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsCurrentState() &&
-            bluetoothRepository.isBluetoothEnabled().not()) {
+            bluetoothRepository.bluetoothEnabled.not()) {
             notificationsRepository.displayPleaseActivateBluetoothNotification()
         }
         return Result.success()
