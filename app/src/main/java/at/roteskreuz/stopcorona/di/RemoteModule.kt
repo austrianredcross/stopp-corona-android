@@ -135,8 +135,9 @@ val remoteModule = module {
         ApiInteractorImpl(
             appDispatchers = get(),
             apiDescription = get(),
-            tanApiDescription = get(),
             contentDeliveryNetworkDescription = get(),
+            contextInteractor = get(),
+            tanApiDescription = get(),
             dataPrivacyRepository = get()
         )
     }

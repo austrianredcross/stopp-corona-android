@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
+import at.roteskreuz.stopcorona.model.api.ContentDeliveryNetworkDescription
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -17,18 +18,22 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 
 class DebugDiagnosisKeysViewModel(
     appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
-    private val exposureNotificationRepository: ExposureNotificationRepository
-) : ScopedViewModel(appDispatchers) {
+    private val exposureNotificationRepository: ExposureNotificationRepository,
+    private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription
+) : ScopedViewModel(appDispatchers)  {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
@@ -150,8 +155,26 @@ class DebugDiagnosisKeysViewModel(
     fun downloadDiagnosisKeysArchiveIndex() {
         launch {
             try {
-                val archive = apiInteractor.getIndexOfDiagnosisKeysArchives()
-                exposureNotificationsTextSubject.onNext("got the archive $archive")
+                val archive = apiInteractor.getIndexOfDignosisKeysArchives()
+                exposureNotificationsTextSubject.onNext("got the archive $archive now downloading ${archive.fullBatch.batchFilePaths.first()}")
+                var downloadedFile = apiInteractor.downloadContentDeliveryFiles2(archive.full_batch.batchFilePaths.first())
+
+                exposureNotificationsTextSubject.onNext("${archive.full_batch.batchFilePaths.first()} downloaded successfully to " +
+                    "${downloadedFile.absolutePath}} resulting in a filesize of ${downloadedFile.length()} bytes  ")
+
+                delay(1000)
+                exposureNotificationsTextSubject.onNext("providing diagnosis keys")
+                val config = ExposureConfiguration.ExposureConfigurationBuilder()
+                    .setDurationAtAttenuationThresholds(50, 60)
+                    .build()
+                val token = "myToken"
+                exposureNotificationClient.provideDiagnosisKeys(arrayListOf(downloadedFile), config, token)
+                    .addOnCompleteListener {
+                        exposureNotificationsTextSubject.onNext("provided diagnosis keys ${if (it.isSuccessful) "sucessfull" else "not sucessfull"}")
+                        if (it.isSuccessful.not()){
+                            exposureNotificationsTextSubject.onNext("error ${it.exception}")
+                        }
+                    }
             } catch (exception: java.lang.Exception) {
                 Timber.e(SilentError(exception))
                 exposureNotificationsTextSubject.onNext("Error while getting the index: $exception")
