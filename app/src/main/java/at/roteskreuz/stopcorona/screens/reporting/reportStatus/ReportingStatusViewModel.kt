@@ -2,6 +2,9 @@ package at.roteskreuz.stopcorona.screens.reporting.reportStatus
 
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.NotCritical
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkRunning
 import at.roteskreuz.stopcorona.model.repositories.AgreementData
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
@@ -14,7 +17,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.delay
@@ -29,21 +31,12 @@ class ReportingStatusViewModel(
     appDispatchers: AppDispatchers,
     private val reportingRepository: ReportingRepository,
     private val quarantineRepository: QuarantineRepository,
+    private val exposureNotificationManager: ExposureNotificationManager,
     private val exposureNotificationRepository: ExposureNotificationRepository
 ) : ScopedViewModel(appDispatchers) {
+
     private val uploadReportDataStateObserver = DataStateObserver<MessageType>()
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
-
-    private suspend fun uploadData(temporaryTracingKeys: List<TemporaryExposureKey>) {
-        try {
-            val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
-            uploadReportDataStateObserver.loaded(reportedInfectionLevel)
-        } catch (ex: Exception) {
-            uploadReportDataStateObserver.error(ex)
-        } finally {
-            uploadReportDataStateObserver.idle()
-        }
-    }
 
     fun setUserAgreement(agreement: Boolean) {
         reportingRepository.setUserAgreement(agreement)
@@ -57,16 +50,22 @@ class ReportingStatusViewModel(
         uploadReportDataStateObserver.loading()
         launch {
             try {
-                if (checkIfAppIsRegistered().not()) {
-                    uploadReportDataStateObserver.idle()
+                if (exposureNotificationManager.currentPhase.let { it is FrameworkRunning || it is NotCritical }.not()) {
+                    uploadReportDataStateObserver.error(FrameworkNotReady)
                     return@launch
                 }
                 val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
-                uploadData(temporaryTracingKeys)
+                try {
+                    val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
+                    uploadReportDataStateObserver.loaded(reportedInfectionLevel)
+                } catch (ex: Exception) {
+                    uploadReportDataStateObserver.error(ex)
+                } finally {
+                    uploadReportDataStateObserver.idle()
+                }
             } catch (apiException: ApiException) {
                 when (apiException.statusCode) {
                     ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
-                        Timber.e(apiException, "Expected Error, RESOLUTION_REQUIRED in result - attempt to handle it")
                         exposureNotificationsErrorState.loaded(ResolutionType.GetExposureKeys(apiException.status))
                     }
                     else -> {
@@ -74,33 +73,12 @@ class ReportingStatusViewModel(
                         return@launch
                     }
                 }
-                uploadReportDataStateObserver.idle()
             } catch (exception: java.lang.Exception) {
                 Timber.e(exception, "Unknown error when attempting to start API")
                 uploadReportDataStateObserver.error(exception)
+            } finally {
+                uploadReportDataStateObserver.idle()
             }
-        }
-    }
-
-    private suspend fun checkIfAppIsRegistered(): Boolean {
-        val appIsRegistered = exposureNotificationRepository.isAppRegisteredForExposureNotificationsCurrentState()
-        if (appIsRegistered) {
-            return true
-        } else {
-            try {
-                exposureNotificationRepository.registerAppForExposureNotificationsNow()
-            } catch (apiException: ApiException) {
-                when (apiException.statusCode) {
-                    ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
-                        Timber.e(apiException, "Expected Error, RESOLUTION_REQUIRED in result when registering - attempt to handle it")
-                        exposureNotificationsErrorState.loaded(ResolutionType.RegisterWithFramework(apiException.status))
-                    }
-                    else -> {
-                        uploadReportDataStateObserver.error(apiException)
-                    }
-                }
-            }
-            return false
         }
     }
 
@@ -168,9 +146,10 @@ data class ReportingStatusData(
     val dateOfFirstMedicalConfirmation: ZonedDateTime?
 )
 
-sealed class ResolutionType{
+sealed class ResolutionType {
     abstract val status: Status
 
-    data class RegisterWithFramework(override val status: Status): ResolutionType()
-    data class GetExposureKeys(override val status: Status):ResolutionType()
+    data class GetExposureKeys(override val status: Status) : ResolutionType()
 }
+
+object FrameworkNotReady : Throwable()

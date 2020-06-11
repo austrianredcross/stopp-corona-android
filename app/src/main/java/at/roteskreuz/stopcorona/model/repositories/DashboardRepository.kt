@@ -16,7 +16,7 @@ interface DashboardRepository {
 }
 
 class DashboardRepositoryImpl(
-    private val preferences: SharedPreferences
+    preferences: SharedPreferences
 ) : DashboardRepository {
 
     companion object {

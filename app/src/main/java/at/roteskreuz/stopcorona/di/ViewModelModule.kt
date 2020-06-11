@@ -142,6 +142,7 @@ val viewModelModule = module {
             appDispatchers = get(),
             reportingRepository = get(),
             quarantineRepository = get(),
+            exposureNotificationManager = get(),
             exposureNotificationRepository = get()
         )
     }

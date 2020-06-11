@@ -207,6 +207,8 @@
 	<string name="certificate_report_status_button_extra">Please insert translation here</string>
 	<string name="certificate_report_status_invalid_tan_error">TAN is incorrect</string>
 	<string name="certificate_report_status_invalid_tan_error_description">Please make sure the entered TAN is correct.</string>
+	<string name="certificate_report_framework_is_not_ready_title">Exposure framework is not working well</string>
+	<string name="certificate_report_framework_is_not_ready_message">Exposure notification framework is not running properly to continue. Please go back to dashboard and see what is needed to fix.</string>
 	<string name="certificate_report_status_invalid_birth_date_error">Date of birth is invalid</string>
 	<string name="certificate_report_status_invalid_birth_date_error_description">Please make sure you enter your date of birth in the correct format.</string>
 	<string name="sickness_certificate_confirmation_title">Infection reported</string>

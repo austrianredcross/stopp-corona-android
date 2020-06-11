@@ -35,6 +35,11 @@ import kotlin.coroutines.CoroutineContext
 interface ExposureNotificationManager {
 
     /**
+     * Get the current exposure phase.
+     */
+    val currentPhase: ExposureNotificationPhase
+
+    /**
      * Indicate a user intent to register.
      * True still doesn't mean, that the framework is successfully registered,
      * use [ExposureNotificationRepository.isAppRegisteredForExposureNotificationsLastState] instead.
@@ -105,6 +110,12 @@ class ExposureNotificationManagerImpl(
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
 
+    override val currentPhase: ExposureNotificationPhase
+        get() = exposureNotificationPhaseSubject.value
+
+    override var userWantsToRegisterAppForExposureNotifications: Boolean
+        by preferences.booleanSharedPreferencesProperty(PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION, false)
+
     init {
         /**
          * Live handling state machine states.
@@ -120,9 +131,6 @@ class ExposureNotificationManagerImpl(
             }
     }
 
-    override var userWantsToRegisterAppForExposureNotifications: Boolean
-        by preferences.booleanSharedPreferencesProperty(PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION, false)
-
     override fun observeUserWantsToRegisterAppForExposureNotification(): Observable<Boolean> {
         return preferences.observeBoolean(PREF_WANTED_STATE_OF_APP_EXPOSURE_NOTIFICATION_REGISTRATION, false)
     }
@@ -132,9 +140,9 @@ class ExposureNotificationManagerImpl(
     }
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
-        exposureNotificationPhaseSubject.value.let { state ->
-            if (state is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
-                state.onResolutionOk()
+        currentPhase.let { phase ->
+            if (phase is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
+                phase.onResolutionOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is ok"))
             }
@@ -142,9 +150,9 @@ class ExposureNotificationManagerImpl(
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
-        exposureNotificationPhaseSubject.value.let { state ->
-            if (state is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
-                state.onResolutionNotOk()
+        currentPhase.let { phase ->
+            if (phase is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
+                phase.onResolutionNotOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is not ok"))
             }
@@ -152,10 +160,10 @@ class ExposureNotificationManagerImpl(
     }
 
     override fun refreshPrerequisitesErrorStatement(ignoreErrors: Boolean) {
-        exposureNotificationPhaseSubject.value.let { state ->
-            when (state) {
+        currentPhase.let { phase ->
+            when (phase) {
                 is PrerequisitesError -> {
-                    state.refresh()
+                    phase.refresh()
                 }
                 else -> {
                     if (ignoreErrors.not()) {
@@ -644,14 +652,14 @@ sealed class ExposureNotificationPhase {
         /**
          * Framework can be started with this error, but it might not work properly at this time.
          */
-        sealed class NotCritical {
+        sealed class NotCritical : FrameworkError() {
 
             /**
              * Bluetooth is not enabled.
              */
             data class BluetoothNotEnabled(
                 override val dependencyHolder: DependencyHolder
-            ) : FrameworkError() {
+            ) : NotCritical() {
 
                 override val register: Boolean
                     get() = throw IllegalAccessException("Not used in this context")

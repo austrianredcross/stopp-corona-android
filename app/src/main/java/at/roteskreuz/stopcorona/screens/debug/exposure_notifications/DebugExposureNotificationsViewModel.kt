@@ -18,7 +18,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
@@ -96,8 +95,7 @@ class DebugExposureNotificationsViewModel(
                 }
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(ResolutionType.RegisterWithFramework(apiException.status))
+                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result but not handled in UI")
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
