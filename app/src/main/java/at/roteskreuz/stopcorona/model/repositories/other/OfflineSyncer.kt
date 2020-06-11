@@ -14,7 +14,6 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
-import at.roteskreuz.stopcorona.model.repositories.PushMessagingRepository
 import at.roteskreuz.stopcorona.screens.mandatory_update.startMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.screens.routing.RouterActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -46,8 +45,7 @@ class OfflineSyncerImpl(
     private val processLifecycleOwner: LifecycleOwner,
     private val configurationRepository: ConfigurationRepository,
     private val dataPrivacyRepository: DataPrivacyRepository,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
-    private val pushMessagingRepository: PushMessagingRepository
+    private val infectionMessengerRepository: InfectionMessengerRepository
 ) : OfflineSyncer {
 
     companion object {
@@ -132,8 +130,6 @@ class OfflineSyncerImpl(
         async {
             // block execution until user approved GDPR
             dataPrivacyRepository.awaitForAcceptanceState()
-            // Start listening for push messages
-            pushMessagingRepository.startListening()
             // update configuration
             runFetcherIfNeeded(PREF_LAST_CONFIG_SYNC) {
                 configurationRepository.fetchAndStoreConfiguration()
