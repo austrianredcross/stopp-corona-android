@@ -17,6 +17,7 @@ import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -108,6 +109,11 @@ interface QuarantineRepository {
      * Resets the last red contact date.
      */
     fun revokeLastRedContactDate()
+
+    /**
+     * Get the current quarantine status.
+     */
+    suspend fun getQuarantineStatus(): QuarantineStatus
 }
 
 class QuarantineRepositoryImpl(
@@ -348,6 +354,12 @@ class QuarantineRepositoryImpl(
 
     override fun revokeLastRedContactDate() {
         dateOfLastRedContact = null
+    }
+
+    override suspend fun getQuarantineStatus(): QuarantineStatus {
+        return withContext(coroutineContext) {
+            quarantineStateObservable.blockingFirst()
+        }
     }
 }
 

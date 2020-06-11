@@ -86,9 +86,7 @@ class DatabaseCleanupManagerImpl(
     private fun cleanupSentTemporaryExposureKeys() {
         launch {
             // The sent temporary exposure keys are removed in case we detect that we are not anymore in quarantine.
-            if (quarantineRepository.observeQuarantineState()
-                    .blockingFirst() is QuarantineStatus.Free
-            ) {
+            if (quarantineRepository.getQuarantineStatus() is QuarantineStatus.Free) {
                 temporaryExposureKeysDao.removeSentTemporaryExposureKeys()
             }
         }
