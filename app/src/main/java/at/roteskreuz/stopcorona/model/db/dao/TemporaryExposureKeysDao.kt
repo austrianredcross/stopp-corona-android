@@ -24,7 +24,7 @@ abstract class TemporaryExposureKeysDao {
         exposureKeys.forEach { exposureKeyWrapper ->
             insertOrUpdateTemporaryExposureKey(
                 DbSentTemporaryExposureKeys(
-                    exposureKeyWrapper.key.rollingPeriod,
+                    exposureKeyWrapper.key.rollingStartIntervalNumber,
                     exposureKeyWrapper.password
                 )
             )

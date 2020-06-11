@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 /**
- * Describes a sent temporary exposure key through it's associated rolling start period
+ * Describes a sent temporary exposure key through it's associated rolling start interval number
  * and password.
  */
 @Entity(
@@ -17,7 +17,7 @@ import java.util.*
 @Parcelize
 data class DbSentTemporaryExposureKeys(
     @PrimaryKey
-    val rollingPeriod: Int,
+    val rollingStartIntervalNumber: Int,
     val password: UUID
 ) : DbEntity, Parcelable {
 
@@ -25,7 +25,7 @@ data class DbSentTemporaryExposureKeys(
         if (this === other) return true
         if (other !is DbSentTemporaryExposureKeys) return false
 
-        if (rollingPeriod != other.rollingPeriod) return false
+        if (rollingStartIntervalNumber != other.rollingStartIntervalNumber) return false
         if (password != other.password) return false
 
         return true
@@ -33,7 +33,7 @@ data class DbSentTemporaryExposureKeys(
 
     override fun hashCode(): Int {
         var result = password.hashCode()
-        result = 31 * result + rollingPeriod.hashCode()
+        result = 31 * result + rollingStartIntervalNumber.hashCode()
         return result
     }
 }
