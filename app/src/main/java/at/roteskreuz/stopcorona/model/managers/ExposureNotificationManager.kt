@@ -97,7 +97,7 @@ class ExposureNotificationManagerImpl(
         )
     )
 
-    private val phaseObservable = observeExposureNotificationPhase()
+    private val phaseObservable = exposureNotificationPhaseSubject
         .subscribeOnNewThread() // needed to have sync emits
         .distinctUntilChanged()
         .shareReplayLast()

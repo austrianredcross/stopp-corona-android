@@ -2,17 +2,18 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.*
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical.*
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.NotCritical
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.*
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
 import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.*
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.Critical
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.Critical.*
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError.NotCritical
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.*
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
