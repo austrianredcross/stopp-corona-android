@@ -1,7 +1,7 @@
 package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
-import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfExposureKeysArchive
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.*
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
@@ -60,7 +60,7 @@ interface ApiInteractor {
     /**
      * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive
+    suspend fun getIndexOfDignosisKeysArchives(): IndexOfDiagnosisKeysArchives
 }
 
 class ApiInteractorImpl(
@@ -119,11 +119,11 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive {
+    override suspend fun getIndexOfDignosisKeysArchives(): IndexOfDiagnosisKeysArchives {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()
             checkGeneralErrors {
-                contentDeliveryNetworkDescription.indexOfTrackingKeysArchives()
+                contentDeliveryNetworkDescription.indexOfDiagnosisKeysArchives()
             }
         }
     }

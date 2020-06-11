@@ -7,16 +7,16 @@ import com.squareup.moshi.JsonClass
  * Describes infection info about user with data gathered from the Exposure SDK.
  */
 @JsonClass(generateAdapter = true)
-data class IndexOfExposureKeysArchive(
+data class IndexOfDiagnosisKeysArchives(
     @field:Json(name = "full_batch")
-    val full_batch: Batch,
+    val fullBatch: DiagnosisKeysBatch,
 
     @field:Json(name = "daily_batches")
-    val dailyBatches: List<Batch>
+    val dailyBatches: List<DiagnosisKeysBatch>
 )
 
 @JsonClass(generateAdapter = true)
-data class Batch(
+data class DiagnosisKeysBatch(
     val interval: Int, // Interval number of the keys in that batch
 
     @field:Json(name = "batch_file_paths")

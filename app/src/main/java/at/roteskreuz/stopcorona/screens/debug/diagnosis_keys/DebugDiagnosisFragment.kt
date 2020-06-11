@@ -1,16 +1,14 @@
-package at.roteskreuz.stopcorona.screens.debug.exposure_notification_infection_messages
+package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
@@ -19,22 +17,21 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmen
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.*
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsErrorMessage
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsMasterSwitch
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsSettingsButton
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.googlePlayServicesVersionTextView
-import kotlinx.android.synthetic.main.debug_contact_tracing_tracking_keys_fragment.*
+import kotlinx.android.synthetic.main.debug_diagnosis_keys_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DebugExposureNotificationsTrackingKeysFragment : BaseFragment(R.layout.debug_contact_tracing_tracking_keys_fragment) {
+class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragment) {
 
     companion object {
         private const val REQUEST_CODE_REGISTER_WITH_FRAMEWORK = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 1
     }
 
     private var listenerActive: Boolean = false
-    private val viewModel: DebugExposureNotificationsTrackingKeysViewModel by viewModel()
+    private val viewModel: DebugDiagnosisKeysViewModel by viewModel()
 
     override val isToolbarVisible: Boolean
         get() = true
@@ -45,8 +42,7 @@ class DebugExposureNotificationsTrackingKeysFragment : BaseFragment(R.layout.deb
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
 
-        exposureNotificationsTracingKeysDownloadIndexButton.setOnClickListener { viewModel.downloadTracingKeysIndex() }
-
+        exposureNotificationsTracingKeysDownloadIndexButton.setOnClickListener { viewModel.downloadDiagnosisKeysArchiveIndex() }
 
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 
@@ -100,7 +96,7 @@ class DebugExposureNotificationsTrackingKeysFragment : BaseFragment(R.layout.deb
     }
 
     override fun getTitle(): String? {
-        return "Exposure Tracing Tracking Keys"
+        return "Diagnosis Keys Processing"
     }
 
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
@@ -126,8 +122,8 @@ class DebugExposureNotificationsTrackingKeysFragment : BaseFragment(R.layout.deb
     }
 }
 
-fun Activity.startDebugExposureNotificationsTracingKeysFragment() {
+fun Activity.startDebugDiagnosisKeysFragment() {
     startFragmentActivity<CoronaPortraitBaseActivity>(
-        fragmentName = DebugExposureNotificationsTrackingKeysFragment::class.java.name
+        fragmentName = DebugDiagnosisFragment::class.java.name
     )
 }

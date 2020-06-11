@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.screens.debug.exposure_notification_infection_messages
+package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 
 import android.app.Activity
 import android.content.Intent
@@ -23,7 +23,7 @@ import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class DebugExposureNotificationsTrackingKeysViewModel(
+class DebugDiagnosisKeysViewModel(
     appDispatchers : AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
@@ -149,10 +149,10 @@ class DebugExposureNotificationsTrackingKeysViewModel(
         exposureNotificationsTextSubject.onNext("resolutionForRegistrationFailed with code: $resultCode")
     }
 
-    fun downloadTracingKeysIndex() {
+    fun downloadDiagnosisKeysArchiveIndex() {
         launch {
             try {
-                val archive = apiInteractor.getIndexOfExposureKeysArchive()
+                val archive = apiInteractor.getIndexOfDignosisKeysArchives()
                 exposureNotificationsTextSubject.onNext("got the archive $archive")
             } catch (exception: java.lang.Exception) {
                 Timber.e(SilentError(exception))
