@@ -61,6 +61,7 @@ android {
             buildConfigField "String", "BASE_URL_CDN", '"dummy"'
             buildConfigField "String[]", "CERTIFICATE_CHAIN", '{}'
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", '{}'
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_CDN", '{}'
             buildConfigField "String", "AUTHORIZATION_VALUE", '"dummy"'
 
             resValue "string", "NEARBY_API_KEY", '"dummy"'
@@ -78,6 +79,7 @@ android {
             buildConfigField "String", "BASE_URL_CDN", resolveProperty("STAGE_BASE_URL_CDN", '"dummy"')
             buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("STAGE_CERTIFICATE_CHAIN", '{}')
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("STAGE_CERTIFICATE_CHAIN_TAN", '{}')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_CDN", resolveProperty("STAGE_CERTIFICATE_CHAIN_CDN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("STAGE_AUTHORIZATION_VALUE", '"dummy"')
 
             resValue "string", "NEARBY_API_KEY", resolveProperty("STAGE_NEARBY_API_KEY", '"dummy"')
@@ -92,6 +94,7 @@ android {
             buildConfigField "String", "BASE_URL_CDN", resolveProperty("PROD_BASE_URL_CDN", '"dummy"')
             buildConfigField "String[]", "CERTIFICATE_CHAIN", resolveProperty("PROD_CERTIFICATE_CHAIN", '{}')
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("PROD_CERTIFICATE_CHAIN_TAN", '{}')
+            buildConfigField "String[]", "CERTIFICATE_CHAIN_CDN", resolveProperty("PROD_CERTIFICATE_CHAIN_CDN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("PROD_AUTHORIZATION_VALUE", '"dummy"')
 
             resValue "string", "NEARBY_API_KEY", resolveProperty("PROD_NEARBY_API_KEY", '"dummy"')
