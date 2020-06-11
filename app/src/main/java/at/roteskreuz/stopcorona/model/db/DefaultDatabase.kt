@@ -7,10 +7,11 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
+import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
+import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConverter
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbSentInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
 import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
@@ -25,9 +26,9 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
         DbReceivedInfectionMessage::class,
-        DbSentInfectionMessage::class
+        DbSentTemporaryExposureKeys::class
     ],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 @TypeConverters(
@@ -181,7 +182,15 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("DROP TABLE `nearby_record`")
                 // delete DbAutomaticDiscoveryEvent
                 execSQL("DROP TABLE `automatic_discovery`")
-
+                // delete DbSentInfectionMessage
+                execSQL("DROP TABLE `sent_infection_message`")
+            },
+            /**
+             * Removing [DbSentInfectionMessage].
+             */
+            migration(16, 17) {
+                // delete DbSentInfectionMessage
+                execSQL("DROP TABLE `sent_infection_message`")
             }
         )
     }
@@ -189,6 +198,8 @@ abstract class DefaultDatabase : RoomDatabase() {
     abstract fun configurationDao(): ConfigurationDao
 
     abstract fun infectionMessageDao(): InfectionMessageDao
+
+    abstract fun temporaryExposureKeysDao(): TemporaryExposureKeysDao
 }
 
 /**
