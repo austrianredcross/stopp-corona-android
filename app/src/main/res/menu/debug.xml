@@ -58,8 +58,8 @@
                 android:id="@+id/debugExposureNotifications"
                 android:title="Exposure Notifications" />
             <item
-                android:id="@+id/debugExposureNotificationsTrackingKeys"
-                android:title="Exposure Notification Tracking Keys " />
+                android:id="@+id/debugDiagnosisKeys"
+                android:title="Diagnosis Keys" />
         </menu>
     </item>
 </menu>

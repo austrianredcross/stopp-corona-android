@@ -6,23 +6,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
     <uses-feature android:name="android.hardware.bluetooth" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
-
-    <!-- //TODO: reconsider all permissions https://tasks.pxp-x.com/browse/CTAA-1547 -->
-    <!-- P2PKit permissions-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- For automatic bluetooth detection service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".App"
@@ -76,15 +67,6 @@
             android:name=".screens.dashboard.DashboardActivity"
             android:screenOrientation="portrait" />
 
-        <!-- Firebase cloud messaging -->
-        <service
-            android:name=".model.services.StopCoronaFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
         <receiver
             android:name=".model.receivers.OnBootReceiver"
             android:enabled="true"
@@ -96,29 +78,13 @@
         </receiver>
         <receiver android:name=".model.receivers.BluetoothStateReceiver" />
 
-
         <receiver
             android:name=".model.receivers.ExposureNotificationBroadcastReceiver"
-            android:permission="com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK"
-            android:exported="true">
+            android:exported="true"
+            android:permission="com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK">
             <intent-filter>
                 <action android:name="com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED" />
             </intent-filter>
         </receiver>
-
-        <meta-data
-            android:name="firebase_performance_collection_enabled"
-            android:value="false" />
-        <meta-data
-            android:name="firebase_messaging_auto_init_enabled"
-            android:value="false" />
-        <meta-data
-            android:name="firebase_analytics_collection_enabled"
-            android:value="false" />
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_red_cross" />
     </application>
-
 </manifest>

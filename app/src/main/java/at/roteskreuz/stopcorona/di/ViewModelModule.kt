@@ -4,7 +4,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogViewModel
-import at.roteskreuz.stopcorona.screens.debug.exposure_notification_infection_messages.DebugExposureNotificationsTrackingKeysViewModel
+import at.roteskreuz.stopcorona.screens.debug.diagnosis_keys.DebugDiagnosisKeysViewModel
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
@@ -48,7 +48,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        DebugExposureNotificationsTrackingKeysViewModel(
+        DebugDiagnosisKeysViewModel(
             appDispatchers = get(),
             apiInteractor = get(),
             contextInteractor = get(),

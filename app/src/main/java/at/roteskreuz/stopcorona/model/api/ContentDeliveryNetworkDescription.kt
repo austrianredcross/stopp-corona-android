@@ -1,6 +1,6 @@
 package at.roteskreuz.stopcorona.model.api
 
-import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfExposureKeysArchive
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfDiagnosisKeysArchives
 import retrofit2.http.GET
 
 /**
@@ -9,5 +9,5 @@ import retrofit2.http.GET
 interface ContentDeliveryNetworkDescription {
 
     @GET("exposures/at/index.json")
-    suspend fun indexOfTrackingKeysArchives(): IndexOfExposureKeysArchive
+    suspend fun indexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
 }

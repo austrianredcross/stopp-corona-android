@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -141,9 +140,6 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
 
     implementation "android.arch.lifecycle:extensions:1.1.1"
-
-    // Firebase messaging
-    implementation 'com.google.firebase:firebase-messaging:20.1.5'
 
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
