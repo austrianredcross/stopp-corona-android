@@ -44,7 +44,18 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
 
         exposureNotificationsTracingKeysDownloadIndexButton.setOnClickListener { viewModel.downloadDiagnosisKeysArchiveIndex() }
 
+        diagnosisKeysGetExposureSummaryButton.setOnClickListener{ viewModel.getExposureSummary() }
+
+        diagnosisKeysGetExposureInformationButton.setOnClickListener { viewModel.getDiagnosisKeysGetExposureInformation() }
+
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
+
+        disposables += viewModel.observeDiagnosisKeyToken()
+            .observeOnMainThread()
+            .subscribe{
+                diagnosisKeysGetExposureSummaryButton.text = "Get Summary for ${it}"
+                diagnosisKeysGetExposureInformationButton.text = "\"Get Information for ${it}\""
+            }
 
         disposables += viewModel.observeEnabledState()
             .observeOnMainThread()

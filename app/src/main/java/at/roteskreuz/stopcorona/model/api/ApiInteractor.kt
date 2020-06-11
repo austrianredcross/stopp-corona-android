@@ -66,7 +66,7 @@ interface ApiInteractor {
     /**
      * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfExposureKeysArchive(): IndexOfExposureKeysArchive
+    suspend fun getIndexOfDignosisKeysArchives(): IndexOfDiagnosisKeysArchives
     suspend fun downloadContentDeliveryFiles(pathToArchive: String): File
     suspend fun downloadContentDeliveryFiles2(pathToArchive: String): File
 }
