@@ -60,8 +60,6 @@ class ReportingStatusViewModel(
                     uploadReportDataStateObserver.loaded(reportedInfectionLevel)
                 } catch (ex: Exception) {
                     uploadReportDataStateObserver.error(ex)
-                } finally {
-                    uploadReportDataStateObserver.idle()
                 }
             } catch (apiException: ApiException) {
                 when (apiException.statusCode) {
