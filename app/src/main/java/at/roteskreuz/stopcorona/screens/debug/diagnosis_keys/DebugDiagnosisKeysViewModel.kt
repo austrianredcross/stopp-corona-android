@@ -24,16 +24,15 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class DebugDiagnosisKeysViewModel(
-    appDispatchers : AppDispatchers,
+    appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository
-) : ScopedViewModel(appDispatchers)  {
+) : ScopedViewModel(appDispatchers) {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
-
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
         Nearby.getExposureNotificationClient(contextInteractor.applicationContext);
@@ -113,7 +112,6 @@ class DebugDiagnosisKeysViewModel(
                 Timber.w(exception, "Failed to unregister")
                 exposureNotificationsTextSubject.onNext("Failed to unregister from the Exposure Notifications framework: '$exception'")
             }
-
     }
 
     fun jumpToSystemSettings() {
@@ -152,7 +150,7 @@ class DebugDiagnosisKeysViewModel(
     fun downloadDiagnosisKeysArchiveIndex() {
         launch {
             try {
-                val archive = apiInteractor.getIndexOfDignosisKeysArchives()
+                val archive = apiInteractor.getIndexOfDiagnosisKeysArchives()
                 exposureNotificationsTextSubject.onNext("got the archive $archive")
             } catch (exception: java.lang.Exception) {
                 Timber.e(SilentError(exception))

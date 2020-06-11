@@ -60,7 +60,7 @@ interface ApiInteractor {
     /**
      * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfDignosisKeysArchives(): IndexOfDiagnosisKeysArchives
+    suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
 }
 
 class ApiInteractorImpl(
@@ -119,7 +119,7 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun getIndexOfDignosisKeysArchives(): IndexOfDiagnosisKeysArchives {
+    override suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()
             checkGeneralErrors {
