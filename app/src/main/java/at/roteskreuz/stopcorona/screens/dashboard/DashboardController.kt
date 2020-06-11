@@ -191,10 +191,10 @@ class DashboardController(
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(16),
-                    ButtonType2Model_({ onFeelingClick(false) })
+                    ButtonType2Model_ { onFeelingClick(false) }
                         .id("feel_button")
                         .text(context.string(R.string.main_button_feel_today_button))
-                        .enabled(exposureNotificationPhase is FrameworkRunning || exposureNotificationPhase is NotCritical)
+                        .enabled(exposureNotificationPhase.isReportingEnabled())
                         .onDisabledClick { onFeelingClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
@@ -221,10 +221,10 @@ class DashboardController(
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(16),
-                    ButtonType2Model_({ onReportClick(false) })
+                    ButtonType2Model_ { onReportClick(false) }
                         .id("report_button")
                         .text(context.string(R.string.main_body_report_button))
-                        .enabled(exposureNotificationPhase is FrameworkRunning || exposureNotificationPhase is NotCritical)
+                        .enabled(exposureNotificationPhase.isReportingEnabled())
                         .onDisabledClick { onReportClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
@@ -384,6 +384,8 @@ class DashboardController(
             ButtonType2Model_(onRevokeSuspicionClick)
                 .id("own_health_status_present_revoke_suspicion")
                 .text(context.string(R.string.self_testing_suspicion_button_revoke))
+                .enabled(exposureNotificationPhase.isReportingEnabled())
+                .onDisabledClick { onFeelingClick(true) }
                 .addTo(modelList)
 
             EmptySpaceModel_()
@@ -394,6 +396,8 @@ class DashboardController(
             ButtonType2Model_(onPresentMedicalReportClick)
                 .id("own_health_status_present_medical_report_button")
                 .text(context.string(R.string.self_testing_suspicion_secondary_button))
+                .enabled(exposureNotificationPhase.isReportingEnabled())
+                .onDisabledClick { onFeelingClick(true) }
                 .addTo(modelList)
         }
 
@@ -406,6 +410,8 @@ class DashboardController(
             ButtonType2Model_(onCheckSymptomsAgainClick)
                 .id("own_health_status_check_symptoms_button")
                 .text(context.string(R.string.self_testing_symptoms_secondary_button))
+                .enabled(exposureNotificationPhase.isReportingEnabled())
+                .onDisabledClick { onFeelingClick(true) }
                 .addTo(modelList)
         }
 
@@ -418,6 +424,8 @@ class DashboardController(
             ButtonType2Model_(onRevokeSicknessClick)
                 .id("own_health_status_revoke_sickness")
                 .text(context.string(R.string.sickness_certificate_attest_revoke))
+                .enabled(exposureNotificationPhase.isReportingEnabled())
+                .onDisabledClick { onFeelingClick(true) }
                 .addTo(modelList)
         }
 
@@ -549,4 +557,8 @@ sealed class CardUpdateStatus {
 
     object ContactUpdate : CardUpdateStatus()
     object EndOfQuarantine : CardUpdateStatus()
+}
+
+private fun ExposureNotificationPhase?.isReportingEnabled(): Boolean {
+    return this is FrameworkRunning || this is NotCritical
 }
