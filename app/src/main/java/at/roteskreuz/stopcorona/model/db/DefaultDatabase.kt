@@ -28,7 +28,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 @TypeConverters(
@@ -175,13 +175,20 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("ALTER TABLE `configuration_questionnaire_answer_temp` RENAME TO `configuration_questionnaire_answer`")
             },
             /**
-             * Removing [DbNearbyRecord], [DbAutomaticDiscoveryEvent], [DbSentInfectionMessage].
+             * Removing [DbNearbyRecord], [DbAutomaticDiscoveryEvent].
              */
             migration(15, 16) {
                 // delete DbNearbyRecord
                 execSQL("DROP TABLE `nearby_record`")
                 // delete DbAutomaticDiscoveryEvent
                 execSQL("DROP TABLE `automatic_discovery`")
+                // delete DbSentInfectionMessage
+                execSQL("DROP TABLE `sent_infection_message`")
+            },
+            /**
+             * Removing [DbSentInfectionMessage].
+             */
+            migration(16, 17) {
                 // delete DbSentInfectionMessage
                 execSQL("DROP TABLE `sent_infection_message`")
             }
