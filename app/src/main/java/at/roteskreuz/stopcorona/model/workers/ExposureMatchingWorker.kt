@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
 import androidx.work.*
+import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.utils.minus
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -62,11 +63,13 @@ class ExposureMatchingWorker(
     }
 
     private val workManager: WorkManager by inject()
+    private val infectionMessengerRepository: InfectionMessengerRepository by inject()
 
     override suspend fun doWork(): Result {
         // TODO mihbat 10-Jun: Run the exposure matching algorithm described in
         //  ticket https://tasks.pxp-x.com/browse/CTAA-1360 .
 
+        infectionMessengerRepository.fetchDecryptAndStoreNewMessages()
 
         // Schedule the next exposure matching work.
         enqueueNextExposureMatching(workManager)
