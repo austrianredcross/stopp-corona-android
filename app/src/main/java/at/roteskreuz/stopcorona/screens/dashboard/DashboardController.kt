@@ -26,8 +26,8 @@ import com.airbnb.epoxy.EpoxyModel
 class DashboardController(
     private val context: Context,
     private val onAutomaticHandshakeInformationClick: () -> Unit,
-    private val onFeelingClick: () -> Unit,
-    private val onReportClick: () -> Unit,
+    private val onFeelingClick: (disabled: Boolean) -> Unit,
+    private val onReportClick: (disabled: Boolean) -> Unit,
     private val onHealthStatusClick: (data: HealthStatusData) -> Unit,
     private val onRevokeSuspicionClick: () -> Unit,
     private val onPresentMedicalReportClick: () -> Unit,
@@ -191,9 +191,11 @@ class DashboardController(
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(16),
-                    ButtonType2Model_(onFeelingClick)
+                    ButtonType2Model_({ onFeelingClick(false) })
                         .id("feel_button")
-                        .text(context.string(R.string.main_button_feel_today_button)),
+                        .text(context.string(R.string.main_button_feel_today_button))
+                        .enabled(exposureNotificationPhase is FrameworkRunning || exposureNotificationPhase is NotCritical)
+                        .onDisabledClick { onFeelingClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(40)
@@ -219,9 +221,11 @@ class DashboardController(
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(16),
-                    ButtonType2Model_(onReportClick)
+                    ButtonType2Model_({ onReportClick(false) })
                         .id("report_button")
-                        .text(context.string(R.string.main_body_report_button)),
+                        .text(context.string(R.string.main_body_report_button))
+                        .enabled(exposureNotificationPhase is FrameworkRunning || exposureNotificationPhase is NotCritical)
+                        .onDisabledClick { onReportClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(40)

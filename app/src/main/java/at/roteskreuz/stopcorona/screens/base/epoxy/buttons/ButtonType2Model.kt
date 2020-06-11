@@ -18,13 +18,30 @@ abstract class ButtonType2Model(
     @EpoxyAttribute
     var text: String? = null
 
+    @EpoxyAttribute
+    var enabled: Boolean = false
+
+    /**
+     * Called when [enabled] = false and user clicked on the view.
+     */
+    @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
+    var onDisabledClick: () -> Unit = {}
+
     override fun Holder.onBind() {
         btnType2.text = text
+        btnType2.isEnabled = enabled
         btnType2.setOnClickListener { onClick() }
+        // TODO: 10/06/2020 dusanjencik: Doesn't work
+        view.setOnClickListener {
+            if (enabled.not()) {
+                onDisabledClick()
+            }
+        }
     }
 
     override fun Holder.onUnbind() {
         btnType2.setOnClickListener(null)
+        view.setOnClickListener(null)
     }
 
     class Holder : BaseEpoxyHolder() {
