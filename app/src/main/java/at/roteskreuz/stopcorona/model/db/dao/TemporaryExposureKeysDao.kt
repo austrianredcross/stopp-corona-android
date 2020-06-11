@@ -4,7 +4,6 @@ import androidx.room.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.repositories.TemporaryExposureKeysWrapper
 import io.reactivex.Flowable
-import java.util.*
 
 /**
  * DAO to manage [DbSentTemporaryExposureKeys].
@@ -26,7 +25,7 @@ abstract class TemporaryExposureKeysDao {
             insertOrUpdateTemporaryExposureKey(
                 DbSentTemporaryExposureKeys(
                     exposureKeyWrapper.key.rollingPeriod,
-                    UUID.randomUUID()
+                    exposureKeyWrapper.password
                 )
             )
         }
