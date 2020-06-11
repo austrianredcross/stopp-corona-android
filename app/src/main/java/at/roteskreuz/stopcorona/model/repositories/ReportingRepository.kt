@@ -4,7 +4,7 @@ import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.info.convertToApiTemporaryTracingKeys
+import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion.SCOPE_NAME
@@ -196,7 +196,6 @@ class ReportingRepositoryImpl(
                                 temporaryExposureKey.password,
                                 MessageType.Revoke.Suspicion
                             )
-
                         }
 
                 infectionMessengerRepository.storeSentTemporaryExposureKeys(resetMessages)
@@ -207,9 +206,10 @@ class ReportingRepositoryImpl(
             infectionMessages.addAll(
                 temporaryExposureKeysFromSDK
                     .filter { it.rollingStartIntervalNumber > thresholdTime }
-                    .map { nearbyRecord ->
+                    .groupBy { it.rollingStartIntervalNumber }
+                    .map { (rollingStartIntervalNumber, _) ->
                         TemporaryExposureKeysWrapper(
-                            nearbyRecord.rollingStartIntervalNumber,
+                            rollingStartIntervalNumber,
                             UUID.randomUUID(),
                             infectionLevel
                         )
@@ -218,7 +218,13 @@ class ReportingRepositoryImpl(
 
             val infectionMessagesAsTemporaryExposureKeys =
                 infectionMessages.mapNotNull { temporaryExposureKeysWrapper ->
-                    temporaryExposureKeysFromSDK.firstOrNull { it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber }
+                    val temporaryExposureKeysFromSdk =
+                        temporaryExposureKeysFromSDK.filter { it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber }
+                    if (temporaryExposureKeysFromSdk.isNotEmpty()) {
+                        temporaryExposureKeysFromSdk to temporaryExposureKeysWrapper.password
+                    } else {
+                        null
+                    }
                 }
 
             uploadData(infectionLevel.warningType, infectionMessagesAsTemporaryExposureKeys)
@@ -243,10 +249,10 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadData(
         warningType: WarningType,
-        temporaryExposureKeys: List<TemporaryExposureKey>
+        temporaryExposureKeys: List<Pair<List<TemporaryExposureKey>, UUID>>
     ) {
         apiInteractor.uploadInfectionData(
-            temporaryExposureKeys.convertToApiTemporaryTracingKeys(),
+            temporaryExposureKeys.asApiEntity(),
             contextInteractor.packageName,
             warningType,
             ApiVerificationPayload(
@@ -269,7 +275,13 @@ class ReportingRepositoryImpl(
                             message.messageType
                         )
                     }.mapNotNull { temporaryExposureKeysWrapper ->
-                        temporaryExposureKeysFromSDK.firstOrNull { it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber }
+                        val temporaryExposureKeysFromSdk =
+                            temporaryExposureKeysFromSDK.filter { it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber }
+                        if (temporaryExposureKeysFromSdk.isNotEmpty()) {
+                            temporaryExposureKeysFromSdk to temporaryExposureKeysWrapper.password
+                        } else {
+                            null
+                        }
                     }
 
             uploadData(MessageType.Revoke.Suspicion.warningType, infectionMessages)
@@ -297,13 +309,19 @@ class ReportingRepositoryImpl(
                         TemporaryExposureKeysWrapper(
                             message.rollingStartIntervalNumber,
                             message.password,
-                            message.messageType
+                            updateStatus
                         )
                     }
 
             val infectionMessagesAsTemporaryExposureKeys =
                 infectionMessages.mapNotNull { temporaryExposureKeysWrapper ->
-                    temporaryExposureKeysFromSDK.firstOrNull { it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber }
+                    val temporaryExposureKeysFromSdk =
+                        temporaryExposureKeysFromSDK.filter { it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber }
+                    if (temporaryExposureKeysFromSdk.isNotEmpty()) {
+                        temporaryExposureKeysFromSdk to temporaryExposureKeysWrapper.password
+                    } else {
+                        null
+                    }
                 }
 
             uploadData(updateStatus.warningType, infectionMessagesAsTemporaryExposureKeys)

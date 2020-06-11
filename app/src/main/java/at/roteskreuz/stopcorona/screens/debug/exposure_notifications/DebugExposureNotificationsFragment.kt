@@ -11,9 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ReportingStatusFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -89,7 +87,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
         )
         disposables+= viewModel.observeLastTemporaryExposureKeys()
             .observeOnMainThread()
-            .subscribe{keys ->
+            .subscribe { keys ->
                 uploadButtons.onEach { it.text = "${keys.size} keys ready to be uploaded" }
             }
 
