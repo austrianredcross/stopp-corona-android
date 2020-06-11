@@ -16,15 +16,6 @@ val repositoryModule = module {
         )
     }
 
-    single<PushMessagingRepository> {
-        PushMessagingRepositoryImpl(
-            firebaseMessaging = get(),
-            cryptoRepository = get(),
-            dataPrivacyRepository = get(),
-            infectionMessengerRepository = get()
-        )
-    }
-
     @Suppress("DEPRECATION")
     single<CryptoRepository> {
         CryptoRepositoryImpl(

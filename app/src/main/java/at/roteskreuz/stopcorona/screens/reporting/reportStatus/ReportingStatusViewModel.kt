@@ -17,6 +17,7 @@ import com.google.android.gms.nearby.exposurenotification.ExposureNotificationSt
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
@@ -139,7 +140,7 @@ class ReportingStatusViewModel(
         uploadReportDataStateObserver.loading()
         launch {
             //we need to do this as the framework is slow and does not know about the resolution yet
-            Thread.sleep(2000)
+            delay(2000)
             uploadReportDataStateObserver.idle()
             uploadData()
         }
