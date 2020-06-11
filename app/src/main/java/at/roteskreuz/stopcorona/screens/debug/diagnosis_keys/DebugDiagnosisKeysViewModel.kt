@@ -162,7 +162,7 @@ class DebugDiagnosisKeysViewModel(
     }
 
     fun downloadDiagnosisKeysArchiveIndex() {
-        launch {
+        launch (appDispatchers.Default){
             try {
                 exposureNotificationsTextSubject.onNext("downloading the index now")
                 val archive = apiInteractor.getIndexOfDignosisKeysArchives()

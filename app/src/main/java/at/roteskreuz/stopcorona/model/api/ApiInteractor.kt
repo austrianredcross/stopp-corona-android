@@ -138,36 +138,31 @@ class ApiInteractorImpl(
     }
 
     override suspend fun downloadContentDeliveryFiles(pathToArchive: String): File {
-        return withContext(appDispatchers.IO) {
-            val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
+        val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
 
-            val cacheDir = contextInteractor.applicationContext.getCacheDir()
-            val outputFile: File = File(cacheDir, pathToArchive.replace("/","-"))
-            //outputFile.deleteOnExit()
+        val cacheDir = contextInteractor.applicationContext.getCacheDir()
+        val outputFile: File = File(cacheDir, pathToArchive.replace("/","-"))
+        //outputFile.deleteOnExit()
 
-            response.body()?.let {
-                if (writeResponseBodyToDisk(it,outputFile).not()){
-                    throw IOException("could not write to file")
-                }
+        response.body()?.let {
+            if (writeResponseBodyToDisk(it,outputFile).not()){
+                throw IOException("could not write to file")
             }
-
-            return@withContext outputFile
         }
+        return outputFile
     }
 
     override suspend fun downloadContentDeliveryFiles2(pathToArchive: String): File {
-        return withContext(appDispatchers.IO) {
-            val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
-            if (response.isSuccessful) {
-                val cacheDir = contextInteractor.applicationContext.getCacheDir()
-                val outputFile: File = File(cacheDir, pathToArchive.replace("/", "-"))
+        val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
+        if (response.isSuccessful) {
+            val cacheDir = contextInteractor.applicationContext.getCacheDir()
+            val outputFile: File = File(cacheDir, pathToArchive.replace("/", "-"))
 
-                response.body()?.byteStream()?.saveToFile(outputFile)
-                return@withContext outputFile
-            } else {
-                response.message()
-                throw IOException("it did not work code:${response} ")
-            }
+            response.body()?.byteStream()?.saveToFile(outputFile)
+            return outputFile
+        } else {
+            response.message()
+            throw IOException("it did not work code:${response} ")
         }
     }
 

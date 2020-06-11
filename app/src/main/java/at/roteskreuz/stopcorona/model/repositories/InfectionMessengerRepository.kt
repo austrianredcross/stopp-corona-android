@@ -74,6 +74,7 @@ interface InfectionMessengerRepository {
      * Enqueue the next work request to run the exposure matching algorithm.
      */
     fun enqueueNextExposureMatching()
+    suspend fun processKeysbasedonToken(token: String)
 }
 
 class InfectionMessengerRepositoryImpl(
@@ -114,7 +115,19 @@ class InfectionMessengerRepositoryImpl(
         infectionMessageDao.insertSentInfectionMessages(messages)
     }
 
+    override suspend fun processKeysbasedonToken(token: String){
+        //continue processiong
+
+
+    }
+
     override suspend fun fetchDecryptAndStoreNewMessages() {
+        //TODO: get diagnosis keys info and zip files
+
+
+        val token = "mytoken"
+
+
         if (downloadMessagesStateObserver.currentState is State.Loading) {
             return
         }
