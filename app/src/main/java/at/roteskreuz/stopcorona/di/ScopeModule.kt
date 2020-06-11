@@ -18,7 +18,11 @@ val scopeModule = module {
             appDispatchers = get(),
             apiInteractor = get(),
             quarantineRepository = get(),
-            contextInteractor = get()
+            contextInteractor = get(),
+            exposureNotificationRepository = get(),
+            infectionMessengerRepository = get(),
+            configurationRepository = get(),
+            databaseCleanupManager = get()
         )
     }
 

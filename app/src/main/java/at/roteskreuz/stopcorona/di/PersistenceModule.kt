@@ -37,8 +37,7 @@ internal val persistenceModule = module {
             appDispatchers = get(),
             configurationRepository = get(),
             infectionMessageDao = get(),
-            temporaryExposureKeysDao = get(),
-            quarantineRepository = get()
+            temporaryExposureKeysDao = get()
         )
     }
 

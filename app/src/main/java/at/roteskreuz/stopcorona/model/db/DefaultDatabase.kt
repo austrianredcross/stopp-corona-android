@@ -191,6 +191,8 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(16, 17) {
                 // delete DbSentInfectionMessage
                 execSQL("DROP TABLE `sent_infection_message`")
+                // add new column for the number of days of temporary exposure keys that will be uploaded
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `uploadKeysDays` INTEGER")
             }
         )
     }

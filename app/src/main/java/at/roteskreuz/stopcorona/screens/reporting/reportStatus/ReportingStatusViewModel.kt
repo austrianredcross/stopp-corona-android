@@ -14,7 +14,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.launch
@@ -33,17 +32,6 @@ class ReportingStatusViewModel(
     private val uploadReportDataStateObserver = DataStateObserver<MessageType>()
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
 
-    private suspend fun uploadData(temporaryTracingKeys: List<TemporaryExposureKey>) {
-        try {
-            val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
-            uploadReportDataStateObserver.loaded(reportedInfectionLevel)
-        } catch (ex: Exception) {
-            uploadReportDataStateObserver.error(ex)
-        } finally {
-            uploadReportDataStateObserver.idle()
-        }
-    }
-
     fun setUserAgreement(agreement: Boolean) {
         reportingRepository.setUserAgreement(agreement)
     }
@@ -60,8 +48,8 @@ class ReportingStatusViewModel(
                     uploadReportDataStateObserver.idle()
                     return@launch
                 }
-                val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
-                uploadData(temporaryTracingKeys)
+                val reportedInfectionLevel = reportingRepository.uploadReportInformation()
+                uploadReportDataStateObserver.loaded(reportedInfectionLevel)
             } catch (apiException: ApiException) {
                 when (apiException.statusCode) {
                     ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
