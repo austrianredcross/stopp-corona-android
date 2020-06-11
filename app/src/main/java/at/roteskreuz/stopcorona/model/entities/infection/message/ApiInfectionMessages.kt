@@ -12,7 +12,7 @@ import kotlinx.android.parcel.Parcelize
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
-import java.util.UUID
+import java.util.*
 
 /**
  * Describes infection messages.
@@ -203,15 +203,6 @@ data class InfectionMessageContent(
 
             return UUID(msbArray.toLong(), lsbArray.toLong())
         }
-    }
-
-    fun asSentDbEntity(publicKey: ByteArray): DbSentInfectionMessage {
-        return DbSentInfectionMessage(
-            uuid = uuid,
-            messageType = messageType,
-            timeStamp = timeStamp,
-            publicKey = publicKey
-        )
     }
 
     fun asReceivedDbEntity(): DbReceivedInfectionMessage {

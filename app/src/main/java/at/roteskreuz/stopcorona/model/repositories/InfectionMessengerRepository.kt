@@ -5,7 +5,11 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.entities.infection.message.*
+import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
+import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessage
+import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
+import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
@@ -17,10 +21,12 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreference
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.utils.asDbObservable
 import at.roteskreuz.stopcorona.utils.isInTheFuture
+import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -34,9 +40,9 @@ interface InfectionMessengerRepository {
     fun enqueueDownloadingNewMessages()
 
     /**
-     * Store to DB sent messages and contacts.
+     * Store to DB the sent temporary exposure keys.
      */
-    suspend fun storeSentInfectionMessages(messages: List<Pair<ByteArray, InfectionMessageContent>>)
+    suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>)
 
     /**
      * Start a process of downloading infection messages and trying to decrypt them.
@@ -48,11 +54,6 @@ interface InfectionMessengerRepository {
      * Observe the infection messages received.
      */
     fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>>
-
-    /**
-     * Observe the infection messages sent.
-     */
-    fun observeSentInfectionMessages(): Observable<List<DbSentInfectionMessage>>
 
     /**
      * Observe info if someone has recovered.
@@ -80,6 +81,7 @@ class InfectionMessengerRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val infectionMessageDao: InfectionMessageDao,
+    private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
     private val cryptoRepository: CryptoRepository,
     private val notificationsRepository: NotificationsRepository,
     private val preferences: SharedPreferences,
@@ -102,16 +104,21 @@ class InfectionMessengerRepositoryImpl(
     /**
      * Stores and provides last and biggest infection message id.
      */
-    private var lastMessageId: Long? by preferences.nullableLongSharedPreferencesProperty(PREF_LAST_MESSAGE_ID)
+    private var lastMessageId: Long? by preferences.nullableLongSharedPreferencesProperty(
+        PREF_LAST_MESSAGE_ID
+    )
 
-    private var someoneHasRecovered: Boolean by preferences.booleanSharedPreferencesProperty(PREF_SOMEONE_HAS_RECOVERED, false)
+    private var someoneHasRecovered: Boolean by preferences.booleanSharedPreferencesProperty(
+        PREF_SOMEONE_HAS_RECOVERED,
+        false
+    )
 
     override fun enqueueDownloadingNewMessages() {
         DownloadInfectionMessagesWorker.enqueueDownloadInfection(workManager)
     }
 
-    override suspend fun storeSentInfectionMessages(messages: List<Pair<ByteArray, InfectionMessageContent>>) {
-        infectionMessageDao.insertSentInfectionMessages(messages)
+    override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>) {
+        temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
     }
 
     override suspend fun fetchDecryptAndStoreNewMessages() {
@@ -179,10 +186,6 @@ class InfectionMessengerRepositoryImpl(
         return infectionMessageDao.observeReceivedInfectionMessages().asDbObservable()
     }
 
-    override fun observeSentInfectionMessages(): Observable<List<DbSentInfectionMessage>> {
-        return infectionMessageDao.observeSentInfectionMessages().asDbObservable()
-    }
-
     override fun observeSomeoneHasRecoveredMessage(): Observable<Boolean> {
         return preferences.observeBoolean(PREF_SOMEONE_HAS_RECOVERED, false)
     }
@@ -199,3 +202,8 @@ class InfectionMessengerRepositoryImpl(
         ExposureMatchingWorker.enqueueNextExposureMatching(workManager)
     }
 }
+
+/**
+ * Describes a temporary exposure key and it's associated random password.
+ */
+data class TemporaryExposureKeysWrapper(val key: TemporaryExposureKey, val password: UUID)
