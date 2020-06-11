@@ -156,7 +156,7 @@ class ReportingRepositoryImpl(
 
             val configuration = configurationRepository.observeConfiguration().blockingFirst()
             val uploadKeysDays = configuration.uploadKeysDays
-                ?: throw InvalidConfigurationException.InvalidNumberOfDaysToUpload
+                ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
             var thresholdTime = ZonedDateTime.now()
                 .minusDays(uploadKeysDays.toLong())
                 .startOfTheDay()
@@ -424,10 +424,14 @@ sealed class ReportingState {
  */
 sealed class InvalidConfigurationException(override val message: String) : Exception(message) {
 
-    object NullWarnBeforeSymptoms : InvalidConfigurationException("warnBeforeSymptoms is null")
-
+    /**
+     * The infection level is not set for the current reporting.
+     */
     object InfectionLevelNotSet : InvalidConfigurationException("messageType is null")
 
-    object InvalidNumberOfDaysToUpload :
+    /**
+     * The number of days of temporary exposure keys to upload is null.
+     */
+    object NullNumberOfDaysToUpload :
         InvalidConfigurationException("The number of days of temporary exposure keys to be uploaded is not provided.")
 }
