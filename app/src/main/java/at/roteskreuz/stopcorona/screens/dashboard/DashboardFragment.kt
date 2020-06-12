@@ -172,6 +172,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             addOnScrollListener(accurateScrollListener)
         }
 
+        disposables += viewModel.observeDateOfFirstMedicalConfirmation()
+            .observeOnMainThread()
+            .subscribe { dateOfFirstMedicalConfirmation ->
+                controller.dateOfFirstMedicalConfirmation = dateOfFirstMedicalConfirmation.orElse(null)
+            }
+
         disposables += viewModel.observeOwnHealthStatus()
             .observeOnMainThread()
             .subscribe {

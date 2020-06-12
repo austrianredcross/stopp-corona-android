@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.menu
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkRunning
@@ -17,6 +18,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Menu content.
@@ -38,10 +40,16 @@ class MenuController(
 
     private var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     private var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
+    private var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
 
-    fun setData(ownHealthStatusData: HealthStatusData, exposureNotificationPhase: ExposureNotificationPhase) {
+    fun setData(
+        ownHealthStatusData: HealthStatusData,
+        exposureNotificationPhase: ExposureNotificationPhase,
+        dateOfFirstMedicalConfirmation: ZonedDateTime?
+    ) {
         this.ownHealthStatus = ownHealthStatusData
         this.exposureNotificationPhase = exposureNotificationPhase
+        this.dateOfFirstMedicalConfirmation = dateOfFirstMedicalConfirmation
     }
 
     override fun buildModels() {
@@ -55,9 +63,11 @@ class MenuController(
 
         if (exposureNotificationPhase.isReportingEnabled()) {
             with(buildFunctionalityMenuItems()) {
-                verticalBackgroundModelGroup(this) {
-                    id("vertical_model_group_functionality")
-                    backgroundColor(R.color.white)
+                if (isNotEmpty()) {
+                    verticalBackgroundModelGroup(this) {
+                        id("vertical_model_group_functionality")
+                        backgroundColor(R.color.white)
+                    }
                 }
             }
         }
@@ -138,7 +148,11 @@ class MenuController(
                 .addTo(modelList)
         }
 
-        if (ownHealthStatus is HealthStatusData.SicknessCertificate) {
+        val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
+            ?.isAfter(ZonedDateTime.now().minusHours(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION.toHours()))
+            ?: true
+
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
             MenuItemModel_(onRevokeSicknessClick)
                 .id("revoke_sickness")
                 .title(context.string(R.string.start_menu_item_revoke_sickness))

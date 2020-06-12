@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical
@@ -20,6 +21,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Contents of the dashboard.
@@ -46,6 +48,7 @@ class DashboardController(
     var showQuarantineEnd: Boolean by adapterProperty(false)
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
+    var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -416,7 +419,11 @@ class DashboardController(
                 .addTo(modelList)
         }
 
-        if (ownHealthStatus is HealthStatusData.SicknessCertificate) {
+        val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
+            ?.isAfter(ZonedDateTime.now().minusHours(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION.toHours()))
+            ?: true
+
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
             EmptySpaceModel_()
                 .id(modelCountBuiltSoFar)
                 .height(16)

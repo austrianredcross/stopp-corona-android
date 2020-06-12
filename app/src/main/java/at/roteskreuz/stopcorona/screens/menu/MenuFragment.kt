@@ -128,7 +128,11 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
         disposables += viewModel.observeOwnHealthStatus()
             .observeOnMainThread()
             .subscribe { healthStatusData ->
-                controller.setData(healthStatusData, viewModel.currentExposureNotificationPhase)
+                controller.setData(
+                    healthStatusData,
+                    viewModel.currentExposureNotificationPhase,
+                    viewModel.dateOfFirstMedicalConfirmation
+                )
             }
     }
 
