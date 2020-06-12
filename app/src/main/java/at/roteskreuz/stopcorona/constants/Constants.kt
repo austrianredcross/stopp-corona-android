@@ -37,6 +37,11 @@ object Constants {
          * Minimum delay between self retest notifications.
          */
         val SELF_RETEST_NOTIFICATION_INTERVAL: Duration = Duration.ofHours(6)
+
+        /**
+         * Time for how long the revoking is possible. After this time revoke button must be hidden.
+         */
+        val MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION: Duration = Duration.ofHours(48)
     }
 
     /**
