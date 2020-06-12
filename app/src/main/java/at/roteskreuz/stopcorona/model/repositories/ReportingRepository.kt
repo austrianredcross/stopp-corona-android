@@ -50,12 +50,10 @@ interface ReportingRepository {
      * Upload the report information with the upload infection request.
      * @throws InvalidConfigurationException - in case the configuration doesn't provide
      * all the necessary data.
-     * @throws ApiException - in case an exception occurs while accessing data from the
-     * Exposure SDK.
      *
      * @return Returns the messageType the user sent to his contacts
      */
-    suspend fun uploadReportInformation(): MessageType
+    suspend fun uploadReportInformation(temporaryTracingKeys: List<TemporaryExposureKey>): MessageType
 
     /**
      * Set the validated personal data when a TAN was successfully requested.
@@ -114,7 +112,6 @@ class ReportingRepositoryImpl(
     private val apiInteractor: ApiInteractor,
     private val quarantineRepository: QuarantineRepository,
     private val contextInteractor: ContextInteractor,
-    private val exposureNotificationRepository: ExposureNotificationRepository,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val configurationRepository: ConfigurationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager
@@ -145,15 +142,15 @@ class ReportingRepositoryImpl(
         tanUuid = apiInteractor.requestTan(mobileNumber).uuid
     }
 
-    override suspend fun uploadReportInformation(): MessageType {
+    override suspend fun uploadReportInformation(temporaryTracingKeys: List<TemporaryExposureKey>): MessageType {
         return when (messageTypeSubject.value) {
-            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo()
-            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo()
-            else -> uploadInfectionInfo()
+            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo(temporaryTracingKeys)
+            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo(temporaryTracingKeys)
+            else -> uploadInfectionInfo(temporaryTracingKeys)
         }
     }
 
-    private suspend fun uploadInfectionInfo(): MessageType.InfectionLevel {
+    private suspend fun uploadInfectionInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.InfectionLevel {
         return withContext(coroutineContext) {
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel
                 ?: throw InvalidConfigurationException.InfectionLevelNotSet
@@ -205,8 +202,6 @@ class ReportingRepositoryImpl(
                 infectionMessengerRepository.storeSentTemporaryExposureKeys(resetMessages)
             }
 
-            val temporaryExposureKeysFromSDK =
-                exposureNotificationRepository.getTemporaryExposureKeys()
             infectionMessages.addAll(
                 temporaryExposureKeysFromSDK
                     .filter { it.rollingStartIntervalNumber > thresholdTime }
@@ -258,10 +253,8 @@ class ReportingRepositoryImpl(
         )
     }
 
-    private suspend fun uploadRevokeSuspicionInfo(): MessageType.Revoke.Suspicion {
+    private suspend fun uploadRevokeSuspicionInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
-            val temporaryExposureKeysFromSDK =
-                exposureNotificationRepository.getTemporaryExposureKeys()
             val infectionMessages =
                 infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(MessageType.InfectionLevel.Yellow)
                     .map { message ->
@@ -281,7 +274,7 @@ class ReportingRepositoryImpl(
         }
     }
 
-    private suspend fun uploadRevokeSicknessInfo(): MessageType.Revoke.Sickness {
+    private suspend fun uploadRevokeSicknessInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.Revoke.Sickness {
         return withContext(coroutineContext) {
 
             val updateStatus = when {
@@ -289,8 +282,6 @@ class ReportingRepositoryImpl(
                 else -> MessageType.Revoke.Suspicion
             }
 
-            val temporaryExposureKeysFromSDK =
-                exposureNotificationRepository.getTemporaryExposureKeys()
             val infectionMessages =
                 infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(MessageType.InfectionLevel.Red)
                     .map { message ->

@@ -54,6 +54,7 @@ class ReportingStatusViewModel(
                     uploadReportDataStateObserver.error(FrameworkNotReady)
                     return@launch
                 }
+
                 val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
                 val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
                 uploadReportDataStateObserver.loaded(reportedInfectionLevel)
