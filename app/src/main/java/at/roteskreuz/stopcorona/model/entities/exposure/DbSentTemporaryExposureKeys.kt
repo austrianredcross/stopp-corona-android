@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.entities.exposure
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.DbEntity
 import kotlinx.android.parcel.Parcelize
 import java.util.*
@@ -18,7 +19,8 @@ import java.util.*
 data class DbSentTemporaryExposureKeys(
     @PrimaryKey
     val rollingStartIntervalNumber: Int,
-    val password: UUID
+    val password: UUID,
+    val messageType: MessageType
 ) : DbEntity, Parcelable {
 
     override fun equals(other: Any?): Boolean {
@@ -27,6 +29,7 @@ data class DbSentTemporaryExposureKeys(
 
         if (rollingStartIntervalNumber != other.rollingStartIntervalNumber) return false
         if (password != other.password) return false
+        if (messageType != other.messageType) return false
 
         return true
     }
@@ -34,6 +37,7 @@ data class DbSentTemporaryExposureKeys(
     override fun hashCode(): Int {
         var result = password.hashCode()
         result = 31 * result + rollingStartIntervalNumber.hashCode()
+        result = 31 * result + messageType.hashCode()
         return result
     }
 }

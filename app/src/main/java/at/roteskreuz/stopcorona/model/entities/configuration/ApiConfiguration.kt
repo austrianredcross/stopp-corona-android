@@ -1,10 +1,11 @@
 package at.roteskreuz.stopcorona.model.entities.configuration
 
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.ApiEntity
 import at.roteskreuz.stopcorona.utils.asEnum
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.util.Locale
+import java.util.*
 
 /**
  * Describes configuration of questionnaire content.
@@ -27,7 +28,11 @@ data class ApiConfiguration(
     @field:Json(name = "diagnostic_questionnaire")
     val diagnosticQuestionnaire: ApiDiagnosticQuestionnaire?,
     @field:Json(name = "page_list")
-    val pageList: ApiPageList?
+    val pageList: ApiPageList?,
+    @field:Json(name = "upload_keys_days")
+    // TODO mihbat 12-Jun: The constant can be removed when the backend will start providing
+    //  this value.
+    val uploadKeysDays: Int = Constants.ConfigurationDefaults.UPLOAD_KEYS_DAYS
 ) : ApiEntity<DbConfiguration> {
 
     override fun asDbEntity(): DbConfiguration {
@@ -35,7 +40,8 @@ data class ApiConfiguration(
             warnBeforeSymptoms = warnBeforeSymptoms,
             redWarningQuarantine = redWarningQuarantine,
             yellowWarningQuarantine = yellowWarningQuarantine,
-            selfDiagnosedQuarantine = selfDiagnosedQuarantine
+            selfDiagnosedQuarantine = selfDiagnosedQuarantine,
+            uploadKeysDays = uploadKeysDays
         )
     }
 }

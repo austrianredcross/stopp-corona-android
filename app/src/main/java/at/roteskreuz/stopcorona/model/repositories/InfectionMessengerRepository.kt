@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
+import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
@@ -21,7 +22,6 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreference
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.utils.asDbObservable
 import at.roteskreuz.stopcorona.utils.isInTheFuture
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
@@ -54,6 +54,11 @@ interface InfectionMessengerRepository {
      * Observe the infection messages received.
      */
     fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>>
+
+    /**
+     * Get the sent temporary exposure keys.
+     */
+    suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
 
     /**
      * Observe info if someone has recovered.
@@ -190,6 +195,10 @@ class InfectionMessengerRepositoryImpl(
         return preferences.observeBoolean(PREF_SOMEONE_HAS_RECOVERED, false)
     }
 
+    override suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
+        return temporaryExposureKeysDao.getSentTemporaryExposureKeysByMessageType(messageType)
+    }
+
     override fun setSomeoneHasRecovered() {
         someoneHasRecovered = true
     }
@@ -204,6 +213,10 @@ class InfectionMessengerRepositoryImpl(
 }
 
 /**
- * Describes a temporary exposure key and it's associated random password.
+ * Describes a temporary exposure key, it's associated random password and messageType.
  */
-data class TemporaryExposureKeysWrapper(val key: TemporaryExposureKey, val password: UUID)
+data class TemporaryExposureKeysWrapper(
+    val rollingStartIntervalNumber: Int,
+    val password: UUID,
+    val messageType: MessageType
+)
