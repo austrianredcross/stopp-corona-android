@@ -199,7 +199,7 @@ object Constants {
     /**
      * Constants related to the configuration provided by the backend.
      */
-    object Configuration {
+    object ConfigurationDefaults {
 
         /**
          * The number of temporary exposure keys that will be uploaded when doing a reporting.

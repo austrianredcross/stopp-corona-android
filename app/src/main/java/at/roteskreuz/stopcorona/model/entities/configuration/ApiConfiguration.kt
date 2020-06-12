@@ -30,7 +30,9 @@ data class ApiConfiguration(
     @field:Json(name = "page_list")
     val pageList: ApiPageList?,
     @field:Json(name = "upload_keys_days")
-    val uploadKeysDays: Int = Constants.Configuration.UPLOAD_KEYS_DAYS
+    // TODO mihbat 12-Jun: The constant can be removed when the backend will start providing
+    //  this value.
+    val uploadKeysDays: Int = Constants.ConfigurationDefaults.UPLOAD_KEYS_DAYS
 ) : ApiEntity<DbConfiguration> {
 
     override fun asDbEntity(): DbConfiguration {
