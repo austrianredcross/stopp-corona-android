@@ -68,6 +68,8 @@ interface ApiInteractor {
     suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File
 
     suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
+
+    suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>>
 }
 
 class ApiInteractorImpl(
@@ -136,7 +138,6 @@ class ApiInteractorImpl(
         }
     }
 
-
     override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File {
         val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
         if (response.isSuccessful) {
@@ -156,8 +157,8 @@ class ApiInteractorImpl(
     override suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
         val indexOfArchives = getIndexOfDiagnosisKeysArchives()
 
-        when(warningType){
-            WarningType.YELLOW, WarningType.RED-> {
+        when (warningType) {
+            WarningType.YELLOW, WarningType.RED -> {
                 return indexOfArchives.full14DaysBatch.batchFilePaths.map {
                     Timber.d("Downloading the full 14 days batch, ther could revocations" +
                         "in the last 14 days even")
@@ -172,6 +173,20 @@ class ApiInteractorImpl(
                 }
             }
         }
+    }
+
+    override suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>> {
+        val indexOfArchives = getIndexOfDiagnosisKeysArchives()
+
+        //we assume the list of dailyBatches is sorted on the server!!!
+        val listOfDaysWithDownloadedFilesSortedByServer = indexOfArchives.dailyBatches
+            .map { dayBatch ->
+                val downloadedFilesOfThisDay = dayBatch.batchFilePaths.map { filepathForOneDay ->
+                    downloadContentDeliveryFileToTempFile(filepathForOneDay)
+                }
+                downloadedFilesOfThisDay
+            }
+        return listOfDaysWithDownloadedFilesSortedByServer
     }
 
     private fun InputStream.saveToFile(file: File) = use { input ->

@@ -5,6 +5,7 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
+import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbSentInfectionMessage
@@ -98,7 +99,8 @@ class InfectionMessengerRepositoryImpl(
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
     private val databaseCleanupManager: DatabaseCleanupManager,
-    private val exposureNotificationRepository: ExposureNotificationRepository
+    private val exposureNotificationRepository: ExposureNotificationRepository,
+    private val configurationRepository: ConfigurationRepository
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
@@ -151,13 +153,29 @@ class InfectionMessengerRepositoryImpl(
 
     private suspend fun processKeysBasedOnBatchToken(token: String) {
         val warningType = WarningType.RED
-        when(warningType) {
-            WarningType.YELLOW, WarningType.RED -> {
 
+        val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
+        val configuration = configurationRepository.observeConfiguration().blockingFirst()
+        when(warningType) {
+
+            WarningType.YELLOW, WarningType.RED -> {
+                if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
+                    val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
+                    //go through the days and check if the day is the first RED/YELLOW day
+                    summary.map {daySummary ->
+                        daySummary.totalRiskScore > configuration.exposureConfigurationDailyRiskThreshold
+                    }
+                } else{
+                    //TODO: we are green again
+                }
             }
             WarningType.REVOKE -> {
-                val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
-                summary.summationRiskScore
+                //we are above risc for the last days!!!
+                if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
+                    //we must now identify day by day if we are YELLOW or RED
+                    val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
+
+                }
             }
         }
     }

@@ -10,10 +10,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import com.google.android.gms.nearby.exposurenotification.ExposureSummary
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
+import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineScope
@@ -118,6 +115,9 @@ interface ExposureNotificationRepository {
      * at least YELLOW
      */
     suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary
+
+
+    suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation>
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -294,6 +294,19 @@ class ExposureNotificationRepositoryImpl(
     override suspend fun determineRiskWithoutInformingUser(token: String) : ExposureSummary{
         return suspendCancellableCoroutine { continuation ->
             exposureNotificationClient.getExposureSummary(token).addOnCompleteListener {
+                if (it.isSuccessful){
+                    continuation.resume(it.result)
+                } else {
+                    continuation.cancel(it.exception)
+                }
+            }
+        }
+    }
+
+    override suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
+        return suspendCancellableCoroutine {continuation ->
+            exposureNotificationClient.getExposureInformation(token)
+                .addOnCompleteListener{
                 if (it.isSuccessful){
                     continuation.resume(it.result)
                 } else {

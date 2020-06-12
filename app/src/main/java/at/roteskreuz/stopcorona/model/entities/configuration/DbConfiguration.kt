@@ -31,13 +31,13 @@ data class DbConfiguration(
      */
     val cacheTime: ZonedDateTime = ZonedDateTime.now(),
 
-    val exposureConfigurationMinimumRiskScore: Int?,                            // 1,
-    val exposureConfigurationDailyRiskThreshold: Int?,                          // 30,
-    val exposureConfigurationAttenuationDurationThresholds: List<Int>?,         // [33, 63],
-    val exposureConfigurationAttenuationLevelValues: List<Int>?,                // [0, 1, 2, 2, 15, 15, 15, 15],
-    val exposureConfigurationDaysSinceLastExposureLevelValues: List<Int>?,      // [1, 1, 1, 1, 1, 1, 1, 1],
-    val exposureConfigurationDurationLevelValues: List<Int>?,                   // [0, 2, 6, 10, 15, 20, 25, 30],
-    val exposureConfigurationTransmissionRiskLevelValues: List<Int>?            // [1, 1, 1, 1, 1, 1, 1, 1]
+    val exposureConfigurationMinimumRiskScore: Int = 1,                                                    // 1,
+    val exposureConfigurationDailyRiskThreshold: Int = 30,                                                 // 30,
+    val exposureConfigurationAttenuationDurationThresholds: List<Int> = listOf(33,53),                     // [33, 63],
+    val exposureConfigurationAttenuationLevelValues: List<Int> = listOf(0, 1, 2, 2, 15, 15, 15, 15),       // [0, 1, 2, 2, 15, 15, 15, 15],
+    val exposureConfigurationDaysSinceLastExposureLevelValues: List<Int> = listOf(1, 1, 1, 1, 1, 1, 1, 1), // [1, 1, 1, 1, 1, 1, 1, 1],
+    val exposureConfigurationDurationLevelValues: List<Int> = listOf(0, 2, 6, 10, 15, 20, 25, 30),         // [0, 2, 6, 10, 15, 20, 25, 30],
+    val exposureConfigurationTransmissionRiskLevelValues: List<Int> = listOf(1, 1, 1, 1, 1, 1, 1, 1)       // [1, 1, 1, 1, 1, 1, 1, 1]
 
 ) : DbEntity
 
@@ -110,14 +110,24 @@ class ArrayOfIntegerConverter {
             return null
         }
         return buildString {
-            listOfIntegers?.forEach {
-                this.append(it).append(SEPARATOR)
+            listOfIntegers?.forEachIndexed() { index, it ->
+                this.append(it)
+                if (index < listOfIntegers.size - 1){
+                    this.append(SEPARATOR)
+                }
             }
         }
     }
 
     @TypeConverter
     fun set(commaSeparatedListOfIntegers: String?): List<Int>? {
+        if (commaSeparatedListOfIntegers == null) {
+            return null
+        }
+        if (commaSeparatedListOfIntegers.isEmpty()){
+            return emptyList()
+        }
+
         return commaSeparatedListOfIntegers?.split(SEPARATOR)?.map { Integer.parseInt(it) }
     }
 }
