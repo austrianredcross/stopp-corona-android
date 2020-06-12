@@ -40,9 +40,9 @@ class DatabaseCleanupManagerImpl(
 ) : DatabaseCleanupManager, CoroutineScope, KoinComponent {
 
     companion object {
-        const val THRESHOLD_REMOVE_INCOMING_GREEN_MESSAGES = 3L //in days
-        val UNIX_TIME_START: ZonedDateTime =
-            ZonedDateTime.ofInstant(Instant.ofEpochSecond(1), ZoneId.of("Europe/Paris"));
+        private const val THRESHOLD_REMOVE_INCOMING_GREEN_MESSAGES = 3L //in days
+        private val UNIX_TIME_START: ZonedDateTime =
+            ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault())
     }
 
     override val coroutineContext: CoroutineContext

@@ -19,7 +19,6 @@ val scopeModule = module {
             apiInteractor = get(),
             quarantineRepository = get(),
             contextInteractor = get(),
-            exposureNotificationRepository = get(),
             infectionMessengerRepository = get(),
             configurationRepository = get(),
             databaseCleanupManager = get()
