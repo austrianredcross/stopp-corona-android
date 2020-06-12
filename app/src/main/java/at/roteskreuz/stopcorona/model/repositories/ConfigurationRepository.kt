@@ -34,7 +34,7 @@ interface ConfigurationRepository {
     /**
      * Get the cached version of the configuration.
      */
-    suspend fun getConfiguration(): DbConfiguration
+    suspend fun getConfiguration(): DbConfiguration?
 
     /**
      * Observe cached version of configuration.
@@ -74,7 +74,7 @@ class ConfigurationRepositoryImpl(
         }
     }
 
-    override suspend fun getConfiguration(): DbConfiguration {
+    override suspend fun getConfiguration(): DbConfiguration? {
         return configurationDao.getConfiguration()
     }
 

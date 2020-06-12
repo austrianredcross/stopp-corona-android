@@ -85,7 +85,7 @@ abstract class ConfigurationDao {
     abstract fun observeConfiguration(): Flowable<DbConfiguration>
 
     @Query("SELECT * FROM configuration")
-    abstract fun getConfiguration(): DbConfiguration
+    abstract fun getConfiguration(): DbConfiguration?
 
     @Transaction
     @Query(
