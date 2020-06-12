@@ -42,7 +42,7 @@ class DownloadInfectionMessagesWorker(
 
     override suspend fun doWork(): Result {
 
-        infectionMessengerRepository.fetchDecryptAndStoreNewMessages()
+        infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
 
         return Result.success()
     }

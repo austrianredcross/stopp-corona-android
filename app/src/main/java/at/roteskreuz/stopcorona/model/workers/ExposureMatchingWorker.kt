@@ -69,7 +69,7 @@ class ExposureMatchingWorker(
         // TODO mihbat 10-Jun: Run the exposure matching algorithm described in
         //  ticket https://tasks.pxp-x.com/browse/CTAA-1360 .
 
-        infectionMessengerRepository.fetchDecryptAndStoreNewMessages()
+        infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
 
         // Schedule the next exposure matching work.
         enqueueNextExposureMatching(workManager)

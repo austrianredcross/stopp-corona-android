@@ -3,7 +3,6 @@ package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.view.View
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.api.ContentDeliveryNetworkDescription
@@ -26,7 +25,6 @@ import io.reactivex.Observable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import java.util.UUID
 
 class DebugDiagnosisKeysViewModel(
@@ -165,13 +163,13 @@ class DebugDiagnosisKeysViewModel(
         launch (appDispatchers.Default){
             try {
                 exposureNotificationsTextSubject.onNext("downloading the index now")
-                val archive = apiInteractor.getIndexOfDignosisKeysArchives()
-                val pathToFirstArchive = archive.fullBatch.batchFilePaths.first()
+                val archive = apiInteractor.getIndexOfDiagnosisKeysArchives()
+                val pathToFirstArchive = archive.full14DaysBatch.batchFilePaths.first()
                 exposureNotificationsTextSubject.onNext("got the archive $archive now downloading $pathToFirstArchive")
 
                 delay(1000)
 
-                var downloadedFile = apiInteractor.downloadContentDeliveryFiles2(pathToFirstArchive)
+                var downloadedFile = apiInteractor.downloadContentDeliveryFileToTempFile(pathToFirstArchive)
                 exposureNotificationsTextSubject.onNext("$pathToFirstArchive downloaded successfully to " +
                     "${downloadedFile.absolutePath}} resulting in a filesize of ${downloadedFile.length()} bytes  ")
 

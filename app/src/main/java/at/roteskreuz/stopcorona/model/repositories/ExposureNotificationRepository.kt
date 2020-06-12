@@ -3,22 +3,29 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
+import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
+import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import java.io.File
+import java.util.UUID
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * Repository for managing Exposure notification framework.
@@ -100,6 +107,17 @@ interface ExposureNotificationRepository {
      */
     //TODO: for Dusan, see if we actually nee the non blocking function
     suspend fun registerAppForExposureNotificationsNow()
+
+    /**
+     * had over Diagnosis Key files to the framework for
+     */
+    suspend fun processBatchDiagnosisKeys(archives: List<File>): String
+
+    /**
+     * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
+     * at least YELLOW
+     */
+    suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -245,6 +263,43 @@ class ExposureNotificationRepositoryImpl(
                 .addOnFailureListener {
                     continuation.cancel(it)
                 }
+        }
+    }
+
+    override suspend fun processBatchDiagnosisKeys(archives: List<File>): String {
+        val token = UUID.randomUUID().toString()
+        val configuration = ExposureConfiguration.ExposureConfigurationBuilder()
+            .setDurationAtAttenuationThresholds(50, 60)
+            .setMinimumRiskScore(1)
+            .setDaysSinceLastExposureScores(1,2,3,4,5,6,7,8)
+            .setDurationScores(1,2,3,4,5,6,7,8)
+            .setAttenuationScores(1,2,3,4,5,6,7,8)
+            .setDaysSinceLastExposureWeight(100)
+            .setTransmissionRiskWeight(100)
+            .build()
+
+        return suspendCancellableCoroutine { continuation ->
+            exposureNotificationClient.provideDiagnosisKeys(archives, configuration, token)
+                .addOnCompleteListener{
+                    if (it.isSuccessful) {
+                        continuation.resume(token)
+                    } else {
+                        continuation.cancel(it.exception)
+                    }
+                }
+        }
+
+    }
+
+    override suspend fun determineRiskWithoutInformingUser(token: String) : ExposureSummary{
+        return suspendCancellableCoroutine { continuation ->
+            exposureNotificationClient.getExposureSummary(token).addOnCompleteListener {
+                if (it.isSuccessful){
+                    continuation.resume(it.result)
+                } else {
+                    continuation.cancel(it.exception)
+                }
+            }
         }
     }
 }

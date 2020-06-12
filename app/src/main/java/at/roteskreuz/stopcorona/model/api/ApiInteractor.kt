@@ -1,6 +1,5 @@
 package at.roteskreuz.stopcorona.model.api
 
-import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.*
@@ -15,10 +14,8 @@ import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnect
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.HttpException
-import retrofit2.Retrofit
+import timber.log.Timber
 import java.io.*
 import java.net.HttpURLConnection.*
 
@@ -66,9 +63,11 @@ interface ApiInteractor {
     /**
      * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfDignosisKeysArchives(): IndexOfDiagnosisKeysArchives
-    suspend fun downloadContentDeliveryFiles(pathToArchive: String): File
-    suspend fun downloadContentDeliveryFiles2(pathToArchive: String): File
+    suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
+
+    suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File
+
+    suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
 }
 
 class ApiInteractorImpl(
@@ -137,26 +136,14 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun downloadContentDeliveryFiles(pathToArchive: String): File {
-        val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
 
-        val cacheDir = contextInteractor.applicationContext.getCacheDir()
-        val outputFile: File = File(cacheDir, pathToArchive.replace("/","-"))
-        //outputFile.deleteOnExit()
-
-        response.body()?.let {
-            if (writeResponseBodyToDisk(it,outputFile).not()){
-                throw IOException("could not write to file")
-            }
-        }
-        return outputFile
-    }
-
-    override suspend fun downloadContentDeliveryFiles2(pathToArchive: String): File {
+    override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File {
         val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
         if (response.isSuccessful) {
             val cacheDir = contextInteractor.applicationContext.getCacheDir()
             val outputFile: File = File(cacheDir, pathToArchive.replace("/", "-"))
+
+            outputFile.deleteOnExit()
 
             response.body()?.byteStream()?.saveToFile(outputFile)
             return outputFile
@@ -166,39 +153,30 @@ class ApiInteractorImpl(
         }
     }
 
-    private fun InputStream.saveToFile(file: File) = use { input ->
-        file.outputStream().use { output ->
-            input.copyTo(output)
+    override suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
+        val indexOfArchives = getIndexOfDiagnosisKeysArchives()
+
+        when(warningType){
+            WarningType.YELLOW, WarningType.RED-> {
+                return indexOfArchives.full14DaysBatch.batchFilePaths.map {
+                    Timber.d("Downloading the full 14 days batch, ther could revocations" +
+                        "in the last 14 days even")
+                    downloadContentDeliveryFileToTempFile(it)
+                }
+            }
+            WarningType.REVOKE -> {
+                return indexOfArchives.full07DaysBatch.batchFilePaths.map {
+                    Timber.d("Downloading the full 7 days batch because there can´t" +
+                        "be changes longer than 7 days ago as we were not exposed.")
+                    downloadContentDeliveryFileToTempFile(it)
+                }
+            }
         }
     }
 
-    private fun writeResponseBodyToDisk(body: ResponseBody, file: File): Boolean {
-        return try {
-            var inputStream: InputStream? = null
-            var outputStream: OutputStream? = null
-            try {
-                val fileReader = ByteArray(4096)
-                var fileSizeDownloaded: Long = 0
-                inputStream = body.byteStream()
-                outputStream = FileOutputStream(file)
-                while (true) {
-                    val read: Int = inputStream.read(fileReader)
-                    if (read == -1) {
-                        break
-                    }
-                    outputStream.write(fileReader, 0, read)
-                    fileSizeDownloaded += read.toLong()
-                }
-                outputStream.flush()
-                true
-            } catch (e: IOException) {
-                false
-            } finally {
-                inputStream?.close()
-                outputStream?.close()
-            }
-        } catch (e: IOException) {
-            false
+    private fun InputStream.saveToFile(file: File) = use { input ->
+        file.outputStream().use { output ->
+            input.copyTo(output)
         }
     }
 

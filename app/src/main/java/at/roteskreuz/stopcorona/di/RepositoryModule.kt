@@ -55,7 +55,8 @@ val repositoryModule = module {
             preferences = get(),
             quarantineRepository = get(),
             workManager = get(),
-            databaseCleanupManager = get()
+            databaseCleanupManager = get(),
+            exposureNotificationRepository = get()
         )
     }
 
