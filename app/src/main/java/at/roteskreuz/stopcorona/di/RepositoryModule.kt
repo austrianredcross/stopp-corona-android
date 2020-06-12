@@ -52,6 +52,7 @@ val repositoryModule = module {
             appDispatchers = get(),
             apiInteractor = get(),
             infectionMessageDao = get(),
+            temporaryExposureKeysDao = get(),
             cryptoRepository = get(),
             notificationsRepository = get(),
             preferences = get(),
