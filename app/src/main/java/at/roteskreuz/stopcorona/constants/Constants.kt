@@ -108,8 +108,12 @@ object Constants {
         const val HOSTNAME_TAN = BuildConfig.HOSTNAME_TAN
         const val BASE_URL_TAN = BuildConfig.BASE_URL_TAN
 
+        const val HOSTNAME_CDN = BuildConfig.HOSTNAME_CDN
+        const val BASE_URL_CDN = BuildConfig.BASE_URL_CDN
+
         val CERTIFICATE_CHAIN_DEFAULT: Array<String> = BuildConfig.CERTIFICATE_CHAIN
         val CERTIFICATE_CHAIN_TAN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_TAN
+        val CERTIFICATE_CHAIN_CDN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_CDN
 
         const val HTTP_CACHE_SIZE = 64L * 1024L * 1024L // 64 MB
 
