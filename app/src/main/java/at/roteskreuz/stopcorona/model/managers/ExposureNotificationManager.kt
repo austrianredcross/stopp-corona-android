@@ -517,7 +517,7 @@ sealed class ExposureNotificationPhase {
         /**
          * Framework cannot be started with this error.
          */
-        sealed class Critical {
+        sealed class Critical : FrameworkError() {
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.SIGN_IN_REQUIRED].
@@ -526,7 +526,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.INVALID_ACCOUNT].
@@ -535,7 +535,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.RESOLUTION_REQUIRED].
@@ -545,7 +545,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError() {
+            ) : Critical() {
 
                 fun onResolutionOk() {
                     dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
@@ -564,7 +564,7 @@ sealed class ExposureNotificationPhase {
             data class ResolutionDeclined(
                 override val dependencyHolder: DependencyHolder,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.NETWORK_ERROR].
@@ -573,7 +573,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.INTERNAL_ERROR].
@@ -582,7 +582,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.DEVELOPER_ERROR].
@@ -591,7 +591,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.ERROR].
@@ -600,7 +600,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.INTERRUPTED].
@@ -609,7 +609,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.TIMEOUT].
@@ -618,7 +618,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.CANCELED].
@@ -627,7 +627,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework [ApiException] of [CommonStatusCodes.API_NOT_CONNECTED].
@@ -636,7 +636,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: ApiException,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
 
             /**
              * Framework caused some unknown error.
@@ -646,7 +646,7 @@ sealed class ExposureNotificationPhase {
                 override val dependencyHolder: DependencyHolder,
                 val exception: Throwable,
                 override val register: Boolean
-            ) : FrameworkError()
+            ) : Critical()
         }
 
         /**
