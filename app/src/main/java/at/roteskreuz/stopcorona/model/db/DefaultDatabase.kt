@@ -28,7 +28,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 17,
+    version = 18,
     exportSchema = false
 )
 @TypeConverters(
@@ -191,6 +191,12 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(16, 17) {
                 // delete DbSentInfectionMessage
                 execSQL("DROP TABLE `sent_infection_message`")
+            },
+            /**
+             * Add new column in `configuration` table for the number of days of temporary
+             * exposure keys to be uploaded.
+             */
+            migration(17, 18) {
                 // add new column for the number of days of temporary exposure keys that will be uploaded
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `uploadKeysDays` INTEGER")
             }
