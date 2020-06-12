@@ -75,15 +75,23 @@ class DatabaseCleanupManagerImpl(
         launch {
             val configuration = configurationRepository.observeConfiguration().blockingFirst()
 
-            val thresholdRedMessages = ZonedDateTime.now()
-                .minusHours(configuration.redWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
+            val redWarningQuarantine = configuration.redWarningQuarantine?.toLong()
+            val thresholdRedMessages = if (redWarningQuarantine != null) {
+                ZonedDateTime.now().minusHours(redWarningQuarantine)
+            } else {
+                UNIX_TIME_START
+            }
             infectionMessageDao.removeReceivedInfectionMessagesOlderThan(
                 MessageType.InfectionLevel.Red,
                 thresholdRedMessages
             )
 
-            val thresholdYellowMessages = ZonedDateTime.now()
-                .minusHours(configuration.yellowWarningQuarantine?.toLong() ?: Long.MAX_VALUE)
+            val yellowWarningQuarantine = configuration.yellowWarningQuarantine?.toLong()
+            val thresholdYellowMessages = if (yellowWarningQuarantine != null) {
+                ZonedDateTime.now().minusHours(yellowWarningQuarantine)
+            } else {
+                UNIX_TIME_START
+            }
             infectionMessageDao.removeReceivedInfectionMessagesOlderThan(
                 MessageType.InfectionLevel.Yellow,
                 thresholdYellowMessages
