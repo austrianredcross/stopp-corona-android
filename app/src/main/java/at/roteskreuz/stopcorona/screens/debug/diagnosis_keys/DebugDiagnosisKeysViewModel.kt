@@ -1,13 +1,11 @@
-package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
+package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
@@ -21,26 +19,20 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 
-class DebugExposureNotificationsViewModel(
-    appDispatchers : AppDispatchers,
+class DebugDiagnosisKeysViewModel(
+    appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository
-) : ScopedViewModel(appDispatchers)  {
+) : ScopedViewModel(appDispatchers) {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
-    private val lastTemporaryExposureKeysSubject =
-        NonNullableBehaviorSubject(mutableListOf<Pair<List<TemporaryExposureKey>, UUID>>());
-    private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
-
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
         Nearby.getExposureNotificationClient(contextInteractor.applicationContext);
@@ -73,10 +65,6 @@ class DebugExposureNotificationsViewModel(
         return exposureNotificationsTextSubject
     }
 
-    fun observeLastTemporaryExposureKeys(): Observable<MutableList<Pair<List<TemporaryExposureKey>, UUID>>> {
-        return lastTemporaryExposureKeysSubject
-    }
-
     /**
      * Calls start on the Exposure Notifications API.
      */
@@ -97,7 +85,7 @@ class DebugExposureNotificationsViewModel(
                 }
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result but not handled in UI")
+                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result which is not handled in UI. Framework must be running to continue.")
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
@@ -123,7 +111,6 @@ class DebugExposureNotificationsViewModel(
                 Timber.w(exception, "Failed to unregister")
                 exposureNotificationsTextSubject.onNext("Failed to unregister from the Exposure Notifications framework: '$exception'")
             }
-
     }
 
     fun jumpToSystemSettings() {
@@ -155,85 +142,18 @@ class DebugExposureNotificationsViewModel(
         startExposureNotifications(activity)
     }
 
-    fun resolutionForExposureKeyHistorySucceded() {
-        exposureNotificationsTextSubject.onNext("resolution succeded, getting the keys")
-        getTemporaryExposureKeyHistory()
-    }
-
-    fun getTemporaryExposureKeyHistory() {
-        exposureNotificationClient.temporaryExposureKeyHistory
-            .addOnSuccessListener {
-                Timber.d("got the list of Temporary Exposure Keys $it")
-                exposureNotificationsTextSubject.onNext(
-                    "got the list of Temp" +
-                            "oraryExposureKeys $it"
-                )
-                lastTemporaryExposureKeysSubject.onNext(
-                    it.groupBy { temporaryExposureKey ->
-                        temporaryExposureKey.rollingStartIntervalNumber
-                    }.map { (_, temporaryExposureKeys) ->
-                        temporaryExposureKeys to UUID.randomUUID()
-                    }.toMutableList()
-                )
-            }
-            .addOnFailureListener { exception: Exception? ->
-                if (exception !is ApiException) {
-                    Timber.e(exception, "Unknown error when attempting to start API")
-                    exposureNotificationsEnabledSubject.onNext(false)
-                    exposureNotificationsTextSubject.onNext("Unknown error when attempting to start API: '${exception}'")
-                    return@addOnFailureListener
-                }
-                val apiException = exception
-                if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(ResolutionType.GetExposureKeys(apiException.status))
-                    exposureNotificationsErrorState.idle()
-                    exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
-                    exposureNotificationsEnabledSubject.onNext(false)
-                } else {
-                    Timber.e(apiException, "No RESOLUTION_REQUIRED in result")
-                    exposureNotificationsTextSubject.onNext("No RESOLUTION_REQUIRED in result: '$exception'")
-                    exposureNotificationsEnabledSubject.onNext(false)
-                }
-            }
-    }
-
-    fun resolutionForExposureKeyHistoryFailed(resultCode: Int) {
-        exposureNotificationsTextSubject.onNext("resolutionForExposureKeyHistoryFailed with code: $resultCode")
-    }
-
     fun resolutionForRegistrationFailed(resultCode: Int) {
         exposureNotificationsTextSubject.onNext("resolutionForRegistrationFailed with code: $resultCode")
     }
 
-    fun requestTan(mobileNumber: String) {
+    fun downloadDiagnosisKeysArchiveIndex() {
         launch {
             try {
-                val tanRequestUUID = apiInteractor.requestTan(mobileNumber).uuid
-                tanRequestUUIDSubject.onNext(tanRequestUUID)
-                exposureNotificationsTextSubject.onNext("TAN for $mobileNumber was requested with UUID $tanRequestUUID")
-
-            } catch (e:Exception){
-                exposureNotificationsTextSubject.onNext("TAN for  ${mobileNumber} failed because of $e")
-                Timber.e(e)
-            }
-        }
-    }
-
-    fun uploadKeys(warningType: WarningType, tan: String) {
-        val keys = lastTemporaryExposureKeysSubject.value
-        launch {
-            try {
-                apiInteractor.uploadInfectionData(
-                    keys.asApiEntity(),
-                    contextInteractor.packageName,
-                    warningType,
-                    ApiVerificationPayload(tanRequestUUIDSubject.value, tan)
-                )
-                exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs succeeded")
-            } catch (e:Exception){
-                exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs failed because of $e")
-                Timber.e(e)
+                val archive = apiInteractor.getIndexOfDiagnosisKeysArchives()
+                exposureNotificationsTextSubject.onNext("got the archive $archive")
+            } catch (exception: java.lang.Exception) {
+                Timber.e(SilentError(exception))
+                exposureNotificationsTextSubject.onNext("Error while getting the index: $exception")
             }
         }
     }

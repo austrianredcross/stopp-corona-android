@@ -3,9 +3,9 @@ package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkRunning
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.WaitingForWantedState
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkRunning
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.WaitingForWantedState
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.utils.string

@@ -1,36 +1,36 @@
-package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
+package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.*
+import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsErrorMessage
+import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsMasterSwitch
+import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsSettingsButton
+import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.googlePlayServicesVersionTextView
+import kotlinx.android.synthetic.main.debug_diagnosis_keys_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_tracing_fragment) {
+class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragment) {
 
     companion object {
         private const val REQUEST_CODE_REGISTER_WITH_FRAMEWORK = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 1
-        private const val REQUEST_CODE_REQUEST_EXPOSURE_KEYS = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 2
     }
 
     private var listenerActive: Boolean = false
-    private val viewModel: DebugExposureNotificationsViewModel by viewModel()
+    private val viewModel: DebugDiagnosisKeysViewModel by viewModel()
 
     override val isToolbarVisible: Boolean
         get() = true
@@ -41,29 +41,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
 
-        val uploadKeylistener = View.OnClickListener {button ->
-            val tan = exposureNotificationsTanEditText.text.toString()
-            if (tan.isNullOrBlank()){
-                activity?.let { Toast.makeText(activity,"please add TAN", Toast.LENGTH_SHORT)}
-                exposureNotificationsTanEditText.error = "please provide TAN"
-                return@OnClickListener
-            }else {
-                exposureNotificationsTanEditText.error = null
-            }
-            val warningType = when (button) {
-                exposureNotificationsUploadTemporaryExposureKeysGreenButton -> WarningType.REVOKE
-                exposureNotificationsUploadTemporaryExposureKeysRedButton -> WarningType.RED
-                exposureNotificationsUploadTemporaryExposureKeysYellowButton -> WarningType.YELLOW
-                else -> throw IllegalArgumentException()
-            }
-
-            viewModel.uploadKeys(warningType, tan)
-        }
-        exposureNotificationsUploadTemporaryExposureKeysGreenButton.setOnClickListener(uploadKeylistener)
-        exposureNotificationsUploadTemporaryExposureKeysRedButton.setOnClickListener(uploadKeylistener)
-        exposureNotificationsUploadTemporaryExposureKeysYellowButton.setOnClickListener(uploadKeylistener)
-
-        exposureNotificationsTanButton.setOnClickListener { viewModel.requestTan(exposureNotificationsPhoneNumberEditText.text.toString()) }
+        exposureNotificationsTracingKeysDownloadIndexButton.setOnClickListener { viewModel.downloadDiagnosisKeysArchiveIndex() }
 
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 
@@ -81,15 +59,6 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 exposureNotificationsErrorMessage.text = it
             }
 
-        var uploadButtons = listOf(exposureNotificationsUploadTemporaryExposureKeysGreenButton,
-            exposureNotificationsUploadTemporaryExposureKeysRedButton,
-            exposureNotificationsUploadTemporaryExposureKeysYellowButton
-        )
-        disposables+= viewModel.observeLastTemporaryExposureKeys()
-            .observeOnMainThread()
-            .subscribe { keys ->
-                uploadButtons.onEach { it.text = "${keys.size} keys ready to be uploaded" }
-            }
 
         disposables += viewModel.observeResolutionError()
             .observeOnMainThread()
@@ -99,18 +68,10 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                         //TODO think about what to do here
                     }
                     is DataState.Loaded -> {
-                        when (state.data){
-                            is ResolutionType.GetExposureKeys -> {
-                                state.data.status.startResolutionForResult(activity, REQUEST_CODE_REQUEST_EXPOSURE_KEYS)
-                            }
-                        }
+                        // no resolution handled. Framework must be running already to continue.
                     }
                 }
             }
-
-        exposureNotificationsGetTemporaryExposureKeyHistoryButton.setOnClickListener{
-            viewModel.getTemporaryExposureKeyHistory()
-        }
 
         exposureNotificationsMasterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (listenerActive.not()) {
@@ -130,7 +91,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
     }
 
     override fun getTitle(): String? {
-        return "Exposure Tracing"
+        return "Diagnosis Keys Processing"
     }
 
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
@@ -149,14 +110,6 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                     viewModel.resolutionForRegistrationFailed(resultCode)
                 }
             }
-            REQUEST_CODE_REQUEST_EXPOSURE_KEYS -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    viewModel.resolutionForExposureKeyHistorySucceded()
-                }
-                else {
-                    viewModel.resolutionForExposureKeyHistoryFailed(resultCode)
-                }
-            }
             else -> {
                 super.onActivityResult(requestCode, resultCode, data)
             }
@@ -164,8 +117,8 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
     }
 }
 
-fun Activity.startDebugExposureNotificationsFragment() {
+fun Activity.startDebugDiagnosisKeysFragment() {
     startFragmentActivity<CoronaPortraitBaseActivity>(
-        fragmentName = DebugExposureNotificationsFragment::class.java.name
+        fragmentName = DebugDiagnosisFragment::class.java.name
     )
 }
