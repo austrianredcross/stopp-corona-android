@@ -15,6 +15,7 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.toRollingStartIntervalNumber
 import at.roteskreuz.stopcorona.utils.view.safeMap
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
@@ -47,7 +48,10 @@ interface ReportingRepository {
 
     /**
      * Upload the report information with the upload infection request.
-     * @throws InvalidConfigurationException
+     * @throws InvalidConfigurationException - in case the configuration doesn't provide
+     * all the necessary data.
+     * @throws ApiException - in case an exception occurs while accessing data from the
+     * Exposure SDK.
      *
      * @return Returns the messageType the user sent to his contacts
      */
