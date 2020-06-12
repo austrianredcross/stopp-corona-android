@@ -10,8 +10,11 @@ import java.time.DateTimeException
  */
 @JsonClass(generateAdapter = true)
 data class IndexOfDiagnosisKeysArchives(
-    @field:Json(name = "full_batch")
-    val fullBatch: DiagnosisKeysBatch,
+    @field:Json(name = "full_14_batch")
+    val full14DaysBatch: DiagnosisKeysBatch,
+
+    @field:Json(name = "full_7_batch")
+    val full07DaysBatch: DiagnosisKeysBatch,
 
     @field:Json(name = "daily_batches")
     val dailyBatches: List<DiagnosisKeysBatch>
