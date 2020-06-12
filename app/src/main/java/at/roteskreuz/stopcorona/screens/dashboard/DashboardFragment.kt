@@ -12,8 +12,8 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.FrameworkError
-import at.roteskreuz.stopcorona.screens.dashboard.ExposureNotificationPhase.PrerequisitesError
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -30,6 +30,7 @@ import at.roteskreuz.stopcorona.utils.startDialogToEnableBluetooth
 import at.roteskreuz.stopcorona.utils.startGooglePlayStore
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -58,11 +59,19 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onAutomaticHandshakeInformationClick = {
                 startHandshakeExplanationFragment()
             },
-            onFeelingClick = {
-                startQuestionnaireFragment()
+            onFeelingClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startQuestionnaireFragment()
+                }
             },
-            onReportClick = {
-                startReportingActivity(MessageType.InfectionLevel.Red)
+            onReportClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startReportingActivity(MessageType.InfectionLevel.Red)
+                }
             },
             onHealthStatusClick = { healthStatusData ->
                 when (healthStatusData) {
@@ -104,7 +113,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                         startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
                     }
-                    is FrameworkError.BluetoothNotEnabled -> {
+                    is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                         startDialogToEnableBluetooth()
                     }
                     is FrameworkError -> {
@@ -176,13 +185,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { phase ->
                 controller.exposureNotificationPhase = phase
                 when (phase) {
-                    is FrameworkError.ResolutionRequired -> {
+                    is FrameworkError.Critical.ResolutionRequired -> {
                         phase.exception.status.startResolutionForResult(
                             requireActivity(),
                             REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
                         )
                     }
-                    is FrameworkError.Unknown -> handleBaseCoronaErrors(phase.exception)
+                    is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
             }
 

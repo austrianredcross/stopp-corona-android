@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
@@ -69,11 +68,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
                         //TODO think about what to do here
                     }
                     is DataState.Loaded -> {
-                        when (state.data){
-                            is ResolutionType.RegisterWithFramework -> {
-                                state.data.status.startResolutionForResult(activity, REQUEST_CODE_REGISTER_WITH_FRAMEWORK)
-                            }
-                        }
+                        // no resolution handled. Framework must be running already to continue.
                     }
                 }
             }

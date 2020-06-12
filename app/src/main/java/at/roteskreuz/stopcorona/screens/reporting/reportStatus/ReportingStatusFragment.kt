@@ -40,8 +40,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
 
     companion object {
         const val CURRENT_SCREEN = 3
-        private const val REQUEST_CODE_REGISTER_WITH_FRAMEWORK = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 1
-        private const val REQUEST_CODE_REQUEST_EXPOSURE_KEYS = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 2
+        private const val REQUEST_CODE_REQUEST_EXPOSURE_KEYS = Constants.Request.REQUEST_REPORTING_STATUS_FRAGMENT + 1
     }
 
     private val viewModel: ReportingStatusViewModel by viewModel()
@@ -104,9 +103,6 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                 when (state) {
                     is DataState.Loaded -> {
                        when (state.data) {
-                           is ResolutionType.RegisterWithFramework -> {
-                               state.data.status.startResolutionForResult(activity, REQUEST_CODE_REGISTER_WITH_FRAMEWORK)
-                           }
                            is ResolutionType.GetExposureKeys -> {
                                state.data.status.startResolutionForResult(activity, REQUEST_CODE_REQUEST_EXPOSURE_KEYS)
                            }
@@ -153,6 +149,10 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                     }
                     is State.Error -> {
                         when (state.error) {
+                            is FrameworkNotReady -> {
+                                GeneralErrorDialog(R.string.certificate_report_framework_is_not_ready_title,
+                                    R.string.certificate_report_framework_is_not_ready_message).show()
+                            }
                             is SicknessCertificateUploadException.TanInvalidException -> {
                                 GeneralErrorDialog(R.string.certificate_report_status_invalid_tan_error,
                                     R.string.certificate_report_status_invalid_tan_error_description).show()
@@ -179,14 +179,6 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            REQUEST_CODE_REGISTER_WITH_FRAMEWORK -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    viewModel.resolutionForRegistrationSucceeded()
-                }
-                else {
-                    viewModel.resolutionForRegistrationFailed()
-                }
-            }
             REQUEST_CODE_REQUEST_EXPOSURE_KEYS -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.resolutionForExposureKeyHistorySucceeded()
