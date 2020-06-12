@@ -54,6 +54,12 @@
         android:layout_height="wrap_content"
         android:text="Get Exposure Information" />
 
+    <Button
+        android:id="@+id/diagnosisKeysBackgroundProcessingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="start the background processing" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

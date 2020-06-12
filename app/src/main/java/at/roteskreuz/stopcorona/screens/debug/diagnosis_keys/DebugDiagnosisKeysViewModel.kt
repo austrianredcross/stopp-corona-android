@@ -8,6 +8,7 @@ import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.api.ContentDeliveryNetworkDescription
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
+import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -32,7 +33,8 @@ class DebugDiagnosisKeysViewModel(
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository,
-    private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription
+    private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
+    val infectionMessengerRepository: InfectionMessengerRepository
 ) : ScopedViewModel(appDispatchers)  {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
@@ -239,5 +241,20 @@ class DebugDiagnosisKeysViewModel(
                     }
                 }
         }
+    }
+
+    fun startBackgroundDiagnosisKeysProcessing() {
+        launch (appDispatchers.Default){
+            try {
+                exposureNotificationsTextSubject.onNext("launching the diagnosis keys background processing")
+                infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
+                exposureNotificationsTextSubject.onNext("sucessfully launched the background processing")
+            } catch (ex: Exception) {
+                exposureNotificationsTextSubject.onNext("error while launching the diagnosis keys background processing: ${ex}")
+            }
+
+
+        }
+
     }
 }

@@ -48,6 +48,8 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
 
         diagnosisKeysGetExposureInformationButton.setOnClickListener { viewModel.getDiagnosisKeysGetExposureInformation() }
 
+        diagnosisKeysBackgroundProcessingButton.setOnClickListener { viewModel.startBackgroundDiagnosisKeysProcessing() }
+
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
 
         disposables += viewModel.observeDiagnosisKeyToken()

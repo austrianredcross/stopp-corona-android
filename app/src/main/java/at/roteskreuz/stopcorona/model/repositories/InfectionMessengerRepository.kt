@@ -162,10 +162,8 @@ class InfectionMessengerRepositoryImpl(
                 if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
                     val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
                     //go through the days and check if the day is the first RED/YELLOW day
-                    summary.map {daySummary ->
-                        daySummary.totalRiskScore > configuration.exposureConfigurationDailyRiskThreshold
-                    }
-                } else{
+                    // TODO: go through the summary and check if the day is the first RED/YELLOW day
+                } else {
                     //TODO: we are green again
                 }
             }
@@ -174,7 +172,6 @@ class InfectionMessengerRepositoryImpl(
                 if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
                     //we must now identify day by day if we are YELLOW or RED
                     val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
-
                 }
             }
         }
