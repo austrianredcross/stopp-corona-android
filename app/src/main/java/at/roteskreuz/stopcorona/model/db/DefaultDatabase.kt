@@ -182,8 +182,6 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("DROP TABLE `nearby_record`")
                 // delete DbAutomaticDiscoveryEvent
                 execSQL("DROP TABLE `automatic_discovery`")
-                // delete DbSentInfectionMessage
-                execSQL("DROP TABLE `sent_infection_message`")
             },
             /**
              * Removing [DbSentInfectionMessage].
