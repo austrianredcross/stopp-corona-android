@@ -95,7 +95,7 @@ class DatabaseCleanupManagerImpl(
 
     private fun cleanupSentTemporaryExposureKeys() {
         launch {
-            val configuration = configurationRepository.observeConfiguration().blockingFirst()
+            val configuration = configurationRepository.getConfiguration()
 
             val nowAsRollingStartIntervalNumber = ZonedDateTime.now()
                 .toRollingStartIntervalNumber()

@@ -32,6 +32,11 @@ interface ConfigurationRepository {
     suspend fun fetchAndStoreConfiguration()
 
     /**
+     * Get the cached version of the configuration.
+     */
+    suspend fun getConfiguration(): DbConfiguration
+
+    /**
      * Observe cached version of configuration.
      */
     fun observeConfiguration(): Observable<DbConfiguration>
@@ -67,6 +72,10 @@ class ConfigurationRepositoryImpl(
             val apiConfiguration = apiInteractor.getConfiguration()
             configurationDao.updateConfiguration(apiConfiguration)
         }
+    }
+
+    override suspend fun getConfiguration(): DbConfiguration {
+        return configurationDao.getConfiguration()
     }
 
     override fun observeConfiguration(): Observable<DbConfiguration> {
