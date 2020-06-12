@@ -16,6 +16,7 @@ import at.roteskreuz.stopcorona.di.CertificatePinnerTag.defaultCertificatePinner
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.tanCertificatePinnerTag
 import at.roteskreuz.stopcorona.model.api.*
 import at.roteskreuz.stopcorona.model.entities.infection.info.LocalDateNotIsoAdapter
+import at.roteskreuz.stopcorona.model.entities.infection.info.UUIDAdapter
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.model.managers.BluetoothManagerImpl
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
@@ -104,6 +105,7 @@ val remoteModule = module {
     single {
         createMoshi {
             add(LocalDateNotIsoAdapter)
+            add(UUIDAdapter)
         }
     }
 

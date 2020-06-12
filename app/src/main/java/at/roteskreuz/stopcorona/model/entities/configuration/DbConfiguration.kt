@@ -26,6 +26,7 @@ data class DbConfiguration(
     val redWarningQuarantine: Int?,
     val yellowWarningQuarantine: Int?,
     val selfDiagnosedQuarantine: Int?,
+    val uploadKeysDays: Int?,
     /**
      * Time of updating.
      */

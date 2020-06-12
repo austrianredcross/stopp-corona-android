@@ -150,3 +150,17 @@ fun ZonedDateTime.formatHandshakeShortVersion(context: Context): String {
 fun ZonedDateTime.isInTheFuture(): Boolean {
     return this.isAfter(ZonedDateTime.now())
 }
+
+/**
+ * Converts a unix timestamp to a rolling start interval number.
+ */
+fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
+    return (toEpochSecond() / 600).toInt()
+}
+
+/**
+ * Returns end of the day of the provided [ZonedDateTime].
+ */
+fun ZonedDateTime.startOfTheDay(): ZonedDateTime {
+    return withHour(0).withMinute(1)
+}

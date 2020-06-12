@@ -54,13 +54,10 @@ class ReportingStatusViewModel(
                     uploadReportDataStateObserver.error(FrameworkNotReady)
                     return@launch
                 }
+
                 val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
-                try {
-                    val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
-                    uploadReportDataStateObserver.loaded(reportedInfectionLevel)
-                } catch (ex: Exception) {
-                    uploadReportDataStateObserver.error(ex)
-                }
+                val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
+                uploadReportDataStateObserver.loaded(reportedInfectionLevel)
             } catch (apiException: ApiException) {
                 when (apiException.statusCode) {
                     ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
@@ -71,7 +68,7 @@ class ReportingStatusViewModel(
                         return@launch
                     }
                 }
-            } catch (exception: java.lang.Exception) {
+            } catch (exception: Exception) {
                 Timber.e(exception, "Unknown error when attempting to start API")
                 uploadReportDataStateObserver.error(exception)
             } finally {

@@ -200,4 +200,15 @@ object Constants {
         const val EMPTY_STRING = ""
         const val SPACE = " "
     }
+
+    /**
+     * Constants related to the configuration provided by the backend.
+     */
+    object ConfigurationDefaults {
+
+        /**
+         * The number of temporary exposure keys that will be uploaded when doing a reporting.
+         */
+        const val UPLOAD_KEYS_DAYS = 2
+    }
 }

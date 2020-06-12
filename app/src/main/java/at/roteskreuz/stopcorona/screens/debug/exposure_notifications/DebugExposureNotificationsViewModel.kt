@@ -7,7 +7,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.info.convertToApiTemporaryTracingKeys
+import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
@@ -25,6 +25,7 @@ import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 class DebugExposureNotificationsViewModel(
     appDispatchers : AppDispatchers,
@@ -36,7 +37,8 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
-    private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject(mutableListOf<TemporaryExposureKey>());
+    private val lastTemporaryExposureKeysSubject =
+        NonNullableBehaviorSubject(mutableListOf<Pair<List<TemporaryExposureKey>, UUID>>());
     private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
 
 
@@ -71,7 +73,7 @@ class DebugExposureNotificationsViewModel(
         return exposureNotificationsTextSubject
     }
 
-    fun observeLastTemporaryExposureKeys(): Observable<MutableList<TemporaryExposureKey>> {
+    fun observeLastTemporaryExposureKeys(): Observable<MutableList<Pair<List<TemporaryExposureKey>, UUID>>> {
         return lastTemporaryExposureKeysSubject
     }
 
@@ -162,9 +164,17 @@ class DebugExposureNotificationsViewModel(
         exposureNotificationClient.temporaryExposureKeyHistory
             .addOnSuccessListener {
                 Timber.d("got the list of Temporary Exposure Keys $it")
-                exposureNotificationsTextSubject.onNext("got the list of Temp" +
-                    "oraryExposureKeys $it")
-                lastTemporaryExposureKeysSubject.onNext(it)
+                exposureNotificationsTextSubject.onNext(
+                    "got the list of Temp" +
+                            "oraryExposureKeys $it"
+                )
+                lastTemporaryExposureKeysSubject.onNext(
+                    it.groupBy { temporaryExposureKey ->
+                        temporaryExposureKey.rollingStartIntervalNumber
+                    }.map { (_, temporaryExposureKeys) ->
+                        temporaryExposureKeys to UUID.randomUUID()
+                    }.toMutableList()
+                )
             }
             .addOnFailureListener { exception: Exception? ->
                 if (exception !is ApiException) {
@@ -215,7 +225,7 @@ class DebugExposureNotificationsViewModel(
         launch {
             try {
                 apiInteractor.uploadInfectionData(
-                    keys.convertToApiTemporaryTracingKeys(),
+                    keys.asApiEntity(),
                     contextInteractor.packageName,
                     warningType,
                     ApiVerificationPayload(tanRequestUUIDSubject.value, tan)
