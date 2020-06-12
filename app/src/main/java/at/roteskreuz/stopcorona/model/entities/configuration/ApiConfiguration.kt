@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.model.entities.configuration
 
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.ApiEntity
 import at.roteskreuz.stopcorona.utils.asEnum
 import com.squareup.moshi.Json
@@ -29,7 +30,7 @@ data class ApiConfiguration(
     @field:Json(name = "page_list")
     val pageList: ApiPageList?,
     @field:Json(name = "upload_keys_days")
-    val uploadKeysDays: Int = 2
+    val uploadKeysDays: Int = Constants.Configuration.UPLOAD_KEYS_DAYS
 ) : ApiEntity<DbConfiguration> {
 
     override fun asDbEntity(): DbConfiguration {
