@@ -29,7 +29,16 @@ data class DbConfiguration(
     /**
      * Time of updating.
      */
-    val cacheTime: ZonedDateTime = ZonedDateTime.now()
+    val cacheTime: ZonedDateTime = ZonedDateTime.now(),
+
+    val exposureConfigurationMinimumRiskScore: Int?,                            // 1,
+    val exposureConfigurationDailyRiskThreshold: Int?,                          // 30,
+    val exposureConfigurationAttenuationDurationThresholds: List<Int>?,         // [33, 63],
+    val exposureConfigurationAttenuationLevelValues: List<Int>?,                // [0, 1, 2, 2, 15, 15, 15, 15],
+    val exposureConfigurationDaysSinceLastExposureLevelValues: List<Int>?,      // [1, 1, 1, 1, 1, 1, 1, 1],
+    val exposureConfigurationDurationLevelValues: List<Int>?,                   // [0, 2, 6, 10, 15, 20, 25, 30],
+    val exposureConfigurationTransmissionRiskLevelValues: List<Int>?            // [1, 1, 1, 1, 1, 1, 1, 1]
+
 ) : DbEntity
 
 @Entity(
@@ -88,6 +97,28 @@ class ConfigurationLanguageConverter {
     @TypeConverter
     fun set(language: ConfigurationLanguage?): Int? {
         return language?.code
+    }
+}
+
+class ArrayOfIntegerConverter {
+    companion object{
+        private const val SEPARATOR = ","
+    }
+    @TypeConverter
+    fun get(listOfIntegers: List<Int>?): String? {
+        if (listOfIntegers == null){
+            return null
+        }
+        return buildString {
+            listOfIntegers?.forEach {
+                this.append(it).append(SEPARATOR)
+            }
+        }
+    }
+
+    @TypeConverter
+    fun set(commaSeparatedListOfIntegers: String?): List<Int>? {
+        return commaSeparatedListOfIntegers?.split(SEPARATOR)?.map { Integer.parseInt(it) }
     }
 }
 

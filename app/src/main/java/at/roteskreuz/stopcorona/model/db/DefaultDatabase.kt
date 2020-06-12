@@ -36,7 +36,8 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     MessageTypeConverter::class,
     WarningTypeConverter::class,
     UUIDConverter::class,
-    DecisionConverter::class
+    DecisionConverter::class,
+    ArrayOfIntegerConverter::class
 )
 abstract class DefaultDatabase : RoomDatabase() {
 
@@ -182,6 +183,18 @@ abstract class DefaultDatabase : RoomDatabase() {
                 // delete DbAutomaticDiscoveryEvent
                 execSQL("DROP TABLE `automatic_discovery`")
 
+            },
+            /**
+             * adding the exposure configuration parameters to the database
+             */
+            migration(16, 17) {
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationMinimumRiskScore` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationDailyRiskThreshold` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationAttenuationDurationThresholds` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationAttenuationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationDaysSinceLastExposureLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationDurationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationTransmissionRiskLevelValues` String")
             }
         )
     }
