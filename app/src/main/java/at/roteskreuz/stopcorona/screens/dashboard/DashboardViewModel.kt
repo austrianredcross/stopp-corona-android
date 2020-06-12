@@ -45,6 +45,9 @@ class DashboardViewModel(
             exposureNotificationManager.userWantsToRegisterAppForExposureNotifications = value
         }
 
+    val currentExposureNotificationPhase: ExposureNotificationPhase
+        get() = exposureNotificationManager.currentPhase
+
     init {
         /**
          * If the user starts the app for the first time the exposure notification framework will be started automatically.

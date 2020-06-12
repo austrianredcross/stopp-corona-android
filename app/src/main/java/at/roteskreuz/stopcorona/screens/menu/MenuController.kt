@@ -2,6 +2,9 @@ package at.roteskreuz.stopcorona.screens.menu
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkRunning
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.headlineH2
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
@@ -33,7 +36,13 @@ class MenuController(
     private val onRevokeSicknessClick: () -> Unit
 ) : EpoxyController() {
 
-    var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
+    private var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
+    private var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
+
+    fun setData(ownHealthStatusData: HealthStatusData, exposureNotificationPhase: ExposureNotificationPhase) {
+        this.ownHealthStatus = ownHealthStatusData
+        this.exposureNotificationPhase = exposureNotificationPhase
+    }
 
     override fun buildModels() {
 
@@ -44,10 +53,12 @@ class MenuController(
             title(context.string(R.string.start_menu_headline_3))
         }
 
-        with(buildFunctionalityMenuItems()) {
-            verticalBackgroundModelGroup(this) {
-                id("vertical_model_group_functionality")
-                backgroundColor(R.color.white)
+        if (exposureNotificationPhase.isReportingEnabled()) {
+            with(buildFunctionalityMenuItems()) {
+                verticalBackgroundModelGroup(this) {
+                    id("vertical_model_group_functionality")
+                    backgroundColor(R.color.white)
+                }
             }
         }
 
@@ -132,7 +143,9 @@ class MenuController(
                 .id("revoke_sickness")
                 .title(context.string(R.string.start_menu_item_revoke_sickness))
                 .addTo(modelList)
-        } else {
+        }
+
+        if ((ownHealthStatus is HealthStatusData.SicknessCertificate).not()) {
             MenuItemModel_(onReportOfficialSicknessClick)
                 .id("official_sickness")
                 .title(context.string(R.string.start_menu_item_3_3))
@@ -141,4 +154,8 @@ class MenuController(
 
         return modelList
     }
+}
+
+private fun ExposureNotificationPhase?.isReportingEnabled(): Boolean {
+    return this is FrameworkRunning || this is FrameworkError.NotCritical
 }

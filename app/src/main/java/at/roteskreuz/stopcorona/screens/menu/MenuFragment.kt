@@ -127,11 +127,9 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
 
         disposables += viewModel.observeOwnHealthStatus()
             .observeOnMainThread()
-            .subscribe {
-                controller.ownHealthStatus = it
+            .subscribe { healthStatusData ->
+                controller.setData(healthStatusData, viewModel.currentExposureNotificationPhase)
             }
-
-        controller.requestModelBuild()
     }
 
     override fun onDestroyView() {
