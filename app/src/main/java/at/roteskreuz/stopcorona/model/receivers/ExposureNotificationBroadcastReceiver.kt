@@ -22,11 +22,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
+import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.model.workers.ProcessDiagnosisKeysWorker
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import org.koin.core.KoinContext
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
@@ -42,24 +41,30 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
         val action = intent.action
         if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
             val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN)
-            Timber.d("got a token '%s' which could be infected, we should check it", token)
+            Timber.d("got a token '%s' tp process the diagnosis keys, we should check it", token)
 
-            val notification = NotificationCompat.Builder(context, "channel_automatic_detection")
-                .setContentTitle("processing done")
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setSmallIcon(R.drawable.ic_red_cross)
-                .setContentText("processing of ${token} finished")
-                .setStyle(NotificationCompat.BigTextStyle().bigText("processing of ${token} finished"))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .build()
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(hashCode(), notification)
+            if (BuildConfig.DEBUG) {
+                showDebugNotificationProcessingFinished(context, token)
+            }
 
-            ProcessDiagnosisKeysWorker.enqueueDownloadInfection(workManager, token)
+            ProcessDiagnosisKeysWorker.enqueueProcessingOfDiagnosisKeys(workManager, token)
 
             //TODO process the exposure notification
             // see https://github.com/google/exposure-notifications-android/blob/master/app/src/main/java/com/google/android/apps/exposurenotification/nearby/StateUpdatedWorker.java
             // and https://github.com/google/exposure-notifications-android/blob/master/app/src/main/java/com/google/android/apps/exposurenotification/nearby/ExposureNotificationBroadcastReceiver.java
         }
+    }
+
+    private fun showDebugNotificationProcessingFinished(context: Context, token: String) {
+        val notification = NotificationCompat.Builder(context, "channel_automatic_detection")
+            .setContentTitle("processing done")
+            .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+            .setSmallIcon(R.drawable.ic_red_cross)
+            .setContentText("processing of ${token} finished")
+            .setStyle(NotificationCompat.BigTextStyle().bigText("processing of ${token} finished"))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .build()
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(hashCode(), notification)
     }
 }

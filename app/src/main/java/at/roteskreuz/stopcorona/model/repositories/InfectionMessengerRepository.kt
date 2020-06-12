@@ -74,7 +74,14 @@ interface InfectionMessengerRepository {
      * Enqueue the next work request to run the exposure matching algorithm.
      */
     fun enqueueNextExposureMatching()
-    suspend fun processKeysbasedonToken(token: String)
+
+    /**
+     * Fetch [com.google.android.gms.nearby.exposurenotification.ExposureSummary]  and
+     * [com.google.android.gms.nearby.exposurenotification.ExposureInformation] based on the token
+     * and the user health status and process the information to a exposure health status which
+     * will be displayed in the UI.
+     */
+    suspend fun processKeysBasedOnToken(token: String)
 }
 
 class InfectionMessengerRepositoryImpl(
@@ -115,7 +122,7 @@ class InfectionMessengerRepositoryImpl(
         infectionMessageDao.insertSentInfectionMessages(messages)
     }
 
-    override suspend fun processKeysbasedonToken(token: String){
+    override suspend fun processKeysBasedOnToken(token: String){
         //continue processiong
 
 

@@ -18,14 +18,14 @@ class ProcessDiagnosisKeysWorker(
 ) : CoroutineWorker(appContext, workerParams), KoinComponent {
 
     companion object {
-        private const val TAG = "DownloadInfectionMessagesWorker"
+        private const val TAG = "ProcessDiagnosisKeysWorker"
 
         private const val ARGUMENT_TOKEN = "token"
 
         /**
-         * Enqueue download and processing infection messages.
+         * Enqueue download and processing diagnosis keys.
          */
-        fun enqueueDownloadInfection(workManager: WorkManager, token: String) {
+        fun enqueueProcessingOfDiagnosisKeys(workManager: WorkManager, token: String) {
             val constraints = Constraints.Builder()
                 .build()
 
@@ -53,7 +53,7 @@ class ProcessDiagnosisKeysWorker(
         val token = inputData.getString(ARGUMENT_TOKEN)
 
         token?.let {
-            infectionMessengerRepository.processKeysbasedonToken(token)
+            infectionMessengerRepository.processKeysBasedOnToken(token)
             return@doWork Result.success()
         }
         Timber.e(SilentError(IllegalArgumentException("No Token was provided, no work can be done")))
