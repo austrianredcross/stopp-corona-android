@@ -5,7 +5,6 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbSentInfectionMessage
@@ -27,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
+import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -109,7 +109,7 @@ class InfectionMessengerRepositoryImpl(
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
         private const val PREF_LAST_SCHEDULED_TOKEN = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_scheduled_token"
 
-        private const val BATCH = "batch_"
+        private const val BATCH = "batch"
     }
 
     private val downloadMessagesStateObserver = StateObserver()
@@ -159,12 +159,14 @@ class InfectionMessengerRepositoryImpl(
         when(warningType) {
 
             WarningType.YELLOW, WarningType.RED -> {
+                //TODO finish this decision branch
                 if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
                     val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
                     //go through the days and check if the day is the first RED/YELLOW day
                     // TODO: go through the summary and check if the day is the first RED/YELLOW day
                 } else {
                     //TODO: we are green again
+                    //TODO finish this decision branch
                 }
             }
             WarningType.REVOKE -> {
@@ -178,6 +180,7 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
+        //TODO: get the real current warning type
         val warningType = WarningType.RED
         if (downloadMessagesStateObserver.currentState is State.Loading) {
             Timber.e(SilentError(IllegalStateException("we´re trying to download but we´re still downloading...")))
@@ -188,13 +191,11 @@ class InfectionMessengerRepositoryImpl(
         withContext(coroutineContext) {
             try {
                 val archives :List<File> = apiInteractor.fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
-
-                val contextToken = BATCH + exposureNotificationRepository.processBatchDiagnosisKeys(archives)
-
+                val contextToken = BATCH + "," + warningType + "," + UUID.randomUUID().toString()
                 lastScheduledToken = contextToken
-
+                exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
             } catch (e: Exception) {
-                Timber.e(e, "Downloading new infection messages failed")
+                Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
             } finally {
                 downloadMessagesStateObserver.idle()

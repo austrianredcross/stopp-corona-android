@@ -3,7 +3,6 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -17,12 +16,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.io.File
-import java.util.UUID
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Repository for managing Exposure notification framework.
@@ -108,7 +104,7 @@ interface ExposureNotificationRepository {
     /**
      * had over Diagnosis Key files to the framework for
      */
-    suspend fun processBatchDiagnosisKeys(archives: List<File>): String
+    suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String): String
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -266,8 +262,9 @@ class ExposureNotificationRepositoryImpl(
         }
     }
 
-    override suspend fun processBatchDiagnosisKeys(archives: List<File>): String {
-        val token = UUID.randomUUID().toString()
+    override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String): String {
+
+        //TODO get values from configuration
         val configuration = ExposureConfiguration.ExposureConfigurationBuilder()
             .setDurationAtAttenuationThresholds(50, 60)
             .setMinimumRiskScore(1)
