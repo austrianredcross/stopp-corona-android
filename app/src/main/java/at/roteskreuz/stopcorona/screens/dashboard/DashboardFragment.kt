@@ -138,9 +138,27 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onRevokeSicknessClick = { disabled ->
                 if (disabled) {
-                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        requireView(),
+                        R.string.main_reporting_disable_btn,
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 } else {
                     startReportingActivity(MessageType.Revoke.Sickness)
+                }
+            },
+            onUploadMissingExposureKeysClick = { disabled, uploadMissingExposureKeys ->
+                if (disabled) {
+                    Snackbar.make(
+                        requireView(),
+                        R.string.main_reporting_disable_btn,
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                } else {
+                    startReportingActivity(
+                        uploadMissingExposureKeys.messageType,
+                        uploadMissingExposureKeys.date
+                    )
                 }
             }
         )
@@ -215,6 +233,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     }
                     is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
+            }
+
+        disposables += viewModel.observeIfUploadOfMissingExposureKeysIsNeeded()
+            .observeOnMainThread()
+            .subscribe {
+                controller.uploadMissingExposureKeys = it
             }
 
         if (viewModel.unseenChangelogForVersionAvailable(VERSION_NAME)) {

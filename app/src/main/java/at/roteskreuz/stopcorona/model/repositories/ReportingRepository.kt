@@ -15,7 +15,6 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.toRollingStartIntervalNumber
 import at.roteskreuz.stopcorona.utils.view.safeMap
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
@@ -40,6 +39,13 @@ interface ReportingRepository {
      * Sets the messageType that will be reported to authorities at the end of the reporting flow.
      */
     fun setMessageType(messageType: MessageType)
+
+    /**
+     * Sets the date for which we need to upload missing temporary exposure keys.
+     * If a value is present upload the exposure keys only for the specified date, otherwise
+     * perform a regular reporting.
+     */
+    fun setDateWithMissingExposureKeys(dateWithMissingExposureKeys: ZonedDateTime?)
 
     /**
      * Request a TAN for authentication.
@@ -132,10 +138,17 @@ class ReportingRepositoryImpl(
 
     private val agreementDataSubject = NonNullableBehaviorSubject(AgreementData())
     private val messageTypeSubject = BehaviorSubject.create<MessageType>()
+
     private var tanUuid: String? = null
+
+    private var dateWithMissingExposureKeys: ZonedDateTime? = null
 
     override fun setMessageType(messageType: MessageType) {
         messageTypeSubject.onNext(messageType)
+    }
+
+    override fun setDateWithMissingExposureKeys(dateWithMissingExposureKeys: ZonedDateTime?) {
+        this.dateWithMissingExposureKeys = dateWithMissingExposureKeys
     }
 
     override suspend fun requestTan(mobileNumber: String) {

@@ -10,6 +10,7 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.Framewo
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.NotCritical
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
+import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
 import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
 import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
@@ -21,6 +22,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import com.github.dmstocking.optional.java.util.Optional
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -40,6 +42,7 @@ class DashboardController(
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
     private val onExposureNotificationErrorActionClick: (ExposureNotificationPhase) -> Unit,
     private val onRevokeSicknessClick: (disabled: Boolean) -> Unit,
+    private val onUploadMissingExposureKeysClick: (disabled: Boolean, uploadMissingExposureKeys: UploadMissingExposureKeys) -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
@@ -49,6 +52,7 @@ class DashboardController(
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
     var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
+    var uploadMissingExposureKeys: Optional<UploadMissingExposureKeys> by adapterProperty(Optional.empty())
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -434,6 +438,29 @@ class DashboardController(
                 .text(context.string(R.string.sickness_certificate_attest_revoke))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
                 .onDisabledClick { onRevokeSicknessClick(true) }
+                .addTo(modelList)
+        }
+
+        if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
+                    ownHealthStatus is HealthStatusData.SicknessCertificate) &&
+            uploadMissingExposureKeys.isPresent
+        ) {
+
+            ButtonType2Model_ {
+                onUploadMissingExposureKeysClick(
+                    false,
+                    uploadMissingExposureKeys.get()
+                )
+            }
+                .id("own_health_status_upload_missing_exposure_keys")
+                .text(context.string(R.string.upload_missing_keys))
+                .enabled(exposureNotificationPhase.isReportingEnabled())
+                .onDisabledClick {
+                    onUploadMissingExposureKeysClick(
+                        true,
+                        uploadMissingExposureKeys.get()
+                    )
+                }
                 .addTo(modelList)
         }
 

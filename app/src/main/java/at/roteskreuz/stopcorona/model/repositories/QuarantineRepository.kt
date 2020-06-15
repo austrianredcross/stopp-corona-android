@@ -5,6 +5,7 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants.Prefs
 import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.cancelEndQuarantineReminder
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.enqueueEndQuarantineReminder
@@ -119,6 +120,11 @@ interface QuarantineRepository {
      * Get the current quarantine status.
      */
     suspend fun getQuarantineStatus(): QuarantineStatus
+
+    /**
+     * Observe if the user needs to upload the exposure keys from the day of the submission.
+     */
+    fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>>
 }
 
 class QuarantineRepositoryImpl(
@@ -138,7 +144,10 @@ class QuarantineRepositoryImpl(
         private const val PREF_DATE_OF_LAST_RED_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_red_contact"
         private const val PREF_DATE_OF_LAST_YELLOW_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
         private const val PREF_DATE_OF_LAST_SELF_MONITORING = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
-        private const val PREF_SHOW_QUARANTINE_END = Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
+        private const val PREF_SHOW_QUARANTINE_END =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
+        private const val PREF_MISSING_KEYS_UPLOADED =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "missing_keys_uploaded"
     }
 
     override var dateOfFirstMedicalConfirmation: ZonedDateTime?
@@ -366,6 +375,28 @@ class QuarantineRepositoryImpl(
             quarantineStateObservable.blockingFirst()
         }
     }
+
+    override fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>> {
+        return Observables.combineLatest(
+            observeDateOfFirstMedicalConfirmation(),
+            observeDateOfFirstSelfDiagnose(),
+            preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
+        ).map { (dateOfFirstMedicalConfirmation, dateOfFirstSelfDiagnose, areMissingKeysUploaded) ->
+            if (dateOfFirstMedicalConfirmation.isPresent && areMissingKeysUploaded.not()) {
+                UploadMissingExposureKeys(
+                    dateOfFirstMedicalConfirmation.get(),
+                    MessageType.InfectionLevel.Red
+                )
+            }
+            if (dateOfFirstSelfDiagnose.isPresent && areMissingKeysUploaded.not()) {
+                UploadMissingExposureKeys(
+                    dateOfFirstSelfDiagnose.get(),
+                    MessageType.InfectionLevel.Yellow
+                )
+            }
+            Optional.empty<UploadMissingExposureKeys>()
+        }
+    }
 }
 
 private data class QuarantinePrerequisitesHolder(
@@ -404,3 +435,8 @@ sealed class QuarantineStatus {
      */
     data class Free(val selfMonitoring: Boolean = false) : QuarantineStatus()
 }
+
+/**
+ * Indicates the date for which the exposure keys have not been uploaded and the diagnostic.
+ */
+data class UploadMissingExposureKeys(val date: ZonedDateTime, val messageType: MessageType)
