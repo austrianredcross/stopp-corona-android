@@ -28,7 +28,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 18,
+    version = 19,
     exportSchema = false
 )
 @TypeConverters(
@@ -204,13 +204,13 @@ abstract class DefaultDatabase : RoomDatabase() {
              * adding the exposure configuration parameters to the database
              */
             migration(18, 19) {
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationMinimumRiskScore` INTEGER")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationDailyRiskThreshold` INTEGER")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationAttenuationDurationThresholds` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationAttenuationLevelValues` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationDaysSinceLastExposureLevelValues` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationDurationLevelValues` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `exposureConfigurationTransmissionRiskLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `minimumRiskScore` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `dailyRiskThreshold` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationDurationThresholds` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `daysSinceLastExposureLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `durationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
             }
         )
     }

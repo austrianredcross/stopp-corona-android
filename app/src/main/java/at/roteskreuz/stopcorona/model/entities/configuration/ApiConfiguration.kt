@@ -3,7 +3,6 @@ package at.roteskreuz.stopcorona.model.entities.configuration
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.ApiEntity
 import at.roteskreuz.stopcorona.utils.asEnum
-import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.*
@@ -44,7 +43,14 @@ data class ApiConfiguration(
             redWarningQuarantine = redWarningQuarantine,
             yellowWarningQuarantine = yellowWarningQuarantine,
             selfDiagnosedQuarantine = selfDiagnosedQuarantine,
-            uploadKeysDays = uploadKeysDays
+            uploadKeysDays = uploadKeysDays,
+            minimumRiskScore = exposureConfiguration.minimumRiskScore,
+            dailyRiskThreshold = exposureConfiguration.dailyRiskThreshold,
+            attenuationDurationThresholds = exposureConfiguration.attenuationDurationThresholds,
+            attenuationLevelValues = exposureConfiguration.attenuationLevelValues,
+            daysSinceLastExposureLevelValues = exposureConfiguration.daysSinceLastExposureLevelValues,
+            durationLevelValues = exposureConfiguration.durationLevelValues,
+            transmissionRiskLevelValues = exposureConfiguration.transmissionRiskLevelValues
         )
     }
 }

@@ -1,7 +1,7 @@
 package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
-import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfDiagnosisKeysArchives
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
@@ -18,6 +18,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnect
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.withContext
+import org.threeten.bp.ZonedDateTime
 import retrofit2.HttpException
 import java.io.File
 import java.io.IOException
@@ -67,13 +68,24 @@ interface ApiInteractor {
     /**
      * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
+    suspend fun getIndexOfDiagnosisKeysArchives(): ApiIndexOfDiagnosisKeysArchives
 
+    /**
+     * Save one file from the Content Delivery Network API to a local temp file.
+     */
     suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File?
 
+    /**
+     * Based on the users [WarningType], download the last 7 or 14 day batch of diagnosis key
+     * archive(s).
+     */
     suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
 
-    suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>>
+    /**
+     * Download all available diagnosis key archive(s) for all available past days for individual
+     * processing.
+     */
+    suspend fun fetchDailyBatchDiagnosisKeys(): ListOfDailyBatches
 }
 
 class ApiInteractorImpl(
@@ -134,7 +146,7 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives {
+    override suspend fun getIndexOfDiagnosisKeysArchives(): ApiIndexOfDiagnosisKeysArchives {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()
             checkGeneralErrors {
@@ -180,16 +192,24 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>> {
+    override suspend fun fetchDailyBatchDiagnosisKeys(): ListOfDailyBatches {
         val indexOfArchives = getIndexOfDiagnosisKeysArchives()
 
         //we assume the list of dailyBatches is sorted on the server!!!
-        return indexOfArchives.dailyBatches
-            .map { dayBatch ->
-                dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
+        val dailyArchives = ListOfDailyBatches()
+            indexOfArchives.dailyBatches.forEachIndexed { index, dayBatch ->
+                val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
                     downloadContentDeliveryFileToTempFile(filepathForOneDay)
                 }
+
+                val dayArchive = ArchivesOfOneDay(
+                    archiveFilePaths = downloadedFilesOfThisDay,
+                    dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
+                    indexFromServer = index
+                )
+                dailyArchives.diagnosisArchiveFilesOfTheDay.add(dayArchive)
             }
+        return dailyArchives
     }
 
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
@@ -291,3 +311,28 @@ sealed class SicknessCertificateUploadException : Exception() {
      */
     object SMSGatewayException : SicknessCertificateUploadException()
 }
+
+/**
+ * Collection of downloaded diagnosis archives
+ */
+data class ListOfDailyBatches(
+    val diagnosisArchiveFilesOfTheDay: MutableList<ArchivesOfOneDay> = ArrayList()
+)
+
+/**
+ * One day worth of diagnosis key files
+ */
+data class ArchivesOfOneDay(
+    /**
+     * path to the diagnosis key files downloaded from the backend as local temp files
+     */
+    val archiveFilePaths: List<File>,
+    /**
+     * unix timestamp of the day
+     */
+    val dayTimestampOfDay: Long,
+    /**
+     * The original index as ordered by the backend
+     */
+    val indexFromServer: Int
+)

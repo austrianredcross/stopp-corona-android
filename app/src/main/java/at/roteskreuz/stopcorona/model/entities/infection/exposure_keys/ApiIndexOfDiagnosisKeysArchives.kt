@@ -9,7 +9,7 @@ import org.threeten.bp.ZonedDateTime
  * Describes infection info about user with data gathered from the Exposure SDK.
  */
 @JsonClass(generateAdapter = true)
-data class IndexOfDiagnosisKeysArchives(
+data class ApiIndexOfDiagnosisKeysArchives(
     @field:Json(name = "full_14_batch")
     val full14DaysBatch: DiagnosisKeysBatch,
 

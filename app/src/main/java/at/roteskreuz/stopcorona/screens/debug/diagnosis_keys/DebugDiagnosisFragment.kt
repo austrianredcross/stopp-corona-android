@@ -78,7 +78,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
             .subscribe { state ->
                 when (state) {
                     is State.Loading -> {
-                        //TODO think about what to do here
+
                     }
                     is DataState.Loaded -> {
                         // no resolution handled. Framework must be running already to continue.
