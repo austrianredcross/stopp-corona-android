@@ -14,6 +14,7 @@ import at.roteskreuz.stopcorona.screens.menu.epoxy.MenuItemModel_
 import at.roteskreuz.stopcorona.screens.menu.epoxy.menuItem
 import at.roteskreuz.stopcorona.screens.menu.epoxy.menuItemVersion
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
+import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
@@ -149,7 +150,7 @@ class MenuController(
         }
 
         val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
-            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION))
+            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION).startOfTheDay())
             ?: true
 
         if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
