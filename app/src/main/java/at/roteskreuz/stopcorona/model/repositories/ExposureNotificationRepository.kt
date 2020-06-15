@@ -119,6 +119,7 @@ interface ExposureNotificationRepository {
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val bluetoothManager: BluetoothManager,
+    private val configurationRepository: ConfigurationRepository,
     private val exposureNotificationClient: ExposureNotificationClient
 ) : ExposureNotificationRepository,
     CoroutineScope {
@@ -264,20 +265,22 @@ class ExposureNotificationRepositoryImpl(
 
     override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String): String {
 
+        val configuration = configurationRepository.observeConfiguration().blockingFirst()
         //TODO get values from configuration
-        val configuration = ExposureConfiguration.ExposureConfigurationBuilder()
-            .setDurationAtAttenuationThresholds(50, 60)
-            .setMinimumRiskScore(1)
-            .setDaysSinceLastExposureScores(1, 2, 3, 4, 5, 6, 7, 8)
-            .setDurationScores(1, 2, 3, 4, 5, 6, 7, 8)
-            .setAttenuationScores(1, 2, 3, 4, 5, 6, 7, 8)
-            .setDaysSinceLastExposureWeight(100)
-            .setTransmissionRiskWeight(100)
+
+        val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
+            .setMinimumRiskScore(configuration.exposureConfigurationMinimumRiskScore)
+            //TODO check if the List can also be "spread"
+            .setDurationAtAttenuationThresholds(*configuration.exposureConfigurationAttenuationDurationThresholds.toIntArray())
+            .setAttenuationScores(*configuration.exposureConfigurationAttenuationLevelValues.toIntArray())
+            .setDaysSinceLastExposureScores(*configuration.exposureConfigurationDaysSinceLastExposureLevelValues.toIntArray())
+            .setDurationScores(*configuration.exposureConfigurationDurationLevelValues.toIntArray())
+            .setTransmissionRiskScores(*configuration.exposureConfigurationTransmissionRiskLevelValues.toIntArray())
             .build()
 
         return suspendCancellableCoroutine { continuation ->
-            exposureNotificationClient.provideDiagnosisKeys(archives, configuration, token)
-                .addOnCompleteListener {
+            exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
+                .addOnCompleteListener{
                     if (it.isSuccessful) {
                         continuation.resume(token)
                     } else {

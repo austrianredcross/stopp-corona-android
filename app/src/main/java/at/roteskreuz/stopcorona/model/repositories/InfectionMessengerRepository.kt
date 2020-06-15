@@ -167,7 +167,7 @@ class InfectionMessengerRepositoryImpl(
 
             WarningType.YELLOW, WarningType.RED -> {
                 //TODO finish this decision branch
-                if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
+                if (summary.summationRiskScore >= configuration.exposureConfigurationDailyRiskThreshold){
                     val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
                     //go through the days and check if the day is the first RED/YELLOW day
                     // TODO: go through the summary and check if the day is the first RED/YELLOW day
@@ -178,7 +178,7 @@ class InfectionMessengerRepositoryImpl(
             }
             WarningType.REVOKE -> {
                 //we are above risc for the last days!!!
-                if (summary.summationRiskScore > configuration.exposureConfigurationDailyRiskThreshold){
+                if (summary.summationRiskScore >= configuration.exposureConfigurationDailyRiskThreshold){
                     //we must now identify day by day if we are YELLOW or RED
                     val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
                 }

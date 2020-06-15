@@ -6,11 +6,11 @@
     "self_diagnosed_quarantine": 168,
     "exposure_configuration": {
       "minimum_risk_score": 1,
-      "daily_risk_threshold": 30,
+      "daily_risk_threshold": 7,
       "attenuation_duration_thresholds": [33, 63],
-      "attenuation_level_values": [0, 1, 2, 2, 15, 15, 15, 15],
+      "attenuation_level_values": [0, 1, 2, 2, 8, 8, 8, 8],
       "days_since_last_exposure_level_values": [1, 1, 1, 1, 1, 1, 1, 1],
-      "duration_level_values": [0, 2, 6, 10, 15, 20, 25, 30],
+      "duration_level_values": [0, 1, 2, 3, 4, 5, 6, 7],
       "transmission_risk_level_values": [1, 1, 1, 1, 1, 1, 1, 1]
     },
     "diagnostic_questionnaire": {
