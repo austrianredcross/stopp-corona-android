@@ -33,4 +33,11 @@ data class DiagnosisKeysBatch(
 
     @field:Json(name = "batch_file_paths")
     val batchFilePaths: List<String>
-)
+) {
+
+    // the diagnosis
+    val intervalToEpochSeconds: Long by lazy {
+        interval.asExposureInterval().toEpochSecond()
+    }
+}
+
