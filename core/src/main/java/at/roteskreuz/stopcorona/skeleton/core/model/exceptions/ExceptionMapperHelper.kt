@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.skeleton.core.model.exceptions
 
+import com.squareup.moshi.JsonDataException
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -48,6 +49,7 @@ interface ExceptionMapperHelper {
         return when (err) {
             is HttpException -> httpExceptionMapper(err) ?: GeneralServerException(err.code())
             is IOException -> NoInternetConnectionException
+            is JsonDataException -> InvalidJsonException(err)
             else -> UnexpectedError(err)
         }
     }
