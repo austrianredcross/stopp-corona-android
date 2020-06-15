@@ -42,8 +42,8 @@ interface ReportingRepository {
     fun setMessageType(messageType: MessageType)
 
     /**
-     * Sets the date for which we need to upload missing temporary exposure keys.
-     * If a value is present upload the exposure keys only for the specified date, otherwise
+     * Sets the date for which missing temporary exposure keys need to be uploaded.
+     * If a value is present report the exposure keys only for the specified date, otherwise
      * perform a regular reporting.
      */
     fun setDateWithMissingExposureKeys(dateWithMissingExposureKeys: ZonedDateTime?)
