@@ -174,5 +174,12 @@ fun Long.asExposureInterval(): ZonedDateTime {
  * Returns start of the day of the provided [ZonedDateTime].
  */
 fun ZonedDateTime.startOfTheDay(): ZonedDateTime {
-    return truncatedTo(ChronoUnit.DAYS) // set hours = 00, minutes = 00, seconds = 00, milliseconds = 000
+    return truncatedTo(ChronoUnit.DAYS)
+}
+
+/**
+ * Returns end of the day of the provided [ZonedDateTime].
+ */
+fun ZonedDateTime.endOfTheDay(): ZonedDateTime {
+    return withHour(23).withMinute(59).withSecond(59)
 }

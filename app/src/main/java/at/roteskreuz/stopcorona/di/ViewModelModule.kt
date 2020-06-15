@@ -22,6 +22,7 @@ import at.roteskreuz.stopcorona.screens.savedIDs.InfoDeleteExposureKeysViewModel
 import at.roteskreuz.stopcorona.screens.webView.WebViewViewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Module for providing viewModels.
@@ -168,11 +169,12 @@ val viewModelModule = module {
      * }
      * ```
      */
-    viewModel { (messageType: MessageType) ->
+    viewModel { (messageType: MessageType, dateWithMissingExposureKeys: ZonedDateTime?) ->
         ReportingViewModel(
             appDispatchers = get(),
             reportingRepository = get(),
-            messageType = messageType
+            messageType = messageType,
+            dateWithMissingExposureKeys = dateWithMissingExposureKeys
         )
     }
 

@@ -132,8 +132,7 @@ class OfflineSyncerImpl(
             dataPrivacyRepository.awaitForAcceptanceState()
             // update configuration
             runFetcherIfNeeded(PREF_LAST_CONFIG_SYNC) {
-                //TODO: bring back after server sync https://tasks.pxp-x.com/browse/CTAA-1640
-                //configurationRepository.fetchAndStoreConfiguration()
+                configurationRepository.fetchAndStoreConfiguration()
             }
             // read all infection messages
             runFetcherIfNeeded(PREF_LAST_FETCH_INFECTION_MESSAGES) {
