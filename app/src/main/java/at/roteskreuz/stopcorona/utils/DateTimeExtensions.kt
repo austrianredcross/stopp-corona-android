@@ -8,6 +8,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.temporal.ChronoUnit
 import kotlin.math.abs
 
 /**
@@ -162,7 +163,7 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
  * Returns start of the day of the provided [ZonedDateTime].
  */
 fun ZonedDateTime.startOfTheDay(): ZonedDateTime {
-    return withHour(0).withMinute(0).withSecond(0)
+    return truncatedTo(ChronoUnit.DAYS)
 }
 
 /**
