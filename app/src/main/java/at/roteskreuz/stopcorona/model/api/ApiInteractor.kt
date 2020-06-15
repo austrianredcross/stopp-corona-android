@@ -194,20 +194,17 @@ class ApiInteractorImpl(
         val indexOfArchives = getIndexOfDiagnosisKeysArchives()
 
         //we assume the list of dailyBatches is sorted on the server!!!
-        val dailyArchives = ListOfDailyBatches()
-        indexOfArchives.dailyBatches.forEachIndexed { index, dayBatch ->
-            val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
-                downloadContentDeliveryFileToTempFile(filepathForOneDay)
-            }
-
-            val dayArchive = ArchivesOfOneDay(
-                archiveFilePaths = downloadedFilesOfThisDay,
-                dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
-                indexFromServer = index
-            )
-            dailyArchives.diagnosisArchiveFilesOfTheDay.add(dayArchive)
-        }
-        return dailyArchives
+        return ListOfDailyBatches(
+            diagnosisArchiveFilesOfTheDay = indexOfArchives.dailyBatches.mapIndexed { index, dayBatch ->
+                val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
+                    downloadContentDeliveryFileToTempFile(filepathForOneDay)
+                }
+                ArchivesOfOneDay(
+                    archiveFilePaths = downloadedFilesOfThisDay,
+                    dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
+                    indexFromServer = index
+                )
+            })
     }
 
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
@@ -314,7 +311,7 @@ sealed class SicknessCertificateUploadException : Exception() {
  * Collection of downloaded diagnosis archives
  */
 data class ListOfDailyBatches(
-    val diagnosisArchiveFilesOfTheDay: MutableList<ArchivesOfOneDay> = ArrayList()
+    val diagnosisArchiveFilesOfTheDay: List<ArchivesOfOneDay>
 )
 
 /**
