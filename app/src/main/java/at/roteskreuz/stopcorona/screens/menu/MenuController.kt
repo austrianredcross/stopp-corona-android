@@ -13,7 +13,6 @@ import at.roteskreuz.stopcorona.screens.dashboard.HealthStatusData
 import at.roteskreuz.stopcorona.screens.menu.epoxy.MenuItemModel_
 import at.roteskreuz.stopcorona.screens.menu.epoxy.menuItem
 import at.roteskreuz.stopcorona.screens.menu.epoxy.menuItemVersion
-import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
@@ -38,9 +37,9 @@ class MenuController(
     private val onRevokeSicknessClick: () -> Unit
 ) : EpoxyController() {
 
-    private var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
-    private var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
-    private var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
+    private var ownHealthStatus: HealthStatusData = HealthStatusData.NoHealthStatus
+    private var exposureNotificationPhase: ExposureNotificationPhase? = null
+    private var dateOfFirstMedicalConfirmation: ZonedDateTime? = null
 
     fun setData(
         ownHealthStatusData: HealthStatusData,
@@ -50,6 +49,7 @@ class MenuController(
         this.ownHealthStatus = ownHealthStatusData
         this.exposureNotificationPhase = exposureNotificationPhase
         this.dateOfFirstMedicalConfirmation = dateOfFirstMedicalConfirmation
+        requestModelBuild()
     }
 
     override fun buildModels() {
