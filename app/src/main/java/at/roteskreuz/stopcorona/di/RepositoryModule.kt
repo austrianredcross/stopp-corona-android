@@ -96,6 +96,7 @@ val repositoryModule = module {
         ExposureNotificationRepositoryImpl(
             appDispatchers = get(),
             bluetoothManager = get(),
+            configurationRepository = get(),
             exposureNotificationClient = get()
         )
     }
