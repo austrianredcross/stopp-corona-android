@@ -95,7 +95,7 @@ interface ExposureNotificationRepository {
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
 
     /**
-     * had over Diagnosis Key files to the framework for
+     * Process the diagnosis key files
      */
     suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String): String
 
