@@ -149,7 +149,7 @@ class MenuController(
         }
 
         val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
-            ?.isAfter(ZonedDateTime.now().minusHours(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION.toHours()))
+            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION))
             ?: true
 
         if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
