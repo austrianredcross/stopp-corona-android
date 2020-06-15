@@ -401,29 +401,30 @@ class QuarantineRepositoryImpl(
             observeDateOfFirstMedicalConfirmation(),
             preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE),
             preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
-        ).map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
-            if (dateOfFirstMedicalConfirmation.isPresent &&
-                ZonedDateTime.now()
-                    .isAfter(dateOfFirstMedicalConfirmation.get().plusDays(1).startOfTheDay()) &&
-                areMissingKeysUploaded.not()
-            ) {
-                UploadMissingExposureKeys(
-                    dateOfFirstMedicalConfirmation.get(),
-                    MessageType.InfectionLevel.Red
-                )
+        ).debounce(50, TimeUnit.MILLISECONDS) // some of the shared prefs can be changed together
+            .map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
+                if (dateOfFirstMedicalConfirmation.isPresent &&
+                    ZonedDateTime.now()
+                        .isAfter(dateOfFirstMedicalConfirmation.get().plusDays(1).startOfTheDay()) &&
+                    areMissingKeysUploaded.not()
+                ) {
+                    UploadMissingExposureKeys(
+                        dateOfFirstMedicalConfirmation.get(),
+                        MessageType.InfectionLevel.Red
+                    )
+                }
+                if (dateOfLastSelfDiagnose.isPresent &&
+                    ZonedDateTime.now()
+                        .isAfter(dateOfLastSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
+                    areMissingKeysUploaded.not()
+                ) {
+                    UploadMissingExposureKeys(
+                        dateOfLastSelfDiagnose.get(),
+                        MessageType.InfectionLevel.Yellow
+                    )
+                }
+                Optional.empty<UploadMissingExposureKeys>()
             }
-            if (dateOfLastSelfDiagnose.isPresent &&
-                ZonedDateTime.now()
-                    .isAfter(dateOfLastSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
-                areMissingKeysUploaded.not()
-            ) {
-                UploadMissingExposureKeys(
-                    dateOfLastSelfDiagnose.get(),
-                    MessageType.InfectionLevel.Yellow
-                )
-            }
-            Optional.empty<UploadMissingExposureKeys>()
-        }
     }
 
     override fun markMissingExposureKeysAsUploaded() {

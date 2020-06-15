@@ -19,6 +19,7 @@ import io.reactivex.rxkotlin.plusAssign
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import timber.log.Timber
 
 /**
@@ -28,27 +29,27 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
 
     companion object {
         private const val ARGUMENT_MESSAGE_TYPE = "argument_message_type"
-        private const val ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS =
+        private const val ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING =
             "argument_upload_missing_exposure_keys"
 
         fun args(messageType: MessageType, dateWithMissingExposureKeys: ZonedDateTime?): Bundle {
             return bundleOf(
                 ARGUMENT_MESSAGE_TYPE to messageType,
-                ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS to dateWithMissingExposureKeys
+                ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING to DateTimeFormatter.ISO_ZONED_DATE_TIME.format(dateWithMissingExposureKeys)
             )
         }
     }
 
     private val messageType: MessageType by argument(ARGUMENT_MESSAGE_TYPE)
 
-    private val dateWithMissingExposureKeys: ZonedDateTime? by argument(
-        ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS
+    private val dateWithMissingExposureKeysAsString: String? by argument(
+        ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING
     )
 
     private val viewModel: ReportingViewModel by viewModel {
         parametersOf(
             messageType,
-            dateWithMissingExposureKeys
+            ZonedDateTime.parse(dateWithMissingExposureKeysAsString)
         )
     }
 
