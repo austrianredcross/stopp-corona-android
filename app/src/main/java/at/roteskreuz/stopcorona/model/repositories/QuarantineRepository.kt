@@ -13,6 +13,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
+import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
@@ -123,6 +124,8 @@ interface QuarantineRepository {
 
     /**
      * Observe if the user needs to upload the exposure keys from the day of the submission.
+     * The user can upload the missing exposure keys starting with the next day after
+     * the submission.
      */
     fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>>
 
@@ -404,15 +407,21 @@ class QuarantineRepositoryImpl(
             observeDateOfFirstSelfDiagnose(),
             preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
         ).map { (dateOfFirstMedicalConfirmation, dateOfFirstSelfDiagnose, areMissingKeysUploaded) ->
-            // TODO: Check to be in the next day after submission
-
-            if (dateOfFirstMedicalConfirmation.isPresent && areMissingKeysUploaded.not()) {
+            if (dateOfFirstMedicalConfirmation.isPresent &&
+                ZonedDateTime.now()
+                    .isAfter(dateOfFirstMedicalConfirmation.get().plusDays(1).startOfTheDay()) &&
+                areMissingKeysUploaded.not()
+            ) {
                 UploadMissingExposureKeys(
                     dateOfFirstMedicalConfirmation.get(),
                     MessageType.InfectionLevel.Red
                 )
             }
-            if (dateOfFirstSelfDiagnose.isPresent && areMissingKeysUploaded.not()) {
+            if (dateOfFirstSelfDiagnose.isPresent &&
+                ZonedDateTime.now()
+                    .isAfter(dateOfFirstSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
+                areMissingKeysUploaded.not()
+            ) {
                 UploadMissingExposureKeys(
                     dateOfFirstSelfDiagnose.get(),
                     MessageType.InfectionLevel.Yellow
