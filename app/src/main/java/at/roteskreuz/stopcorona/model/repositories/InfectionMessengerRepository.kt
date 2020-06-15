@@ -184,7 +184,7 @@ class InfectionMessengerRepositoryImpl(
                     //TODO find time of contact
                     //this is a fake calculation:
                     val dayOfExposure = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong())
-                    quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dayOfExposure)
+                    quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = dayOfExposure)
                     var quarantineStatus = quarantineRepository.getQuarantineStatus()
                 } else {
                     Timber.d("We are still WarningType.REVOKE")

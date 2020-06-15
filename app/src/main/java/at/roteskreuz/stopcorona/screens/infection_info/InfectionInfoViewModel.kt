@@ -35,7 +35,7 @@ data class InfectedContactsViewState(
     val messages: List<DbReceivedInfectionMessage>,
     val quarantinedUntil: LocalDate? = null
 ) {
-
+    //TODO: remove these values and transform then into Booleans
     val yellowMessages by lazy { messages.filter { it.messageType == MessageType.InfectionLevel.Yellow } }
     val redMessages by lazy { messages.filter { it.messageType == MessageType.InfectionLevel.Red } }
 }

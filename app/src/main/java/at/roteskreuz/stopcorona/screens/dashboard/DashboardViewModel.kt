@@ -1,7 +1,7 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.managers.ChangelogManager
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
@@ -11,7 +11,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
-import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 
@@ -67,22 +66,15 @@ class DashboardViewModel(
     }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
-        return Observables.combineLatest(
-            quarantineRepository.observeQuarantineState(),
-            configurationRepository.observeConfiguration()
-        ).map { (quarantineStatus, configuration) ->
-            if (true) {
-                val redWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
-                    (configuration.redWarningQuarantine ?: DEFAULT_RED_WARNING_QUARANTINE).toLong()
-                )
-                val yellowWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
-                    (configuration.yellowWarningQuarantine ?: DEFAULT_YELLOW_WARNING_QUARANTINE).toLong()
-                )
-                HealthStatusData.ContactsSicknessInfo(100, 100, quarantineStatus)
-            } else {
-                HealthStatusData.NoHealthStatus
+        return quarantineRepository.observeQuarantineState()
+            .map { quarantineStatus ->
+                val warningType = quarantineRepository.getCurrentWarningType()
+                if (warningType != WarningType.REVOKE) {
+                    HealthStatusData.ContactsSicknessInfo(quarantineStatus, warningType)
+                } else {
+                    HealthStatusData.NoHealthStatus
+                }
             }
-        }
     }
 
     fun observeOwnHealthStatus(): Observable<HealthStatusData> {
@@ -188,9 +180,8 @@ sealed class HealthStatusData {
      * The user has received sickness info his contacts.
      */
     class ContactsSicknessInfo(
-        val confirmed: Int = 0,
-        val suspicion: Int = 0,
-        val quarantineStatus: QuarantineStatus
+        val quarantineStatus: QuarantineStatus,
+        val warningType: WarningType
     ) : HealthStatusData()
 
     /**
