@@ -143,7 +143,6 @@ class QuarantineRepositoryImpl(
 
     override var dateOfFirstMedicalConfirmation: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
-        private set
 
     override fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
         return preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
