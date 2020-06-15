@@ -52,11 +52,6 @@ interface InfectionMessengerRepository {
     suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
 
     /**
-     * Observe the infection messages received.
-     */
-    fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>>
-
-    /**
      * Get the sent temporary exposure keys.
      */
     suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
@@ -165,7 +160,7 @@ class InfectionMessengerRepositoryImpl(
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         val configuration =
             configurationRepository.getConfiguration()
-                ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
+                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
         when (warningType) {
             WarningType.YELLOW, WarningType.RED -> {
@@ -179,20 +174,20 @@ class InfectionMessengerRepositoryImpl(
                         WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
                         WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
                     }
+                    quarantineRepository.setShowQuarantineEnd()
                 }
             }
             WarningType.REVOKE -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     //we must now identify day by day if we are YELLOW or RED
-                    val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
+                    //val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
                     //process the batches and do one of these:
                     //TODO find time of contact
                     //this is a fake calculation:
                     val dayOfExposure = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong())
                     quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dayOfExposure)
-
-                    quarantineRepository.receivedWarning(WarningType.YELLOW)
+                    var quarantineStatus = quarantineRepository.getQuarantineStatus()
                 } else {
                     Timber.d("We are still WarningType.REVOKE")
                 }
@@ -221,10 +216,6 @@ class InfectionMessengerRepositoryImpl(
                 downloadMessagesStateObserver.idle()
             }
         }
-    }
-
-    override fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>> {
-        return infectionMessageDao.observeReceivedInfectionMessages().asDbObservable()
     }
 
     override fun observeSomeoneHasRecoveredMessage(): Observable<Boolean> {

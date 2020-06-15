@@ -21,12 +21,9 @@ class InfectionInfoViewModel(
 ) : ScopedViewModel(appDispatchers) {
 
     fun observeInfectedContacts(): Observable<InfectedContactsViewState> {
-        return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
-            quarantineRepository.observeQuarantineState()
-        ).map { (messages, quarantineStatus) ->
+        return quarantineRepository.observeQuarantineState().map { quarantineStatus ->
             InfectedContactsViewState(
-                messages = messages,
+                messages = emptyList(),
                 quarantinedUntil = if (quarantineStatus is QuarantineStatus.Jailed.Limited) quarantineStatus.end.toLocalDate()
                 else null
             )

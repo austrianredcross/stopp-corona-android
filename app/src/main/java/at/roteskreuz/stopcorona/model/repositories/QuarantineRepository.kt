@@ -159,16 +159,16 @@ class QuarantineRepositoryImpl(
     CoroutineScope {
 
     companion object {
-        private const val PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_medical_confirmation"
-        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose"
-        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose_backup"
-        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose"
-        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose_backup"
-        private const val PREF_DATE_OF_LAST_RED_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_red_contact"
-        private const val PREF_DATE_OF_LAST_YELLOW_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
-        private const val PREF_DATE_OF_LAST_SELF_MONITORING = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
-        private const val PREF_SHOW_QUARANTINE_END = Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
-        private const val PREF_MISSING_KEYS_UPLOADED = Prefs.QUARANTINE_REPOSITORY_PREFIX + "missing_keys_uploaded"
+        private const val PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION   = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_medical_confirmation"
+        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE          = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose"
+        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP   = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose_backup"
+        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE           = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose"
+        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP    = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose_backup"
+        private const val PREF_DATE_OF_LAST_RED_CONTACT             = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_red_contact"
+        private const val PREF_DATE_OF_LAST_YELLOW_CONTACT          = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
+        private const val PREF_DATE_OF_LAST_SELF_MONITORING         = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
+        private const val PREF_SHOW_QUARANTINE_END                  = Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
+        private const val PREF_MISSING_KEYS_UPLOADED                = Prefs.QUARANTINE_REPOSITORY_PREFIX + "missing_keys_uploaded"
     }
 
     override var dateOfFirstMedicalConfirmation: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(

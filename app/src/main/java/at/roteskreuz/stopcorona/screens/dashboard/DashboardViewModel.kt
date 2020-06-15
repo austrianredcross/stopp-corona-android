@@ -68,29 +68,17 @@ class DashboardViewModel(
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
         return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
             quarantineRepository.observeQuarantineState(),
             configurationRepository.observeConfiguration()
-        ).map { (infectionMessageList, quarantineStatus, configuration) ->
-            val filteredInfectionMessages = infectionMessageList.filter { it.messageType != MessageType.Revoke.Suspicion }
-            Triple(filteredInfectionMessages, quarantineStatus, configuration)
-        }.map { (infectionMessageList, quarantineStatus, configuration) ->
-            if (infectionMessageList.isNotEmpty()) {
+        ).map { (quarantineStatus, configuration) ->
+            if (true) {
                 val redWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
                     (configuration.redWarningQuarantine ?: DEFAULT_RED_WARNING_QUARANTINE).toLong()
                 )
                 val yellowWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
                     (configuration.yellowWarningQuarantine ?: DEFAULT_YELLOW_WARNING_QUARANTINE).toLong()
                 )
-                HealthStatusData.ContactsSicknessInfo(
-                    infectionMessageList
-                        .filter { it.timeStamp > redWarningQuarantineThreshold }
-                        .count { it.messageType == MessageType.InfectionLevel.Red },
-                    infectionMessageList
-                        .filter { it.timeStamp > yellowWarningQuarantineThreshold }
-                        .count { it.messageType == MessageType.InfectionLevel.Yellow },
-                    quarantineStatus
-                )
+                HealthStatusData.ContactsSicknessInfo(100, 100, quarantineStatus)
             } else {
                 HealthStatusData.NoHealthStatus
             }
