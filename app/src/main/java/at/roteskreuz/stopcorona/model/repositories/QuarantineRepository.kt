@@ -125,7 +125,7 @@ interface QuarantineRepository {
     /**
      * Observe if the user needs to upload the exposure keys from the day of the submission.
      * The user can upload the missing exposure keys starting with the next day after
-     * the submission.
+     * a successful submission.
      */
     fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>>
 
