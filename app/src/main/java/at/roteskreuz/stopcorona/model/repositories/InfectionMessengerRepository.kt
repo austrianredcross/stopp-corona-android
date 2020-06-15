@@ -162,7 +162,10 @@ class InfectionMessengerRepositoryImpl(
         val warningType = WarningType.RED
 
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
-        val configuration = configurationRepository.observeConfiguration().blockingFirst()
+        val configuration =
+            configurationRepository.getConfiguration()
+                ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
+
         when(warningType) {
 
             WarningType.YELLOW, WarningType.RED -> {
