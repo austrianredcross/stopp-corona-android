@@ -142,13 +142,13 @@ class InfectionMessengerRepositoryImpl(
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
     }
 
-    override suspend fun processKeysBasedOnToken(token: String){
+    override suspend fun processKeysBasedOnToken(token: String) {
         //we´re processing the batches
-        if (lastScheduledToken != token){
+        if (lastScheduledToken != token) {
             Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
         }
 
-        if (token.startsWith(BATCH)){
+        if (token.startsWith(BATCH)) {
             processKeysBasedOnBatchToken(token)
         } else {
             processDailyTokens(token)
@@ -167,16 +167,15 @@ class InfectionMessengerRepositoryImpl(
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
-        when(warningType) {
-
+        when (warningType) {
             WarningType.YELLOW, WarningType.RED -> {
                 //TODO finish this decision branch
-                if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
+                if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
                     //go through the days and check if the day is the first RED/YELLOW day
                     // TODO: go through the summary and check if the day is the first RED/YELLOW day
                 } else {
-                    when (warningType){
+                    when (warningType) {
                         WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
                         WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
                     }
@@ -184,7 +183,7 @@ class InfectionMessengerRepositoryImpl(
             }
             WarningType.REVOKE -> {
                 //we are above risc for the last days!!!
-                if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
+                if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     //we must now identify day by day if we are YELLOW or RED
                     val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
                     //process the batches and do one of these:
@@ -194,7 +193,6 @@ class InfectionMessengerRepositoryImpl(
                     quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dayOfExposure)
 
                     quarantineRepository.receivedWarning(WarningType.YELLOW)
-
                 } else {
                     Timber.d("We are still WarningType.REVOKE")
                 }
@@ -212,7 +210,7 @@ class InfectionMessengerRepositoryImpl(
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
             try {
-                val archives :List<File> = apiInteractor.fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
+                val archives: List<File> = apiInteractor.fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
                 val contextToken = BATCH + "," + warningType + "," + UUID.randomUUID().toString()
                 lastScheduledToken = contextToken
                 exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
