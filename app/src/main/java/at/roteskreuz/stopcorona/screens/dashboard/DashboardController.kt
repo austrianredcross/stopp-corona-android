@@ -63,7 +63,8 @@ class DashboardController(
         if (ownHealthStatus != HealthStatusData.NoHealthStatus ||
             contactsHealthStatus != HealthStatusData.NoHealthStatus ||
             showQuarantineEnd ||
-            someoneHasRecoveredHealthStatus != HealthStatusData.NoHealthStatus) {
+            someoneHasRecoveredHealthStatus != HealthStatusData.NoHealthStatus
+        ) {
 
             /**
              * Build card for own health status if available
@@ -76,7 +77,8 @@ class DashboardController(
              * Add single space if own AND contact health state are available
              */
             if (ownHealthStatus != HealthStatusData.NoHealthStatus &&
-                contactsHealthStatus != HealthStatusData.NoHealthStatus) {
+                contactsHealthStatus != HealthStatusData.NoHealthStatus
+            ) {
                 emptySpace(modelCountBuiltSoFar, 16)
             }
 
@@ -91,8 +93,9 @@ class DashboardController(
              * Add single space if own OR contact health state are available AND someone has recovered
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                    contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
-                someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) {
+                        contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
+                someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered
+            ) {
                 emptySpace(modelCountBuiltSoFar, 16)
             }
 
@@ -107,9 +110,10 @@ class DashboardController(
              * Add single space if own or contact health state are available or someone has recovered AND the quarantine should end
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                    contactsHealthStatus != HealthStatusData.NoHealthStatus ||
-                    someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
-                showQuarantineEnd) {
+                        contactsHealthStatus != HealthStatusData.NoHealthStatus ||
+                        someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
+                showQuarantineEnd
+            ) {
                 emptySpace(modelCountBuiltSoFar, 16)
             }
 
@@ -126,7 +130,8 @@ class DashboardController(
             if (ownHealthStatus != HealthStatusData.NoHealthStatus ||
                 contactsHealthStatus != HealthStatusData.NoHealthStatus ||
                 someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered ||
-                showQuarantineEnd) {
+                showQuarantineEnd
+            ) {
                 emptySpace(modelCountBuiltSoFar, 32)
             }
         }
@@ -424,7 +429,10 @@ class DashboardController(
         }
 
         val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
-            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION))
+            ?.isAfter(
+                ZonedDateTime.now()
+                    .minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION)
+            )
             ?: true
 
         if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
@@ -445,6 +453,10 @@ class DashboardController(
                     ownHealthStatus is HealthStatusData.SicknessCertificate) &&
             uploadMissingExposureKeys.isPresent
         ) {
+            EmptySpaceModel_()
+                .id(modelCountBuiltSoFar)
+                .height(16)
+                .addTo(modelList)
 
             ButtonType2Model_ {
                 onUploadMissingExposureKeysClick(
