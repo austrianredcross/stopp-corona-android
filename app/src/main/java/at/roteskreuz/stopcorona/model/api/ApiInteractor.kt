@@ -65,10 +65,21 @@ interface ApiInteractor {
      */
     suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
 
+    /**
+     * Save one file from the Content Delivery Network API to a local temp file.
+     */
     suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File
 
+    /**
+     * Based on the users [WarningType], download the last 7 or 14 day batch of diagnosis key
+     * archive(s).
+     */
     suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
 
+    /**
+     * Download all available diagnosis key archive(s) for all available past days for individual
+     * processing.
+     */
     suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>>
 }
 
