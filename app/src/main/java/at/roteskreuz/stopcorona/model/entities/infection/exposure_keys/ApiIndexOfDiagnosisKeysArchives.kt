@@ -16,7 +16,7 @@ data class ApiIndexOfDiagnosisKeysArchives(
     @field:Json(name = "full_7_batch")
     val full07DaysBatch: DiagnosisKeysBatch,
 
-    @field:Json(name = "daily_batches")
+    @field:Json(name = "dail_batches")
     val dailyBatches: List<DiagnosisKeysBatch>
 ) {
 

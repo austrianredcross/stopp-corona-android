@@ -12,11 +12,9 @@ import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
-import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
-import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
-import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
+import com.squareup.moshi.JsonDataException
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import retrofit2.HttpException
@@ -197,18 +195,18 @@ class ApiInteractorImpl(
 
         //we assume the list of dailyBatches is sorted on the server!!!
         val dailyArchives = ListOfDailyBatches()
-            indexOfArchives.dailyBatches.forEachIndexed { index, dayBatch ->
-                val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
-                    downloadContentDeliveryFileToTempFile(filepathForOneDay)
-                }
-
-                val dayArchive = ArchivesOfOneDay(
-                    archiveFilePaths = downloadedFilesOfThisDay,
-                    dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
-                    indexFromServer = index
-                )
-                dailyArchives.diagnosisArchiveFilesOfTheDay.add(dayArchive)
+        indexOfArchives.dailyBatches.forEachIndexed { index, dayBatch ->
+            val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
+                downloadContentDeliveryFileToTempFile(filepathForOneDay)
             }
+
+            val dayArchive = ArchivesOfOneDay(
+                archiveFilePaths = downloadedFilesOfThisDay,
+                dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
+                indexFromServer = index
+            )
+            dailyArchives.diagnosisArchiveFilesOfTheDay.add(dayArchive)
+        }
         return dailyArchives
     }
 
