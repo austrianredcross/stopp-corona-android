@@ -130,7 +130,7 @@ interface QuarantineRepository {
     fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>>
 
     /**
-     * Mark that the upload of the missing exposure keys have been performed successfully.
+     * Mark the upload of the missing exposure keys as done.
      */
     fun markMissingExposureKeysAsUploaded()
 }
