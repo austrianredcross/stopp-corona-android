@@ -9,6 +9,7 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.launch
@@ -45,6 +46,12 @@ class DashboardViewModel(
             exposureNotificationManager.userWantsToRegisterAppForExposureNotifications = value
         }
 
+    val currentExposureNotificationPhase: ExposureNotificationPhase
+        get() = exposureNotificationManager.currentPhase
+
+    val dateOfFirstMedicalConfirmation: ZonedDateTime?
+        get() = quarantineRepository.dateOfFirstMedicalConfirmation
+
     init {
         /**
          * If the user starts the app for the first time the exposure notification framework will be started automatically.
@@ -53,6 +60,10 @@ class DashboardViewModel(
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
+    }
+
+    fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
+        return quarantineRepository.observeDateOfFirstMedicalConfirmation()
     }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
