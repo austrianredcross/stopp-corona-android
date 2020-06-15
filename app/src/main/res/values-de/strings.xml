@@ -51,16 +51,16 @@
 	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
 	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
 	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
-	<string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
-	<string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
+    <string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
+    <string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
 
-	<!-- Dashboard -->
-	<string name="main_headline">Gemeinsam gegen das Coronavirus</string>
-	<string name="main_body_contact_title">Digitaler Handshake</string>
-	<string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
-	<string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
-	<string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
-	<string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
+    <!-- Dashboard -->
+    <string name="main_headline">Gemeinsam gegen das Coronavirus</string>
+    <string name="main_body_contact_title">Digitaler Handshake</string>
+    <string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
+    <string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
+    <string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
+    <string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
     <string name="main_body_feeling_title">Wie fühlen Sie sich heute?</string>
     <string name="main_body_feeling_description">Erhalten Sie eine Einschätzung zu Ihrem Gesundheitszustand.</string>
     <string name="main_button_feel_today_button">Symptome abprüfen</string>
@@ -107,16 +107,16 @@
     <!-- Update Information -->
     <string name="mandatory_update_title">Aktuelle Version herunterladen</string>
     <string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
-	<string name="mandatory_update_playstore">Zum Play Store</string>
+    <string name="mandatory_update_playstore">Zum Play Store</string>
 
-	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
-	<string name="infection_info_title">Achtung</string>
-	<string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
-	<string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
-	<string name="infection_info_description1_single">Einer Ihrer registrierten Begegnungen ist %s mit dem Coronavirus infiziert.</string>
-	<string name="infection_info_description_acording_evidence">laut ärztlichem Nachweis</string>
-	<string name="infection_info_description1_many">%d Ihrer registrierten Begegnungen sind %s mit dem Coronavirus infiziert.</string>
-	<string name="infection_info_handshake_took_place_single">Handshake fand statt:</string>
+    <!-- Contact Sickness_Guidelines for people with proven sick contact -->
+    <string name="infection_info_title">Achtung</string>
+    <string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
+    <string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
+    <string name="infection_info_description1_single">Einer Ihrer registrierten Begegnungen ist %s mit dem Coronavirus infiziert.</string>
+    <string name="infection_info_description_acording_evidence">laut ärztlichem Nachweis</string>
+    <string name="infection_info_description1_many">%d Ihrer registrierten Begegnungen sind %s mit dem Coronavirus infiziert.</string>
+    <string name="infection_info_handshake_took_place_single">Handshake fand statt:</string>
 	<string name="infection_info_handshake_took_place_many">Handshakes fanden statt:</string>
 	<string name="infection_info_handshake_took_place_format">%s, %s und %s Uhr</string>
 	<string name="infection_info_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
@@ -142,16 +142,16 @@
 	<string name="handshake_information">Wie funktioniert es?</string>
 	<string name="handshake_identification_prefix">Sie sind:</string>
 	<string name="handshake_results_headline">Smartphones suchen</string>
-	<string name="handshake_save_contacts">Speichern</string>
-	<string name="handshake_contact_saved">Gespeichert</string>
-	<string name="handshake_select_all_contacts">alle</string>
-	<string name="handshake_missing_permissions_title">Berechtigungen fehlen</string>
-	<string name="handshake_missing_permissions_microphone">Mikrofon</string>
-	<string name="handshake_missing_permissions_message">Für die Präzision Ihres digitalen Handshakes werden zusätzlich folgende Berechtigungen benötigt: </string>
-	<string name="handshake_missing_permissions_message_settings">Bitte erlauben Sie diese Einstellung in den Systemeinstellungen</string>
-	<string name="handshake_missing_permissions_open_settings">Einstellungen öffnen</string>
-	<string name="handshake_dialog_title">So funktioniert’s:</string>
-	<string name="handshake_dialog_description1">Öffnen Sie beide den manuellen Handshake in dieser App.</string>
+    <string name="handshake_save_contacts">Speichern</string>
+    <string name="handshake_contact_saved">Gespeichert</string>
+    <string name="handshake_select_all_contacts">alle</string>
+    <string name="handshake_missing_permissions_title">Berechtigungen fehlen</string>
+    <string name="handshake_missing_permissions_microphone">Mikrofon</string>
+    <string name="handshake_missing_permissions_message">Für die Präzision Ihres digitalen Handshakes werden zusätzlich folgende Berechtigungen benötigt: </string>
+    <string name="handshake_missing_permissions_message_settings">Bitte erlauben Sie diese Einstellung in den Systemeinstellungen</string>
+    <string name="handshake_missing_permissions_open_settings">Einstellungen öffnen</string>
+    <string name="handshake_dialog_title">So funktioniert’s:</string>
+    <string name="handshake_dialog_description1">Öffnen Sie beide den manuellen Handshake in dieser App.</string>
     <string name="handshake_dialog_description2">Ihr Smartphone sucht jetzt automatisch nach anderen Smartphones.</string>
     <string name="handshake_dialog_description3">Wählen Sie beide die Nummer Ihres Gegenübers aus und speichern Sie.</string>
     <string name="handshake_dialog_disclaimer">Haben Sie noch weitere Fragen zum manuellen Handshake haben, finden Sie in den FAQs weitere Informationen.</string>
@@ -162,10 +162,7 @@
     <string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und aktivieren Sie Bluetooth.</string>
     <string name="automatic_handshake_dialog_description_2">Ihr Gerät kann über Bluetooth Zufalls-IDs mit anderen App-Nutzern austauschen.</string>
     <string name="automatic_handshake_dialog_description_3">Die Zufalls-IDs werden im COVID-19 Kontaktprotokoll Ihres Geräts gespeichert.</string>
-    <string name="automatic_handshake_dialog_description_4_1">Kontakte sind erkrankt</string>
-    <string name="automatic_handshake_dialog_description_4_2">Mithilfe des Kontaktprotokolls können Sie benachrichtig werden, wenn Sie einen möglichen Kontakt mit dem Coronavirus hatten. Es wird eine Empfehlung in einem Algorithmus kalkuliert, wie lange Sie als Vorsichtsmaßnahme in Quarantäne bleiben sollten.</string>
-    <string name="automatic_handshake_dialog_description_4_3">Sie sind erkrankt</string>
-    <string name="automatic_handshake_dialog_description_4_4">Ebenso können die Zufalls-IDs genutzt werden, um andere Nutzer zu benachrichtigen, sollten Sie eine mögliche Infektion melden.</string>
+    <string name="automatic_handshake_dialog_description_4"><b>Kontakte sind erkrankt</b> \nMithilfe des Kontaktprotokolls können Sie benachrichtig werden, wenn Sie einen möglichen Kontakt mit dem Coronavirus hatten. Es wird eine Empfehlung in einem Algorithmus kalkuliert, wie lange Sie als Vorsichtsmaßnahme in Quarantäne bleiben sollten.\n<b>Sie sind erkrankt</b> \nEbenso können die Zufalls-IDs genutzt werden, um andere Nutzer zu benachrichtigen, sollten Sie eine mögliche Infektion melden.</string>
     <string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Bluetooth aktiviert ist.</string>
     <string name="automatic_handshake_dialog_faq">Zu den FAQs</string>
     <string name="automatic_handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
@@ -176,20 +173,20 @@
     <string name="main_automatic_handshake_switch_off">inaktiv</string>
     <string name="main_automatic_handshake_switch_paused">pausiert</string>
     <string name="main_automatic_handshake_description_on">Via Bluetooth versenden und empfangen Sie Signale anderer Corona-Apps. Signale über 5 Minuten werden im COVID-19 Kontaktprotokoll in Ihrem Gerät aufgezeichnet. Dies geschieht anonym mittels zufällig erzeugter IDs.</string>
-	<string name="main_automatic_handshake_description_off">Aktuell werden keine Ihrer Begegnungen automatisch gespeichert. Bitte aktivieren Sie hierzu den automatischen Handshake.</string>
-	<string name="main_start_manual_handshake">Manuellen Handshake starten</string>
+    <string name="main_automatic_handshake_description_off">Aktuell werden keine Ihrer Begegnungen automatisch gespeichert. Bitte aktivieren Sie hierzu den automatischen Handshake.</string>
+    <string name="main_start_manual_handshake">Manuellen Handshake starten</string>
 
-	<!-- Sickness Certificate -->
-	<string name="certificate_personal_data_headline">Bitte geben Sie Ihre Daten ein</string>
-	<string name="certificate_personal_data_title">Status melden</string>
-	<string name="certificate_personal_data_description">Wir werden nach dem nächsten Schritt Ihre engen Kontakte der letzten beiden Tage anonym informieren. Wir validieren Ihre Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
-	<string name="certificate_personal_data_mobile_number_label">Mobilfunknummer (+43...)</string>
-	<string name="certificate_personal_data_next_button">Weiter</string>
-	<string name="certificate_personal_data_input_error">Mobilfunknummer</string>
-	<string name="certificate_personal_data_field_mandatory">Pflichtfeld</string>
-	<string name="certificate_personal_data_phone_field_invalid">Ungültiges Format (+43 ...)</string>
-	<string name="certificate_personal_data_invalid_mobile_number_error">Mobilfunknummer ist nicht gültig</string>
-	<string name="certificate_personal_data_invalid_mobile_number_error_description">Die TAN konnte nicht versendet werden. Bitte prüfen Sie Ihre Mobilfunknummer.</string>
+    <!-- Sickness Certificate -->
+    <string name="certificate_personal_data_headline">Bitte geben Sie Ihre Daten ein</string>
+    <string name="certificate_personal_data_title">Status melden</string>
+    <string name="certificate_personal_data_description">Wir werden nach dem nächsten Schritt Ihre engen Kontakte der letzten beiden Tage anonym informieren. Wir validieren Ihre Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
+    <string name="certificate_personal_data_mobile_number_label">Mobilfunknummer (+43...)</string>
+    <string name="certificate_personal_data_next_button">Weiter</string>
+    <string name="certificate_personal_data_input_error">Mobilfunknummer</string>
+    <string name="certificate_personal_data_field_mandatory">Pflichtfeld</string>
+    <string name="certificate_personal_data_phone_field_invalid">Ungültiges Format (+43 ...)</string>
+    <string name="certificate_personal_data_invalid_mobile_number_error">Mobilfunknummer ist nicht gültig</string>
+    <string name="certificate_personal_data_invalid_mobile_number_error_description">Die TAN konnte nicht versendet werden. Bitte prüfen Sie Ihre Mobilfunknummer.</string>
     <string name="certificate_personal_progress_label">%d von %d</string>
     <string name="certificate_tan_check_title">TAN bestätigen</string>
     <string name="certificate_tan_check_headline">Mit der TAN bestätigen Sie Ihre Daten</string>
@@ -232,16 +229,16 @@
     <string name="sickness_certificate_guidelines_content_description">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
     <string name="sickness_certificate_guidelines_headline">Begeben Sie sich in Quarantäne</string>
     <string name="sickness_certificate_guidelines_first">Halten Sie räumlich Abstand von gesunden Mitbewohnern.</string>
-	<string name="sickness_certificate_guidelines_second">Überwachen Sie Ihren Gesundheitszustand: Messen Sie 2x täglich Fieber und führen ein Tagebuch über Symptome.</string>
-	<string name="sickness_certificate_guidelines_third">Nachbarn oder Angehörige übernehmen die Versorgung.</string>
-	<string name="sickness_certificate_guidelines_fourth">Wenn das nicht möglich ist, hilft Ihnen gerne das %s unter:</string>
-	<string name="sickness_certificate_guidelines_fourth_team">Team Österreich</string>
-	<string name="sickness_certificate_guidelines_fourth_phone">0800 600 600</string>
-	<string name="sickness_certificate_urgent_help_headline">Benötigen Sie dringend Hilfe?</string>
-	<string name="sickness_certificate_urgent_help_content">Wenn Sie das Gefühl haben, dass Sie zuhause nicht zurecht kommen, Sie keine Luft mehr bekommen oder schwer krank sind, kontaktieren Sie bitte, mit dem Hinweis auf den Verdacht auf eine Corona-Infektion, folgende Nummern:</string>
-	<string name="sickness_certificate_phone_emergency_label">Ärztenotdienst</string>
-	<string name="sickness_certificate_phone_emergency_number">141</string>
-	<string name="sickness_certificate_phone_ambulance_label">Rettung</string>
+    <string name="sickness_certificate_guidelines_second">Überwachen Sie Ihren Gesundheitszustand: Messen Sie 2x täglich Fieber und führen ein Tagebuch über Symptome.</string>
+    <string name="sickness_certificate_guidelines_third">Nachbarn oder Angehörige übernehmen die Versorgung.</string>
+    <string name="sickness_certificate_guidelines_fourth">Wenn das nicht möglich ist, hilft Ihnen gerne das %s unter:</string>
+    <string name="sickness_certificate_guidelines_fourth_team">Team Österreich</string>
+    <string name="sickness_certificate_guidelines_fourth_phone">0800 600 600</string>
+    <string name="sickness_certificate_urgent_help_headline">Benötigen Sie dringend Hilfe?</string>
+    <string name="sickness_certificate_urgent_help_content">Wenn Sie das Gefühl haben, dass Sie zuhause nicht zurecht kommen, Sie keine Luft mehr bekommen oder schwer krank sind, kontaktieren Sie bitte, mit dem Hinweis auf den Verdacht auf eine Corona-Infektion, folgende Nummern:</string>
+    <string name="sickness_certificate_phone_emergency_label">Ärztenotdienst</string>
+    <string name="sickness_certificate_phone_emergency_number">141</string>
+    <string name="sickness_certificate_phone_ambulance_label">Rettung</string>
 	<string name="sickness_certificate_phone_ambulance_number">144</string>
 	<string name="sickness_certificate_guidelines_consulting_description_title">Benötigen Sie telefonische Beratung oder Versorgung?</string>
 	<string name="sickness_certificate_guidelines_consulting_description_description">Kontaktieren Sie bitte Ihren behandelnden Arzt\n\nBei psychischer Belastung unterstützt die telefonische Beratung:</string>
@@ -406,16 +403,16 @@
 	<string name="questionnaire_observe_symptoms_next_steps">Nächste Schritte</string>
 	<string name="questionnaire_observe_symptoms_step_1">Bitte messen Sie Ihre Körpertemperatur nach 6 Stunden erneut.</string>
 	<string name="questionnaire_observe_symptoms_step_2">Starten Sie das Formular dann erneut.</string>
-	<string name="questionnaire_observe_symptoms_step_3">Vermeiden Sie soziale Kontakte. So helfen Sie, weitere Ansteckungen zu vermeiden.</string>
-	<string name="questionnaire_observe_symptoms_attention_headline">Achtung</string>
-	<string name="questionnaire_observe_symptoms_attention_description">Melden Sie sich bitte telefonisch bei Ihrem behandelnden Arzt, wenn Sie medizinische Hilfe benötigen. Ihr Arzt kann Sie auch telefonisch krank schreiben oder ein Rezept auf Ihre e-card ausstellen.</string>
-	<string name="questionnaire_observe_symptoms_button">Symptome erneut prüfen</string>
+    <string name="questionnaire_observe_symptoms_step_3">Vermeiden Sie soziale Kontakte. So helfen Sie, weitere Ansteckungen zu vermeiden.</string>
+    <string name="questionnaire_observe_symptoms_attention_headline">Achtung</string>
+    <string name="questionnaire_observe_symptoms_attention_description">Melden Sie sich bitte telefonisch bei Ihrem behandelnden Arzt, wenn Sie medizinische Hilfe benötigen. Ihr Arzt kann Sie auch telefonisch krank schreiben oder ein Rezept auf Ihre e-card ausstellen.</string>
+    <string name="questionnaire_observe_symptoms_button">Symptome erneut prüfen</string>
 
-	<!-- Notifications -->
-	<string name="local_notification_sick_contact_headline">Kontakt meldet Corona-Erkrankung</string>
-	<string name="local_notification_sick_contact_message">Begeben Sie sich in Quarantäne und halten Sie min. 2m Abstand zu gesunden Menschen.</string>
-	<string name="local_notification_suspected_sick_contact_headline">Kontakt mit Verdacht auf Corona-Infektion</string>
-	<string name="local_notification_suspected_sick_contact_message">Begeben Sie sich als Vorsichtsmaßnahme in Quarantäne. Halten Sie räumlich Abstand von Ihrem gesunden Umfeld.</string>
+    <!-- Notifications -->
+    <string name="local_notification_sick_contact_headline">Kontakt meldet Corona-Erkrankung</string>
+    <string name="local_notification_sick_contact_message">Begeben Sie sich in Quarantäne und halten Sie min. 2m Abstand zu gesunden Menschen.</string>
+    <string name="local_notification_suspected_sick_contact_headline">Kontakt mit Verdacht auf Corona-Infektion</string>
+    <string name="local_notification_suspected_sick_contact_message">Begeben Sie sich als Vorsichtsmaßnahme in Quarantäne. Halten Sie räumlich Abstand von Ihrem gesunden Umfeld.</string>
     <string name="local_notification_self_retest_headline">Wie fühlen Sie sich heute?</string>
     <string name="local_notification_someone_has_recovered_headline">Jemand hat sich erholt.</string>
     <string name="local_notification_quarantine_end_headline">Sie können die Quarantäne beenden!</string>
@@ -437,16 +434,16 @@
     <string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
     <string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>
     <string name="contacts_confirmed_multiple_case_description_2">Infektion</string>
-	<string name="contacts_confirmed_multiple_case_description_3">bestätigt.</string>
-	<string name="contacts_suspicion_multiple_case_headline">Hinweis</string>
-	<string name="contacts_suspicion_multiple_case_description_1">Bei %d Ihrer Kontakte gibt es den</string>
-	<string name="contacts_suspicion_multiple_case_description_2">Verdacht</string>
-	<string name="contacts_suspicion_multiple_case_description_3">auf eine Corona-Infektion.</string>
-	<string name="contacts_quarantine_day_single">Quarantänetag</string>
-	<string name="contacts_quarantine_day_many">Quarantäne-Tage</string>
-	<string name="revoke_suspicion_title">Status melden</string>
-	<string name="revoke_suspicion_headline">Entwarnung geben</string>
-	<string name="revoke_suspicion_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Symptome einer Corona-Infektion bei Ihnen aufgetreten sind.\n\nWenn durch\n• einen Laborbefund oder\n• einen Arzt\nbestätigt wurde, dass Sie nicht an dem Coronavirus erkrankt sind, informieren Sie bitte umgehend Ihre Kontakte mit dieser Entwarnung.\n\nIm nächsten Schritt fragen wir dafür Zugriff auf die gespeicherten Zufalls-IDs an. Den Zugriff benötigen wir, um Ihre zuvor benachrichtigten Kontakte über die Entwarnung zu informieren.</string>
+    <string name="contacts_confirmed_multiple_case_description_3">bestätigt.</string>
+    <string name="contacts_suspicion_multiple_case_headline">Hinweis</string>
+    <string name="contacts_suspicion_multiple_case_description_1">Bei %d Ihrer Kontakte gibt es den</string>
+    <string name="contacts_suspicion_multiple_case_description_2">Verdacht</string>
+    <string name="contacts_suspicion_multiple_case_description_3">auf eine Corona-Infektion.</string>
+    <string name="contacts_quarantine_day_single">Quarantänetag</string>
+    <string name="contacts_quarantine_day_many">Quarantäne-Tage</string>
+    <string name="revoke_suspicion_title">Status melden</string>
+    <string name="revoke_suspicion_headline">Entwarnung geben</string>
+    <string name="revoke_suspicion_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Symptome einer Corona-Infektion bei Ihnen aufgetreten sind.\n\nWenn durch\n• einen Laborbefund oder\n• einen Arzt\nbestätigt wurde, dass Sie nicht an dem Coronavirus erkrankt sind, informieren Sie bitte umgehend Ihre Kontakte mit dieser Entwarnung.\n\nIm nächsten Schritt fragen wir dafür Zugriff auf die gespeicherten Zufalls-IDs an. Den Zugriff benötigen wir, um Ihre zuvor benachrichtigten Kontakte über die Entwarnung zu informieren.</string>
 	<string name="revoke_suspicion_approval">Hiermit bestätige ich, die Angaben wahrheitsgemäß getätigt zu haben.</string>
 	<string name="revoke_suspicion_action">Entwarnung bestätigen</string>
 	<string name="revoke_suspicion_success_headline">Entwarnung bestätigt</string>
