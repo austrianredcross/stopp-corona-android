@@ -51,12 +51,16 @@ class ProcessDiagnosisKeysWorker(
 
     override suspend fun doWork(): Result {
         val token = inputData.getString(ARGUMENT_TOKEN)
-
-        token?.let {
-            infectionMessengerRepository.processKeysBasedOnToken(token)
-            return@doWork Result.success()
+        try {
+            token?.let {
+                infectionMessengerRepository.processKeysBasedOnToken(token)
+                return@doWork Result.success()
+            }
+            Timber.e(SilentError(IllegalArgumentException("No Token was provided, no work can be done")))
+        } catch (ex: Exception){
+            Timber.e(SilentError(ex))
         }
-        Timber.e(SilentError(IllegalArgumentException("No Token was provided, no work can be done")))
+
         return Result.failure()
     }
 }

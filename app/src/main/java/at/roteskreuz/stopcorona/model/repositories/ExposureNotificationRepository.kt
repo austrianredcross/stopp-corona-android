@@ -246,7 +246,8 @@ class ExposureNotificationRepositoryImpl(
 
     override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String) {
 
-        val configuration = configurationRepository.observeConfiguration().blockingFirst()
+        val configuration = configurationRepository.getConfiguration()
+            ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
         //TODO get values from configuration
 
         val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()

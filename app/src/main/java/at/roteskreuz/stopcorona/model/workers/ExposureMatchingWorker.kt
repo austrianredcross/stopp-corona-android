@@ -72,6 +72,7 @@ class ExposureMatchingWorker(
         try {
             infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
         } catch (ex: Exception){
+            //we agreed to silently fail in case of errors here
             Timber.e(SilentError(ex))
         }
         // Schedule the next exposure matching work.
