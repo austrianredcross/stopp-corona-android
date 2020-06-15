@@ -12,11 +12,12 @@ import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.*
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import com.squareup.moshi.JsonDataException
 import kotlinx.coroutines.withContext
-import org.threeten.bp.ZonedDateTime
 import retrofit2.HttpException
 import java.io.File
 import java.io.IOException
@@ -72,12 +73,6 @@ interface ApiInteractor {
      * Save one file from the Content Delivery Network API to a local temp file.
      */
     suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File?
-
-    /**
-     * Based on the users [WarningType], download the last 7 or 14 day batch of diagnosis key
-     * archive(s).
-     */
-    suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
 
     /**
      * Download all available diagnosis key archive(s) for all available past days for individual
@@ -168,23 +163,6 @@ class ApiInteractorImpl(
                     }
                 } else {
                     throw IOException("it did not work code:${response} ")
-                }
-            }
-        }
-    }
-
-    override suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
-        val indexOfArchives = getIndexOfDiagnosisKeysArchives()
-
-        return when (warningType) {
-            WarningType.YELLOW, WarningType.RED -> {
-                indexOfArchives.full14DaysBatch.batchFilePaths.mapNotNull {
-                    downloadContentDeliveryFileToTempFile(it)
-                }
-            }
-            WarningType.REVOKE -> {
-                indexOfArchives.full07DaysBatch.batchFilePaths.mapNotNull {
-                    downloadContentDeliveryFileToTempFile(it)
                 }
             }
         }

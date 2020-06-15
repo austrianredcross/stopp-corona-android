@@ -8,7 +8,6 @@ import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
@@ -21,7 +20,6 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProp
 import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.skeleton.core.utils.stringSharedPreferencesProperty
-import at.roteskreuz.stopcorona.utils.asDbObservable
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
@@ -160,7 +158,7 @@ class InfectionMessengerRepositoryImpl(
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         val configuration =
             configurationRepository.getConfiguration()
-                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
+                ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
         when (warningType) {
             WarningType.YELLOW, WarningType.RED -> {
@@ -205,7 +203,7 @@ class InfectionMessengerRepositoryImpl(
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
             try {
-                val archives: List<File> = apiInteractor.fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
+                val archives: List<File> = fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
                 val contextToken = BATCH + "," + warningType + "," + UUID.randomUUID().toString()
                 lastScheduledToken = contextToken
                 exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
@@ -214,6 +212,23 @@ class InfectionMessengerRepositoryImpl(
                 downloadMessagesStateObserver.error(e)
             } finally {
                 downloadMessagesStateObserver.idle()
+            }
+        }
+    }
+
+    suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
+        val indexOfArchives = apiInteractor.getIndexOfDiagnosisKeysArchives()
+
+        return when (warningType) {
+            WarningType.YELLOW, WarningType.RED -> {
+                indexOfArchives.full14DaysBatch.batchFilePaths.mapNotNull {
+                    apiInteractor.downloadContentDeliveryFileToTempFile(it)
+                }
+            }
+            WarningType.REVOKE -> {
+                indexOfArchives.full07DaysBatch.batchFilePaths.mapNotNull {
+                    apiInteractor.downloadContentDeliveryFileToTempFile(it)
+                }
             }
         }
     }
