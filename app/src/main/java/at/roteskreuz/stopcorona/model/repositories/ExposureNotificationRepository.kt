@@ -97,7 +97,7 @@ interface ExposureNotificationRepository {
     /**
      * Process the diagnosis key files
      */
-    suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String): String
+    suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String)
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -244,7 +244,7 @@ class ExposureNotificationRepositoryImpl(
         }
     }
 
-    override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String): String {
+    override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String) {
 
         val configuration = configurationRepository.observeConfiguration().blockingFirst()
         //TODO get values from configuration
@@ -259,11 +259,11 @@ class ExposureNotificationRepositoryImpl(
             .setTransmissionRiskScores(*configuration.transmissionRiskLevelValues.toIntArray())
             .build()
 
-        return suspendCancellableCoroutine { continuation ->
+        suspendCancellableCoroutine<Unit> { continuation ->
             exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
                 .addOnCompleteListener{
                     if (it.isSuccessful) {
-                        continuation.resume(token)
+                        continuation.resume(Unit)
                     } else {
                         continuation.cancel(it.exception)
                     }
