@@ -172,7 +172,7 @@ class DebugDiagnosisKeysViewModel(
 
                 var downloadedFile = apiInteractor.downloadContentDeliveryFileToTempFile(pathToFirstArchive)
                 exposureNotificationsTextSubject.onNext("$pathToFirstArchive downloaded successfully to " +
-                    "${downloadedFile.absolutePath}} resulting in a filesize of ${downloadedFile.length()} bytes  ")
+                    "${downloadedFile?.absolutePath}} resulting in a filesize of ${downloadedFile?.length()} bytes  ")
 
                 delay(1000)
 

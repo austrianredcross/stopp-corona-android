@@ -2,11 +2,15 @@ package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfDiagnosisKeysArchives
-import at.roteskreuz.stopcorona.model.entities.infection.info.*
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
+import at.roteskreuz.stopcorona.model.repositories.FilesRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
@@ -15,8 +19,8 @@ import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import timber.log.Timber
-import java.io.*
+import java.io.File
+import java.io.IOException
 import java.net.HttpURLConnection.*
 
 /**
@@ -65,7 +69,7 @@ interface ApiInteractor {
      */
     suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
 
-    suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File
+    suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File?
 
     suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
 
@@ -78,7 +82,8 @@ class ApiInteractorImpl(
     private val contextInteractor: ContextInteractor,
     private val tanApiDescription: TanApiDescription,
     private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
-    private val dataPrivacyRepository: DataPrivacyRepository
+    private val dataPrivacyRepository: DataPrivacyRepository,
+    private val filesRepository: FilesRepository
 ) : ApiInteractor,
     ExceptionMapperHelper {
 
@@ -138,37 +143,37 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File {
-        val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
-        if (response.isSuccessful) {
-            val cacheDir = contextInteractor.applicationContext.getCacheDir()
-            val outputFile: File = File(cacheDir, pathToArchive.replace("/", "-"))
+    override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File? {
+        return withContext(appDispatchers.IO) {
+            checkGeneralErrors {
+                @Suppress("BlockingMethodInNonBlockingContext")
+                val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
+                if (response.isSuccessful) {
+                    val fileName = pathToArchive.replace("/", "-")
+                    filesRepository.removeCacheFile(fileName)
 
-            outputFile.deleteOnExit()
-
-            response.body()?.byteStream()?.saveToFile(outputFile)
-            return outputFile
-        } else {
-            response.message()
-            throw IOException("it did not work code:${response} ")
+                    response.body()?.byteStream()?.let { inputStream ->
+                        filesRepository.createCacheFileFromInputStream(inputStream, fileName)
+                        filesRepository.getCacheFile(fileName)
+                    }
+                } else {
+                    throw IOException("it did not work code:${response} ")
+                }
+            }
         }
     }
 
     override suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
         val indexOfArchives = getIndexOfDiagnosisKeysArchives()
 
-        when (warningType) {
+        return when (warningType) {
             WarningType.YELLOW, WarningType.RED -> {
-                return indexOfArchives.full14DaysBatch.batchFilePaths.map {
-                    Timber.d("Downloading the full 14 days batch, ther could revocations" +
-                        "in the last 14 days even")
+                indexOfArchives.full14DaysBatch.batchFilePaths.mapNotNull {
                     downloadContentDeliveryFileToTempFile(it)
                 }
             }
             WarningType.REVOKE -> {
-                return indexOfArchives.full07DaysBatch.batchFilePaths.map {
-                    Timber.d("Downloading the full 7 days batch because there can´t" +
-                        "be changes longer than 7 days ago as we were not exposed.")
+                indexOfArchives.full07DaysBatch.batchFilePaths.mapNotNull {
                     downloadContentDeliveryFileToTempFile(it)
                 }
             }
@@ -179,20 +184,12 @@ class ApiInteractorImpl(
         val indexOfArchives = getIndexOfDiagnosisKeysArchives()
 
         //we assume the list of dailyBatches is sorted on the server!!!
-        val listOfDaysWithDownloadedFilesSortedByServer = indexOfArchives.dailyBatches
+        return indexOfArchives.dailyBatches
             .map { dayBatch ->
-                val downloadedFilesOfThisDay = dayBatch.batchFilePaths.map { filepathForOneDay ->
+                dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
                     downloadContentDeliveryFileToTempFile(filepathForOneDay)
                 }
-                downloadedFilesOfThisDay
             }
-        return listOfDaysWithDownloadedFilesSortedByServer
-    }
-
-    private fun InputStream.saveToFile(file: File) = use { input ->
-        file.outputStream().use { output ->
-            input.copyTo(output)
-        }
     }
 
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
