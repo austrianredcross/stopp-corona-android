@@ -25,6 +25,7 @@ import at.roteskreuz.stopcorona.utils.asDbObservable
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.io.File
 import java.util.UUID
@@ -159,7 +160,7 @@ class InfectionMessengerRepositoryImpl(
     }
 
     private suspend fun processKeysBasedOnBatchToken(token: String) {
-        val warningType = WarningType.RED
+        val warningType = quarantineRepository.getCurrentWarningType()
 
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         val configuration =
@@ -175,8 +176,7 @@ class InfectionMessengerRepositoryImpl(
                     //go through the days and check if the day is the first RED/YELLOW day
                     // TODO: go through the summary and check if the day is the first RED/YELLOW day
                 } else {
-                    //TODO: we are green again
-                    //TODO finish this decision branch
+                    quarantineRepository.receivedWarning(WarningType.REVOKE)
                 }
             }
             WarningType.REVOKE -> {
@@ -184,14 +184,23 @@ class InfectionMessengerRepositoryImpl(
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
                     //we must now identify day by day if we are YELLOW or RED
                     val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
+                    //process the batches and do one of these:
+                    //TODO find time of contact
+                    //this is a fake calculation:
+                    val dayOfExposure = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong())
+                    quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dayOfExposure)
+
+                    quarantineRepository.receivedWarning(WarningType.YELLOW)
+
+                } else {
+                    Timber.d("We are still QuarantineStatus.Free")
                 }
             }
         }
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
-        //TODO: get the real current warning type
-        val warningType = WarningType.RED
+        val warningType = quarantineRepository.getCurrentWarningType()
         if (downloadMessagesStateObserver.currentState is State.Loading) {
             Timber.e(SilentError(IllegalStateException("we´re trying to download but we´re still downloading...")))
             return

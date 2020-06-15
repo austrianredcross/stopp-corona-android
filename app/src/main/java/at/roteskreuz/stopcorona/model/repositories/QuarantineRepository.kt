@@ -119,6 +119,11 @@ interface QuarantineRepository {
      * Get the current quarantine status.
      */
     suspend fun getQuarantineStatus(): QuarantineStatus
+
+    /**
+     * return the current Warning type based on the last Yellow and Red contact date times
+     */
+    fun getCurrentWarningType(): WarningType
 }
 
 class QuarantineRepositoryImpl(
@@ -343,6 +348,12 @@ class QuarantineRepositoryImpl(
             WarningType.YELLOW -> dateOfLastYellowContact = timeOfContact
             WarningType.RED -> dateOfLastRedContact = timeOfContact
         }
+    }
+
+    override fun getCurrentWarningType() : WarningType {
+        if (dateOfLastRedContact != null) return WarningType.RED
+        if (dateOfLastYellowContact != null) return WarningType.YELLOW
+        return WarningType.REVOKE
     }
 
     override fun setShowQuarantineEnd() {
