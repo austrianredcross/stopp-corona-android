@@ -48,10 +48,6 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
             }
 
             ProcessDiagnosisKeysWorker.enqueueProcessingOfDiagnosisKeys(workManager, token)
-
-            //TODO process the exposure notification
-            // see https://github.com/google/exposure-notifications-android/blob/master/app/src/main/java/com/google/android/apps/exposurenotification/nearby/StateUpdatedWorker.java
-            // and https://github.com/google/exposure-notifications-android/blob/master/app/src/main/java/com/google/android/apps/exposurenotification/nearby/ExposureNotificationBroadcastReceiver.java
         }
     }
 

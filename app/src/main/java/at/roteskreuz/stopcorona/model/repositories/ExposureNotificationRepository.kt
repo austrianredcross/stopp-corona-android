@@ -248,11 +248,9 @@ class ExposureNotificationRepositoryImpl(
 
         val configuration = configurationRepository.getConfiguration()
             ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
-        //TODO get values from configuration
 
         val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
             .setMinimumRiskScore(configuration.minimumRiskScore)
-            //TODO check if the List can also be "spread"
             .setDurationAtAttenuationThresholds(*configuration.attenuationDurationThresholds.toIntArray())
             .setAttenuationScores(*configuration.attenuationLevelValues.toIntArray())
             .setDaysSinceLastExposureScores(*configuration.daysSinceLastExposureLevelValues.toIntArray())
