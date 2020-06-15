@@ -9,7 +9,7 @@ import org.koin.standalone.inject
 import timber.log.Timber
 
 /**
- * Worker that displays local notifications.
+ * Worker that downloads and processes diagnosis keys.
  */
 class ProcessDiagnosisKeysWorker(
     appContext: Context,
