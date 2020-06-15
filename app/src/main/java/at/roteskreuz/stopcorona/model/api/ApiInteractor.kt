@@ -14,6 +14,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnect
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.withContext
+import org.threeten.bp.ZonedDateTime
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.*
@@ -80,7 +81,7 @@ interface ApiInteractor {
      * Download all available diagnosis key archive(s) for all available past days for individual
      * processing.
      */
-    suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>>
+    suspend fun fetchDailyBatchDiagnosisKeys(): ListOfDailyBatches
 }
 
 class ApiInteractorImpl(
@@ -186,18 +187,24 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun fetchDailyBatchDiagnosisKeys(): List<List<File>> {
+    override suspend fun fetchDailyBatchDiagnosisKeys(): ListOfDailyBatches {
         val indexOfArchives = getIndexOfDiagnosisKeysArchives()
 
         //we assume the list of dailyBatches is sorted on the server!!!
-        val listOfDaysWithDownloadedFilesSortedByServer = indexOfArchives.dailyBatches
-            .map { dayBatch ->
+        val dailyArchives = ListOfDailyBatches()
+            indexOfArchives.dailyBatches.forEachIndexed { index, dayBatch ->
                 val downloadedFilesOfThisDay = dayBatch.batchFilePaths.map { filepathForOneDay ->
                     downloadContentDeliveryFileToTempFile(filepathForOneDay)
                 }
-                downloadedFilesOfThisDay
+
+                val dayArchive = ArchivesOfOneDay(
+                    archiveFilePaths = downloadedFilesOfThisDay,
+                    dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
+                    indexFromServer = index
+                )
+                dailyArchives.diagnosisArchiveFilesOfTheDay.add(dayArchive)
             }
-        return listOfDaysWithDownloadedFilesSortedByServer
+        return dailyArchives
     }
 
     private fun InputStream.saveToFile(file: File) = use { input ->
@@ -305,3 +312,28 @@ sealed class SicknessCertificateUploadException : Exception() {
      */
     object SMSGatewayException : SicknessCertificateUploadException()
 }
+
+/**
+ * Collection of downloaded diagnosis archives
+ */
+data class ListOfDailyBatches(
+    val diagnosisArchiveFilesOfTheDay: MutableList<ArchivesOfOneDay> = ArrayList()
+)
+
+/**
+ * One day worth of diagnosis key files
+ */
+data class ArchivesOfOneDay(
+    /**
+     * path to the diagnosis key files downloaded from the backend as local temp files
+     */
+    val archiveFilePaths: List<File>,
+    /**
+     * unix timestamp of the day
+     */
+    val dayTimestampOfDay: Long,
+    /**
+     * The original index as ordered by the backend
+     */
+    val indexFromServer: Int
+)

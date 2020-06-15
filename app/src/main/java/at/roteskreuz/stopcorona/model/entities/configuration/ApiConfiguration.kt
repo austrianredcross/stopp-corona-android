@@ -44,7 +44,9 @@ data class ApiConfiguration(
             redWarningQuarantine = redWarningQuarantine,
             yellowWarningQuarantine = yellowWarningQuarantine,
             selfDiagnosedQuarantine = selfDiagnosedQuarantine,
-            uploadKeysDays = uploadKeysDays
+            uploadKeysDays = uploadKeysDays,
+
+
         )
     }
 }
