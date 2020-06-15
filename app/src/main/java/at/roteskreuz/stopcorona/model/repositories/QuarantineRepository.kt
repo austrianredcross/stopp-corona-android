@@ -399,9 +399,9 @@ class QuarantineRepositoryImpl(
     override fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>> {
         return Observables.combineLatest(
             observeDateOfFirstMedicalConfirmation(),
-            observeDateOfFirstSelfDiagnose(),
+            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE),
             preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
-        ).map { (dateOfFirstMedicalConfirmation, dateOfFirstSelfDiagnose, areMissingKeysUploaded) ->
+        ).map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
             if (dateOfFirstMedicalConfirmation.isPresent &&
                 ZonedDateTime.now()
                     .isAfter(dateOfFirstMedicalConfirmation.get().plusDays(1).startOfTheDay()) &&
@@ -412,13 +412,13 @@ class QuarantineRepositoryImpl(
                     MessageType.InfectionLevel.Red
                 )
             }
-            if (dateOfFirstSelfDiagnose.isPresent &&
+            if (dateOfLastSelfDiagnose.isPresent &&
                 ZonedDateTime.now()
-                    .isAfter(dateOfFirstSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
+                    .isAfter(dateOfLastSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
                 areMissingKeysUploaded.not()
             ) {
                 UploadMissingExposureKeys(
-                    dateOfFirstSelfDiagnose.get(),
+                    dateOfLastSelfDiagnose.get(),
                     MessageType.InfectionLevel.Yellow
                 )
             }
