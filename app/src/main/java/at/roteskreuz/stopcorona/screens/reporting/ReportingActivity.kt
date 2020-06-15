@@ -18,6 +18,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import timber.log.Timber
 
 /**
@@ -27,17 +29,29 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
 
     companion object {
         private const val ARGUMENT_MESSAGE_TYPE = "argument_message_type"
+        private const val ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING =
+            "argument_upload_missing_exposure_keys"
 
-        fun args(messageType: MessageType): Bundle {
+        fun args(messageType: MessageType, dateWithMissingExposureKeys: ZonedDateTime?): Bundle {
             return bundleOf(
-                ARGUMENT_MESSAGE_TYPE to messageType
+                ARGUMENT_MESSAGE_TYPE to messageType,
+                ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING to DateTimeFormatter.ISO_ZONED_DATE_TIME.format(dateWithMissingExposureKeys)
             )
         }
     }
 
     private val messageType: MessageType by argument(ARGUMENT_MESSAGE_TYPE)
 
-    private val viewModel: ReportingViewModel by viewModel { parametersOf(messageType) }
+    private val dateWithMissingExposureKeysAsString: String? by argument(
+        ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING
+    )
+
+    private val viewModel: ReportingViewModel by viewModel {
+        parametersOf(
+            messageType,
+            ZonedDateTime.parse(dateWithMissingExposureKeysAsString)
+        )
+    }
 
     /**
      * Contains disposables that have to be disposed in [onStop].
@@ -94,9 +108,12 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     }
 }
 
-fun Fragment.startReportingActivity(messageType: MessageType) {
+fun Fragment.startReportingActivity(
+    messageType: MessageType,
+    dateWithMissingExposureKeys: ZonedDateTime? = null
+) {
     startFragmentActivity<ReportingActivity>(
         fragmentName = ReportingPersonalDataFragment::class.java.name,
-        activityBundle = ReportingActivity.args(messageType)
+        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys)
     )
 }

@@ -5,6 +5,7 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants.Prefs
 import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.cancelEndQuarantineReminder
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.enqueueEndQuarantineReminder
@@ -12,6 +13,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
+import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
@@ -119,6 +121,23 @@ interface QuarantineRepository {
      * Get the current quarantine status.
      */
     suspend fun getQuarantineStatus(): QuarantineStatus
+
+    /**
+     * Observe if the user needs to upload the exposure keys from the day of the submission.
+     * The user can upload the missing exposure keys starting with the next day after
+     * a successful submission.
+     */
+    fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>>
+
+    /**
+     * Mark the upload of the missing exposure keys as done.
+     */
+    fun markMissingExposureKeysAsUploaded()
+
+    /**
+     * Mark the upload of the missing exposure keys as not done.
+     */
+    fun markMissingExposureKeysAsNotUploaded()
 }
 
 class QuarantineRepositoryImpl(
@@ -139,17 +158,18 @@ class QuarantineRepositoryImpl(
         private const val PREF_DATE_OF_LAST_YELLOW_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
         private const val PREF_DATE_OF_LAST_SELF_MONITORING = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
         private const val PREF_SHOW_QUARANTINE_END = Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
+        private const val PREF_MISSING_KEYS_UPLOADED = Prefs.QUARANTINE_REPOSITORY_PREFIX + "missing_keys_uploaded"
     }
 
-    override var dateOfFirstMedicalConfirmation: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
+    override var dateOfFirstMedicalConfirmation: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+        PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
 
     override fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
         return preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
     }
 
-    private var dateOfFirstSelfDiagnose: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
+    private var dateOfFirstSelfDiagnose: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+        PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
 
     override fun observeDateOfFirstSelfDiagnose(): Observable<Optional<ZonedDateTime>> {
         return preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
@@ -165,16 +185,25 @@ class QuarantineRepositoryImpl(
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
 
     private var dateOfLastRedContact: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_RED_CONTACT)
+        by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+            PREF_DATE_OF_LAST_RED_CONTACT
+        )
 
     private var dateOfLastYellowContact: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_YELLOW_CONTACT)
+        by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+            PREF_DATE_OF_LAST_YELLOW_CONTACT
+        )
 
     private var dateOfLastSelfMonitoringInstruction: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_MONITORING)
+        by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+            PREF_DATE_OF_LAST_SELF_MONITORING
+        )
 
     private var showQuarantineEnd: Boolean
         by preferences.booleanSharedPreferencesProperty(PREF_SHOW_QUARANTINE_END, false)
+
+    private var missingKeysUploaded: Boolean
+        by preferences.booleanSharedPreferencesProperty(PREF_MISSING_KEYS_UPLOADED, false)
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
@@ -366,6 +395,45 @@ class QuarantineRepositoryImpl(
             quarantineStateObservable.blockingFirst()
         }
     }
+
+    override fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>> {
+        return Observables.combineLatest(
+            observeDateOfFirstMedicalConfirmation(),
+            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE),
+            preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
+        ).debounce(50, TimeUnit.MILLISECONDS) // some of the shared prefs can be changed together
+            .map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
+                if (dateOfFirstMedicalConfirmation.isPresent &&
+                    ZonedDateTime.now()
+                        .isAfter(dateOfFirstMedicalConfirmation.get().plusDays(1).startOfTheDay()) &&
+                    areMissingKeysUploaded.not()
+                ) {
+                    UploadMissingExposureKeys(
+                        dateOfFirstMedicalConfirmation.get(),
+                        MessageType.InfectionLevel.Red
+                    )
+                }
+                if (dateOfLastSelfDiagnose.isPresent &&
+                    ZonedDateTime.now()
+                        .isAfter(dateOfLastSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
+                    areMissingKeysUploaded.not()
+                ) {
+                    UploadMissingExposureKeys(
+                        dateOfLastSelfDiagnose.get(),
+                        MessageType.InfectionLevel.Yellow
+                    )
+                }
+                Optional.empty<UploadMissingExposureKeys>()
+            }
+    }
+
+    override fun markMissingExposureKeysAsUploaded() {
+        missingKeysUploaded = true
+    }
+
+    override fun markMissingExposureKeysAsNotUploaded() {
+        missingKeysUploaded = false
+    }
 }
 
 private data class QuarantinePrerequisitesHolder(
@@ -404,3 +472,9 @@ sealed class QuarantineStatus {
      */
     data class Free(val selfMonitoring: Boolean = false) : QuarantineStatus()
 }
+
+/**
+ * Indicates the date for which the exposure keys have not been uploaded and
+ * the associated diagnostic.
+ */
+data class UploadMissingExposureKeys(val date: ZonedDateTime, val messageType: MessageType)

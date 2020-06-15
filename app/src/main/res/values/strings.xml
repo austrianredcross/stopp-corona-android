@@ -423,6 +423,7 @@
 	<string name="local_notification_automatic_handshake_message">Thank you for helping us contain the Corona virus.</string>
 	<string name="local_notification_activate_automatic_handshake_again_title">Please activate the automatic handshake again</string>
 	<string name="local_notification_activate_automatic_handshake_again_message">and continue to help contain the corona virus.</string>
+	<string name="upload_missing_keys">Please insert translation here</string>
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Caution</string>

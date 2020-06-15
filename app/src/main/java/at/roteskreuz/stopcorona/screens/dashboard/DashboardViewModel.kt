@@ -126,6 +126,10 @@ class DashboardViewModel(
         quarantineRepository.quarantineEndSeen()
     }
 
+    fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>> {
+        return quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
+    }
+
     fun observeSomeoneHasRecoveredStatus(): Observable<HealthStatusData> {
         return infectionMessengerRepository.observeSomeoneHasRecoveredMessage()
             .map { shouldShow ->
