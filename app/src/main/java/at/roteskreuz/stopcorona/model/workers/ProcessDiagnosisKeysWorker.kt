@@ -7,7 +7,6 @@ import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
-import kotlin.IllegalArgumentException
 
 /**
  * Worker that displays local notifications.
@@ -27,6 +26,7 @@ class ProcessDiagnosisKeysWorker(
          */
         fun enqueueProcessingOfDiagnosisKeys(workManager: WorkManager, token: String) {
             val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()
 
             val request = OneTimeWorkRequestBuilder<ProcessDiagnosisKeysWorker>()
