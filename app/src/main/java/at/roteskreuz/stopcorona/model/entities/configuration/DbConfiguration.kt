@@ -107,17 +107,7 @@ class ArrayOfIntegerConverter {
     }
     @TypeConverter
     fun get(listOfIntegers: List<Int>?): String? {
-        if (listOfIntegers == null){
-            return null
-        }
-        return buildString {
-            listOfIntegers?.forEachIndexed() { index, it ->
-                this.append(it)
-                if (index < listOfIntegers.size - 1){
-                    this.append(SEPARATOR)
-                }
-            }
-        }
+        return listOfIntegers?.joinToString(SEPARATOR)
     }
 
     @TypeConverter
@@ -129,7 +119,7 @@ class ArrayOfIntegerConverter {
             return emptyList()
         }
 
-        return commaSeparatedListOfIntegers?.split(SEPARATOR)?.map { Integer.parseInt(it) }
+        return commaSeparatedListOfIntegers.split(SEPARATOR).map { Integer.parseInt(it) }
     }
 }
 
