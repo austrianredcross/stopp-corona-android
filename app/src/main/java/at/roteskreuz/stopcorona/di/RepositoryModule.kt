@@ -1,6 +1,8 @@
 package at.roteskreuz.stopcorona.di
 
 import android.bluetooth.BluetoothAdapter
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManagerImpl
 import at.roteskreuz.stopcorona.model.repositories.*
 import org.koin.dsl.module.module
 
@@ -50,6 +52,7 @@ val repositoryModule = module {
             appDispatchers = get(),
             apiInteractor = get(),
             infectionMessageDao = get(),
+            temporaryExposureKeysDao = get(),
             cryptoRepository = get(),
             notificationsRepository = get(),
             preferences = get(),
@@ -94,6 +97,17 @@ val repositoryModule = module {
             appDispatchers = get(),
             bluetoothManager = get(),
             exposureNotificationClient = get()
+        )
+    }
+
+    single<ExposureNotificationManager> {
+        ExposureNotificationManagerImpl(
+            appDispatchers = get(),
+            preferences = get(),
+            exposureNotificationRepository = get(),
+            bluetoothRepository = get(),
+            googlePlayAvailability = get(),
+            contextInteractor = get()
         )
     }
 }

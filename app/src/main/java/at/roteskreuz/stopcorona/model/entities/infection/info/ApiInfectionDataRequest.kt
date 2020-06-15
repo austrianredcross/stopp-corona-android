@@ -2,7 +2,10 @@ package at.roteskreuz.stopcorona.model.entities.infection.info
 
 import android.util.Base64
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
+import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
+import com.squareup.moshi.ToJson
+import java.util.*
 
 /**
  * Describes infection info about user with data gathered from the Exposure SDK.
@@ -21,8 +24,14 @@ data class ApiInfectionDataRequest(
 @JsonClass(generateAdapter = true)
 data class ApiTemporaryTracingKey(
     val key: String,
-    val password: String,
+    val password: UUID,
+    /**
+     * rollingStartIntervalNumber = A number describing when a key starts.
+     * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10). */
     val intervalNumber: Int,
+    /**
+     * rollingPeriod = A number describing how long a key is valid.
+     * It is expressed in increments of 10 minutes (e.g. 144 for 24 hours). */
     val intervalCount: Int
 )
 
@@ -32,22 +41,38 @@ data class ApiVerificationPayload(
     val authorization: String
 )
 
-fun List<TemporaryExposureKey>.convertToApiTemporaryTracingKeys(): List<ApiTemporaryTracingKey>{
-    return this.map { it.convertToApiTemporaryTracingKey() }
+fun List<Pair<List<TemporaryExposureKey>, UUID>>.asApiEntity(): List<ApiTemporaryTracingKey> {
+    return this.map { pair ->
+        val temporaryExposureKeys = pair.first
+        val password = pair.second
+
+        temporaryExposureKeys.map { temporaryExposureKey ->
+            val base64Key = Base64.encodeToString(temporaryExposureKey.keyData, Base64.NO_WRAP)
+
+            ApiTemporaryTracingKey(
+                key = base64Key,
+                password = password,
+                intervalNumber = temporaryExposureKey.rollingStartIntervalNumber,
+                intervalCount = temporaryExposureKey.rollingPeriod
+            )
+        }
+    }.flatten()
 }
 
-fun TemporaryExposureKey.convertToApiTemporaryTracingKey(): ApiTemporaryTracingKey{
-    val base64Key = Base64.encodeToString(this.keyData, Base64.NO_WRAP)
-    return ApiTemporaryTracingKey(
-        key = base64Key,
-        password = base64Key,
-        /**
-         * rollingStartIntervalNumber = A number describing when a key starts.
-         * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10). */
-        intervalNumber = this.rollingStartIntervalNumber,
-        /**
-         * rollingPeriod = A number describing how long a key is valid.
-         * It is expressed in increments of 10 minutes (e.g. 144 for 24 hours). */
-        intervalCount = this.rollingPeriod
-    )
+/**
+ * Adapter for UUID to String.
+ */
+object UUIDAdapter {
+
+    @FromJson
+    fun fromJson(value: String?): UUID? {
+        return value?.let {
+            UUID.fromString(it)
+        }
+    }
+
+    @ToJson
+    fun toJson(value: UUID?): String? {
+        return value?.toString()
+    }
 }

@@ -62,15 +62,12 @@ val viewModelModule = module {
         DashboardViewModel(
             appDispatchers = get(),
             dashboardRepository = get(),
-            contextInteractor = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get(),
             configurationRepository = get(),
-            exposureNotificationRepository = get(),
             databaseCleanupManager = get(),
-            googlePlayAvailability = get(),
             changelogManager = get(),
-            bluetoothRepository = get()
+            exposureNotificationManager = get()
         )
     }
 
@@ -157,6 +154,7 @@ val viewModelModule = module {
             appDispatchers = get(),
             reportingRepository = get(),
             quarantineRepository = get(),
+            exposureNotificationManager = get(),
             exposureNotificationRepository = get()
         )
     }

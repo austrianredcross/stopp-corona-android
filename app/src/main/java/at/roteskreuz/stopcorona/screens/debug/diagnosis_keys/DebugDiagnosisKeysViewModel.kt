@@ -99,8 +99,7 @@ class DebugDiagnosisKeysViewModel(
                 }
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result")
-                    exposureNotificationsErrorState.loaded(ResolutionType.RegisterWithFramework(apiException.status))
+                    Timber.e(exception, "Error, RESOLUTION_REQUIRED in result which is not handled in UI. Framework must be running to continue.")
                     exposureNotificationsErrorState.idle()
                     exposureNotificationsTextSubject.onNext("Error, RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)

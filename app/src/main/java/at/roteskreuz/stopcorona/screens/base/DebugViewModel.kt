@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import at.roteskreuz.stopcorona.utils.view.safeRun
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
-import kotlin.random.Random
 
 /**
  * Special viewModel for managing debug tasks.
@@ -60,16 +59,22 @@ class DebugViewModel(
 
     fun addOutgoingMessageRed() {
         launch {
-            val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
-            infectionMessengerRepository.storeSentInfectionMessages(listOf(Random.nextBytes(ByteArray(1)) to infectionMessageContent))
+            val infectionMessageContent =
+                InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
+
+            // TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
+
             quarantineRepository.reportMedicalConfirmation()
         }
     }
 
     fun addOutgoingMessageYellow() {
         launch {
-            val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
-            infectionMessengerRepository.storeSentInfectionMessages(listOf(Random.nextBytes(ByteArray(1)) to infectionMessageContent))
+            val infectionMessageContent =
+                InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
+
+            // TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
+
             quarantineRepository.reportPositiveSelfDiagnose()
         }
     }

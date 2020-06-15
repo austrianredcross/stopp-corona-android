@@ -94,6 +94,7 @@ object Constants {
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
         const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
+        const val EXPOSURE_NOTIFICATION_MANAGER_PREFIX = PREFIX + "exposure_notification_manager_"
     }
 
     /**
@@ -198,5 +199,16 @@ object Constants {
 
         const val EMPTY_STRING = ""
         const val SPACE = " "
+    }
+
+    /**
+     * Constants related to the configuration provided by the backend.
+     */
+    object ConfigurationDefaults {
+
+        /**
+         * The number of temporary exposure keys that will be uploaded when doing a reporting.
+         */
+        const val UPLOAD_KEYS_DAYS = 2
     }
 }
