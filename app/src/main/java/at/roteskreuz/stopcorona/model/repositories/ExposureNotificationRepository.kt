@@ -268,16 +268,16 @@ class ExposureNotificationRepositoryImpl(
         val configuration = ExposureConfiguration.ExposureConfigurationBuilder()
             .setDurationAtAttenuationThresholds(50, 60)
             .setMinimumRiskScore(1)
-            .setDaysSinceLastExposureScores(1,2,3,4,5,6,7,8)
-            .setDurationScores(1,2,3,4,5,6,7,8)
-            .setAttenuationScores(1,2,3,4,5,6,7,8)
+            .setDaysSinceLastExposureScores(1, 2, 3, 4, 5, 6, 7, 8)
+            .setDurationScores(1, 2, 3, 4, 5, 6, 7, 8)
+            .setAttenuationScores(1, 2, 3, 4, 5, 6, 7, 8)
             .setDaysSinceLastExposureWeight(100)
             .setTransmissionRiskWeight(100)
             .build()
 
         return suspendCancellableCoroutine { continuation ->
             exposureNotificationClient.provideDiagnosisKeys(archives, configuration, token)
-                .addOnCompleteListener{
+                .addOnCompleteListener {
                     if (it.isSuccessful) {
                         continuation.resume(token)
                     } else {
@@ -285,31 +285,31 @@ class ExposureNotificationRepositoryImpl(
                     }
                 }
         }
-
     }
 
-    override suspend fun determineRiskWithoutInformingUser(token: String) : ExposureSummary{
+    override suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary {
         return suspendCancellableCoroutine { continuation ->
-            exposureNotificationClient.getExposureSummary(token).addOnCompleteListener {
-                if (it.isSuccessful){
-                    continuation.resume(it.result)
-                } else {
-                    continuation.cancel(it.exception)
+            exposureNotificationClient.getExposureSummary(token)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        continuation.resume(it.result)
+                    } else {
+                        continuation.cancel(it.exception)
+                    }
                 }
-            }
         }
     }
 
     override suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
-        return suspendCancellableCoroutine {continuation ->
+        return suspendCancellableCoroutine { continuation ->
             exposureNotificationClient.getExposureInformation(token)
-                .addOnCompleteListener{
-                if (it.isSuccessful){
-                    continuation.resume(it.result)
-                } else {
-                    continuation.cancel(it.exception)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        continuation.resume(it.result)
+                    } else {
+                        continuation.cancel(it.exception)
+                    }
                 }
-            }
         }
     }
 }
