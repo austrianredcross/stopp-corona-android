@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical
@@ -17,9 +18,11 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
+import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Contents of the dashboard.
@@ -30,14 +33,14 @@ class DashboardController(
     private val onFeelingClick: (disabled: Boolean) -> Unit,
     private val onReportClick: (disabled: Boolean) -> Unit,
     private val onHealthStatusClick: (data: HealthStatusData) -> Unit,
-    private val onRevokeSuspicionClick: () -> Unit,
-    private val onPresentMedicalReportClick: () -> Unit,
-    private val onCheckSymptomsAgainClick: () -> Unit,
+    private val onRevokeSuspicionClick: (disabled: Boolean) -> Unit,
+    private val onPresentMedicalReportClick: (disabled: Boolean) -> Unit,
+    private val onCheckSymptomsAgainClick: (disabled: Boolean) -> Unit,
     private val onSomeoneHasRecoveredCloseClick: () -> Unit,
     private val onQuarantineEndCloseClick: () -> Unit,
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
     private val onExposureNotificationErrorActionClick: (ExposureNotificationPhase) -> Unit,
-    private val onRevokeSicknessClick: () -> Unit,
+    private val onRevokeSicknessClick: (disabled: Boolean) -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
 
@@ -46,6 +49,7 @@ class DashboardController(
     var showQuarantineEnd: Boolean by adapterProperty(false)
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
+    var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -382,11 +386,11 @@ class DashboardController(
                 .height(16)
                 .addTo(modelList)
 
-            ButtonType2Model_(onRevokeSuspicionClick)
+            ButtonType2Model_ { onRevokeSuspicionClick(false) }
                 .id("own_health_status_present_revoke_suspicion")
                 .text(context.string(R.string.self_testing_suspicion_button_revoke))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
-                .onDisabledClick { onFeelingClick(true) }
+                .onDisabledClick { onRevokeSuspicionClick(true) }
                 .addTo(modelList)
 
             EmptySpaceModel_()
@@ -394,11 +398,11 @@ class DashboardController(
                 .height(16)
                 .addTo(modelList)
 
-            ButtonType2Model_(onPresentMedicalReportClick)
+            ButtonType2Model_ { onPresentMedicalReportClick(false) }
                 .id("own_health_status_present_medical_report_button")
                 .text(context.string(R.string.self_testing_suspicion_secondary_button))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
-                .onDisabledClick { onFeelingClick(true) }
+                .onDisabledClick { onPresentMedicalReportClick(true) }
                 .addTo(modelList)
         }
 
@@ -408,25 +412,29 @@ class DashboardController(
                 .height(16)
                 .addTo(modelList)
 
-            ButtonType2Model_(onCheckSymptomsAgainClick)
+            ButtonType2Model_ { onCheckSymptomsAgainClick(false) }
                 .id("own_health_status_check_symptoms_button")
                 .text(context.string(R.string.self_testing_symptoms_secondary_button))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
-                .onDisabledClick { onFeelingClick(true) }
+                .onDisabledClick { onCheckSymptomsAgainClick(true) }
                 .addTo(modelList)
         }
 
-        if (ownHealthStatus is HealthStatusData.SicknessCertificate) {
+        val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
+            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION).startOfTheDay())
+            ?: true
+
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
             EmptySpaceModel_()
                 .id(modelCountBuiltSoFar)
                 .height(16)
                 .addTo(modelList)
 
-            ButtonType2Model_(onRevokeSicknessClick)
+            ButtonType2Model_ { onRevokeSicknessClick(false) }
                 .id("own_health_status_revoke_sickness")
                 .text(context.string(R.string.sickness_certificate_attest_revoke))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
-                .onDisabledClick { onFeelingClick(true) }
+                .onDisabledClick { onRevokeSicknessClick(true) }
                 .addTo(modelList)
         }
 

@@ -2,6 +2,10 @@ package at.roteskreuz.stopcorona.screens.menu
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkRunning
 import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
 import at.roteskreuz.stopcorona.screens.base.epoxy.headlineH2
 import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
@@ -9,11 +13,12 @@ import at.roteskreuz.stopcorona.screens.dashboard.HealthStatusData
 import at.roteskreuz.stopcorona.screens.menu.epoxy.MenuItemModel_
 import at.roteskreuz.stopcorona.screens.menu.epoxy.menuItem
 import at.roteskreuz.stopcorona.screens.menu.epoxy.menuItemVersion
-import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
+import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Menu content.
@@ -33,7 +38,20 @@ class MenuController(
     private val onRevokeSicknessClick: () -> Unit
 ) : EpoxyController() {
 
-    var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
+    private var ownHealthStatus: HealthStatusData = HealthStatusData.NoHealthStatus
+    private var exposureNotificationPhase: ExposureNotificationPhase? = null
+    private var dateOfFirstMedicalConfirmation: ZonedDateTime? = null
+
+    fun setData(
+        ownHealthStatusData: HealthStatusData,
+        exposureNotificationPhase: ExposureNotificationPhase,
+        dateOfFirstMedicalConfirmation: ZonedDateTime?
+    ) {
+        this.ownHealthStatus = ownHealthStatusData
+        this.exposureNotificationPhase = exposureNotificationPhase
+        this.dateOfFirstMedicalConfirmation = dateOfFirstMedicalConfirmation
+        requestModelBuild()
+    }
 
     override fun buildModels() {
 
@@ -44,10 +62,14 @@ class MenuController(
             title(context.string(R.string.start_menu_headline_3))
         }
 
-        with(buildFunctionalityMenuItems()) {
-            verticalBackgroundModelGroup(this) {
-                id("vertical_model_group_functionality")
-                backgroundColor(R.color.white)
+        if (exposureNotificationPhase.isReportingEnabled()) {
+            with(buildFunctionalityMenuItems()) {
+                if (isNotEmpty()) {
+                    verticalBackgroundModelGroup(this) {
+                        id("vertical_model_group_functionality")
+                        backgroundColor(R.color.white)
+                    }
+                }
             }
         }
 
@@ -127,12 +149,18 @@ class MenuController(
                 .addTo(modelList)
         }
 
-        if (ownHealthStatus is HealthStatusData.SicknessCertificate) {
+        val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
+            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION).startOfTheDay())
+            ?: true
+
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
             MenuItemModel_(onRevokeSicknessClick)
                 .id("revoke_sickness")
                 .title(context.string(R.string.start_menu_item_revoke_sickness))
                 .addTo(modelList)
-        } else {
+        }
+
+        if ((ownHealthStatus is HealthStatusData.SicknessCertificate).not()) {
             MenuItemModel_(onReportOfficialSicknessClick)
                 .id("official_sickness")
                 .title(context.string(R.string.start_menu_item_3_3))
@@ -141,4 +169,8 @@ class MenuController(
 
         return modelList
     }
+}
+
+private fun ExposureNotificationPhase?.isReportingEnabled(): Boolean {
+    return this is FrameworkRunning || this is FrameworkError.NotCritical
 }

@@ -8,7 +8,7 @@
 
     <Button
         android:id="@+id/btnType2"
-        style="@style/AppTheme.ButtonLargeType2"
+        style="@style/AppTheme.ButtonLargeType2.Activable"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -16,6 +16,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:enabled="false"
         tools:text="Button Type 2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

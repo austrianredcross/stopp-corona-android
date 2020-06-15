@@ -29,6 +29,11 @@ import kotlin.coroutines.CoroutineContext
 interface QuarantineRepository {
 
     /**
+     * Get date of first medical confirmation.
+     */
+    val dateOfFirstMedicalConfirmation: ZonedDateTime?
+
+    /**
      * Indicator if the user was in yellow state before turning red.
      */
     val hasSelfDiagnoseBackup: Boolean
@@ -136,7 +141,7 @@ class QuarantineRepositoryImpl(
         private const val PREF_SHOW_QUARANTINE_END = Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
     }
 
-    private var dateOfFirstMedicalConfirmation: ZonedDateTime?
+    override var dateOfFirstMedicalConfirmation: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
 
     override fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
