@@ -116,6 +116,11 @@ interface QuarantineRepository {
     fun revokeLastRedContactDate()
 
     /**
+     * Resets the last yellow contact date.
+     */
+    fun revokeLastYellowContactDate()
+
+    /**
      * Get the current quarantine status.
      */
     suspend fun getQuarantineStatus(): QuarantineStatus
@@ -370,6 +375,10 @@ class QuarantineRepositoryImpl(
 
     override fun revokeLastRedContactDate() {
         dateOfLastRedContact = null
+    }
+
+    override fun revokeLastYellowContactDate() {
+        dateOfLastYellowContact = null
     }
 
     override suspend fun getQuarantineStatus(): QuarantineStatus {

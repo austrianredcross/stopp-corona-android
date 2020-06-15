@@ -176,7 +176,10 @@ class InfectionMessengerRepositoryImpl(
                     //go through the days and check if the day is the first RED/YELLOW day
                     // TODO: go through the summary and check if the day is the first RED/YELLOW day
                 } else {
-                    quarantineRepository.receivedWarning(WarningType.REVOKE)
+                    when (warningType){
+                        WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
+                        WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
+                    }
                 }
             }
             WarningType.REVOKE -> {
@@ -193,7 +196,7 @@ class InfectionMessengerRepositoryImpl(
                     quarantineRepository.receivedWarning(WarningType.YELLOW)
 
                 } else {
-                    Timber.d("We are still QuarantineStatus.Free")
+                    Timber.d("We are still WarningType.REVOKE")
                 }
             }
         }
