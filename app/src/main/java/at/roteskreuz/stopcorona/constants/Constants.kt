@@ -73,6 +73,11 @@ object Constants {
         const val MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION = 201813000
 
         const val GOOGLE_PLAY_SERVICES_PACKAGE_NAME = GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE
+
+        /**
+         * Framework expose new event each 10 minutes.
+         */
+        val INTERVAL_NUMBER_OFFSET: Duration = Duration.ofMinutes(10)
     }
 
     /**
