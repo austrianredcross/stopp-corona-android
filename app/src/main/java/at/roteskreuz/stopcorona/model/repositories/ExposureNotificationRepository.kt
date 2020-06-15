@@ -269,13 +269,13 @@ class ExposureNotificationRepositoryImpl(
         //TODO get values from configuration
 
         val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
-            .setMinimumRiskScore(configuration.exposureConfigurationMinimumRiskScore)
+            .setMinimumRiskScore(configuration.minimumRiskScore)
             //TODO check if the List can also be "spread"
-            .setDurationAtAttenuationThresholds(*configuration.exposureConfigurationAttenuationDurationThresholds.toIntArray())
-            .setAttenuationScores(*configuration.exposureConfigurationAttenuationLevelValues.toIntArray())
-            .setDaysSinceLastExposureScores(*configuration.exposureConfigurationDaysSinceLastExposureLevelValues.toIntArray())
-            .setDurationScores(*configuration.exposureConfigurationDurationLevelValues.toIntArray())
-            .setTransmissionRiskScores(*configuration.exposureConfigurationTransmissionRiskLevelValues.toIntArray())
+            .setDurationAtAttenuationThresholds(*configuration.attenuationDurationThresholds.toIntArray())
+            .setAttenuationScores(*configuration.attenuationLevelValues.toIntArray())
+            .setDaysSinceLastExposureScores(*configuration.daysSinceLastExposureLevelValues.toIntArray())
+            .setDurationScores(*configuration.durationLevelValues.toIntArray())
+            .setTransmissionRiskScores(*configuration.transmissionRiskLevelValues.toIntArray())
             .build()
 
         return suspendCancellableCoroutine { continuation ->

@@ -32,14 +32,13 @@ data class DbConfiguration(
      */
     val cacheTime: ZonedDateTime = ZonedDateTime.now(),
 
-    val exposureConfigurationMinimumRiskScore: Int,                       // 1,
-    val exposureConfigurationDailyRiskThreshold: Int,                     // 30,
-    val exposureConfigurationAttenuationDurationThresholds: List<Int>,    // [33, 63],
-    val exposureConfigurationAttenuationLevelValues: List<Int>,           // [0, 1, 2, 2, 8, 8, 8, 8],
-    val exposureConfigurationDaysSinceLastExposureLevelValues: List<Int>, // [1, 1, 1, 1, 1, 1, 1, 1],
-    val exposureConfigurationDurationLevelValues: List<Int>,              // [0, 1, 2, 3, 4, 5, 6, 7],
-    val exposureConfigurationTransmissionRiskLevelValues: List<Int>       // [1, 1, 1, 1, 1, 1, 1, 1]
-
+    val minimumRiskScore: Int,                               // 1,
+    val dailyRiskThreshold: Int,                             // 30,
+    val attenuationDurationThresholds: List<Int>,            // [33, 63],
+    val attenuationLevelValues: List<Int>,                   // [0, 1, 2, 2, 8, 8, 8, 8],
+    val daysSinceLastExposureLevelValues: List<Int>,         // [1, 1, 1, 1, 1, 1, 1, 1],
+    val durationLevelValues: List<Int>,                      // [0, 1, 2, 3, 4, 5, 6, 7],
+    val transmissionRiskLevelValues: List<Int>               // [1, 1, 1, 1, 1, 1, 1, 1]
 ) : DbEntity
 
 @Entity(
