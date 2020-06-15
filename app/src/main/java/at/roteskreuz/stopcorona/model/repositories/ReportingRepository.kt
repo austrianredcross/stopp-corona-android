@@ -316,6 +316,7 @@ class ReportingRepositoryImpl(
 
             quarantineRepository.revokePositiveSelfDiagnose(backup = false)
             databaseCleanupManager.removeSentYellowTemporaryExposureKeys()
+            quarantineRepository.markMissingExposureKeysAsNotUploaded()
 
             MessageType.Revoke.Suspicion
         }
@@ -354,6 +355,7 @@ class ReportingRepositoryImpl(
                 }
                 is MessageType.Revoke.Suspicion -> {
                     quarantineRepository.revokePositiveSelfDiagnose(backup = false)
+                    quarantineRepository.markMissingExposureKeysAsNotUploaded()
                 }
             }
 

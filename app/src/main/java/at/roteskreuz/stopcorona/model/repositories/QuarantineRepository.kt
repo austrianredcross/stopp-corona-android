@@ -133,6 +133,11 @@ interface QuarantineRepository {
      * Mark the upload of the missing exposure keys as done.
      */
     fun markMissingExposureKeysAsUploaded()
+
+    /**
+     * Mark the upload of the missing exposure keys as not done.
+     */
+    fun markMissingExposureKeysAsNotUploaded()
 }
 
 class QuarantineRepositoryImpl(
@@ -433,6 +438,10 @@ class QuarantineRepositoryImpl(
 
     override fun markMissingExposureKeysAsUploaded() {
         missingKeysUploaded = true
+    }
+
+    override fun markMissingExposureKeysAsNotUploaded() {
+        missingKeysUploaded = false
     }
 }
 
