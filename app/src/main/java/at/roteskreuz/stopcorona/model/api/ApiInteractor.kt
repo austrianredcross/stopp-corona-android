@@ -20,7 +20,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.File
-import java.io.IOException
 import java.net.HttpURLConnection.*
 
 /**
@@ -149,22 +148,12 @@ class ApiInteractorImpl(
     }
 
     override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File? {
-        return withContext(appDispatchers.IO) {
-            checkGeneralErrors {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
-                if (response.isSuccessful) {
-                    val fileName = pathToArchive.replace("/", "-")
-                    filesRepository.removeCacheFile(fileName)
-
-                    response.body()?.byteStream()?.let { inputStream ->
-                        filesRepository.createCacheFileFromInputStream(inputStream, fileName)
-                        filesRepository.getCacheFile(fileName)
-                    }
-                } else {
-                    throw IOException("it did not work code:${response} ")
-                }
-            }
+        return checkGeneralErrors {
+            val inputStream = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive)
+            val fileName = pathToArchive.replace("/", "-")
+            filesRepository.removeCacheFile(fileName)
+            filesRepository.createCacheFileFromInputStream(inputStream, fileName)
+            filesRepository.getCacheFile(fileName)
         }
     }
 
