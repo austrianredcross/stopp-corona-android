@@ -22,8 +22,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
-import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.model.workers.ProcessDiagnosisKeysWorker
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import org.koin.standalone.KoinComponent
@@ -43,7 +43,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
             val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN)
             Timber.d("got a token '%s' tp process the diagnosis keys, we should check it", token)
 
-            if (BuildConfig.DEBUG) {
+            if (isDebug) {
                 showDebugNotificationProcessingFinished(context, token)
             }
 
