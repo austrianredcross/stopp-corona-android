@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.temporal.ChronoUnit
 import kotlin.math.abs
 
 /**
@@ -170,8 +171,8 @@ fun Long.asExposureInterval(): ZonedDateTime {
 }
 
 /**
- * Returns end of the day of the provided [ZonedDateTime].
+ * Returns start of the day of the provided [ZonedDateTime].
  */
 fun ZonedDateTime.startOfTheDay(): ZonedDateTime {
-    return withHour(0).withMinute(1)
+    return truncatedTo(ChronoUnit.DAYS) // set hours = 00, minutes = 00, seconds = 00, milliseconds = 000
 }

@@ -89,14 +89,26 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     }
                 }
             },
-            onRevokeSuspicionClick = {
-                startReportingActivity(MessageType.Revoke.Suspicion)
+            onRevokeSuspicionClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startReportingActivity(MessageType.Revoke.Suspicion)
+                }
             },
-            onPresentMedicalReportClick = {
-                startReportingActivity(MessageType.InfectionLevel.Red)
+            onPresentMedicalReportClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startReportingActivity(MessageType.InfectionLevel.Red)
+                }
             },
-            onCheckSymptomsAgainClick = {
-                startQuestionnaireFragment()
+            onCheckSymptomsAgainClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startQuestionnaireFragment()
+                }
             },
             onSomeoneHasRecoveredCloseClick = viewModel::someoneHasRecoveredSeen,
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
@@ -124,8 +136,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onShareAppClick = {
                 shareApp()
             },
-            onRevokeSicknessClick = {
-                startReportingActivity(MessageType.Revoke.Sickness)
+            onRevokeSicknessClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startReportingActivity(MessageType.Revoke.Sickness)
+                }
             }
         )
     }
@@ -155,6 +171,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             layoutManager = LinearLayoutManagerAccurateOffset(requireContext(), accurateScrollListener)
             addOnScrollListener(accurateScrollListener)
         }
+
+        disposables += viewModel.observeDateOfFirstMedicalConfirmation()
+            .observeOnMainThread()
+            .subscribe { dateOfFirstMedicalConfirmation ->
+                controller.dateOfFirstMedicalConfirmation = dateOfFirstMedicalConfirmation.orElse(null)
+            }
 
         disposables += viewModel.observeOwnHealthStatus()
             .observeOnMainThread()

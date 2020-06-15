@@ -61,6 +61,11 @@
         <item name="android:textColor">@color/button_type2_text_color_selector</item>
     </style>
 
+    <style name="AppTheme.ButtonLargeType2.Activable" parent="AppTheme.ButtonLargeType2">
+        <item name="android:background">@drawable/button_type2_activable_selector</item>
+        <item name="android:textColor">@color/button_type2_text_color_activable_selector</item>
+    </style>
+
     <style name="AppTheme.ToolbarTheme">
         <item name="android:textColorPrimary">@color/toolbar_text</item>
         <item name="android:textColorSecondary">@color/toolbar_text</item>
