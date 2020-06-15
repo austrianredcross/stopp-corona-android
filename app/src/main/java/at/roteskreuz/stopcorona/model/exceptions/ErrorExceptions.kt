@@ -22,17 +22,17 @@ fun Fragment.handleBaseCoronaErrors(error: Throwable) {
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is GeneralServerException -> {
-            Timber.w(error, "Unhandled server exception")
+            Timber.e(error, "Unhandled server exception")
             GeneralErrorDialog(R.string.error_server_title, R.string.error_server_message)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is UnexpectedError -> {
-            Timber.w(error, "Unhandled unknown exception")
+            Timber.e(error, "Unhandled unknown exception")
             GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is DataFetchFailedException -> {
-            Timber.w(error, "Fetch failed exception")
+            Timber.e(error, "Fetch failed exception")
             GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }

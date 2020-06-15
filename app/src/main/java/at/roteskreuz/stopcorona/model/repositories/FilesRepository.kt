@@ -26,6 +26,17 @@ interface FilesRepository {
     suspend fun createTextFileFromString(text: String, fileName: String)
 
     /**
+     * Write input stream into a new file in the cache storage. If the destination file already
+     * exists, it will not be overwritten.
+     *
+     * @param inputStream: The content to write.
+     * @param fileName a file name, relative to the apps storage
+     *
+     * @throws IOException
+     */
+    suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String)
+
+    /**
      * Loads a raw resource file and returns it's content as string
      */
     suspend fun loadRawResource(fileName: String): String
@@ -51,6 +62,21 @@ interface FilesRepository {
      * Get url of file on app storage.
      */
     fun getFileUrl(absoluteUrl: String): String
+
+    /**
+     * Get a [File] for file with path [fileName], relative to the applciation's base folder.
+     */
+    fun getFile(fileName: String): File
+
+    /**
+     * Get a [File] for file with path [fileName], relative to the cache base folder.
+     */
+    fun getCacheFile(fileName: String): File
+
+    /**
+     * Remove file in cache folder.
+     */
+    suspend fun removeCacheFile(fileName: String)
 }
 
 class FilesRepositoryImpl(
@@ -68,11 +94,23 @@ class FilesRepositoryImpl(
     private val applicationInternalBaseFolder: File
         get() = contextInteractor.filesDir
 
+    private val cacheFolder: File
+        get() = contextInteractor.applicationContext.cacheDir
+
     override suspend fun createTextFileFromString(text: String, fileName: String) {
         withContext(coroutineContext) {
             val destFile = getFile(fileName)
-            if (!destFile.exists()) {
-                saveTextFile(destFile, text)
+            if (destFile.exists().not()) {
+                text.saveTo(destFile)
+            }
+        }
+    }
+
+    override suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String) {
+        withContext(coroutineContext) {
+            val destFile = getCacheFile(fileName)
+            if (destFile.exists().not()) {
+                inputStream.saveTo(destFile)
             }
         }
     }
@@ -91,17 +129,18 @@ class FilesRepositoryImpl(
 
     override suspend fun saveTextFile(text: String, fileName: String) {
         val file = getFile(fileName)
-        saveTextFile(file, text)
+        text.saveTo(file)
     }
 
-    private suspend fun saveTextFile(file: File, text: String) {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun String.saveTo(file: File) {
         withContext(coroutineContext) {
             val tmpDestFile: File = File.createTempFile(file.name, null, file.parentFile)
             // Write to temp file and only move to the requested file name when we know
             // we succeeded. Otherwise we might leave a half written file around which will
-            // never be replaced beacuse ´if (!fileExists(destFilename))´ thinks everything is ok
+            // never be replaced because ´if (!fileExists(destFilename))´ thinks everything is ok
             FileOutputStream(tmpDestFile).use { output ->
-                output.write(text.toByteArray())
+                output.write(toByteArray())
                 output.flush() // Flush buffers to OS
                 output.fd.sync() // Make sure OS writes all the way to disc
             }
@@ -112,11 +151,33 @@ class FilesRepositoryImpl(
         }
     }
 
-    /**
-     * Gets a [File] for file with path [fileName], relative to the applciation's base folder
-     */
-    private fun getFile(fileName: String): File {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun InputStream.saveTo(file: File) {
+        withContext(coroutineContext) {
+            val tmpDestFile: File = File.createTempFile(file.name, null, file.parentFile)
+            // Write to temp file and only move to the requested file name when we know
+            // we succeeded. Otherwise we might leave a half written file around which will
+            // never be replaced because ´if (!fileExists(destFilename))´ thinks everything is ok
+            use { input ->
+                FileOutputStream(tmpDestFile).use { output ->
+                    input.copyTo(output)
+                    output.flush() // Flush buffers to OS
+                    output.fd.sync() // Make sure OS writes all the way to disc
+                }
+            }
+
+            if (!tmpDestFile.renameTo(file)) {
+                throw IOException("Could not move temporary file to final destination ${tmpDestFile.name}")
+            }
+        }
+    }
+
+    override fun getFile(fileName: String): File {
         return File(applicationInternalBaseFolder, fileName)
+    }
+
+    override fun getCacheFile(fileName: String): File {
+        return File(cacheFolder, fileName)
     }
 
     private suspend fun loadRawResource(@RawRes resId: Int): String? {
@@ -133,5 +194,11 @@ class FilesRepositoryImpl(
 
     override fun getFileUrl(absoluteUrl: String): String {
         return "file://${absoluteUrl}"
+    }
+
+    override suspend fun removeCacheFile(fileName: String) {
+        withContext(coroutineContext) {
+            getCacheFile(fileName).delete()
+        }
     }
 }

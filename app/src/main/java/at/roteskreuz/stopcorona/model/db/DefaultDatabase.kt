@@ -28,7 +28,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 19,
+    version = 20,
     exportSchema = false
 )
 @TypeConverters(
@@ -37,7 +37,8 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     MessageTypeConverter::class,
     WarningTypeConverter::class,
     UUIDConverter::class,
-    DecisionConverter::class
+    DecisionConverter::class,
+    ArrayOfIntegerConverter::class
 )
 abstract class DefaultDatabase : RoomDatabase() {
 
@@ -205,6 +206,18 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL(
                     "CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (`rollingStartIntervalNumber` INTEGER NOT NULL, `password` TEXT NOT NULL, `messageType` TEXT NOT NULL, PRIMARY KEY(`rollingStartIntervalNumber`))"
                 )
+            },
+            /**
+             * adding the exposure configuration parameters to the database
+             */
+            migration(19, 20) {
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `minimumRiskScore` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `dailyRiskThreshold` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationDurationThresholds` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `daysSinceLastExposureLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `durationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
             }
         )
     }

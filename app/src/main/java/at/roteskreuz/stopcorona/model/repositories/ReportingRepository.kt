@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPay
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion.SCOPE_NAME
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -23,6 +24,7 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -154,8 +156,8 @@ class ReportingRepositoryImpl(
         return withContext(coroutineContext) {
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel
                 ?: throw InvalidConfigurationException.InfectionLevelNotSet
-
-            val configuration = configurationRepository.observeConfiguration().blockingFirst()
+            val configuration = configurationRepository.getConfiguration()
+                ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
             var thresholdTime = ZonedDateTime.now()
@@ -439,4 +441,9 @@ sealed class InvalidConfigurationException(override val message: String) : Excep
      */
     object NullNumberOfDaysToUpload :
         InvalidConfigurationException("The number of days of temporary exposure keys to be uploaded is not provided.")
+
+    /**
+     * No configuration present, not even the bundled config.
+     */
+    object ConfigurationNotPresent: InvalidConfigurationException("No configuration present, not even the bundled config")
 }

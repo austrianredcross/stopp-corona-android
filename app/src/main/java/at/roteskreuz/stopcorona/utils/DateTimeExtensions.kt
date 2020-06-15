@@ -3,10 +3,8 @@ package at.roteskreuz.stopcorona.utils
 import android.content.Context
 import android.text.format.DateUtils
 import at.roteskreuz.stopcorona.R
-import org.threeten.bp.Duration
-import org.threeten.bp.LocalDate
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
+import at.roteskreuz.stopcorona.constants.Constants
+import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import kotlin.math.abs
@@ -14,6 +12,9 @@ import kotlin.math.abs
 /**
  * Extension related to date and time.
  */
+
+private val UTC_TIMEZONE: ZoneId
+    get() = ZoneId.of("UTC")
 
 /**
  * Get minutes difference between two times.
@@ -156,7 +157,17 @@ fun ZonedDateTime.isInTheFuture(): Boolean {
  * Converts a unix timestamp to a rolling start interval number.
  */
 fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
-    return (toEpochSecond() / 600).toInt()
+    return (withZoneSameInstant(UTC_TIMEZONE).toEpochSecond() / Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds).toInt()
+}
+
+/**
+ * Converts a interval number from exposure notification framework to the [ZonedDateTime].
+ */
+fun Long.asExposureInterval(): ZonedDateTime {
+    return ZonedDateTime.ofInstant(
+        Instant.ofEpochSecond(this * Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds),
+        UTC_TIMEZONE
+    )
 }
 
 /**

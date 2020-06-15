@@ -62,7 +62,7 @@ class DebugViewModel(
             val infectionMessageContent =
                 InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
 
-            // TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
+            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
 
             quarantineRepository.reportMedicalConfirmation()
         }
@@ -73,7 +73,7 @@ class DebugViewModel(
             val infectionMessageContent =
                 InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
 
-            // TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
+            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
 
             quarantineRepository.reportPositiveSelfDiagnose()
         }

@@ -137,7 +137,7 @@ class OfflineSyncerImpl(
             }
             // read all infection messages
             runFetcherIfNeeded(PREF_LAST_FETCH_INFECTION_MESSAGES) {
-                infectionMessengerRepository.fetchDecryptAndStoreNewMessages()
+                infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
             }
         }
     }

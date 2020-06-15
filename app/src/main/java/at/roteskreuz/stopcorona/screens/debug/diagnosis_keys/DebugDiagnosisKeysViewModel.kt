@@ -5,8 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
+import at.roteskreuz.stopcorona.model.api.ContentDeliveryNetworkDescription
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
+import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -17,21 +19,29 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.UUID
 
 class DebugDiagnosisKeysViewModel(
     appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
-    private val exposureNotificationRepository: ExposureNotificationRepository
-) : ScopedViewModel(appDispatchers) {
+    private val exposureNotificationRepository: ExposureNotificationRepository,
+    private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
+    val infectionMessengerRepository: InfectionMessengerRepository
+) : ScopedViewModel(appDispatchers)  {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
+
+    private val diagnosisKeyTokenSubject = NonNullableBehaviorSubject("no Key");
+
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
@@ -63,6 +73,10 @@ class DebugDiagnosisKeysViewModel(
 
     fun observeResultionErrorReasons(): Observable<String> {
         return exposureNotificationsTextSubject
+    }
+
+    fun observeDiagnosisKeyToken(): Observable<String> {
+        return diagnosisKeyTokenSubject
     }
 
     /**
@@ -147,14 +161,99 @@ class DebugDiagnosisKeysViewModel(
     }
 
     fun downloadDiagnosisKeysArchiveIndex() {
-        launch {
+        launch (appDispatchers.Default){
             try {
+                exposureNotificationsTextSubject.onNext("downloading the index now")
                 val archive = apiInteractor.getIndexOfDiagnosisKeysArchives()
-                exposureNotificationsTextSubject.onNext("got the archive $archive")
+                val pathToFirstArchive = archive.full14DaysBatch.batchFilePaths.first()
+                exposureNotificationsTextSubject.onNext("got the archive $archive now downloading $pathToFirstArchive")
+
+                delay(1000)
+
+                var downloadedFile = apiInteractor.downloadContentDeliveryFileToTempFile(pathToFirstArchive)
+                exposureNotificationsTextSubject.onNext("$pathToFirstArchive downloaded successfully to " +
+                    "${downloadedFile?.absolutePath}} resulting in a filesize of ${downloadedFile?.length()} bytes  ")
+
+                delay(1000)
+
+                /**
+                 * "exposure_configuration": {
+                    "minimum_risk_score": 0,
+                    "attenuation_duration_thresholds": [50, 70],
+                    "attenuation_level_values": [1, 2, 3, 4, 5, 6, 7, 8],
+                    "days_since_last_exposure_level_values": [1, 2, 3, 4, 5, 6, 7, 8],
+                    "duration_level_values": [1, 2, 3, 4, 5, 6, 7, 8],
+                    "transmission_risk_level_values": [1, 2, 3, 4, 5, 6, 7, 8]
+                },
+                 */
+                exposureNotificationsTextSubject.onNext("providing diagnosis keys")
+                val config = ExposureConfiguration.ExposureConfigurationBuilder()
+                    .setDurationAtAttenuationThresholds(50, 60)
+                    .setMinimumRiskScore(1)
+                    .setDaysSinceLastExposureScores(1,2,3,4,5,6,7,8)
+                    .setDurationScores(1,2,3,4,5,6,7,8)
+                    .setAttenuationScores(1,2,3,4,5,6,7,8)
+                    .setDaysSinceLastExposureWeight(100)
+                    .setTransmissionRiskWeight(100)
+                    .build()
+                val token = UUID.randomUUID().toString()
+                diagnosisKeyTokenSubject.onNext(token)
+
+                delay(1000)
+
+                exposureNotificationClient.provideDiagnosisKeys(arrayListOf(downloadedFile), config, token)
+                    .addOnCompleteListener {
+                        exposureNotificationsTextSubject.onNext("provided diagnosis keys ${if (it.isSuccessful) "successful" else "not sucessfull"} with token $token")
+                        if (it.isSuccessful.not()){
+                            exposureNotificationsTextSubject.onNext("error ${it.exception}")
+                        }
+                    }
             } catch (exception: java.lang.Exception) {
                 Timber.e(SilentError(exception))
                 exposureNotificationsTextSubject.onNext("Error while getting the index: $exception")
             }
         }
+    }
+
+    fun getExposureSummary() {
+        launch {
+            exposureNotificationsTextSubject.onNext("getting the summary for ${diagnosisKeyTokenSubject.value} ")
+            exposureNotificationClient.getExposureSummary(diagnosisKeyTokenSubject.value)
+                .addOnCompleteListener{
+                    if (it.isSuccessful){
+                        exposureNotificationsTextSubject.onNext("here is the summary for token${diagnosisKeyTokenSubject.value}˜:\n  ${it.result}")
+                    } else {
+                        exposureNotificationsTextSubject.onNext("exposure summary failed for token${diagnosisKeyTokenSubject.value}˜:\n  ${it.exception}")
+                    }
+            }
+        }
+    }
+
+    fun getDiagnosisKeysGetExposureInformation(){
+        launch {
+            exposureNotificationClient.getExposureInformation(diagnosisKeyTokenSubject.value)
+                .addOnCompleteListener{
+                    if (it.isSuccessful){
+                        exposureNotificationsTextSubject.onNext("here is the exposure information for token${diagnosisKeyTokenSubject.value}˜:\n  ${it.result}")
+                    } else {
+                        exposureNotificationsTextSubject.onNext("exposure information failed for token${diagnosisKeyTokenSubject.value}˜:\n  ${it.exception}")
+                    }
+                }
+        }
+    }
+
+    fun startBackgroundDiagnosisKeysProcessing() {
+        launch (appDispatchers.Default){
+            try {
+                exposureNotificationsTextSubject.onNext("launching the diagnosis keys background processing")
+                infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
+                exposureNotificationsTextSubject.onNext("sucessfully launched the background processing")
+            } catch (ex: Exception) {
+                exposureNotificationsTextSubject.onNext("error while launching the diagnosis keys background processing: ${ex}")
+            }
+
+
+        }
+
     }
 }

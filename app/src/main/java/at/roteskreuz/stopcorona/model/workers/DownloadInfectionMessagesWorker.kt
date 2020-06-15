@@ -7,7 +7,7 @@ import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
 /**
- * Worker that displays local notifications.
+ * Worker which fetches diagnosis keys from the backend
  */
 class DownloadInfectionMessagesWorker(
     appContext: Context,
@@ -42,7 +42,7 @@ class DownloadInfectionMessagesWorker(
 
     override suspend fun doWork(): Result {
 
-        infectionMessengerRepository.fetchDecryptAndStoreNewMessages()
+        infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
 
         return Result.success()
     }

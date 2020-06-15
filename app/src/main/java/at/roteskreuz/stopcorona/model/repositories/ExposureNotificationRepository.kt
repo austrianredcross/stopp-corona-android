@@ -9,12 +9,12 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
+import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import java.io.File
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -93,11 +93,26 @@ interface ExposureNotificationRepository {
      * in a blocking manner.
      */
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
+
+    /**
+     * Process the diagnosis key files
+     */
+    suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String)
+
+    /**
+     * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
+     * at least YELLOW
+     */
+    suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary
+
+
+    suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation>
 }
 
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val bluetoothManager: BluetoothManager,
+    private val configurationRepository: ConfigurationRepository,
     private val exposureNotificationClient: ExposureNotificationClient
 ) : ExposureNotificationRepository,
     CoroutineScope {
@@ -225,6 +240,60 @@ class ExposureNotificationRepositoryImpl(
                 }
                 .addOnFailureListener {
                     continuation.cancel(it)
+                }
+        }
+    }
+
+    override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String) {
+
+        val configuration = configurationRepository.getConfiguration()
+            ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
+        //TODO get values from configuration
+
+        val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
+            .setMinimumRiskScore(configuration.minimumRiskScore)
+            //TODO check if the List can also be "spread"
+            .setDurationAtAttenuationThresholds(*configuration.attenuationDurationThresholds.toIntArray())
+            .setAttenuationScores(*configuration.attenuationLevelValues.toIntArray())
+            .setDaysSinceLastExposureScores(*configuration.daysSinceLastExposureLevelValues.toIntArray())
+            .setDurationScores(*configuration.durationLevelValues.toIntArray())
+            .setTransmissionRiskScores(*configuration.transmissionRiskLevelValues.toIntArray())
+            .build()
+
+        suspendCancellableCoroutine<Unit> { continuation ->
+            exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
+                .addOnCompleteListener{
+                    if (it.isSuccessful) {
+                        continuation.resume(Unit)
+                    } else {
+                        continuation.cancel(it.exception)
+                    }
+                }
+        }
+    }
+
+    override suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary {
+        return suspendCancellableCoroutine { continuation ->
+            exposureNotificationClient.getExposureSummary(token)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        continuation.resume(it.result)
+                    } else {
+                        continuation.cancel(it.exception)
+                    }
+                }
+        }
+    }
+
+    override suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
+        return suspendCancellableCoroutine { continuation ->
+            exposureNotificationClient.getExposureInformation(token)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        continuation.resume(it.result)
+                    } else {
+                        continuation.cancel(it.exception)
+                    }
                 }
         }
     }

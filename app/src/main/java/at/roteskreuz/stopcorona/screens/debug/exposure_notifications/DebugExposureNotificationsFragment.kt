@@ -96,7 +96,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
             .subscribe { state ->
                 when (state) {
                     is State.Loading -> {
-                        //TODO think about what to do here
+
                     }
                     is DataState.Loaded -> {
                         when (state.data){

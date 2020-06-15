@@ -1,9 +1,18 @@
 {
   "configuration": {
-    "warn_before_symptoms": 54,
+    "upload_keys_days": 2,
     "red_warning_quarantine": 336,
     "yellow_warning_quarantine": 168,
     "self_diagnosed_quarantine": 168,
+    "exposure_configuration": {
+      "minimum_risk_score": 1,
+      "daily_risk_threshold": 7,
+      "attenuation_duration_thresholds": [33, 63],
+      "attenuation_level_values": [0, 1, 2, 2, 8, 8, 8, 8],
+      "days_since_last_exposure_level_values": [1, 1, 1, 1, 1, 1, 1, 1],
+      "duration_level_values": [0, 1, 2, 3, 4, 5, 6, 7],
+      "transmission_risk_level_values": [1, 1, 1, 1, 1, 1, 1, 1]
+    },
     "diagnostic_questionnaire": {
       "de": [
         {

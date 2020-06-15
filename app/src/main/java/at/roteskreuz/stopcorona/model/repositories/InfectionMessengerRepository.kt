@@ -7,10 +7,10 @@ import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
-import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessage
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
@@ -20,13 +20,14 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
+import at.roteskreuz.stopcorona.skeleton.core.utils.stringSharedPreferencesProperty
 import at.roteskreuz.stopcorona.utils.asDbObservable
-import at.roteskreuz.stopcorona.utils.isInTheFuture
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.*
+import java.io.File
+import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -45,10 +46,9 @@ interface InfectionMessengerRepository {
     suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>)
 
     /**
-     * Start a process of downloading infection messages and trying to decrypt them.
-     * Successful decrypted messages are stored in DB.
+     * Start a process of downloading diagnosis keys (previously known as infection messages)
      */
-    suspend fun fetchDecryptAndStoreNewMessages()
+    suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
 
     /**
      * Observe the infection messages received.
@@ -80,6 +80,14 @@ interface InfectionMessengerRepository {
      * Enqueue the next work request to run the exposure matching algorithm.
      */
     fun enqueueNextExposureMatching()
+
+    /**
+     * Fetch [com.google.android.gms.nearby.exposurenotification.ExposureSummary]  and
+     * [com.google.android.gms.nearby.exposurenotification.ExposureInformation] based on the token
+     * and the user health status and process the information to a exposure health status which
+     * will be displayed in the UI.
+     */
+    suspend fun processKeysBasedOnToken(token: String)
 }
 
 class InfectionMessengerRepositoryImpl(
@@ -92,13 +100,18 @@ class InfectionMessengerRepositoryImpl(
     private val preferences: SharedPreferences,
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
-    private val databaseCleanupManager: DatabaseCleanupManager
+    private val databaseCleanupManager: DatabaseCleanupManager,
+    private val exposureNotificationRepository: ExposureNotificationRepository,
+    private val configurationRepository: ConfigurationRepository
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
     companion object {
         private const val PREF_LAST_MESSAGE_ID = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_message_id"
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
+        private const val PREF_LAST_SCHEDULED_TOKEN = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_scheduled_token"
+
+        private const val BATCH = "batch"
     }
 
     private val downloadMessagesStateObserver = StateObserver()
@@ -118,6 +131,8 @@ class InfectionMessengerRepositoryImpl(
         false
     )
 
+    private var lastScheduledToken: String by preferences.stringSharedPreferencesProperty(PREF_LAST_SCHEDULED_TOKEN, "no token ever")
+
     override fun enqueueDownloadingNewMessages() {
         DownloadInfectionMessagesWorker.enqueueDownloadInfection(workManager)
     }
@@ -126,60 +141,71 @@ class InfectionMessengerRepositoryImpl(
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
     }
 
-    override suspend fun fetchDecryptAndStoreNewMessages() {
+    override suspend fun processKeysBasedOnToken(token: String){
+        //we´re processing the batches
+        if (lastScheduledToken != token){
+            Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
+        }
+
+        if (token.startsWith(BATCH)){
+            processKeysBasedOnBatchToken(token)
+        } else {
+            processDailyTokens(token)
+        }
+    }
+
+    private fun processDailyTokens(token: String) {
+        //we can assume you are WarningType.GREEN as only in this case we process the tokens
+    }
+
+    private suspend fun processKeysBasedOnBatchToken(token: String) {
+        val warningType = WarningType.RED
+
+        val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
+        val configuration =
+            configurationRepository.getConfiguration()
+                ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
+
+        when(warningType) {
+
+            WarningType.YELLOW, WarningType.RED -> {
+                //TODO finish this decision branch
+                if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
+                    val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
+                    //go through the days and check if the day is the first RED/YELLOW day
+                    // TODO: go through the summary and check if the day is the first RED/YELLOW day
+                } else {
+                    //TODO: we are green again
+                    //TODO finish this decision branch
+                }
+            }
+            WarningType.REVOKE -> {
+                //we are above risc for the last days!!!
+                if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
+                    //we must now identify day by day if we are YELLOW or RED
+                    val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
+                }
+            }
+        }
+    }
+
+    override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
+        //TODO: get the real current warning type
+        val warningType = WarningType.RED
         if (downloadMessagesStateObserver.currentState is State.Loading) {
+            Timber.e(SilentError(IllegalStateException("we´re trying to download but we´re still downloading...")))
             return
         }
 
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
             try {
-                val addressPrefix = cryptoRepository.publicKeyPrefix
-                var messages: List<ApiInfectionMessage>
-                do {
-                    // downloading next 100 messages
-                    messages = apiInteractor.getInfectionMessages(addressPrefix, lastMessageId).infectionMessages
-                        ?: throw Exception("Message list is null")
-
-                    // update pointer
-                    val lastId = messages.maxBy { it.id }?.id
-                    if (lastId == null) {
-                        messages = listOf() // to stop loop
-                        continue
-                    }
-                    lastMessageId = lastId
-
-                    // try to decrypt them
-                    messages.forEach { message ->
-                        val decryptedMessage = cryptoRepository.decrypt(message.message)
-
-                        // store decrypted messages to DB
-                        if (decryptedMessage != null) {
-                            val infectionMessageContent = InfectionMessageContent(decryptedMessage)
-                            if (infectionMessageContent != null && infectionMessageContent.timeStamp.isInTheFuture().not()) {
-                                val dbMessage = infectionMessageContent.asReceivedDbEntity()
-                                infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
-                                when (val messageType = infectionMessageContent.messageType) {
-                                    is MessageType.InfectionLevel -> {
-                                        notificationsRepository.displayInfectionNotification(messageType)
-                                        quarantineRepository.receivedWarning(messageType.warningType)
-
-                                        if (infectionMessageDao.hasReceivedRedInfectionMessages().not()) {
-                                            quarantineRepository.revokeLastRedContactDate()
-                                        }
-                                    }
-                                    MessageType.Revoke.Suspicion -> {
-                                        setSomeoneHasRecovered()
-                                        notificationsRepository.displaySomeoneHasRecoveredNotification()
-                                        databaseCleanupManager.removeReceivedGreenMessages()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } while (messages.isNotEmpty()) // repeat until we have read all messages
+                val archives :List<File> = apiInteractor.fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
+                val contextToken = BATCH + "," + warningType + "," + UUID.randomUUID().toString()
+                lastScheduledToken = contextToken
+                exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
             } catch (e: Exception) {
-                Timber.e(e, "Downloading new infection messages failed")
+                Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
             } finally {
                 downloadMessagesStateObserver.idle()

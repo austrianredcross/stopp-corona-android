@@ -43,7 +43,20 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
 
         exposureNotificationsTracingKeysDownloadIndexButton.setOnClickListener { viewModel.downloadDiagnosisKeysArchiveIndex() }
 
+        diagnosisKeysGetExposureSummaryButton.setOnClickListener{ viewModel.getExposureSummary() }
+
+        diagnosisKeysGetExposureInformationButton.setOnClickListener { viewModel.getDiagnosisKeysGetExposureInformation() }
+
+        diagnosisKeysBackgroundProcessingButton.setOnClickListener { viewModel.startBackgroundDiagnosisKeysProcessing() }
+
         googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
+
+        disposables += viewModel.observeDiagnosisKeyToken()
+            .observeOnMainThread()
+            .subscribe{
+                diagnosisKeysGetExposureSummaryButton.text = "Get Summary for ${it}"
+                diagnosisKeysGetExposureInformationButton.text = "Get Information for ${it}"
+            }
 
         disposables += viewModel.observeEnabledState()
             .observeOnMainThread()
@@ -65,7 +78,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
             .subscribe { state ->
                 when (state) {
                     is State.Loading -> {
-                        //TODO think about what to do here
+
                     }
                     is DataState.Loaded -> {
                         // no resolution handled. Framework must be running already to continue.
