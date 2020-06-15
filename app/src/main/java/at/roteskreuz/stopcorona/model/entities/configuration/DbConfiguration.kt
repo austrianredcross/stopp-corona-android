@@ -35,7 +35,7 @@ data class DbConfiguration(
     val exposureConfigurationMinimumRiskScore: Int,                       // 1,
     val exposureConfigurationDailyRiskThreshold: Int,                     // 30,
     val exposureConfigurationAttenuationDurationThresholds: List<Int>,    // [33, 63],
-    val exposureConfigurationAttenuationLevelValues: List<Int>,           // [0, 1, 2, 2, 15, 15, 15, 15],
+    val exposureConfigurationAttenuationLevelValues: List<Int>,           // [0, 1, 2, 2, 8, 8, 8, 8],
     val exposureConfigurationDaysSinceLastExposureLevelValues: List<Int>, // [1, 1, 1, 1, 1, 1, 1, 1],
     val exposureConfigurationDurationLevelValues: List<Int>,              // [0, 2, 6, 10, 15, 20, 25, 30],
     val exposureConfigurationTransmissionRiskLevelValues: List<Int>       // [1, 1, 1, 1, 1, 1, 1, 1]
