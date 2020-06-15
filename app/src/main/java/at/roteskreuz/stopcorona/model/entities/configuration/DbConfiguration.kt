@@ -37,7 +37,7 @@ data class DbConfiguration(
     val exposureConfigurationAttenuationDurationThresholds: List<Int>,    // [33, 63],
     val exposureConfigurationAttenuationLevelValues: List<Int>,           // [0, 1, 2, 2, 8, 8, 8, 8],
     val exposureConfigurationDaysSinceLastExposureLevelValues: List<Int>, // [1, 1, 1, 1, 1, 1, 1, 1],
-    val exposureConfigurationDurationLevelValues: List<Int>,              // [0, 2, 6, 10, 15, 20, 25, 30],
+    val exposureConfigurationDurationLevelValues: List<Int>,              // [0, 1, 2, 3, 4, 5, 6, 7],
     val exposureConfigurationTransmissionRiskLevelValues: List<Int>       // [1, 1, 1, 1, 1, 1, 1, 1]
 
 ) : DbEntity
