@@ -159,8 +159,15 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
 }
 
 /**
- * Returns end of the day of the provided [ZonedDateTime].
+ * Returns start of the day of the provided [ZonedDateTime].
  */
 fun ZonedDateTime.startOfTheDay(): ZonedDateTime {
-    return withHour(0).withMinute(1)
+    return withHour(0).withMinute(0).withSecond(0)
+}
+
+/**
+ * Returns end of the day of the provided [ZonedDateTime].
+ */
+fun ZonedDateTime.endOfTheDay(): ZonedDateTime {
+    return withHour(23).withMinute(59).withSecond(59)
 }

@@ -125,6 +125,11 @@ interface QuarantineRepository {
      * Observe if the user needs to upload the exposure keys from the day of the submission.
      */
     fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>>
+
+    /**
+     * Mark that the upload of the missing exposure keys have been performed successfully.
+     */
+    fun markMissingExposureKeysAsUploaded()
 }
 
 class QuarantineRepositoryImpl(
@@ -136,14 +141,22 @@ class QuarantineRepositoryImpl(
     CoroutineScope {
 
     companion object {
-        private const val PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_medical_confirmation"
-        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose"
-        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose_backup"
-        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose"
-        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose_backup"
-        private const val PREF_DATE_OF_LAST_RED_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_red_contact"
-        private const val PREF_DATE_OF_LAST_YELLOW_CONTACT = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
-        private const val PREF_DATE_OF_LAST_SELF_MONITORING = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
+        private const val PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_medical_confirmation"
+        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose"
+        private const val PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_self_diagnose_backup"
+        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose"
+        private const val PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_self_diagnose_backup"
+        private const val PREF_DATE_OF_LAST_RED_CONTACT =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_red_contact"
+        private const val PREF_DATE_OF_LAST_YELLOW_CONTACT =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_last_yellow_contact"
+        private const val PREF_DATE_OF_LAST_SELF_MONITORING =
+            Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_opf_last_self_monitoring"
         private const val PREF_SHOW_QUARANTINE_END =
             Prefs.QUARANTINE_REPOSITORY_PREFIX + "show_quarantine_end"
         private const val PREF_MISSING_KEYS_UPLOADED =
@@ -174,16 +187,25 @@ class QuarantineRepositoryImpl(
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
 
     private var dateOfLastRedContact: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_RED_CONTACT)
+            by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+                PREF_DATE_OF_LAST_RED_CONTACT
+            )
 
     private var dateOfLastYellowContact: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_YELLOW_CONTACT)
+            by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+                PREF_DATE_OF_LAST_YELLOW_CONTACT
+            )
 
     private var dateOfLastSelfMonitoringInstruction: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_MONITORING)
+            by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+                PREF_DATE_OF_LAST_SELF_MONITORING
+            )
 
     private var showQuarantineEnd: Boolean
-        by preferences.booleanSharedPreferencesProperty(PREF_SHOW_QUARANTINE_END, false)
+            by preferences.booleanSharedPreferencesProperty(PREF_SHOW_QUARANTINE_END, false)
+
+    private var missingKeysUploaded: Boolean
+            by preferences.booleanSharedPreferencesProperty(PREF_MISSING_KEYS_UPLOADED, false)
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
@@ -382,6 +404,8 @@ class QuarantineRepositoryImpl(
             observeDateOfFirstSelfDiagnose(),
             preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
         ).map { (dateOfFirstMedicalConfirmation, dateOfFirstSelfDiagnose, areMissingKeysUploaded) ->
+            // TODO: Check to be in the next day after submission
+
             if (dateOfFirstMedicalConfirmation.isPresent && areMissingKeysUploaded.not()) {
                 UploadMissingExposureKeys(
                     dateOfFirstMedicalConfirmation.get(),
@@ -396,6 +420,10 @@ class QuarantineRepositoryImpl(
             }
             Optional.empty<UploadMissingExposureKeys>()
         }
+    }
+
+    override fun markMissingExposureKeysAsUploaded() {
+        missingKeysUploaded = true
     }
 }
 
