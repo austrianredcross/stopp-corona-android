@@ -11,7 +11,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
-import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
@@ -94,12 +93,6 @@ interface ExposureNotificationRepository {
      * in a blocking manner.
      */
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
-
-    /**
-     * Register with the Google Exposure Notifications framework in a blocking manner.
-     */
-    //TODO: for Dusan, see if we actually nee the non blocking function
-    suspend fun registerAppForExposureNotificationsNow()
 
     /**
      * had over Diagnosis Key files to the framework for
@@ -242,18 +235,6 @@ class ExposureNotificationRepositoryImpl(
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
         return suspendCancellableCoroutine { continuation ->
             exposureNotificationClient.temporaryExposureKeyHistory
-                .addOnSuccessListener {
-                    continuation.resume(it)
-                }
-                .addOnFailureListener {
-                    continuation.cancel(it)
-                }
-        }
-    }
-
-    override suspend fun registerAppForExposureNotificationsNow() {
-        suspendCancellableCoroutine { continuation: CancellableContinuation<Void> ->
-            exposureNotificationClient.start()
                 .addOnSuccessListener {
                     continuation.resume(it)
                 }
