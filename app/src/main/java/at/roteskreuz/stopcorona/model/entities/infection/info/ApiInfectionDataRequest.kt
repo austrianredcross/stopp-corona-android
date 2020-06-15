@@ -24,7 +24,7 @@ data class ApiInfectionDataRequest(
 @JsonClass(generateAdapter = true)
 data class ApiTemporaryTracingKey(
     val key: String,
-    val password: UUID,
+    val password: String,
     /**
      * rollingStartIntervalNumber = A number describing when a key starts.
      * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10). */
@@ -51,7 +51,7 @@ fun List<Pair<List<TemporaryExposureKey>, UUID>>.asApiEntity(): List<ApiTemporar
 
             ApiTemporaryTracingKey(
                 key = base64Key,
-                password = password,
+                password = password.toString(),
                 intervalNumber = temporaryExposureKey.rollingStartIntervalNumber,
                 intervalCount = temporaryExposureKey.rollingPeriod
             )

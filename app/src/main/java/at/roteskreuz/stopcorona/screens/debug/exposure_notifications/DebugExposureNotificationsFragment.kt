@@ -88,7 +88,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
         disposables+= viewModel.observeLastTemporaryExposureKeys()
             .observeOnMainThread()
             .subscribe { keys ->
-                uploadButtons.onEach { it.text = "${keys.size} keys ready to be uploaded" }
+                uploadButtons.onEach { it.text = "${keys.size} keys ready to be uploaded with key as password" }
             }
 
         disposables += viewModel.observeResolutionError()
