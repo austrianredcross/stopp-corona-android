@@ -474,6 +474,7 @@ sealed class QuarantineStatus {
 }
 
 /**
- * Indicates the date for which the exposure keys have not been uploaded and the diagnostic.
+ * Indicates the date for which the exposure keys have not been uploaded and
+ * the associated diagnostic.
  */
 data class UploadMissingExposureKeys(val date: ZonedDateTime, val messageType: MessageType)
