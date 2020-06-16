@@ -148,12 +148,14 @@ class ApiInteractorImpl(
     }
 
     override suspend fun downloadContentDeliveryFileToCacheFile(pathToArchive: String): File {
-        return checkGeneralErrors {
-            contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
-                val fileName = pathToArchive.replace("/", "-")
-                filesRepository.removeCacheFile(fileName)
-                body.byteStream().use { inputStream ->
-                    filesRepository.createCacheFileFromInputStream(inputStream, fileName)
+        return withContext(appDispatchers.IO) {
+            checkGeneralErrors {
+                contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
+                    val fileName = pathToArchive.replace("/", "-")
+                    filesRepository.removeCacheFile(fileName)
+                    body.byteStream().use { inputStream ->
+                        filesRepository.createCacheFileFromInputStream(inputStream, fileName)
+                    }
                 }
             }
         }
