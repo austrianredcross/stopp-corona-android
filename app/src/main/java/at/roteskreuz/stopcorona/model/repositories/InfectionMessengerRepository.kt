@@ -148,7 +148,6 @@ class InfectionMessengerRepositoryImpl(
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
-
         //TODO: delete the old diagnosis key files as they have been processed
         val fullSession: DbFullSession = sessionDao.getFullSession(token)
         val warningType = WarningType.valueOf(fullSession.session.warningType)
@@ -185,7 +184,6 @@ class InfectionMessengerRepositoryImpl(
                 }
             }
         }
-
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -202,17 +200,18 @@ class InfectionMessengerRepositoryImpl(
                 val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
                 val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
                 val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
-                lastScheduledToken = contextToken
+
                 val fullSession = DbFullSession(
                     session = DbSession(
                         token = contextToken,
                         warningType = warningType.name
                     ),
                     fullBatchParts = fullBatchParts,
-                    dailyBatchesParts = listOf(DbDailyBatchPart(token = contextToken, batchNo = 1, intervalStart = 0, path = "/"))
-
+                    dailyBatchesParts = dailyBatchesParts
                 )
+
                 sessionDao.insertOrUpdateFullSession(fullSession)
+                lastScheduledToken = contextToken
                 exposureNotificationRepository.processBatchDiagnosisKeys(fullBatchParts.map { File(it.path) }, contextToken)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
