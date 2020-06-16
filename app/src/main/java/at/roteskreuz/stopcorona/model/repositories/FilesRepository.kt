@@ -6,7 +6,6 @@ import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.*
 import kotlin.coroutines.CoroutineContext
 
@@ -164,7 +163,6 @@ class FilesRepositoryImpl(
             use { input ->
                 FileOutputStream(tmpDestFile).use { output ->
                     val bytes = input.copyTo(output)
-                    Timber.d("### Copied $bytes bytes to ${file.canonicalPath}")
                     output.flush() // Flush buffers to OS
                     output.fd.sync() // Make sure OS writes all the way to disc
                 }
