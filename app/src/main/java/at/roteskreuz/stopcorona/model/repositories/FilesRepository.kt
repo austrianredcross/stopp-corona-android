@@ -154,7 +154,7 @@ class FilesRepositoryImpl(
             // never be replaced because ´if (!fileExists(destFilename))´ thinks everything is ok
             use { input ->
                 FileOutputStream(tmpDestFile).use { output ->
-                    val bytes = input.copyTo(output)
+                    input.copyTo(output)
                     output.flush() // Flush buffers to OS
                     output.fd.sync() // Make sure OS writes all the way to disc
                 }
