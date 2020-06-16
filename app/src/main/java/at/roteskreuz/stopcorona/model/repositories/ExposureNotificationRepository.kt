@@ -12,12 +12,11 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
 
 /**
  * Repository for managing Exposure notification framework.
@@ -104,7 +103,6 @@ interface ExposureNotificationRepository {
      * at least YELLOW
      */
     suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary
-
 
     suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation>
 }
@@ -220,28 +218,11 @@ class ExposureNotificationRepositoryImpl(
     }
 
     override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
-        return suspendCancellableCoroutine { cancellableContinuation ->
-            exposureNotificationClient.isEnabled
-                .addOnSuccessListener {
-                    cancellableContinuation.resume(it)
-                }
-                .addOnFailureListener {
-                    Timber.e(SilentError(it))
-                    cancellableContinuation.resume(false)
-                }
-        }
+        return exposureNotificationClient.isEnabled.await()
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
-        return suspendCancellableCoroutine { continuation ->
-            exposureNotificationClient.temporaryExposureKeyHistory
-                .addOnSuccessListener {
-                    continuation.resume(it)
-                }
-                .addOnFailureListener {
-                    continuation.cancel(it)
-                }
-        }
+        return exposureNotificationClient.temporaryExposureKeyHistory.await()
     }
 
     override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String) {
@@ -258,41 +239,14 @@ class ExposureNotificationRepositoryImpl(
             .setTransmissionRiskScores(*configuration.transmissionRiskLevelValues.toIntArray())
             .build()
 
-        suspendCancellableCoroutine<Unit> { continuation ->
-            exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
-                .addOnCompleteListener{
-                    if (it.isSuccessful) {
-                        continuation.resume(Unit)
-                    } else {
-                        continuation.cancel(it.exception)
-                    }
-                }
-        }
+        exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
     }
 
     override suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary {
-        return suspendCancellableCoroutine { continuation ->
-            exposureNotificationClient.getExposureSummary(token)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        continuation.resume(it.result)
-                    } else {
-                        continuation.cancel(it.exception)
-                    }
-                }
-        }
+        return exposureNotificationClient.getExposureSummary(token).await()
     }
 
     override suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
-        return suspendCancellableCoroutine { continuation ->
-            exposureNotificationClient.getExposureInformation(token)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        continuation.resume(it.result)
-                    } else {
-                        continuation.cancel(it.exception)
-                    }
-                }
-        }
+        return exposureNotificationClient.getExposureInformation(token).await()
     }
 }

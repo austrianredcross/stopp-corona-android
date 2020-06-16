@@ -71,7 +71,7 @@ interface ApiInteractor {
     /**
      * Save one file from the Content Delivery Network API to a local temp file.
      */
-    suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File?
+    suspend fun downloadContentDeliveryFileToCacheFile(pathToArchive: String): File
 
     /**
      * Download all available diagnosis key archive(s) for all available past days for individual
@@ -147,7 +147,7 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File? {
+    override suspend fun downloadContentDeliveryFileToCacheFile(pathToArchive: String): File {
         return checkGeneralErrors {
             contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
                 val fileName = pathToArchive.replace("/", "-")
@@ -155,7 +155,6 @@ class ApiInteractorImpl(
                 body.byteStream().use { inputStream ->
                     filesRepository.createCacheFileFromInputStream(inputStream, fileName)
                 }
-                filesRepository.getCacheFile(fileName)
             }
         }
     }
@@ -167,7 +166,7 @@ class ApiInteractorImpl(
         return ListOfDailyBatches(
             diagnosisArchiveFilesOfTheDay = indexOfArchives.dailyBatches.mapIndexed { index, dayBatch ->
                 val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
-                    downloadContentDeliveryFileToTempFile(filepathForOneDay)
+                    downloadContentDeliveryFileToCacheFile(filepathForOneDay)
                 }
                 ArchivesOfOneDay(
                     archiveFilePaths = downloadedFilesOfThisDay,

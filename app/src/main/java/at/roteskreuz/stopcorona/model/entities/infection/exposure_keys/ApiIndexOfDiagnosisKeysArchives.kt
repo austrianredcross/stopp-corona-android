@@ -11,16 +11,16 @@ import org.threeten.bp.ZonedDateTime
 @JsonClass(generateAdapter = true)
 data class ApiIndexOfDiagnosisKeysArchives(
     @field:Json(name = "full_14_batch")
-    val full14DaysBatch: DiagnosisKeysBatch,
+    val full14DaysBatch: ApiDiagnosisKeysBatch,
 
     @field:Json(name = "full_7_batch")
-    val full07DaysBatch: DiagnosisKeysBatch,
+    val full07DaysBatch: ApiDiagnosisKeysBatch,
 
     @field:Json(name = "daily_batches")
-    val dailyBatches: List<DiagnosisKeysBatch>
+    val dailyBatches: List<ApiDiagnosisKeysBatch>
 ) {
 
-    fun batchesForLastHours(hour: Long): List<DiagnosisKeysBatch> {
+    fun batchesForLastHours(hour: Long): List<ApiDiagnosisKeysBatch> {
         return dailyBatches.filter {
             (it.interval.asExposureInterval().isAfter(ZonedDateTime.now().minusHours(hour)))
         }
@@ -28,7 +28,7 @@ data class ApiIndexOfDiagnosisKeysArchives(
 }
 
 @JsonClass(generateAdapter = true)
-data class DiagnosisKeysBatch(
+data class ApiDiagnosisKeysBatch(
     val interval: Long, // Interval number of the keys in that batch
 
     @field:Json(name = "batch_file_paths")

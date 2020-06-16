@@ -4,11 +4,17 @@ import android.content.SharedPreferences
 import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
+import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiDiagnosisKeysBatch
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
+import at.roteskreuz.stopcorona.model.entities.session.DbSession
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
@@ -25,7 +31,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
-import java.io.File
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
@@ -87,7 +92,7 @@ interface InfectionMessengerRepository {
 class InfectionMessengerRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
-    private val infectionMessageDao: InfectionMessageDao,
+    private val sessionDao: SessionDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
     private val cryptoRepository: CryptoRepository,
     private val notificationsRepository: NotificationsRepository,
@@ -104,8 +109,6 @@ class InfectionMessengerRepositoryImpl(
         private const val PREF_LAST_MESSAGE_ID = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_message_id"
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
         private const val PREF_LAST_SCHEDULED_TOKEN = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_scheduled_token"
-
-        private const val BATCH = "batch"
     }
 
     private val downloadMessagesStateObserver = StateObserver()
@@ -141,11 +144,7 @@ class InfectionMessengerRepositoryImpl(
             Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
         }
 
-        if (token.startsWith(BATCH)) {
-            processKeysBasedOnBatchToken(token)
-        } else {
-            processDailyTokens(token)
-        }
+        processKeysBasedOnBatchToken(token)
     }
 
     private fun processDailyTokens(token: String) {
@@ -194,7 +193,6 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
-        val warningType = quarantineRepository.getCurrentWarningType()
         if (downloadMessagesStateObserver.currentState is State.Loading) {
             Timber.e(SilentError(IllegalStateException("we´re trying to download but we´re still downloading...")))
             return
@@ -203,10 +201,23 @@ class InfectionMessengerRepositoryImpl(
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
             try {
-                val archives: List<File> = fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
-                val contextToken = BATCH + "," + warningType + "," + UUID.randomUUID().toString()
+                val warningType = quarantineRepository.getCurrentWarningType()
+                val contextToken = UUID.randomUUID().toString()
+                val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
+                val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
+                val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
                 lastScheduledToken = contextToken
-                exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
+                val fullSession = DbFullSession(
+                    session = DbSession(
+                        token = contextToken,
+                        warningType = warningType.name
+                    ),
+                    fullBatchParts = fullBatchParts,
+                    dailyBatchesParts = listOf(DbDailyBatchPart(token = contextToken, batchNo = 1, intervalStart = 0, path = "/"))
+
+                )
+                sessionDao.insertOrUpdateFullSession(fullSession)
+                // exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
@@ -216,20 +227,34 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
-        val indexOfArchives = apiInteractor.getIndexOfDiagnosisKeysArchives()
-
+    fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
         return when (warningType) {
-            WarningType.YELLOW, WarningType.RED -> {
-                indexOfArchives.full14DaysBatch.batchFilePaths.mapNotNull {
-                    apiInteractor.downloadContentDeliveryFileToTempFile(it)
-                }
+            WarningType.YELLOW, WarningType.RED -> full14DaysBatch
+            WarningType.REVOKE -> full07DaysBatch
+        }
+    }
+
+    suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
+        return dailyBatches.map { dailyBatch ->
+            dailyBatch.batchFilePaths.mapIndexed { index, path ->
+                DbDailyBatchPart(
+                    batchNo = index,
+                    intervalStart = dailyBatch.interval,
+                    path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
+                )
             }
-            WarningType.REVOKE -> {
-                indexOfArchives.full07DaysBatch.batchFilePaths.mapNotNull {
-                    apiInteractor.downloadContentDeliveryFileToTempFile(it)
-                }
-            }
+        }.fold(emptyList<DbDailyBatchPart>()) { acc, dailyBatchParts ->
+            acc + dailyBatchParts
+        }
+    }
+
+    suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
+        return batch.batchFilePaths.mapIndexed { index, path ->
+            DbFullBatchPart(
+                batchNo = index,
+                intervalStart = batch.interval,
+                path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
+            )
         }
     }
 

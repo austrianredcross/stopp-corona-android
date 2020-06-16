@@ -54,6 +54,10 @@ internal val persistenceModule = module {
     }
 
     single {
+        get<DefaultDatabase>().sessionDao()
+    }
+
+    single {
         get<DefaultDatabase>().infectionMessageDao()
     }
 

@@ -125,8 +125,6 @@ object Constants {
         val CERTIFICATE_CHAIN_TAN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_TAN
         val CERTIFICATE_CHAIN_CDN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_CDN
 
-        const val HTTP_CACHE_SIZE = 64L * 1024L * 1024L // 64 MB
-
         object Header {
             const val AUTHORIZATION_KEY = "AuthorizationKey"
             const val AUTHORIZATION_VALUE = BuildConfig.AUTHORIZATION_VALUE

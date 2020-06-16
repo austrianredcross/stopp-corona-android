@@ -38,6 +38,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
     private val workManager: WorkManager by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
+        Timber.d("ExposureNotificationBroadcastReceiver.onReceive")
         val action = intent.action
         if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
             val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN)

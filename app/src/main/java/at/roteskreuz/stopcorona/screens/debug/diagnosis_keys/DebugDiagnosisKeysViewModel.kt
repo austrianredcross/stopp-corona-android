@@ -37,19 +37,19 @@ class DebugDiagnosisKeysViewModel(
     val infectionMessengerRepository: InfectionMessengerRepository
 ) : ScopedViewModel(appDispatchers)  {
 
-    private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
-    private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
+    private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false)
+    private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error")
 
-    private val diagnosisKeyTokenSubject = NonNullableBehaviorSubject("no Key");
+    private val diagnosisKeyTokenSubject = NonNullableBehaviorSubject("no Key")
 
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
 
     private val exposureNotificationClient: ExposureNotificationClient by lazy {
-        Nearby.getExposureNotificationClient(contextInteractor.applicationContext);
+        Nearby.getExposureNotificationClient(contextInteractor.applicationContext)
     }
 
     fun checkEnabledState() {
-        exposureNotificationClient.isEnabled()
+        exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
                 exposureNotificationsEnabledSubject.onNext(enabled)
             }
@@ -129,7 +129,7 @@ class DebugDiagnosisKeysViewModel(
 
     fun jumpToSystemSettings() {
         val intent = exposureNotificationRepository.getExposureSettingsIntent()
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         contextInteractor.applicationContext.startActivity(intent)
     }
 
@@ -143,7 +143,7 @@ class DebugDiagnosisKeysViewModel(
     /** Gets the version name for a specified package. Returns a debug string if not found.  */
     private fun getVersionNameForPackage(packageName: String): String? {
         try {
-            return contextInteractor.applicationContext.getPackageManager()
+            return contextInteractor.applicationContext.packageManager
                 .getPackageInfo(packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             Timber.e(e, "Couldn't get the app version")
@@ -170,9 +170,9 @@ class DebugDiagnosisKeysViewModel(
 
                 delay(1000)
 
-                var downloadedFile = apiInteractor.downloadContentDeliveryFileToTempFile(pathToFirstArchive)
+                var downloadedFile = apiInteractor.downloadContentDeliveryFileToCacheFile(pathToFirstArchive)
                 exposureNotificationsTextSubject.onNext("$pathToFirstArchive downloaded successfully to " +
-                    "${downloadedFile?.absolutePath}} resulting in a filesize of ${downloadedFile?.length()} bytes  ")
+                    "${downloadedFile.absolutePath}} resulting in a filesize of ${downloadedFile.length()} bytes  ")
 
                 delay(1000)
 

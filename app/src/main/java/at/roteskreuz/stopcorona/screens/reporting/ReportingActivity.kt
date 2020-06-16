@@ -33,10 +33,11 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
             "argument_upload_missing_exposure_keys"
 
         fun args(messageType: MessageType, dateWithMissingExposureKeys: ZonedDateTime?): Bundle {
-            return bundleOf(
-                ARGUMENT_MESSAGE_TYPE to messageType,
-                ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING to DateTimeFormatter.ISO_ZONED_DATE_TIME.format(dateWithMissingExposureKeys)
-            )
+            val bundle = bundleOf(ARGUMENT_MESSAGE_TYPE to messageType)
+            dateWithMissingExposureKeys?.let {
+                bundle.putString(ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING, DateTimeFormatter.ISO_ZONED_DATE_TIME.format(it))
+            }
+            return bundle
         }
     }
 
@@ -49,7 +50,7 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     private val viewModel: ReportingViewModel by viewModel {
         parametersOf(
             messageType,
-            ZonedDateTime.parse(dateWithMissingExposureKeysAsString)
+            dateWithMissingExposureKeysAsString?.let { ZonedDateTime.parse(it) }
         )
     }
 

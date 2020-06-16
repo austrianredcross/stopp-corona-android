@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.*
 import kotlin.coroutines.CoroutineContext
 
@@ -32,9 +33,10 @@ interface FilesRepository {
      * @param inputStream: The content to write.
      * @param fileName a file name, relative to the apps storage
      *
+     * @return The full path to the file
      * @throws IOException
      */
-    suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String)
+    suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String): File
 
     /**
      * Loads a raw resource file and returns it's content as string
@@ -106,12 +108,13 @@ class FilesRepositoryImpl(
         }
     }
 
-    override suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String) {
-        withContext(coroutineContext) {
+    override suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String): File {
+        return withContext(coroutineContext) {
             val destFile = getCacheFile(fileName)
             if (destFile.exists().not()) {
                 inputStream.saveTo(destFile)
             }
+            destFile
         }
     }
 
@@ -160,14 +163,15 @@ class FilesRepositoryImpl(
             // never be replaced because ´if (!fileExists(destFilename))´ thinks everything is ok
             use { input ->
                 FileOutputStream(tmpDestFile).use { output ->
-                    input.copyTo(output)
+                    val bytes = input.copyTo(output)
+                    Timber.d("### Copied $bytes bytes to ${file.canonicalPath}")
                     output.flush() // Flush buffers to OS
                     output.fd.sync() // Make sure OS writes all the way to disc
                 }
             }
 
             if (!tmpDestFile.renameTo(file)) {
-                throw IOException("Could not move temporary file to final destination ${tmpDestFile.name}")
+                throw IOException("Could not move temporary file to final destination ${file.canonicalPath}")
             }
         }
     }
