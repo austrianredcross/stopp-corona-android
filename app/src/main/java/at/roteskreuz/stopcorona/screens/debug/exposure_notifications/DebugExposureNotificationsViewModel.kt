@@ -3,11 +3,12 @@ package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.util.Base64
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
@@ -25,7 +26,7 @@ import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
+import java.util.UUID
 
 class DebugExposureNotificationsViewModel(
     appDispatchers : AppDispatchers,
@@ -37,8 +38,7 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
-    private val lastTemporaryExposureKeysSubject =
-        NonNullableBehaviorSubject(mutableListOf<Pair<List<TemporaryExposureKey>, UUID>>());
+    private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject<List<TemporaryExposureKey>>(emptyList())
     private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
 
 
@@ -73,7 +73,7 @@ class DebugExposureNotificationsViewModel(
         return exposureNotificationsTextSubject
     }
 
-    fun observeLastTemporaryExposureKeys(): Observable<MutableList<Pair<List<TemporaryExposureKey>, UUID>>> {
+    fun observeLastTemporaryExposureKeys(): Observable<List<TemporaryExposureKey>> {
         return lastTemporaryExposureKeysSubject
     }
 
@@ -165,16 +165,9 @@ class DebugExposureNotificationsViewModel(
             .addOnSuccessListener {
                 Timber.d("got the list of Temporary Exposure Keys $it")
                 exposureNotificationsTextSubject.onNext(
-                    "got the list of Temp" +
-                            "oraryExposureKeys $it"
+                    "got the list of TemporaryExposureKeys $it"
                 )
-                lastTemporaryExposureKeysSubject.onNext(
-                    it.groupBy { temporaryExposureKey ->
-                        temporaryExposureKey.rollingStartIntervalNumber
-                    }.map { (_, temporaryExposureKeys) ->
-                        temporaryExposureKeys to UUID.randomUUID()
-                    }.toMutableList()
-                )
+                lastTemporaryExposureKeysSubject.onNext(it)
             }
             .addOnFailureListener { exception: Exception? ->
                 if (exception !is ApiException) {
@@ -224,8 +217,17 @@ class DebugExposureNotificationsViewModel(
         val keys = lastTemporaryExposureKeysSubject.value
         launch {
             try {
+                val keysWithoutPasswords = lastTemporaryExposureKeysSubject.value.map {
+                    val base54key = Base64.encodeToString(it.keyData, Base64.NO_WRAP)
+                    ApiTemporaryTracingKey(
+                        key = base54key,
+                        password = base54key,
+                        intervalNumber = it.rollingStartIntervalNumber,
+                        intervalCount = it.rollingPeriod
+                    )
+                }
                 apiInteractor.uploadInfectionData(
-                    keys.asApiEntity(),
+                    keysWithoutPasswords,
                     contextInteractor.packageName,
                     warningType,
                     ApiVerificationPayload(tanRequestUUIDSubject.value, tan)
