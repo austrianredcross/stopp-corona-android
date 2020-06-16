@@ -85,7 +85,7 @@ interface ExposureNotificationRepository {
     /**
      * Get the current (refreshed) state of the Exposure Notifications Framework state.
      */
-    suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
+    suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean
 
     /**
      * Retrieve the TemporaryExposureKey from the Google Exposure Notifications framework
@@ -196,17 +196,11 @@ class ExposureNotificationRepositoryImpl(
     override fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
-                if (enabled) {
-                    bluetoothManager.startListeningForChanges()
-                } else {
-                    bluetoothManager.stopListeningForChanges()
-                }
-                frameworkEnabledStateSubject.onNext(enabled)
+                updateAppRegisteredState(enabled)
             }
             .addOnFailureListener {
-                bluetoothManager.stopListeningForChanges()
+                updateAppRegisteredState(false)
                 Timber.e(SilentError(it))
-                frameworkEnabledStateSubject.onNext(false)
             }
     }
 
@@ -217,8 +211,19 @@ class ExposureNotificationRepositoryImpl(
         return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 
-    override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
-        return exposureNotificationClient.isEnabled.await()
+    private fun updateAppRegisteredState(frameworkEnabled: Boolean) {
+        if (frameworkEnabled) {
+            bluetoothManager.startListeningForChanges()
+        } else {
+            bluetoothManager.stopListeningForChanges()
+        }
+        frameworkEnabledStateSubject.onNext(frameworkEnabled)
+    }
+
+    override suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean {
+        val enabled = exposureNotificationClient.isEnabled.await()
+        updateAppRegisteredState(enabled) // update the state while reading
+        return enabled
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {

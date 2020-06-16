@@ -210,10 +210,10 @@ class DebugExposureNotificationsViewModel(
         launch {
             try {
                 val keysWithoutPasswords = lastTemporaryExposureKeysSubject.value.map {
-                    val base54key = Base64.encodeToString(it.keyData, Base64.NO_WRAP)
+                    val base64key = Base64.encodeToString(it.keyData, Base64.NO_WRAP)
                     ApiTemporaryTracingKey(
-                        key = base54key,
-                        password = base54key,
+                        key = base64key,
+                        password = base64key,
                         intervalNumber = it.rollingStartIntervalNumber,
                         intervalCount = it.rollingPeriod
                     )

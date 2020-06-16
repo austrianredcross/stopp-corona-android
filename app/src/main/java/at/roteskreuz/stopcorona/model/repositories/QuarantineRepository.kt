@@ -378,6 +378,7 @@ class QuarantineRepositoryImpl(
     }
 
     override fun receivedWarning(warningType: WarningType, timeOfContact: ZonedDateTime) {
+        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (warningType) {
             WarningType.YELLOW -> dateOfLastYellowContact = timeOfContact
             WarningType.RED -> dateOfLastRedContact = timeOfContact
@@ -387,7 +388,7 @@ class QuarantineRepositoryImpl(
     override fun getCurrentWarningType(): WarningType {
         if (dateOfLastRedContact != null) return WarningType.RED
         if (dateOfLastYellowContact != null) return WarningType.YELLOW
-        return WarningType.REVOKE
+        return WarningType.GREEN
     }
 
     override fun setShowQuarantineEnd() {

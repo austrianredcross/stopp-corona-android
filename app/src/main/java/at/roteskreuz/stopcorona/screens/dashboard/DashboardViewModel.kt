@@ -69,7 +69,7 @@ class DashboardViewModel(
         return quarantineRepository.observeQuarantineState()
             .map { quarantineStatus ->
                 val warningType = quarantineRepository.getCurrentWarningType()
-                if (warningType != WarningType.REVOKE) {
+                if (warningType != WarningType.GREEN) {
                     HealthStatusData.ContactsSicknessInfo(quarantineStatus, warningType)
                 } else {
                     HealthStatusData.NoHealthStatus

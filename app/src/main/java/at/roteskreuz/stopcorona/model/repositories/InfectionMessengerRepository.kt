@@ -168,7 +168,7 @@ class InfectionMessengerRepositoryImpl(
                     quarantineRepository.setShowQuarantineEnd()
                 }
             }
-            WarningType.REVOKE -> {
+            WarningType.GREEN -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     //we must now identify day by day if we are YELLOW or RED
@@ -222,31 +222,29 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
+    private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
         return when (warningType) {
             WarningType.YELLOW, WarningType.RED -> full14DaysBatch
-            WarningType.REVOKE -> full07DaysBatch
+            WarningType.GREEN -> full07DaysBatch
         }
     }
 
-    suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
-        return dailyBatches.map { dailyBatch ->
+    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
+        return dailyBatches.flatMap { dailyBatch ->
             dailyBatch.batchFilePaths.mapIndexed { index, path ->
                 DbDailyBatchPart(
-                    batchNo = index,
+                    batchNumber = index,
                     intervalStart = dailyBatch.interval,
                     path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
                 )
             }
-        }.fold(emptyList<DbDailyBatchPart>()) { acc, dailyBatchParts ->
-            acc + dailyBatchParts
         }
     }
 
-    suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
+    private suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
         return batch.batchFilePaths.mapIndexed { index, path ->
             DbFullBatchPart(
-                batchNo = index,
+                batchNumber = index,
                 intervalStart = batch.interval,
                 path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
             )

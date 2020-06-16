@@ -1,10 +1,12 @@
 package at.roteskreuz.stopcorona.model.entities.infection.info
 
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.EnumTypeConverter
-import com.squareup.moshi.*
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonQualifier
+import com.squareup.moshi.ToJson
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
-import java.lang.IllegalArgumentException
 
 enum class WarningType {
     @field:Json(name = "yellow-warning")
@@ -14,7 +16,7 @@ enum class WarningType {
     RED,
 
     @field:Json(name = "green-warning")
-    REVOKE
+    GREEN
 }
 
 class WarningTypeConverter : EnumTypeConverter<WarningType>({ enumValueOf(it) })
