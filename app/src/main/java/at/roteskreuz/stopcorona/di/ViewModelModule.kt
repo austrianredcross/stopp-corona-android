@@ -44,7 +44,8 @@ val viewModelModule = module {
             appDispatchers = get(),
             apiInteractor = get(),
             contextInteractor = get(),
-            exposureNotificationRepository = get()
+            exposureNotificationRepository = get(),
+            exposureNotificationClient = get()
         )
     }
 
@@ -54,6 +55,7 @@ val viewModelModule = module {
             apiInteractor = get(),
             contextInteractor = get(),
             exposureNotificationRepository = get(),
+            exposureNotificationClient = get(),
             infectionMessengerRepository = get()
         )
     }

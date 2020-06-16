@@ -17,7 +17,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
@@ -32,6 +31,7 @@ class DebugDiagnosisKeysViewModel(
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository,
+    private val exposureNotificationClient: ExposureNotificationClient,
     val infectionMessengerRepository: InfectionMessengerRepository
 ) : ScopedViewModel(appDispatchers) {
 
@@ -41,10 +41,6 @@ class DebugDiagnosisKeysViewModel(
     private val diagnosisKeyTokenSubject = NonNullableBehaviorSubject("no Key")
 
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
-
-    private val exposureNotificationClient: ExposureNotificationClient by lazy {
-        Nearby.getExposureNotificationClient(contextInteractor.applicationContext)
-    }
 
     fun checkEnabledState() {
         exposureNotificationClient.isEnabled
