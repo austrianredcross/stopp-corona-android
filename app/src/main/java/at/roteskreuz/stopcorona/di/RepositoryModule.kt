@@ -97,7 +97,8 @@ val repositoryModule = module {
             appDispatchers = get(),
             bluetoothManager = get(),
             configurationRepository = get(),
-            exposureNotificationClient = get()
+            exposureNotificationClient = get(),
+            filesRepository = get()
         )
     }
 

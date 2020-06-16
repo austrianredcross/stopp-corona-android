@@ -58,7 +58,7 @@ data class DbFullBatchPart(
     val token: String = "", // will be set up during inserting to DB
     val batchNumber: Int,
     val intervalStart: Long,
-    val path: String
+    val fileName: String
 ) : DbEntity
 
 @Entity(
@@ -83,5 +83,5 @@ data class DbDailyBatchPart(
     val token: String = "", // will be set up during inserting to DB
     val batchNumber: Int,
     val intervalStart: Long,
-    val path: String
+    val fileName: String
 ) : DbEntity
