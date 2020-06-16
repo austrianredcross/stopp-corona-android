@@ -51,7 +51,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 exposureNotificationsTanEditText.error = null
             }
             val warningType = when (button) {
-                exposureNotificationsUploadTemporaryExposureKeysGreenButton -> WarningType.REVOKE
+                exposureNotificationsUploadTemporaryExposureKeysGreenButton -> WarningType.GREEN
                 exposureNotificationsUploadTemporaryExposureKeysRedButton -> WarningType.RED
                 exposureNotificationsUploadTemporaryExposureKeysYellowButton -> WarningType.YELLOW
                 else -> throw IllegalArgumentException()

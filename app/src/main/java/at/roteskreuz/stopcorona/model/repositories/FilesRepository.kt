@@ -6,7 +6,6 @@ import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.*
 import kotlin.coroutines.CoroutineContext
 
@@ -27,7 +26,7 @@ interface FilesRepository {
     suspend fun createTextFileFromString(text: String, fileName: String)
 
     /**
-     * Write input stream into a new file in the cache storage. If the destination file already
+     * Write input stream into a new file in the app's storage. If the destination file already
      * exists, it will not be overwritten.
      *
      * @param inputStream: The content to write.
@@ -36,7 +35,7 @@ interface FilesRepository {
      * @return The full path to the file
      * @throws IOException
      */
-    suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String): File
+    suspend fun createFileFromInputStream(inputStream: InputStream, fileName: String): File
 
     /**
      * Loads a raw resource file and returns it's content as string
@@ -66,19 +65,14 @@ interface FilesRepository {
     fun getFileUrl(absoluteUrl: String): String
 
     /**
-     * Get a [File] for file with path [fileName], relative to the applciation's base folder.
+     * Get a [File] for file with path [fileName], relative to the application's base folder.
      */
     fun getFile(fileName: String): File
 
     /**
-     * Get a [File] for file with path [fileName], relative to the cache base folder.
+     * Remove file in application's folder.
      */
-    fun getCacheFile(fileName: String): File
-
-    /**
-     * Remove file in cache folder.
-     */
-    suspend fun removeCacheFile(fileName: String)
+    suspend fun removeFile(fileName: String)
 }
 
 class FilesRepositoryImpl(
@@ -96,9 +90,6 @@ class FilesRepositoryImpl(
     private val applicationInternalBaseFolder: File
         get() = contextInteractor.filesDir
 
-    private val cacheFolder: File
-        get() = contextInteractor.applicationContext.cacheDir
-
     override suspend fun createTextFileFromString(text: String, fileName: String) {
         withContext(coroutineContext) {
             val destFile = getFile(fileName)
@@ -108,9 +99,9 @@ class FilesRepositoryImpl(
         }
     }
 
-    override suspend fun createCacheFileFromInputStream(inputStream: InputStream, fileName: String): File {
+    override suspend fun createFileFromInputStream(inputStream: InputStream, fileName: String): File {
         return withContext(coroutineContext) {
-            val destFile = getCacheFile(fileName)
+            val destFile = getFile(fileName)
             if (destFile.exists().not()) {
                 inputStream.saveTo(destFile)
             }
@@ -164,7 +155,6 @@ class FilesRepositoryImpl(
             use { input ->
                 FileOutputStream(tmpDestFile).use { output ->
                     val bytes = input.copyTo(output)
-                    Timber.d("### Copied $bytes bytes to ${file.canonicalPath}")
                     output.flush() // Flush buffers to OS
                     output.fd.sync() // Make sure OS writes all the way to disc
                 }
@@ -178,10 +168,6 @@ class FilesRepositoryImpl(
 
     override fun getFile(fileName: String): File {
         return File(applicationInternalBaseFolder, fileName)
-    }
-
-    override fun getCacheFile(fileName: String): File {
-        return File(cacheFolder, fileName)
     }
 
     private suspend fun loadRawResource(@RawRes resId: Int): String? {
@@ -200,9 +186,9 @@ class FilesRepositoryImpl(
         return "file://${absoluteUrl}"
     }
 
-    override suspend fun removeCacheFile(fileName: String) {
+    override suspend fun removeFile(fileName: String) {
         withContext(coroutineContext) {
-            getCacheFile(fileName).delete()
+            getFile(fileName).delete()
         }
     }
 }

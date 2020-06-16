@@ -31,13 +31,13 @@ abstract class SessionDao {
     open suspend fun insertOrUpdateFullSession(fullSession: DbFullSession) {
         val token = fullSession.session.token
         deleteSession(token)
+        insertSession(fullSession.session)
         fullSession.fullBatchParts.forEach { fullBatchPath ->
             insertFullBatch(fullBatchPath.copy(token = token))
         }
         fullSession.dailyBatchesParts.forEach { dailyBatch ->
             insertDailyBatch(dailyBatch.copy(token = token))
         }
-        insertSession(fullSession.session)
     }
 
     @Transaction

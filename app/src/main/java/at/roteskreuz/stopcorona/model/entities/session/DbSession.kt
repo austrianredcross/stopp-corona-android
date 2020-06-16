@@ -16,7 +16,7 @@ data class DbSession(
 ) : DbEntity
 
 /**
- * This entity is wrapping hotel instance, its images and properties.
+ * This entity is wrapping the [DbSession], its [DbFullBatchPart] and [DbDailyBatchPart].
  */
 data class DbFullSession(
     @Embedded
@@ -55,8 +55,8 @@ data class DbFullSession(
 data class DbFullBatchPart(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    var token: String = "", // will be set up during inserting to DB
-    val batchNo: Int,
+    val token: String = "", // will be set up during inserting to DB
+    val batchNumber: Int,
     val intervalStart: Long,
     val path: String
 ) : DbEntity
@@ -80,8 +80,8 @@ data class DbFullBatchPart(
 data class DbDailyBatchPart(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    var token: String = "", // will be set up during inserting to DB
-    val batchNo: Int,
+    val token: String = "", // will be set up during inserting to DB
+    val batchNumber: Int,
     val intervalStart: Long,
     val path: String
 ) : DbEntity

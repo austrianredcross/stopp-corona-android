@@ -19,32 +19,26 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.UUID
 
 class DebugExposureNotificationsViewModel(
-    appDispatchers : AppDispatchers,
+    appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
-    private val exposureNotificationRepository: ExposureNotificationRepository
-) : ScopedViewModel(appDispatchers)  {
+    private val exposureNotificationRepository: ExposureNotificationRepository,
+    private val exposureNotificationClient: ExposureNotificationClient
+) : ScopedViewModel(appDispatchers) {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
     private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
     private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject<List<TemporaryExposureKey>>(emptyList())
     private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
-
-
-    private val exposureNotificationClient: ExposureNotificationClient by lazy {
-        Nearby.getExposureNotificationClient(contextInteractor.applicationContext);
-    }
 
     fun checkEnabledState() {
         exposureNotificationClient.isEnabled()
@@ -123,7 +117,6 @@ class DebugExposureNotificationsViewModel(
                 Timber.w(exception, "Failed to unregister")
                 exposureNotificationsTextSubject.onNext("Failed to unregister from the Exposure Notifications framework: '$exception'")
             }
-
     }
 
     fun jumpToSystemSettings() {
@@ -205,8 +198,7 @@ class DebugExposureNotificationsViewModel(
                 val tanRequestUUID = apiInteractor.requestTan(mobileNumber).uuid
                 tanRequestUUIDSubject.onNext(tanRequestUUID)
                 exposureNotificationsTextSubject.onNext("TAN for $mobileNumber was requested with UUID $tanRequestUUID")
-
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 exposureNotificationsTextSubject.onNext("TAN for  ${mobileNumber} failed because of $e")
                 Timber.e(e)
             }
@@ -218,10 +210,10 @@ class DebugExposureNotificationsViewModel(
         launch {
             try {
                 val keysWithoutPasswords = lastTemporaryExposureKeysSubject.value.map {
-                    val base54key = Base64.encodeToString(it.keyData, Base64.NO_WRAP)
+                    val base64key = Base64.encodeToString(it.keyData, Base64.NO_WRAP)
                     ApiTemporaryTracingKey(
-                        key = base54key,
-                        password = base54key,
+                        key = base64key,
+                        password = base64key,
                         intervalNumber = it.rollingStartIntervalNumber,
                         intervalCount = it.rollingPeriod
                     )
@@ -233,7 +225,7 @@ class DebugExposureNotificationsViewModel(
                     ApiVerificationPayload(tanRequestUUIDSubject.value, tan)
                 )
                 exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs succeeded")
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 exposureNotificationsTextSubject.onNext("upload of ${keys.size}TEKs failed because of $e")
                 Timber.e(e)
             }

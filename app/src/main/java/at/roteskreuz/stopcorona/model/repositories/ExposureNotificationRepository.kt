@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -85,7 +86,7 @@ interface ExposureNotificationRepository {
     /**
      * Get the current (refreshed) state of the Exposure Notifications Framework state.
      */
-    suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
+    suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean
 
     /**
      * Retrieve the TemporaryExposureKey from the Google Exposure Notifications framework
@@ -96,7 +97,7 @@ interface ExposureNotificationRepository {
     /**
      * Process the diagnosis key files
      */
-    suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String)
+    suspend fun processBatchDiagnosisKeys(archives: List<DbFullBatchPart>, token: String)
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -196,17 +197,11 @@ class ExposureNotificationRepositoryImpl(
     override fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
-                if (enabled) {
-                    bluetoothManager.startListeningForChanges()
-                } else {
-                    bluetoothManager.stopListeningForChanges()
-                }
-                frameworkEnabledStateSubject.onNext(enabled)
+                updateAppRegisteredState(enabled)
             }
             .addOnFailureListener {
-                bluetoothManager.stopListeningForChanges()
+                updateAppRegisteredState(false)
                 Timber.e(SilentError(it))
-                frameworkEnabledStateSubject.onNext(false)
             }
     }
 
@@ -217,15 +212,29 @@ class ExposureNotificationRepositoryImpl(
         return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 
-    override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
-        return exposureNotificationClient.isEnabled.await()
+    private fun updateAppRegisteredState(frameworkEnabled: Boolean) {
+        if (frameworkEnabled) {
+            bluetoothManager.startListeningForChanges()
+        } else {
+            bluetoothManager.stopListeningForChanges()
+        }
+        frameworkEnabledStateSubject.onNext(frameworkEnabled)
+    }
+
+    override suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean {
+        val enabled = exposureNotificationClient.isEnabled.await()
+        updateAppRegisteredState(enabled) // update the state while reading
+        return enabled
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
         return exposureNotificationClient.temporaryExposureKeyHistory.await()
     }
 
-    override suspend fun processBatchDiagnosisKeys(archives: List<File>, token: String) {
+    override suspend fun processBatchDiagnosisKeys(batches: List<DbFullBatchPart>, token: String) {
+        val archives = batches
+            .sortedWith ( compareBy { it.batchNumber  } )
+            .map { File(it.path) }
 
         val configuration = configurationRepository.getConfiguration()
             ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")

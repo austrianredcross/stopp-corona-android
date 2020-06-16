@@ -129,7 +129,6 @@ val remoteModule = module {
             appDispatchers = get(),
             apiDescription = get(),
             contentDeliveryNetworkDescription = get(),
-            contextInteractor = get(),
             tanApiDescription = get(),
             dataPrivacyRepository = get(),
             filesRepository = get()

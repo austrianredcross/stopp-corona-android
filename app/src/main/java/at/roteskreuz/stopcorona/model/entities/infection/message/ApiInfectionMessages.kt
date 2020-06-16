@@ -12,7 +12,7 @@ import kotlinx.android.parcel.Parcelize
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
-import java.util.*
+import java.util.UUID
 
 /**
  * Describes infection messages.
@@ -88,7 +88,7 @@ sealed class MessageType(val identifier: String) : Parcelable {
         object Suspicion : MessageType("g") {
 
             @IgnoredOnParcel
-            override val warningType: WarningType = WarningType.REVOKE
+            override val warningType: WarningType = WarningType.GREEN
         }
 
         /**
@@ -99,7 +99,7 @@ sealed class MessageType(val identifier: String) : Parcelable {
         object Sickness : MessageType("g") {
 
             @IgnoredOnParcel
-            override val warningType: WarningType = WarningType.REVOKE
+            override val warningType: WarningType = WarningType.GREEN
         }
     }
 }
