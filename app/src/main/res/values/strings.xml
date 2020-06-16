@@ -23,8 +23,8 @@
 
 	<!-- Onboarding -->
 	<string name="onboarding_headline_1">Welcome!</string>
-	<string name="onboarding_copy_1_1">By installing the Stopp Corona App you help</string>
-	<string name="onboarding_copy_1_2">slow down the spread</string>
+	<string name="onboarding_copy_1_1">By installing the Stopp Corona App you help slow down</string>
+	<string name="onboarding_copy_1_2">the spread</string>
 	<string name="onboarding_copy_1_3">of the coronavirus and to reduce the number</string>
 	<string name="onboarding_copy_1_4">of new infections.</string>
 	<string name="onboarding_copy_1_5"></string>
@@ -91,15 +91,15 @@
 	<string name="main_exposure_error_google_play_wrong_version_message">The installed version of Google Play Services is outdated. Please check for updates. You need at least version 20.18.13, which may be in the beta channel.</string>
 	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to the Play Store</string>
 	<string name="main_exposure_error_bluetooth_not_supported_title">Bluetooth is not supported</string>
-	<string name="main_exposure_error_bluetooth_not_supported_message">The Bluetooth adapter in this unit is not supported by the COVID 19 contact notification framework.</string>
+	<string name="main_exposure_error_bluetooth_not_supported_message">The Bluetooth adapter in this unit is not supported by the COVID-19 contact notification framework.</string>
 	<string name="main_exposure_error_title">Error with COVID-19 contact notifications</string>
 	<string name="main_exposure_error_sign_in_message">Registration required.</string>
 	<string name="main_exposure_error_invalid_account_message">Invalid account.</string>
 	<string name="main_exposure_error_declined_message">Framework was not found.</string>
 	<string name="main_exposure_error_network_error_message">Network failure.</string>
-	<string name="main_exposure_error_internal_message">Internal error. An error has occurred in the COVID 19 contact notifications.</string>
+	<string name="main_exposure_error_internal_message">Internal error. An error has occurred in the COVID-19 contact notifications.</string>
 	<string name="main_exposure_error_developer_message">We made a mistake here. An exception was logged, we will fix it in the later version of the app. Sorry for the inconvenience.</string>
-	<string name="main_exposure_error_bluetooth_off_message">Bluetooth is switched off. For COVID 19 contact notifications to work properly, you must enable Bluetooth.</string>
+	<string name="main_exposure_error_bluetooth_off_message">Bluetooth is switched off. For COVID-19 contact notifications to work properly, you must enable Bluetooth.</string>
 	<string name="main_exposure_error_bluetooth_off_action">Activate</string>
 	<string name="main_exposure_error_action">Try again</string>
 	<string name="main_reporting_disable_btn">Activate the automatic handshake for this function.</string>
@@ -162,7 +162,7 @@
 	<string name="automatic_handshake_dialog_description_1">Activate the automatic handshake in the app and enable Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_2">Your device can exchange random IDs with other app users via Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_3">The random IDs are stored in the COVID-19 contact log of your device.</string>
-	<string name="automatic_handshake_dialog_description_4"><b>contacts are sick</b> \nThe contact log can be used to notify you if you have had any contact with the coronavirus. A recommendation is calculated in an algorithm, how long you should stay in quarantine as a precautionary measure.\n<b> You are ill</b> \nThe random IDs can also be used to notify other users should you report a possible infection.</string>
+	<string name="automatic_handshake_dialog_description_4"><b>Contacts are sick</b> \nThe contact log can be used to notify you if you have had any contact with the coronavirus. A recommendation is calculated in an algorithm, how long you should stay in quarantine as a precautionary measure.\n<b> You are ill</b> \nThe random IDs can also be used to notify other users should you report a possible infection.</string>
 	<string name="automatic_handshake_dialog_disclaimer">Please make sure that Bluetooth is activated.</string>
 	<string name="automatic_handshake_dialog_faq">To the FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
@@ -172,7 +172,7 @@
 	<string name="main_automatic_handshake_switch_on">active</string>
 	<string name="main_automatic_handshake_switch_off">inactive</string>
 	<string name="main_automatic_handshake_switch_paused">paused</string>
-	<string name="main_automatic_handshake_description_on">You can send and receive signals from other Corona Apps via Bluetooth. Signals over 5 minutes are recorded in the COVID-19 contact log in your device. This happens anonymously by means of randomly generated IDs.</string>
+	<string name="main_automatic_handshake_description_on">You can send and receive signals from other Corona apps via Bluetooth. Signals over 5 minutes are recorded in the COVID-19 contact log in your device. This happens anonymously by means of randomly generated IDs.</string>
 	<string name="main_automatic_handshake_description_off">None of your encounters are currently saved automatically. Please activate the automatic handshake.</string>
 	<string name="main_start_manual_handshake">Start manual handshake</string>
 
@@ -212,9 +212,9 @@
 	<string name="certificate_report_status_invalid_birth_date_error">Date of birth is invalid</string>
 	<string name="certificate_report_status_invalid_birth_date_error_description">Please make sure you enter your date of birth in the correct format.</string>
 	<string name="sickness_certificate_confirmation_title">Infection reported</string>
-	<string name="sickness_certificate_confirmation_title_extra">share IDs</string>
+	<string name="sickness_certificate_confirmation_title_extra">Share IDs</string>
 	<string name="sickness_certificate_confirmation_headline">Infection reported</string>
-	<string name="sickness_certificate_confirmation_headline_extra">IDs from contact log shared with Stop Corona App</string>
+	<string name="sickness_certificate_confirmation_headline_extra">IDs from contact log shared with Stop Corona app</string>
 	<string name="sickness_certificate_confirmation_description1_extra">Other contacts will now be notified of your sick note.</string>
 	<string name="sickness_certificate_confirmation_description1">Thank you for reporting your infection and for contributing significantly to the common good.</string>
 	<string name="sickness_certificate_confirmation_description2">Your contacts were notified anonymously.</string>
@@ -254,7 +254,7 @@
 	<string name="sickness_certificate_attest_description">Please remain in quarantine. You have officially declared yourself ill with the coronavirus.</string>
 	<string name="sickness_certificate_attest_button">Self-quarantine</string>
 	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>
-	<string name="sickness_certificate_attest_info_update">Notify people with whom you exchanged a digital handshake on the day you reported.</string>
+	<string name="sickness_certificate_attest_info_update">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 	<string name="sickness_certificate_attest_update">Notify other contacts</string>
 
 	<!-- Start Menu -->
@@ -360,7 +360,7 @@
 	<string name="self_testing_symptoms_description">You have completed the questionnaire and your symptoms are unclear.</string>
 	<string name="self_testing_symptoms_button">Next steps</string>
 	<string name="self_testing_symptoms_secondary_button">Reassess symptoms</string>
-	<string name="self_testing_symptoms_warning_info_update">Notify people with whom you exchanged a digital handshake on the day you reported.</string>
+	<string name="self_testing_symptoms_warning_info_update">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 	<string name="self_testing_symptoms_warning_button_update">Notify other contacts</string>
 
 	<!-- Self Testing (Detail screens) -->
@@ -443,7 +443,7 @@
 	<string name="contacts_quarantine_day_many">Self-quarantine days</string>
 	<string name="revoke_suspicion_title">Report status</string>
 	<string name="revoke_suspicion_headline">Confirm all-clear</string>
-	<string name="revoke_suspicion_description">You have informed your contacts at the %s that you have experienced symptoms of corona infection\n\nIf through\n- a laboratory report, or\n- a doctor\nhas confirmed that you are not ill with the coronavirus, please inform your contacts immediately with this all-clear.\n\nIn the next step we will request access to the stored random IDs for this purpose. We need this access to inform your previously notified contacts about the all-clear.</string>
+	<string name="revoke_suspicion_description">You have informed your contacts at the %s that you have experienced symptoms of corona infection\n\nIf through\n• a laboratory report, or\n• a doctor\nhas confirmed that you are not ill with the coronavirus, please inform your contacts immediately with this all-clear.\n\nIn the next step we will request access to the stored random IDs for this purpose. We need this access to inform your previously notified contacts about the all-clear.</string>
 	<string name="revoke_suspicion_approval">I hereby confirm that the information provided is true and correct.</string>
 	<string name="revoke_suspicion_action">confirm all-clear</string>
 	<string name="revoke_suspicion_success_headline">All-clear confirmed</string>
@@ -480,7 +480,7 @@
 	<string name="changelog_cta_v2.0.0">All right!</string>
 	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
 	<string name="changelog_description_2_v2.0.0">Apple and Google COVID-19 interface</string>
-	<string name="changelog_description_3_v2.0.0">The notifications will continue to be exchanged anonymously and therefore in some places the information will be presented differently.\n\nEncounters that you saved as a handshake before updating to this version are no longer saved for technical reasons and can unfortunately no longer be notified.\n</string>
+	<string name="changelog_description_3_v2.0.0">. The notifications will continue to be exchanged anonymously and therefore in some places the information will be presented differently.\n\nEncounters that you saved as a handshake before updating to this version are no longer saved for technical reasons and can unfortunately no longer be notified.\n</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>
