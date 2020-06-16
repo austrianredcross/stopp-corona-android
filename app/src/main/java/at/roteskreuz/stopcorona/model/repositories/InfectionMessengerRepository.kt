@@ -233,7 +233,7 @@ class InfectionMessengerRepositoryImpl(
         return dailyBatches.map { dailyBatch ->
             dailyBatch.batchFilePaths.mapIndexed { index, path ->
                 DbDailyBatchPart(
-                    batchNo = index,
+                    batchNumber = index,
                     intervalStart = dailyBatch.interval,
                     path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
                 )
