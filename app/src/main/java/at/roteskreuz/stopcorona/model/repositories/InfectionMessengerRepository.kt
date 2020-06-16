@@ -222,14 +222,14 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
+    private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
         return when (warningType) {
             WarningType.YELLOW, WarningType.RED -> full14DaysBatch
             WarningType.REVOKE -> full07DaysBatch
         }
     }
 
-    suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
+    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
         return dailyBatches.map { dailyBatch ->
             dailyBatch.batchFilePaths.mapIndexed { index, path ->
                 DbDailyBatchPart(
@@ -243,7 +243,7 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
+    private suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
         return batch.batchFilePaths.mapIndexed { index, path ->
             DbFullBatchPart(
                 batchNo = index,
