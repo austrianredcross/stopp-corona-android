@@ -8,15 +8,15 @@ import com.squareup.moshi.ToJson
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
-enum class WarningType {
+enum class WarningType(val transmissionRiskLevel: Int) {
     @field:Json(name = "yellow-warning")
-    YELLOW,
+    YELLOW(5),
 
     @field:Json(name = "red-warning")
-    RED,
+    RED(2),
 
     @field:Json(name = "green-warning")
-    GREEN
+    GREEN(6)
 }
 
 class WarningTypeConverter : EnumTypeConverter<WarningType>({ enumValueOf(it) })
