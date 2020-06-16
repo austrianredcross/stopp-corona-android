@@ -31,7 +31,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
-import java.io.File
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
@@ -212,7 +211,7 @@ class InfectionMessengerRepositoryImpl(
 
                 sessionDao.insertOrUpdateFullSession(fullSession)
                 lastScheduledToken = contextToken
-                exposureNotificationRepository.processBatchDiagnosisKeys(fullBatchParts.map { File(it.path) }, contextToken)
+                exposureNotificationRepository.processBatchDiagnosisKeys(fullBatchParts, contextToken)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
