@@ -1,6 +1,6 @@
 ext.getBuildCode = {
-    if (System.getenv('CI_PIPELINE_IID') != null) {
-        return System.getenv('CI_PIPELINE_IID').trim().toInteger()
+    if (System.getenv('BUILD_BUILDID') != null) {
+        return System.getenv('BUILD_BUILDID').trim().toInteger()
     } else {
         return 12
     }
