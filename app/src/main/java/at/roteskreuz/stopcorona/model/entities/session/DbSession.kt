@@ -16,7 +16,7 @@ data class DbSession(
 ) : DbEntity
 
 /**
- * This entity is wrapping hotel instance, its images and properties.
+ * This entity is wrapping the [DbSession], its [DbFullBatchPart] and [DbDailyBatchPart].
  */
 data class DbFullSession(
     @Embedded

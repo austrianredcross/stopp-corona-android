@@ -38,11 +38,10 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
     private val workManager: WorkManager by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
-        Timber.d("ExposureNotificationBroadcastReceiver.onReceive")
         val action = intent.action
         if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
             val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN)
-            Timber.d("got a token '%s' tp process the diagnosis keys, we should check it", token)
+            Timber.d("got a token $token to process the diagnosis keys, we should check it")
 
             if (isDebug) {
                 showDebugNotificationProcessingFinished(context, token)
@@ -57,8 +56,8 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
             .setContentTitle("processing done")
             .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setSmallIcon(R.drawable.ic_red_cross)
-            .setContentText("processing of ${token} finished")
-            .setStyle(NotificationCompat.BigTextStyle().bigText("processing of ${token} finished"))
+            .setContentText("processing of $token finished")
+            .setStyle(NotificationCompat.BigTextStyle().bigText("processing of $token finished"))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .build()
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
