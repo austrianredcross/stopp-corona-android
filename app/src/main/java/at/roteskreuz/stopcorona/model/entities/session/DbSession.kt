@@ -55,7 +55,7 @@ data class DbFullSession(
 data class DbFullBatchPart(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    var token: String = "", // will be set up during inserting to DB
+    val token: String = "", // will be set up during inserting to DB
     val batchNumber: Int,
     val intervalStart: Long,
     val path: String
@@ -80,7 +80,7 @@ data class DbFullBatchPart(
 data class DbDailyBatchPart(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    var token: String = "", // will be set up during inserting to DB
+    val token: String = "", // will be set up during inserting to DB
     val batchNumber: Int,
     val intervalStart: Long,
     val path: String
