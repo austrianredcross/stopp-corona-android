@@ -121,7 +121,7 @@
 	<string name="infection_info_handshake_took_place_format">%s, %s und %s Uhr</string>
 	<string name="infection_info_go_to_quarantine">Begeben Sie sich möglichst direkt in Quarantäne</string>
 	<string name="infection_info_quarantine_end">Bleiben Sie dort bitte bis %s</string>
-	<string name="contact_sickness_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben \nist.</string>
+	<string name="contact_sickness_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben ist.</string>
 	<string name="infection_info_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
