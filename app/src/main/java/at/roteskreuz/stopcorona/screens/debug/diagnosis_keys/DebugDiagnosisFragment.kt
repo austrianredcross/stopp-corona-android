@@ -66,7 +66,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
                 listenerActive = true
             }
 
-        disposables += viewModel.observeResultionErrorReasons()
+        disposables += viewModel.observeResolutionErrorReasons()
             .observeOnMainThread()
             .subscribe {
                 exposureNotificationsErrorMessage.text = it
