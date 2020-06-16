@@ -11,7 +11,6 @@ import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
-import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
@@ -83,7 +82,6 @@ interface ApiInteractor {
 class ApiInteractorImpl(
     private val appDispatchers: AppDispatchers,
     private val apiDescription: ApiDescription,
-    private val contextInteractor: ContextInteractor,
     private val tanApiDescription: TanApiDescription,
     private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
     private val dataPrivacyRepository: DataPrivacyRepository,

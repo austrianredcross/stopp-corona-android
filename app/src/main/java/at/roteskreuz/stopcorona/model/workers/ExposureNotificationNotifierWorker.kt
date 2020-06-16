@@ -37,7 +37,7 @@ class ExposureNotificationNotifierWorker(
     private val bluetoothRepository: BluetoothRepository by inject()
 
     override suspend fun doWork(): Result {
-        if (exposureNotificationRepository.isAppRegisteredForExposureNotificationsCurrentState() &&
+        if (exposureNotificationRepository.refreshAndGetAppRegisteredForExposureNotificationsCurrentState() &&
             bluetoothRepository.bluetoothEnabled.not()) {
             notificationsRepository.displayPleaseActivateBluetoothNotification()
         }
