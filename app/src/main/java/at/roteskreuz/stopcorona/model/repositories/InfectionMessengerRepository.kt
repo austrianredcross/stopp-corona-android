@@ -230,7 +230,7 @@ class InfectionMessengerRepositoryImpl(
     }
 
     private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
-        return dailyBatches.map { dailyBatch ->
+        return dailyBatches.flatMap { dailyBatch ->
             dailyBatch.batchFilePaths.mapIndexed { index, path ->
                 DbDailyBatchPart(
                     batchNumber = index,
@@ -238,8 +238,6 @@ class InfectionMessengerRepositoryImpl(
                     path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
                 )
             }
-        }.fold(emptyList<DbDailyBatchPart>()) { acc, dailyBatchParts ->
-            acc + dailyBatchParts
         }
     }
 
