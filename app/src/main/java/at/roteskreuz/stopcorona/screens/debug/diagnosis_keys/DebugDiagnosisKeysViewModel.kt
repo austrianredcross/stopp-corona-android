@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
@@ -166,7 +167,7 @@ class DebugDiagnosisKeysViewModel(
                 delay(1000)
 
                 val fileName = apiInteractor.downloadContentDeliveryFile(pathToFirstArchive)
-                val downloadedFile = filesRepository.getFile(fileName)
+                val downloadedFile = filesRepository.getFile(Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER, fileName)
                 exposureNotificationsTextSubject.onNext("$pathToFirstArchive downloaded successfully to " +
                     "${downloadedFile.absolutePath}} resulting in a filesize of ${downloadedFile.length()} bytes  ")
 

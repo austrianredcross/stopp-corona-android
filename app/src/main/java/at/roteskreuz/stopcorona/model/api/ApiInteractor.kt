@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.model.api
 
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
@@ -145,9 +146,9 @@ class ApiInteractorImpl(
             checkGeneralErrors {
                 contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
                     val fileName = pathToArchive.replace("/", "-")
-                    filesRepository.removeFile(fileName)
+                    filesRepository.removeFile(EXPOSURE_ARCHIVES_FOLDER, fileName)
                     body.byteStream().use { inputStream ->
-                        filesRepository.createFileFromInputStream(inputStream, fileName)
+                        filesRepository.createFileFromInputStream(inputStream, EXPOSURE_ARCHIVES_FOLDER, fileName)
                     }
                     fileName
                 }

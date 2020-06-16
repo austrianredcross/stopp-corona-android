@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
 import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
@@ -96,7 +97,7 @@ interface ExposureNotificationRepository {
     /**
      * Process the diagnosis key files
      */
-    suspend fun processBatchDiagnosisKeys(archives: List<DbFullBatchPart>, token: String)
+    suspend fun processBatchDiagnosisKeys(batches: List<DbFullBatchPart>, token: String)
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -234,7 +235,7 @@ class ExposureNotificationRepositoryImpl(
     override suspend fun processBatchDiagnosisKeys(batches: List<DbFullBatchPart>, token: String) {
         val archives = batches
             .sortedWith(compareBy { it.batchNumber })
-            .map { filesRepository.getFile(it.fileName) }
+            .map { filesRepository.getFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName) }
 
         val configuration = configurationRepository.getConfiguration()
             ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
