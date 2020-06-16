@@ -81,7 +81,7 @@ data class DbDailyBatchPart(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     var token: String = "", // will be set up during inserting to DB
-    val batchNo: Int,
+    val batchNumber: Int,
     val intervalStart: Long,
     val path: String
 ) : DbEntity
