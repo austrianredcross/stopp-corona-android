@@ -32,10 +32,9 @@ interface FilesRepository {
      * @param inputStream: The content to write.
      * @param fileName a file name, relative to the apps storage
      *
-     * @return The full path to the file
      * @throws IOException
      */
-    suspend fun createFileFromInputStream(inputStream: InputStream, fileName: String): File
+    suspend fun createFileFromInputStream(inputStream: InputStream, fileName: String)
 
     /**
      * Loads a raw resource file and returns it's content as string
@@ -99,13 +98,12 @@ class FilesRepositoryImpl(
         }
     }
 
-    override suspend fun createFileFromInputStream(inputStream: InputStream, fileName: String): File {
+    override suspend fun createFileFromInputStream(inputStream: InputStream, fileName: String) {
         return withContext(coroutineContext) {
             val destFile = getFile(fileName)
             if (destFile.exists().not()) {
                 inputStream.saveTo(destFile)
             }
-            destFile
         }
     }
 
