@@ -150,9 +150,9 @@ class ApiInteractorImpl(
             checkGeneralErrors {
                 contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
                     val fileName = pathToArchive.replace("/", "-")
-                    filesRepository.removeCacheFile(fileName)
+                    filesRepository.removeFile(fileName)
                     body.byteStream().use { inputStream ->
-                        filesRepository.createCacheFileFromInputStream(inputStream, fileName)
+                        filesRepository.createFileFromInputStream(inputStream, fileName)
                     }
                 }
             }
