@@ -13,6 +13,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
+import at.roteskreuz.stopcorona.utils.areOnTheSameDay
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
@@ -380,8 +381,22 @@ class QuarantineRepositoryImpl(
     override fun receivedWarning(warningType: WarningType, timeOfContact: ZonedDateTime) {
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (warningType) {
-            WarningType.YELLOW -> dateOfLastYellowContact = timeOfContact
-            WarningType.RED -> dateOfLastRedContact = timeOfContact
+            WarningType.YELLOW -> {
+                if (dateOfLastYellowContact == null || dateOfLastYellowContact!!.areOnTheSameDay(timeOfContact).not()) {
+                    dateOfLastYellowContact = timeOfContact
+                } else {
+                    Timber.d("no update of the yellow quarantine neccesary, we stay at " +
+                        "$dateOfLastYellowContact. $timeOfContact can be discarted")
+                }
+            }
+            WarningType.RED -> {
+                if (dateOfLastRedContact == null || dateOfLastRedContact!!.areOnTheSameDay(timeOfContact)) {
+                    dateOfLastRedContact = timeOfContact
+                } else {
+                    Timber.d("no update of the red quarantine neccesary, we stay at " +
+                        "$dateOfLastYellowContact. $timeOfContact can be discarted")
+                }
+            }
         }
     }
 

@@ -57,7 +57,8 @@ val viewModelModule = module {
             exposureNotificationRepository = get(),
             exposureNotificationClient = get(),
             infectionMessengerRepository = get(),
-            filesRepository = get()
+            filesRepository = get(),
+            configurationRepository = get()
         )
     }
 
