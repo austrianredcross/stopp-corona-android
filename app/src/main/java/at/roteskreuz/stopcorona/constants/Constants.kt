@@ -83,6 +83,11 @@ object Constants {
          * Framework expose new event each 10 minutes.
          */
         val INTERVAL_NUMBER_OFFSET: Duration = Duration.ofMinutes(10)
+
+        /**
+         * Local folder name for copy of exposure archives to be processed.
+         */
+        const val EXPOSURE_ARCHIVES_FOLDER = "exposure_archives"
     }
 
     /**
@@ -124,8 +129,6 @@ object Constants {
         val CERTIFICATE_CHAIN_DEFAULT: Array<String> = BuildConfig.CERTIFICATE_CHAIN
         val CERTIFICATE_CHAIN_TAN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_TAN
         val CERTIFICATE_CHAIN_CDN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_CDN
-
-        const val HTTP_CACHE_SIZE = 64L * 1024L * 1024L // 64 MB
 
         object Header {
             const val AUTHORIZATION_KEY = "AuthorizationKey"
@@ -209,16 +212,5 @@ object Constants {
 
         const val EMPTY_STRING = ""
         const val SPACE = " "
-    }
-
-    /**
-     * Constants related to the configuration provided by the backend.
-     */
-    object ConfigurationDefaults {
-
-        /**
-         * The number of temporary exposure keys that will be uploaded when doing a reporting.
-         */
-        const val UPLOAD_KEYS_DAYS = 2
     }
 }

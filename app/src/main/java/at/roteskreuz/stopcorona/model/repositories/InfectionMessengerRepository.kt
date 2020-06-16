@@ -4,12 +4,17 @@ import android.content.SharedPreferences
 import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
+import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiDiagnosisKeysBatch
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
+import at.roteskreuz.stopcorona.model.entities.session.DbSession
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
@@ -21,12 +26,11 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProp
 import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.skeleton.core.utils.stringSharedPreferencesProperty
-import at.roteskreuz.stopcorona.utils.asDbObservable
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
-import java.io.File
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
@@ -49,11 +53,6 @@ interface InfectionMessengerRepository {
      * Start a process of downloading diagnosis keys (previously known as infection messages)
      */
     suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
-
-    /**
-     * Observe the infection messages received.
-     */
-    fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>>
 
     /**
      * Get the sent temporary exposure keys.
@@ -93,7 +92,7 @@ interface InfectionMessengerRepository {
 class InfectionMessengerRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
-    private val infectionMessageDao: InfectionMessageDao,
+    private val sessionDao: SessionDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
     private val cryptoRepository: CryptoRepository,
     private val notificationsRepository: NotificationsRepository,
@@ -110,8 +109,6 @@ class InfectionMessengerRepositoryImpl(
         private const val PREF_LAST_MESSAGE_ID = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_message_id"
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
         private const val PREF_LAST_SCHEDULED_TOKEN = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_scheduled_token"
-
-        private const val BATCH = "batch"
     }
 
     private val downloadMessagesStateObserver = StateObserver()
@@ -141,57 +138,54 @@ class InfectionMessengerRepositoryImpl(
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
     }
 
-    override suspend fun processKeysBasedOnToken(token: String){
+    override suspend fun processKeysBasedOnToken(token: String) {
         //we´re processing the batches
-        if (lastScheduledToken != token){
+        if (lastScheduledToken != token) {
             Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
         }
-
-        if (token.startsWith(BATCH)){
-            processKeysBasedOnBatchToken(token)
-        } else {
-            processDailyTokens(token)
-        }
-    }
-
-    private fun processDailyTokens(token: String) {
-        //we can assume you are WarningType.GREEN as only in this case we process the tokens
-    }
-
-    private suspend fun processKeysBasedOnBatchToken(token: String) {
-        val warningType = WarningType.RED
-
-        val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         val configuration =
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
-        when(warningType) {
+        //TODO: delete the old diagnosis key files as they have been processed
+        val fullSession: DbFullSession = sessionDao.getFullSession(token)
+        val warningType = WarningType.valueOf(fullSession.session.warningType)
 
+        val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
+        when (warningType) {
             WarningType.YELLOW, WarningType.RED -> {
                 //TODO finish this decision branch
-                if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
+                if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
                     //go through the days and check if the day is the first RED/YELLOW day
                     // TODO: go through the summary and check if the day is the first RED/YELLOW day
                 } else {
-                    //TODO: we are green again
-                    //TODO finish this decision branch
+                    when (warningType) {
+                        WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
+                        WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
+                    }
+                    quarantineRepository.setShowQuarantineEnd()
                 }
             }
-            WarningType.REVOKE -> {
+            WarningType.GREEN -> {
                 //we are above risc for the last days!!!
-                if (summary.summationRiskScore >= configuration.dailyRiskThreshold){
+                if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     //we must now identify day by day if we are YELLOW or RED
-                    val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
+                    //val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
+                    //process the batches and do one of these:
+                    //TODO find time of contact
+                    //this is a fake calculation:
+                    val dayOfExposure = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong())
+                    quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = dayOfExposure)
+                    var quarantineStatus = quarantineRepository.getQuarantineStatus()
+                } else {
+                    Timber.d("We are still WarningType.REVOKE")
                 }
             }
         }
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
-        //TODO: get the real current warning type
-        val warningType = WarningType.RED
         if (downloadMessagesStateObserver.currentState is State.Loading) {
             Timber.e(SilentError(IllegalStateException("we´re trying to download but we´re still downloading...")))
             return
@@ -200,10 +194,24 @@ class InfectionMessengerRepositoryImpl(
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
             try {
-                val archives :List<File> = apiInteractor.fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType)
-                val contextToken = BATCH + "," + warningType + "," + UUID.randomUUID().toString()
+                val warningType = quarantineRepository.getCurrentWarningType()
+                val contextToken = UUID.randomUUID().toString()
+                val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
+                val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
+                val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
+
+                val fullSession = DbFullSession(
+                    session = DbSession(
+                        token = contextToken,
+                        warningType = warningType.name
+                    ),
+                    fullBatchParts = fullBatchParts,
+                    dailyBatchesParts = dailyBatchesParts
+                )
+
+                sessionDao.insertOrUpdateFullSession(fullSession)
                 lastScheduledToken = contextToken
-                exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
+                exposureNotificationRepository.processBatchDiagnosisKeys(fullBatchParts, contextToken)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
@@ -213,8 +221,33 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    override fun observeReceivedInfectionMessages(): Observable<List<DbReceivedInfectionMessage>> {
-        return infectionMessageDao.observeReceivedInfectionMessages().asDbObservable()
+    private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
+        return when (warningType) {
+            WarningType.YELLOW, WarningType.RED -> full14DaysBatch
+            WarningType.GREEN -> full07DaysBatch
+        }
+    }
+
+    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
+        return dailyBatches.flatMap { dailyBatch ->
+            dailyBatch.batchFilePaths.mapIndexed { index, path ->
+                DbDailyBatchPart(
+                    batchNumber = index,
+                    intervalStart = dailyBatch.intervalToEpochSeconds,
+                    fileName = apiInteractor.downloadContentDeliveryFile(path)
+                )
+            }
+        }
+    }
+
+    private suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
+        return batch.batchFilePaths.mapIndexed { index, path ->
+            DbFullBatchPart(
+                batchNumber = index,
+                intervalStart = batch.intervalToEpochSeconds,
+                fileName = apiInteractor.downloadContentDeliveryFile(path)
+            )
+        }
     }
 
     override fun observeSomeoneHasRecoveredMessage(): Observable<Boolean> {

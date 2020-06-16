@@ -7,6 +7,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
 import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
+import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
@@ -14,6 +15,9 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConvert
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
 import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
+import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbSession
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -23,6 +27,9 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     entities = [
         DbConfiguration::class,
         DbQuestionnaire::class,
+        DbSession::class,
+        DbFullBatchPart::class,
+        DbDailyBatchPart::class,
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
         DbReceivedInfectionMessage::class,
@@ -223,6 +230,8 @@ abstract class DefaultDatabase : RoomDatabase() {
     }
 
     abstract fun configurationDao(): ConfigurationDao
+
+    abstract fun sessionDao(): SessionDao
 
     abstract fun infectionMessageDao(): InfectionMessageDao
 

@@ -2,7 +2,6 @@ package at.roteskreuz.stopcorona.model.api
 
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import okhttp3.ResponseBody
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Streaming
@@ -17,7 +16,7 @@ interface ContentDeliveryNetworkDescription {
 
     @Streaming
     @GET("{fullPathProvidedAsParameter}")
-    fun downloadExposureKeyArchive(
+    suspend fun downloadExposureKeyArchive(
         @Path("fullPathProvidedAsParameter", encoded = true) path: String
-    ) : Call<ResponseBody>
+    ): ResponseBody
 }

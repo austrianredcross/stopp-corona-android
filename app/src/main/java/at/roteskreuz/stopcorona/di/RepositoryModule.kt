@@ -51,7 +51,7 @@ val repositoryModule = module {
         InfectionMessengerRepositoryImpl(
             appDispatchers = get(),
             apiInteractor = get(),
-            infectionMessageDao = get(),
+            sessionDao = get(),
             temporaryExposureKeysDao = get(),
             cryptoRepository = get(),
             notificationsRepository = get(),
@@ -97,7 +97,8 @@ val repositoryModule = module {
             appDispatchers = get(),
             bluetoothManager = get(),
             configurationRepository = get(),
-            exposureNotificationClient = get()
+            exposureNotificationClient = get(),
+            filesRepository = get()
         )
     }
 

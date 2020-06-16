@@ -118,9 +118,19 @@ interface QuarantineRepository {
     fun revokeLastRedContactDate()
 
     /**
+     * Resets the last yellow contact date.
+     */
+    fun revokeLastYellowContactDate()
+
+    /**
      * Get the current quarantine status.
      */
     suspend fun getQuarantineStatus(): QuarantineStatus
+
+    /**
+     * Return the current Warning type based on the last Yellow and Red contact date times.
+     */
+    fun getCurrentWarningType(): WarningType
 
     /**
      * Observe if the user needs to upload the exposure keys from the day of the submission.
@@ -368,10 +378,17 @@ class QuarantineRepositoryImpl(
     }
 
     override fun receivedWarning(warningType: WarningType, timeOfContact: ZonedDateTime) {
+        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (warningType) {
             WarningType.YELLOW -> dateOfLastYellowContact = timeOfContact
             WarningType.RED -> dateOfLastRedContact = timeOfContact
         }
+    }
+
+    override fun getCurrentWarningType(): WarningType {
+        if (dateOfLastRedContact != null) return WarningType.RED
+        if (dateOfLastYellowContact != null) return WarningType.YELLOW
+        return WarningType.GREEN
     }
 
     override fun setShowQuarantineEnd() {
@@ -388,6 +405,10 @@ class QuarantineRepositoryImpl(
 
     override fun revokeLastRedContactDate() {
         dateOfLastRedContact = null
+    }
+
+    override fun revokeLastYellowContactDate() {
+        dateOfLastYellowContact = null
     }
 
     override suspend fun getQuarantineStatus(): QuarantineStatus {

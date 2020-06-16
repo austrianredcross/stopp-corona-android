@@ -51,9 +51,7 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     private val viewModel: ReportingViewModel by viewModel {
         parametersOf(
             messageType,
-            dateWithMissingExposureKeysAsString?.let {
-                ZonedDateTime.parse(it)
-            }
+            dateWithMissingExposureKeysAsString?.let { ZonedDateTime.parse(it) }
         )
     }
 

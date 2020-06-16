@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.model.api
 
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
@@ -11,15 +12,13 @@ import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
-import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.*
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
+import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import com.squareup.moshi.JsonDataException
 import kotlinx.coroutines.withContext
-import org.threeten.bp.ZonedDateTime
 import retrofit2.HttpException
-import java.io.File
-import java.io.IOException
 import java.net.HttpURLConnection.*
 
 /**
@@ -69,27 +68,16 @@ interface ApiInteractor {
     suspend fun getIndexOfDiagnosisKeysArchives(): ApiIndexOfDiagnosisKeysArchives
 
     /**
-     * Save one file from the Content Delivery Network API to a local temp file.
+     * Save one file from the Content Delivery Network API to a local file.
+     *
+     * @return fileName
      */
-    suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File?
-
-    /**
-     * Based on the users [WarningType], download the last 7 or 14 day batch of diagnosis key
-     * archive(s).
-     */
-    suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File>
-
-    /**
-     * Download all available diagnosis key archive(s) for all available past days for individual
-     * processing.
-     */
-    suspend fun fetchDailyBatchDiagnosisKeys(): ListOfDailyBatches
+    suspend fun downloadContentDeliveryFile(pathToArchive: String): String
 }
 
 class ApiInteractorImpl(
     private val appDispatchers: AppDispatchers,
     private val apiDescription: ApiDescription,
-    private val contextInteractor: ContextInteractor,
     private val tanApiDescription: TanApiDescription,
     private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
     private val dataPrivacyRepository: DataPrivacyRepository,
@@ -153,58 +141,19 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun downloadContentDeliveryFileToTempFile(pathToArchive: String): File? {
+    override suspend fun downloadContentDeliveryFile(pathToArchive: String): String {
         return withContext(appDispatchers.IO) {
             checkGeneralErrors {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                val response = contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).execute()
-                if (response.isSuccessful) {
+                contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
                     val fileName = pathToArchive.replace("/", "-")
-                    filesRepository.removeCacheFile(fileName)
-
-                    response.body()?.byteStream()?.let { inputStream ->
-                        filesRepository.createCacheFileFromInputStream(inputStream, fileName)
-                        filesRepository.getCacheFile(fileName)
+                    filesRepository.removeFile(EXPOSURE_ARCHIVES_FOLDER, fileName)
+                    body.byteStream().use { inputStream ->
+                        filesRepository.createFileFromInputStream(inputStream, EXPOSURE_ARCHIVES_FOLDER, fileName)
                     }
-                } else {
-                    throw IOException("it did not work code:${response} ")
+                    fileName
                 }
             }
         }
-    }
-
-    override suspend fun fetchBatchDiagnosisKeysBasedOnInfectionLevel(warningType: WarningType): List<File> {
-        val indexOfArchives = getIndexOfDiagnosisKeysArchives()
-
-        return when (warningType) {
-            WarningType.YELLOW, WarningType.RED -> {
-                indexOfArchives.full14DaysBatch.batchFilePaths.mapNotNull {
-                    downloadContentDeliveryFileToTempFile(it)
-                }
-            }
-            WarningType.REVOKE -> {
-                indexOfArchives.full07DaysBatch.batchFilePaths.mapNotNull {
-                    downloadContentDeliveryFileToTempFile(it)
-                }
-            }
-        }
-    }
-
-    override suspend fun fetchDailyBatchDiagnosisKeys(): ListOfDailyBatches {
-        val indexOfArchives = getIndexOfDiagnosisKeysArchives()
-
-        //we assume the list of dailyBatches is sorted on the server!!!
-        return ListOfDailyBatches(
-            diagnosisArchiveFilesOfTheDay = indexOfArchives.dailyBatches.mapIndexed { index, dayBatch ->
-                val downloadedFilesOfThisDay = dayBatch.batchFilePaths.mapNotNull { filepathForOneDay ->
-                    downloadContentDeliveryFileToTempFile(filepathForOneDay)
-                }
-                ArchivesOfOneDay(
-                    archiveFilePaths = downloadedFilesOfThisDay,
-                    dayTimestampOfDay = dayBatch.intervalToEpochSeconds,
-                    indexFromServer = index
-                )
-            })
     }
 
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
@@ -306,28 +255,3 @@ sealed class SicknessCertificateUploadException : Exception() {
      */
     object SMSGatewayException : SicknessCertificateUploadException()
 }
-
-/**
- * Collection of downloaded diagnosis archives
- */
-data class ListOfDailyBatches(
-    val diagnosisArchiveFilesOfTheDay: List<ArchivesOfOneDay>
-)
-
-/**
- * One day worth of diagnosis key files
- */
-data class ArchivesOfOneDay(
-    /**
-     * path to the diagnosis key files downloaded from the backend as local temp files
-     */
-    val archiveFilePaths: List<File>,
-    /**
-     * unix timestamp of the day
-     */
-    val dayTimestampOfDay: Long,
-    /**
-     * The original index as ordered by the backend
-     */
-    val indexFromServer: Int
-)

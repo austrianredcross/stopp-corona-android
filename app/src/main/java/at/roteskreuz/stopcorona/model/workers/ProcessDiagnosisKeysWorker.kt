@@ -60,7 +60,6 @@ class ProcessDiagnosisKeysWorker(
         } catch (ex: Exception){
             Timber.e(SilentError(ex))
         }
-
         return Result.failure()
     }
 }

@@ -21,12 +21,9 @@ class InfectionInfoViewModel(
 ) : ScopedViewModel(appDispatchers) {
 
     fun observeInfectedContacts(): Observable<InfectedContactsViewState> {
-        return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
-            quarantineRepository.observeQuarantineState()
-        ).map { (messages, quarantineStatus) ->
+        return quarantineRepository.observeQuarantineState().map { quarantineStatus ->
             InfectedContactsViewState(
-                messages = messages,
+                messages = emptyList(),
                 quarantinedUntil = if (quarantineStatus is QuarantineStatus.Jailed.Limited) quarantineStatus.end.toLocalDate()
                 else null
             )
@@ -38,7 +35,7 @@ data class InfectedContactsViewState(
     val messages: List<DbReceivedInfectionMessage>,
     val quarantinedUntil: LocalDate? = null
 ) {
-
+    //TODO: remove these values and transform then into Booleans
     val yellowMessages by lazy { messages.filter { it.messageType == MessageType.InfectionLevel.Yellow } }
     val redMessages by lazy { messages.filter { it.messageType == MessageType.InfectionLevel.Red } }
 }
