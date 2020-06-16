@@ -31,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
+import java.io.File
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
@@ -143,22 +144,16 @@ class InfectionMessengerRepositoryImpl(
         if (lastScheduledToken != token) {
             Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
         }
-
-        processKeysBasedOnBatchToken(token)
-    }
-
-    private fun processDailyTokens(token: String) {
-        //we can assume you are WarningType.GREEN as only in this case we process the tokens
-    }
-
-    private suspend fun processKeysBasedOnBatchToken(token: String) {
-        val warningType = quarantineRepository.getCurrentWarningType()
-
-        val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         val configuration =
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
+
+        //TODO: delete the old diagnosis key files as they have been processed
+        val fullSession: DbFullSession = sessionDao.getFullSession(token)
+        val warningType = WarningType.valueOf(fullSession.session.warningType)
+
+        val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         when (warningType) {
             WarningType.YELLOW, WarningType.RED -> {
                 //TODO finish this decision branch
@@ -190,6 +185,7 @@ class InfectionMessengerRepositoryImpl(
                 }
             }
         }
+
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -217,7 +213,7 @@ class InfectionMessengerRepositoryImpl(
 
                 )
                 sessionDao.insertOrUpdateFullSession(fullSession)
-                // exposureNotificationRepository.processBatchDiagnosisKeys(archives, contextToken)
+                exposureNotificationRepository.processBatchDiagnosisKeys(fullBatchParts.map { File(it.path) }, contextToken)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
