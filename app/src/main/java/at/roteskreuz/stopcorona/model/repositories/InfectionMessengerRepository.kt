@@ -246,7 +246,7 @@ class InfectionMessengerRepositoryImpl(
     private suspend fun fetchFullBatchDiagnosisKeys(batch: ApiDiagnosisKeysBatch): List<DbFullBatchPart> {
         return batch.batchFilePaths.mapIndexed { index, path ->
             DbFullBatchPart(
-                batchNo = index,
+                batchNumber = index,
                 intervalStart = batch.interval,
                 path = apiInteractor.downloadContentDeliveryFileToCacheFile(path).canonicalPath
             )
