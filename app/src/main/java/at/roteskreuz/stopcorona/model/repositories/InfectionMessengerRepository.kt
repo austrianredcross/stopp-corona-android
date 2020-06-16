@@ -168,7 +168,7 @@ class InfectionMessengerRepositoryImpl(
                     quarantineRepository.setShowQuarantineEnd()
                 }
             }
-            WarningType.REVOKE -> {
+            WarningType.GREEN -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     //we must now identify day by day if we are YELLOW or RED
@@ -225,7 +225,7 @@ class InfectionMessengerRepositoryImpl(
     private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
         return when (warningType) {
             WarningType.YELLOW, WarningType.RED -> full14DaysBatch
-            WarningType.REVOKE -> full07DaysBatch
+            WarningType.GREEN -> full07DaysBatch
         }
     }
 

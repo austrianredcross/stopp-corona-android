@@ -105,7 +105,7 @@ class NotificationsRepositoryImpl(
                 context.string(R.string.local_notification_sick_contact_headline) to
                     context.string(R.string.local_notification_sick_contact_message)
             }
-            WarningType.REVOKE -> {
+            WarningType.GREEN -> {
                 context.string(R.string.local_notification_someone_has_recovered_headline) to
                     context.string(R.string.local_notification_quarantine_end_message)
             }
