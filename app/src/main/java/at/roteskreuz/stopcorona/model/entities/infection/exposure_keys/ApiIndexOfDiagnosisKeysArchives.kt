@@ -20,6 +20,7 @@ data class ApiIndexOfDiagnosisKeysArchives(
     val dailyBatches: List<ApiDiagnosisKeysBatch>
 ) {
 
+    // TODO: 16/06/2020 dusanjencik: Not used. Why?
     fun batchesForLastHours(hour: Long): List<ApiDiagnosisKeysBatch> {
         return dailyBatches.filter {
             (it.interval.asExposureInterval().isAfter(ZonedDateTime.now().minusHours(hour)))

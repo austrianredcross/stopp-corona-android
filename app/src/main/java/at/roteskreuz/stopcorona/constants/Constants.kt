@@ -83,6 +83,11 @@ object Constants {
          * Framework expose new event each 10 minutes.
          */
         val INTERVAL_NUMBER_OFFSET: Duration = Duration.ofMinutes(10)
+
+        /**
+         * Local folder name for copy of exposure archives to be processed.
+         */
+        const val EXPOSURE_ARCHIVES_FOLDER = "exposure_archives"
     }
 
     /**
