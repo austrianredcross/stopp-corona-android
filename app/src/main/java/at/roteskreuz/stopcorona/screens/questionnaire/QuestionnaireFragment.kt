@@ -88,16 +88,7 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
                 }
             }
 
-        disposables += viewModel.observeQuestionnaireWithAnswers(
-            requireContext().getString(R.string.current_language).let { currentLanguage ->
-                ConfigurationLanguage.parse(currentLanguage).let {
-                    if (it == ConfigurationLanguage.UNDEFINED) {
-                        Timber.e(SilentError("Undefined language for questionnaire: $currentLanguage"))
-                        ConfigurationLanguage.EN // fallback when undefined
-                    } else it
-                }
-            }
-        )
+        disposables += viewModel.observeQuestionnaireWithQuestions()
             .observeOnMainThread()
             .subscribe { configuration ->
                 controller.setData(configuration)
@@ -133,6 +124,17 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
                     Decision.SELFMONITORING -> startQuestionnaireSelfMonitoringFragment()
                 }
             }
+
+        viewModel.getQuestionnaireWithAnswers(
+            requireContext().getString(R.string.current_language).let { currentLanguage ->
+                ConfigurationLanguage.parse(currentLanguage).let {
+                    if (it == ConfigurationLanguage.UNDEFINED) {
+                        Timber.e(SilentError("Undefined language for questionnaire: $currentLanguage"))
+                        ConfigurationLanguage.EN // fallback when undefined
+                    } else it
+                }
+            }
+        )
     }
 
     override fun overrideOnBackPressed(): Boolean {
@@ -162,7 +164,6 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             })
         }
     }
-
 }
 
 fun Activity.startQuestionnaireFragment() {

@@ -3,11 +3,12 @@ package at.roteskreuz.stopcorona.screens.questionnaire
 import android.util.SparseArray
 import androidx.core.util.contains
 import androidx.core.util.set
-import at.roteskreuz.stopcorona.model.entities.configuration.*
+import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
+import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
+import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
@@ -33,7 +34,8 @@ class QuestionnaireViewModel(
     private val currentPageSubject = NonNullableBehaviorSubject(0)
     private val decisionSubject = NonNullableBehaviorSubject(SparseArray<Decision>())
     private val executeDecisionSubject = BehaviorSubject.create<Decision>()
-    private val questionnaireStateObserver = StateObserver()
+    private val fetchQuestionnaireStateObserver = StateObserver()
+    private val questionnaireSubject = BehaviorSubject.create<List<DbQuestionnaireWithAnswers>>()
 
     var currentPage: Int
         get() = currentPageSubject.value
@@ -66,16 +68,16 @@ class QuestionnaireViewModel(
      * so we can ignore no internet connection case.
      */
     private fun fetchQuestionnaire() {
-        questionnaireStateObserver.loading()
+        fetchQuestionnaireStateObserver.loading()
         launch {
             try {
                 configurationRepository.fetchAndStoreConfiguration()
             } catch (e: NoInternetConnectionException) {
                 // ignore, this is ok
             } catch (e: Exception) {
-                questionnaireStateObserver.error(e)
+                fetchQuestionnaireStateObserver.error(e)
             } finally {
-                questionnaireStateObserver.idle()
+                fetchQuestionnaireStateObserver.idle()
             }
         }
     }
@@ -106,9 +108,20 @@ class QuestionnaireViewModel(
 
     fun observeDecision(): Observable<Decision> = executeDecisionSubject
 
-    fun observeFetchState(): Observable<State> = questionnaireStateObserver.observe()
+    fun observeFetchState(): Observable<State> = fetchQuestionnaireStateObserver.observe()
+
+    fun observeQuestionnaireWithQuestions(): Observable<List<DbQuestionnaireWithAnswers>> = questionnaireSubject
 
     fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
-        return configurationRepository.observeQuestionnaireWithAnswers(language)
+        return configurationRepository.observeQuestionnaireWithAnswers(language).map {
+            Timber.e("map: ${it.size}")
+            it
+        }
+    }
+
+    fun getQuestionnaireWithAnswers(language: ConfigurationLanguage) {
+        launch {
+            questionnaireSubject.onNext(configurationRepository.getQuestionnaireWithAnswers(language))
+        }
     }
 }

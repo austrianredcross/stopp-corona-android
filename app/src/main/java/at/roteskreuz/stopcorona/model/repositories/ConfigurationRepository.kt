@@ -11,6 +11,7 @@ import at.roteskreuz.stopcorona.utils.asDbObservable
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -45,6 +46,8 @@ interface ConfigurationRepository {
      * Observe cached version of questions with answers for current [language].
      */
     fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>>
+
+    suspend fun getQuestionnaireWithAnswers(language: ConfigurationLanguage): List<DbQuestionnaireWithAnswers>
 }
 
 class ConfigurationRepositoryImpl(
@@ -83,6 +86,15 @@ class ConfigurationRepositoryImpl(
     }
 
     override fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
-        return configurationDao.observeQuestionnaireWithAnswers(language).asDbObservable()
+        return configurationDao.observeQuestionnaireWithAnswers(language).asDbObservable().map {
+            Timber.e("map2: ${it.size}")
+            it
+        }
+    }
+
+    override suspend fun getQuestionnaireWithAnswers(language: ConfigurationLanguage): List<DbQuestionnaireWithAnswers> {
+        return withContext(coroutineContext) {
+            configurationDao.getQuestionnaireWithAnswers(language)
+        }
     }
 }
