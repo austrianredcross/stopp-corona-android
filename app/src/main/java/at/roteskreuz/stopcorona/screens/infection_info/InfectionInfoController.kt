@@ -59,8 +59,6 @@ class InfectionInfoController(
                     builder.append("\n\n")
                     builder.append(context.string(R.string.infection_info_suspicion_description_1))
                     builder.append(context.getBoldSpan(R.string.infection_info_suspicion_description_2))
-                } else {
-                    EMPTY_STRING
                 }
                 description(SpannableString.valueOf(builder))
             }
