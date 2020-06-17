@@ -42,26 +42,26 @@ class InfectionInfoController(
 
         emptySpace(modelCountBuiltSoFar, 24)
 
-            description {
-                id("red_contacts")
-                val builder = SpannableStringBuilder()
-                if (data.combinedWarningType.redContactsDetected && data.combinedWarningType.yellowContactsDetected.not()) {
-                    builder.append(context.string(R.string.infection_info_confirmed_description_1))
-                    builder.append(context.getBoldSpan(R.string.infection_info_confirmed_description_2))
-                    builder.append(context.string(R.string.infection_info_confirmed_description_3))
-                } else if (data.combinedWarningType.redContactsDetected.not() && data.combinedWarningType.yellowContactsDetected) {
-                    builder.append(context.string(R.string.infection_info_suspicion_description_1))
-                    builder.append(context.getBoldSpan(R.string.infection_info_suspicion_description_2))
-                } else if (data.combinedWarningType.redContactsDetected && data.combinedWarningType.yellowContactsDetected) {
-                    builder.append(context.string(R.string.infection_info_confirmed_description_1))
-                    builder.append(context.getBoldSpan(R.string.infection_info_confirmed_description_2))
-                    builder.append(context.string(R.string.infection_info_confirmed_description_3))
-                    builder.append("\n\n")
-                    builder.append(context.string(R.string.infection_info_suspicion_description_1))
-                    builder.append(context.getBoldSpan(R.string.infection_info_suspicion_description_2))
-                }
-                description(SpannableString.valueOf(builder))
+        description {
+            id("red_contacts")
+            val builder = SpannableStringBuilder()
+            if (data.combinedWarningType.redContactsDetected && data.combinedWarningType.yellowContactsDetected.not()) {
+                builder.append(context.string(R.string.infection_info_confirmed_description_1))
+                builder.append(context.getBoldSpan(R.string.infection_info_confirmed_description_2))
+                builder.append(context.string(R.string.infection_info_confirmed_description_3))
+            } else if (data.combinedWarningType.redContactsDetected.not() && data.combinedWarningType.yellowContactsDetected) {
+                builder.append(context.string(R.string.infection_info_suspicion_description_1))
+                builder.append(context.getBoldSpan(R.string.infection_info_suspicion_description_2))
+            } else if (data.combinedWarningType.redContactsDetected && data.combinedWarningType.yellowContactsDetected) {
+                builder.append(context.string(R.string.infection_info_confirmed_description_1))
+                builder.append(context.getBoldSpan(R.string.infection_info_confirmed_description_2))
+                builder.append(context.string(R.string.infection_info_confirmed_description_3))
+                builder.append("\n\n")
+                builder.append(context.string(R.string.infection_info_suspicion_description_1))
+                builder.append(context.getBoldSpan(R.string.infection_info_suspicion_description_2))
             }
+            description(SpannableString.valueOf(builder))
+        }
 
         emptySpace(modelCountBuiltSoFar, 24)
 
