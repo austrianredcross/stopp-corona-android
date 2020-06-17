@@ -23,9 +23,7 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
 
                 val totalRiskScoreOfTheDay = listOfExposureInformationsOfThisDay
                     .map { it.totalRiskScore }
-                    .reduce { acc, totalRiskScore ->
-                        acc + totalRiskScore
-                    }
+                    .sum()
 
                 val warningTypeOfThisDay: WarningType
 
