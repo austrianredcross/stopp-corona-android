@@ -24,23 +24,25 @@ abstract class SessionDao {
     @Insert
     protected abstract suspend fun insertDailyBatch(batch: DbDailyBatchPart): Long
 
-    @Query("DELETE FROM session WHERE token = :token")
+    @Query("DELETE FROM session WHERE currentToken = :token")
     abstract suspend fun deleteSession(token: String): Int
 
     @Transaction
     open suspend fun insertOrUpdateFullSession(fullSession: DbFullSession) {
-        val token = fullSession.session.token
+        val token = fullSession.session.currentToken
         deleteSession(token)
         insertSession(fullSession.session)
         fullSession.fullBatchParts.forEach { fullBatchPath ->
-            insertFullBatch(fullBatchPath.copy(token = token))
+            fullBatchPath.id = 0
+            insertFullBatch(fullBatchPath.copy(currentToken = token))
         }
         fullSession.dailyBatchesParts.forEach { dailyBatch ->
-            insertDailyBatch(dailyBatch.copy(token = token))
+            dailyBatch.id = 0
+            insertDailyBatch(dailyBatch.copy(currentToken  = token))
         }
     }
 
     @Transaction
-    @Query("SELECT * FROM session where token = :token")
-    abstract suspend fun getFullSession(token: String): DbFullSession
+    @Query("SELECT * FROM session where currentToken = :token")
+    abstract suspend fun getFullSession(token: String): DbFullSession?
 }

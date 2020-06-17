@@ -7,13 +7,13 @@ class DbFullBatchPartTest {
     @Test
     fun getIntervalStart() {
         val part1 = DbFullBatchPart(
-            token= "egal",
+            currentToken= "egal",
             batchNumber = 1,
             intervalStart = 1,
             fileName = "/"
         )
         val part2 = DbFullBatchPart(
-            token= "egal",
+            currentToken= "egal",
             batchNumber = 2,
             intervalStart = 1,
             fileName = "/"

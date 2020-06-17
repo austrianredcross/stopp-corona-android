@@ -18,6 +18,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhaseConverter
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -43,6 +44,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     ConfigurationLanguageConverter::class,
     MessageTypeConverter::class,
     WarningTypeConverter::class,
+    ProcessingPhaseConverter::class,
     UUIDConverter::class,
     DecisionConverter::class,
     ArrayOfIntegerConverter::class
@@ -246,33 +248,43 @@ abstract class DefaultDatabase : RoomDatabase() {
              * adding the exposure configuration parameters to the database
              */
             migration(20, 21) {
-                execSQL(
-                    "CREATE TABLE IF NOT EXISTS `session` (`token` TEXT NOT NULL, `warningType` TEXT NOT NULL, PRIMARY KEY(`token`))"
-                )
-                execSQL(
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `session` (
+                        `currentToken` TEXT NOT NULL, `warningType` TEXT NOT NULL, 
+                        `processingPhase` TEXT NOT NULL, 
+                        `yellowDay` INTEGER, PRIMARY KEY(`currentToken`)
+                    )
                     """
-                        CREATE TABLE IF NOT EXISTS `full_batch` (
+                )
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `full_batch` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                        `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
+                        `currentToken` TEXT NOT NULL, 
+                        `batchNumber` INTEGER NOT NULL, 
                         `intervalStart` INTEGER NOT NULL, 
                         `fileName` TEXT NOT NULL, 
-                        FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE )
-                        """
-                )
-                execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_full_batch_token` ON `full_batch` (`token`)"
-                )
-                execSQL(
+                        FOREIGN KEY(`currentToken`) REFERENCES `session`(`currentToken`) ON UPDATE CASCADE ON DELETE CASCADE 
+                    )
                     """
-                        CREATE TABLE IF NOT EXISTS `daily_batch` (
-                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                        `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
-                        `intervalStart` INTEGER NOT NULL, 
-                        `fileName` TEXT NOT NULL, FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE )
-                        """
                 )
-                execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_daily_batch_token` ON `daily_batch` (`token`)"
+                execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_full_batch_currentToken` ON `full_batch` (`currentToken`)
+                    """
+                )
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `daily_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `currentToken` TEXT NOT NULL, 
+                        `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        FOREIGN KEY(`currentToken`) REFERENCES `session`(`currentToken`) ON UPDATE CASCADE ON DELETE CASCADE
+                    )
+                    """
+                )
+                execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_daily_batch_currentToken` ON `daily_batch` (`currentToken`)
+                    """
                 )
             }
         )
