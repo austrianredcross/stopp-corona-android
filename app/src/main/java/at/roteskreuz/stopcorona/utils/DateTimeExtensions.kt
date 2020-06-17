@@ -188,5 +188,5 @@ fun ZonedDateTime.endOfTheDay(): ZonedDateTime {
  * Evaluates if two dates are on the same calendar day
  */
 fun ZonedDateTime.areOnTheSameDay(otherDateTime: ZonedDateTime): Boolean {
-    return this.startOfTheDay().equals(otherDateTime.startOfTheDay())
+    return toLocalDate() == otherDateTime.toLocalDate()
 }
