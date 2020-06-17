@@ -18,13 +18,6 @@ val repositoryModule = module {
         )
     }
 
-    @Suppress("DEPRECATION")
-    single<CryptoRepository> {
-        CryptoRepositoryImpl(
-            keyPairGeneratorSpecBuilder = get()
-        )
-    }
-
     single<OnboardingRepository> {
         OnboardingRepositoryImpl(
             preferences = get()
@@ -53,7 +46,6 @@ val repositoryModule = module {
             apiInteractor = get(),
             sessionDao = get(),
             temporaryExposureKeysDao = get(),
-            cryptoRepository = get(),
             notificationsRepository = get(),
             preferences = get(),
             quarantineRepository = get(),
