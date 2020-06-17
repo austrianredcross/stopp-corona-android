@@ -60,7 +60,6 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
                     warningType = warningTypeOfThisDay
                 )
             }.sortedBy {
-                //TODO verify this is ordering the right way, [0, T-1, T-2, T-3...]
                 it.day
             }
 
