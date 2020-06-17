@@ -10,13 +10,13 @@ class DbFullBatchPartTest {
             token= "egal",
             batchNumber = 1,
             intervalStart = 1,
-            path = "/"
+            fileName = "/"
         )
         val part2 = DbFullBatchPart(
             token= "egal",
             batchNumber = 2,
             intervalStart = 1,
-            path = "/"
+            fileName = "/"
         )
         val unsortedList = arrayListOf(part2,part1)
         val sorted = unsortedList.sortedWith( compareBy{ it.batchNumber })
