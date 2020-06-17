@@ -180,7 +180,7 @@ class DebugDiagnosisKeysViewModel(
                     ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
 
                 val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
-                //.setMinimumRiskScore(configuration.minimumRiskScore)
+                    .setMinimumRiskScore(configuration.minimumRiskScore)
                     .setDurationAtAttenuationThresholds(*configuration.attenuationDurationThresholds.toIntArray())
                     .setAttenuationScores(*configuration.attenuationLevelValues.toIntArray())
                     .setDaysSinceLastExposureScores(*configuration.daysSinceLastExposureLevelValues.toIntArray())
