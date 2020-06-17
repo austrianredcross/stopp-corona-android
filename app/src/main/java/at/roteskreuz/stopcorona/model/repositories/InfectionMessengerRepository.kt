@@ -94,7 +94,6 @@ class InfectionMessengerRepositoryImpl(
     private val apiInteractor: ApiInteractor,
     private val sessionDao: SessionDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
-    private val cryptoRepository: CryptoRepository,
     private val notificationsRepository: NotificationsRepository,
     private val preferences: SharedPreferences,
     private val quarantineRepository: QuarantineRepository,

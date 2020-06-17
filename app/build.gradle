@@ -160,12 +160,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
-    // When upgrading, please check if `android.jetifier.blacklist=bcprov-jdk15on` in
-    // gradle.properties is still needed
-    def bouncyCastleCoreVersion = "1.65"
-    implementation "org.bouncycastle:bcprov-jdk15on:$bouncyCastleCoreVersion"
-    implementation "org.bouncycastle:bcpkix-jdk15on:$bouncyCastleCoreVersion"
-
     def work_version = "2.3.4"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "androidx.work:work-rxjava2:$work_version"
