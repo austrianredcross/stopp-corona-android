@@ -173,6 +173,7 @@ class InfectionMessengerRepositoryImpl(
             WarningType.GREEN -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
+                    summary.daysSinceLastExposure
                     //we must now identify day by day if we are YELLOW or RED
                     //process all 7 days!!! find both and yellow red quarantine day
                     //val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
