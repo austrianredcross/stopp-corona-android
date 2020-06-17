@@ -78,7 +78,6 @@ val viewModelModule = module {
     viewModel {
         InfectionInfoViewModel(
             appDispatchers = get(),
-            infectionMessengerRepository = get(),
             quarantineRepository = get()
         )
     }

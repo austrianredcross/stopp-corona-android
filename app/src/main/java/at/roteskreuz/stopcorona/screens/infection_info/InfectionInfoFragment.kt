@@ -68,7 +68,7 @@ class InfectionInfoFragment : BaseFragment(R.layout.infection_info_fragment) {
         disposables += viewModel.observeInfectedContacts()
             .observeOnMainThread()
             .subscribe { infectedContactsViewState ->
-                if (infectedContactsViewState.redMessages.isNotEmpty()) {
+                if (infectedContactsViewState.combinedWarningType.redContactsDetected) {
                     setTitle(R.string.infection_info_title)
                 } else {
                     setTitle(R.string.infection_info_warning_title)

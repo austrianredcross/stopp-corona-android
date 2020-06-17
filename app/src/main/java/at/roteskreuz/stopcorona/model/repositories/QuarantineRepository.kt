@@ -149,6 +149,12 @@ interface QuarantineRepository {
      * Mark the upload of the missing exposure keys as not done.
      */
     fun markMissingExposureKeysAsNotUploaded()
+
+    /**
+     * Observe a combined warning type, this warning type provides information about
+     * the red and yellow contacts.
+     */
+    fun observeCombinedWarningType(): Observable<CombinedWarningType>
 }
 
 class QuarantineRepositoryImpl(
@@ -410,6 +416,15 @@ class QuarantineRepositoryImpl(
         showQuarantineEnd = true
     }
 
+    override fun observeCombinedWarningType(): Observable<CombinedWarningType> {
+        return Observables.combineLatest(
+            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_RED_CONTACT),
+            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_YELLOW_CONTACT)
+        ).map { (lastDateOfRedContact, lastDateOfYellowContact) ->
+            CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
+        }
+    }
+
     override fun quarantineEndSeen() {
         showQuarantineEnd = false
     }
@@ -514,3 +529,8 @@ sealed class QuarantineStatus {
  * the associated diagnostic.
  */
 data class UploadMissingExposureKeys(val date: ZonedDateTime, val messageType: MessageType)
+
+/**
+ * Describes a warning type that provides information about the red and yellow contacts.
+ */
+data class CombinedWarningType(val yellowContactsDetected: Boolean, val redContactsDetected: Boolean)
