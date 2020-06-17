@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
 import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
@@ -34,8 +35,9 @@ class DebugDiagnosisKeysViewModel(
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val exposureNotificationClient: ExposureNotificationClient,
-    val infectionMessengerRepository: InfectionMessengerRepository,
-    private val filesRepository: FilesRepository
+    private val infectionMessengerRepository: InfectionMessengerRepository,
+    private val filesRepository: FilesRepository,
+    private val configurationRepository: ConfigurationRepository
 ) : ScopedViewModel(appDispatchers) {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false)
@@ -173,32 +175,24 @@ class DebugDiagnosisKeysViewModel(
 
                 delay(1000)
 
-                /**
-                 * "exposure_configuration": {
-                "minimum_risk_score": 0,
-                "attenuation_duration_thresholds": [50, 70],
-                "attenuation_level_values": [1, 2, 3, 4, 5, 6, 7, 8],
-                "days_since_last_exposure_level_values": [1, 2, 3, 4, 5, 6, 7, 8],
-                "duration_level_values": [1, 2, 3, 4, 5, 6, 7, 8],
-                "transmission_risk_level_values": [1, 2, 3, 4, 5, 6, 7, 8]
-                },
-                 */
                 exposureNotificationsTextSubject.onNext("providing diagnosis keys")
-                val config = ExposureConfiguration.ExposureConfigurationBuilder()
-                    .setDurationAtAttenuationThresholds(50, 60)
-                    .setMinimumRiskScore(1)
-                    .setDaysSinceLastExposureScores(1, 2, 3, 4, 5, 6, 7, 8)
-                    .setDurationScores(1, 2, 3, 4, 5, 6, 7, 8)
-                    .setAttenuationScores(1, 2, 3, 4, 5, 6, 7, 8)
-                    .setDaysSinceLastExposureWeight(100)
-                    .setTransmissionRiskWeight(100)
+                val configuration = configurationRepository.getConfiguration()
+                    ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
+
+                val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
+                    .setMinimumRiskScore(configuration.minimumRiskScore)
+                    .setDurationAtAttenuationThresholds(*configuration.attenuationDurationThresholds.toIntArray())
+                    .setAttenuationScores(*configuration.attenuationLevelValues.toIntArray())
+                    .setDaysSinceLastExposureScores(*configuration.daysSinceLastExposureLevelValues.toIntArray())
+                    .setDurationScores(*configuration.durationLevelValues.toIntArray())
+                    .setTransmissionRiskScores(*configuration.transmissionRiskLevelValues.toIntArray())
                     .build()
                 val token = UUID.randomUUID().toString()
                 diagnosisKeyTokenSubject.onNext(token)
 
                 delay(1000)
 
-                exposureNotificationClient.provideDiagnosisKeys(arrayListOf(downloadedFile), config, token)
+                exposureNotificationClient.provideDiagnosisKeys(arrayListOf(downloadedFile), exposureConfiguration, token)
                     .addOnCompleteListener {
                         exposureNotificationsTextSubject.onNext(
                             "provided diagnosis keys ${if (it.isSuccessful) "successful" else "not successful"} with token $token")
@@ -215,11 +209,11 @@ class DebugDiagnosisKeysViewModel(
 
     fun getExposureSummary() {
         launch {
-            exposureNotificationsTextSubject.onNext("getting the summary for ${diagnosisKeyTokenSubject.value} ")
+            exposureNotificationsTextSubject.onNext("getting the summary for: ${diagnosisKeyTokenSubject.value} ")
             exposureNotificationClient.getExposureSummary(diagnosisKeyTokenSubject.value)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        exposureNotificationsTextSubject.onNext("here is the summary for token${diagnosisKeyTokenSubject.value}˜:\n  ${it.result}")
+                        exposureNotificationsTextSubject.onNext("here is the summary for token ${diagnosisKeyTokenSubject.value}˜:\n  ${it.result}")
                     } else {
                         exposureNotificationsTextSubject.onNext(
                             "exposure summary failed for token${diagnosisKeyTokenSubject.value}˜:\n  ${it.exception}")
