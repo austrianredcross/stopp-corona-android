@@ -35,7 +35,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = false
 )
 @TypeConverters(
@@ -225,6 +225,39 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `daysSinceLastExposureLevelValues` String")
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `durationLevelValues` String")
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
+            },
+            /**
+             * adding the exposure configuration parameters to the database
+             */
+            migration(20, 21) {
+                execSQL(
+                    "CREATE TABLE IF NOT EXISTS `session` (`token` TEXT NOT NULL, `warningType` TEXT NOT NULL, PRIMARY KEY(`token`))"
+                )
+                execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `full_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE )
+                        """
+                )
+                execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_full_batch_token` ON `full_batch` (`token`)"
+                )
+                execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `daily_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE )
+                        """
+                )
+                execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_daily_batch_token` ON `daily_batch` (`token`)"
+                )
             }
         )
     }
