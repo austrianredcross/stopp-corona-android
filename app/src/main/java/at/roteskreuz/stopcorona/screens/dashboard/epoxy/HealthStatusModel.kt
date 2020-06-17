@@ -1,14 +1,10 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
-import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType.RED
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType.YELLOW
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.screens.dashboard.HealthStatusData
@@ -17,7 +13,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.color
 import at.roteskreuz.stopcorona.utils.daysTo
-import at.roteskreuz.stopcorona.utils.getBoldSpan
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
@@ -75,7 +70,6 @@ abstract class HealthStatusModel(
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
                 }
                 is HealthStatusData.ContactsSicknessInfo -> {
-                    val healthStatusDataSickness = healthStatusData as HealthStatusData.ContactsSicknessInfo
                     val days = if (healthStatusData.quarantineStatus is QuarantineStatus.Jailed.Limited) {
                         healthStatusData.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
                     } else {
@@ -88,16 +82,24 @@ abstract class HealthStatusModel(
                     else string(R.string.contacts_quarantine_day_many)
 
                     when {
-                        healthStatusDataSickness.warningType == RED -> {
-                            txtTitle.text = context.string(R.string.contacts_confirmed_one_case_headline)
-                            txtDescription.text = context.string(R.string.contacts_confirmed_one_case_description)
+                        healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected.not() -> {
+                            txtTitle.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline)
+                            txtDescription.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_checkmark_white_red)
                             cardViewContainer.setCardBackgroundColor(color(R.color.red))
                         }
-                        healthStatusDataSickness.warningType == YELLOW -> {
-                            txtTitle.text = context.string(R.string.contacts_suspicion_one_case_headline)
-                            txtDescription.text = context.string(R.string.contacts_suspicion_one_case_description)
+                        healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected -> {
+                            txtTitle.text = context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_headline)
+                            txtDescription.text =
+                                context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_description)
+                            txtActionButton.text = quarantineDayActionText
+                            imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
+                            cardViewContainer.setCardBackgroundColor(color(R.color.red))
+                        }
+                        healthStatusData.warningType.redContactsDetected.not() && healthStatusData.warningType.yellowContactsDetected -> {
+                            txtTitle.text = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_headline)
+                            txtDescription.text = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                             cardViewContainer.setCardBackgroundColor(color(R.color.orange))

@@ -111,8 +111,12 @@
 
 	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
 	<string name="infection_info_title">Attention</string>
+	<string name="infection_info_confirmed_headline"></string>
 	<string name="infection_info_headline_single">1 infected contact detected</string>
 	<string name="infection_info_headline_many">%d infected contacts detected</string>
+	<string name="infection_info_confirmed_description_1">With one or more of your contacts a </string>
+	<string name="infection_info_confirmed_description_2">corona infection </string>
+	<string name="infection_info_confirmed_description_3">was detected.</string>
 	<string name="infection_info_description1_single">One of your registered encounters is %s infected with the coronavirus.</string>
 	<string name="infection_info_description_acording_evidence">according to medical evidence</string>
 	<string name="infection_info_description1_many">%d of your registered encounters are %s infected with the coronavirus.</string>
@@ -126,8 +130,11 @@
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
 	<string name="infection_info_warning_title">Attention</string>
+	<string name="infection_info_suspicion_headline">Coronavirus suspicious</string>
 	<string name="infection_info_warning_headline_single">1 contact with a suspected corona infection</string>
 	<string name="infection_info_warning_headline_many">%d contacts with suspected corona infection</string>
+	<string name="infection_info_suspicion_description_1">For one or more of your contacts the </string>
+	<string name="infection_info_suspicion_description_2">suspicion of a corona infection detected.</string>
 	<string name="infection_info_warning_description1_single">One of your registered encounters %s.</string>
 	<string name="infection_info_warning_explanation">is suspected to have contracted corona.</string>
 	<string name="infection_info_warning_description1_many">%d of your registered encounters %s.</string>
@@ -135,6 +142,8 @@
 	<string name="infection_info_warning_quarantine_end">Please stay quarantined until %s</string>
 	<string name="contact_sickness__warning_guidelines_quarantine_rule">If you have an official quarantine certificate, take into account the quarantine period specified in it.</string>
 	<string name="infection_info_warning_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
+	<string name="infection_info_confirmed_and_suspicion_title">Attention</string>
+	<string name="infection_info_confirmed_and_suspicion_headline">Coronavirus Disease and suspicion</string>
 
 	<!-- Handshake -->
 	<string name="handshake_title">Digital handshake</string>
@@ -441,6 +450,12 @@
 	<string name="contacts_suspicion_multiple_case_description_3">a corona infection.</string>
 	<string name="contacts_quarantine_day_single">Self-quarantine day</string>
 	<string name="contacts_quarantine_day_many">Self-quarantine days</string>
+	<string name="health_status_contacts_confirmed_one_or_more_cases_headline">Caution</string>
+	<string name="health_status_contacts_confirmed_one_or_more_cases_description">One or more corona infections have been reported in your contacts.</string>
+	<string name="health_status_contacts_suspicion_one_or_more_cases_headline">Note</string>
+	<string name="health_status_contacts_suspicion_one_or_more_cases_description">One or more suspected corona infections were reported in your contacts.</string>
+	<string name="health_status_contacts_confirmed_and_suspicion_one_or_more_cases_headline">Caution</string>
+	<string name="health_status_contacts_confirmed_and_suspicion_one_or_more_cases_description">One or more corona infections have been reported in your contacts.\n\nOne or more suspected corona infections were reported in your contacts.</string>
 	<string name="revoke_suspicion_title">Report status</string>
 	<string name="revoke_suspicion_headline">Confirm all-clear</string>
 	<string name="revoke_suspicion_description">You have informed your contacts at the %s that you have experienced symptoms of corona infection\n\nIf through\n• a laboratory report, or\n• a doctor\nhas confirmed that you are not ill with the coronavirus, please inform your contacts immediately with this all-clear.\n\nIn the next step we will request access to the stored random IDs for this purpose. We need this access to inform your previously notified contacts about the all-clear.</string>
