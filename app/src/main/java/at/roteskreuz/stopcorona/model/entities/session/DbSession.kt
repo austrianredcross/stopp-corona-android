@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.model.entities.session
 
 import androidx.room.*
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.DbEntity
 
 /**
@@ -12,7 +13,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.entities.DbEntity
 data class DbSession(
     @PrimaryKey()
     val token: String = "",
-    val warningType: String
+    val warningType: WarningType
 ) : DbEntity
 
 /**

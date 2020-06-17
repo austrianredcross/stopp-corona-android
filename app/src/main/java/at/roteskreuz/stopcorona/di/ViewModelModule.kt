@@ -57,7 +57,8 @@ val viewModelModule = module {
             exposureNotificationRepository = get(),
             exposureNotificationClient = get(),
             infectionMessengerRepository = get(),
-            filesRepository = get()
+            filesRepository = get(),
+            configurationRepository = get()
         )
     }
 
@@ -77,7 +78,6 @@ val viewModelModule = module {
     viewModel {
         InfectionInfoViewModel(
             appDispatchers = get(),
-            infectionMessengerRepository = get(),
             quarantineRepository = get()
         )
     }
