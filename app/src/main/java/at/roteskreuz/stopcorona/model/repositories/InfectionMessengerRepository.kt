@@ -151,7 +151,7 @@ class InfectionMessengerRepositoryImpl(
 
         //TODO: CTAA-1664 cleanup the files and sessionDao (delete by token)
 
-        val currentWarningType = WarningType.valueOf(fullSession.session.warningType)
+        val currentWarningType = fullSession.session.warningType
 
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
         when (currentWarningType) {
@@ -207,7 +207,7 @@ class InfectionMessengerRepositoryImpl(
                 val fullSession = DbFullSession(
                     session = DbSession(
                         token = contextToken,
-                        warningType = warningType.name
+                        warningType = warningType
                     ),
                     fullBatchParts = fullBatchParts,
                     dailyBatchesParts = dailyBatchesParts
