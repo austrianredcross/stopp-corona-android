@@ -81,7 +81,7 @@ class ExposureNotficationExtensionsKtTest {
         val listUnderTest2: List<ExposureInformation> = arrayListOf(RED_YESTERDAY, RED_YESTERDAY)
 
         arrayListOf(listUnderTest, listUnderTest2).forEach {
-            val dates = listUnderTest.extractLatestRedAndYellowContactDate(THRESHOLD)
+            val dates = it.extractLatestRedAndYellowContactDate(THRESHOLD)
 
             assert(dates.firstYellowDay == null)
             assertNotNull(dates.firstRedDay)
