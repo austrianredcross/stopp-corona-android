@@ -17,7 +17,6 @@ import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * Handles the user interaction and provides data for [QuestionnaireFragment].
@@ -111,13 +110,6 @@ class QuestionnaireViewModel(
     fun observeFetchState(): Observable<State> = fetchQuestionnaireStateObserver.observe()
 
     fun observeQuestionnaireWithQuestions(): Observable<List<DbQuestionnaireWithAnswers>> = questionnaireSubject
-
-    fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
-        return configurationRepository.observeQuestionnaireWithAnswers(language).map {
-            Timber.e("map: ${it.size}")
-            it
-        }
-    }
 
     fun getQuestionnaireWithAnswers(language: ConfigurationLanguage) {
         launch {

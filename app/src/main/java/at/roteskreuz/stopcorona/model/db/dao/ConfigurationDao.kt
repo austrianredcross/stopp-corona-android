@@ -88,18 +88,11 @@ abstract class ConfigurationDao {
     abstract fun getConfiguration(): DbConfiguration?
 
     @Transaction
-    @Query("SELECT * FROM configuration_questionnaire AS question INNER JOIN configuration_questionnaire_answer AS answers ON (question.id = answers.questionnaireId) WHERE question.language = :language")
-    abstract fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Flowable<List<DbQuestionnaireWithAnswers>>
-
-//    @Query("SELECT * FROM configuration_questionnaire AS question INNER JOIN configuration_questionnaire_answer AS answers ON (question.id = answers.questionnaireId) WHERE question.language = :language")
-//    abstract suspend fun getQuestionnaireWithAnswers(language: ConfigurationLanguage): List<DbQuestionnaireWithAnswers>
-
-    @Transaction
     open suspend fun getQuestionnaireWithAnswers(language: ConfigurationLanguage): List<DbQuestionnaireWithAnswers> {
         return getQuestionnaire(language).map {
             it to getAnswersForQuestionnaire(it.id)
-        }.map {(questionnaire, answers) ->
-            DbQuestionnaireWithAnswers(questionnaire, answers)
+        }.map { (questions, answers) ->
+            DbQuestionnaireWithAnswers(questions, answers)
         }
     }
 
