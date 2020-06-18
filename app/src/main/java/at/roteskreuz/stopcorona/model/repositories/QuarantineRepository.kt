@@ -421,7 +421,7 @@ class QuarantineRepositoryImpl(
             preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_RED_CONTACT),
             preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_YELLOW_CONTACT)
         ).map { (lastDateOfRedContact, lastDateOfYellowContact) ->
-            CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
+            CombinedWarningType(lastDateOfYellowContact.isPresent, lastDateOfRedContact.isPresent)
         }
     }
 
