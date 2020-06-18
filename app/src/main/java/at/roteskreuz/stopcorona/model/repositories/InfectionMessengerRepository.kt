@@ -135,15 +135,15 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun processKeysBasedOnToken(token: String) {
-        val fullSession = sessionDao.getFullSession(token)
-
-        if (fullSession == null || fullSession.session.currentToken != token) {
-            Timber.e(IllegalStateException("Session for token ${token} not found"))
+        val configuration = configurationRepository.getConfiguration() ?: run {
+            Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
             return
         }
-        val configuration =
-            configurationRepository.getConfiguration()
-                ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
+
+        val fullSession = sessionDao.getFullSession(token) ?: run {
+            Timber.e(SilentError(IllegalStateException("Session for token ${token} not found")))
+            return
+        }
 
         //TODO: CTAA-1664 cleanup the files and sessionDao (delete by token)
 
