@@ -29,7 +29,6 @@ import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.UUID
@@ -155,27 +154,28 @@ class InfectionMessengerRepositoryImpl(
                 processResultsOfFullBatch(token, configuration, fullSession)
             }
             ProcessingPhase.DailyBatch -> {
-                val exposureInformation = exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(fullSession.session.currentToken)
+                val exposureInformation =
+                    exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(fullSession.session.currentToken)
 
                 val dates = exposureInformation.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
-                if (dates.firstYellowDay != null && fullSession.session.yellowDay == null){
-                    fullSession.session.yellowDay = dates.firstYellowDay
+                if (dates.firstYellowDay != null && fullSession.session.firstYellowDay == null) {
+                    fullSession.session.firstYellowDay = dates.firstYellowDay
                 }
 
                 dates.firstRedDay?.let { firstRedDay ->
-                    fullSession.session.yellowDay?.let { yellowDay ->
-                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = yellowDay)
+                    fullSession.session.firstYellowDay?.let { firstYellowDay ->
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
                     }
 
                     quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dates.firstRedDay)
                     return
                 }
 
-                if (fullSession.dailyBatchesParts.isEmpty()){
-                    val yellowDay = fullSession.session.yellowDay
-                    if (yellowDay != null) {
-                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = yellowDay)
+                if (fullSession.dailyBatchesParts.isEmpty()) {
+                    val firstYellowDay = fullSession.session.firstYellowDay
+                    if (firstYellowDay != null) {
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
                     } else {
                         Timber.e("we´re done processing but it seems there is no yellow date")
                     }
@@ -278,7 +278,7 @@ class InfectionMessengerRepositoryImpl(
                         currentToken = token,
                         warningType = warningType,
                         processingPhase = FullBatch,
-                        yellowDay = null
+                        firstYellowDay = null
                     ),
                     fullBatchParts = fullBatchParts,
                     dailyBatchesParts = dailyBatchesParts

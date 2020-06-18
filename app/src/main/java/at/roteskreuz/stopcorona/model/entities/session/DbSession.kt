@@ -17,7 +17,7 @@ data class DbSession(
     var currentToken: String = "",
     val warningType: WarningType,
     var processingPhase: ProcessingPhase,
-    var yellowDay: ZonedDateTime?
+    var firstYellowDay: ZonedDateTime?
 ) : DbEntity
 
 enum class ProcessingPhase {

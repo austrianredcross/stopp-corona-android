@@ -138,7 +138,7 @@ abstract class DefaultDatabase : RoomDatabase() {
                 // add new tables
                 execSQL(
                     """CREATE TABLE IF NOT EXISTS `received_infection_message` (
-                        `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
+                       `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
 |                       `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"""
                 )
                 execSQL(
@@ -252,7 +252,8 @@ abstract class DefaultDatabase : RoomDatabase() {
                     CREATE TABLE IF NOT EXISTS `session` (
                         `currentToken` TEXT NOT NULL, `warningType` TEXT NOT NULL, 
                         `processingPhase` TEXT NOT NULL, 
-                        `yellowDay` INTEGER, PRIMARY KEY(`currentToken`)
+                        `firstYellowDay` INTEGER, 
+                        PRIMARY KEY(`currentToken`)
                     )
                     """
                 )
