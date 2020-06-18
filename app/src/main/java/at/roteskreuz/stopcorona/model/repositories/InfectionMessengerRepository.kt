@@ -224,8 +224,7 @@ class InfectionMessengerRepositoryImpl(
                     }
                     Timber.d("filtered the relevantDailyBatchesParts to length ${relevantDailyBatchesParts.size} ")
                     processAndDropNextDayPersistState(relevantDailyBatchesParts, fullSession)
-                }
-                else {
+                } else {
                     Timber.d("We are still WarningType.REVOKE")
                 }
             }
@@ -234,7 +233,7 @@ class InfectionMessengerRepositoryImpl(
     }
 
     /**
-     * we find the batch files of the next day, process them and drop them form the database
+     * we find the batch files of the next day, process them and drop them from the database
      */
     private suspend fun processAndDropNextDayPersistState(
         relevantDailyBatchesParts: List<DbDailyBatchPart>,
@@ -302,8 +301,7 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>
-    )
+    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>)
         : List<DbDailyBatchPart> {
         return dailyBatches.flatMap { dailyBatch ->
             dailyBatch.batchFilePaths.mapIndexed { index, path ->
@@ -330,8 +328,7 @@ class InfectionMessengerRepositoryImpl(
         return preferences.observeBoolean(PREF_SOMEONE_HAS_RECOVERED, false)
     }
 
-    override suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType)
-        : List<DbSentTemporaryExposureKeys> {
+    override suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
         return temporaryExposureKeysDao.getSentTemporaryExposureKeysByMessageType(messageType)
     }
 
