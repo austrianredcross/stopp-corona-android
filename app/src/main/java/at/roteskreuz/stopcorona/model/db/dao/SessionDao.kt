@@ -1,9 +1,6 @@
 package at.roteskreuz.stopcorona.model.db.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
@@ -19,30 +16,37 @@ abstract class SessionDao {
     protected abstract suspend fun insertSession(session: DbSession): Long
 
     @Insert
-    protected abstract suspend fun insertFullBatch(batch: DbFullBatchPart): Long
+    protected abstract suspend fun insertFullBatchPath(batch: DbFullBatchPart): Long
 
     @Insert
-    protected abstract suspend fun insertDailyBatch(batch: DbDailyBatchPart): Long
-
-    @Query("DELETE FROM session WHERE currentToken = :token")
-    abstract suspend fun deleteSession(token: String): Int
+    protected abstract suspend fun insertDailyBatchPath(batch: DbDailyBatchPart): Long
 
     @Transaction
-    open suspend fun insertOrUpdateFullSession(fullSession: DbFullSession) {
-        val token = fullSession.session.currentToken
-        deleteSession(token)
-        insertSession(fullSession.session)
-        fullSession.fullBatchParts.forEach { fullBatchPath ->
-            fullBatchPath.id = 0
-            insertFullBatch(fullBatchPath.copy(currentToken = token))
+    open suspend fun insertFullSession(fullSession: DbFullSession) {
+        val session = fullSession.session
+        deleteSession(session)
+        val sessionId = insertSession(session)
+        fullSession.fullBatchParts.forEach { fullBatchPathPath ->
+            insertFullBatchPath(fullBatchPathPath.copy(sessionId = sessionId))
         }
-        fullSession.dailyBatchesParts.forEach { dailyBatch ->
-            dailyBatch.id = 0
-            insertDailyBatch(dailyBatch.copy(currentToken  = token))
+        fullSession.dailyBatchesParts.forEach { dailyBatchPath ->
+            insertDailyBatchPath(dailyBatchPath.copy(sessionId = sessionId))
         }
     }
 
     @Transaction
+    @Delete
+    abstract suspend fun deleteSession(session: DbSession): Int
+
+    @Transaction
     @Query("SELECT * FROM session where currentToken = :token")
     abstract suspend fun getFullSession(token: String): DbFullSession?
+
+    @Transaction
+    @Update
+    abstract suspend fun updateDailyBatchParts(dailyBatches: List<DbDailyBatchPart>)
+
+    @Transaction
+    @Update
+    abstract suspend fun updateSession(session: DbSession)
 }

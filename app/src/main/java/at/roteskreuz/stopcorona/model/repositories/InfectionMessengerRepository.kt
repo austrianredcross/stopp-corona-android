@@ -12,10 +12,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiDiagno
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
-import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
@@ -127,86 +124,108 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun processKeysBasedOnToken(token: String) {
-        val configuration = configurationRepository.getConfiguration() ?: run {
-            Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
-            return
-        }
-
         val fullSession = sessionDao.getFullSession(token) ?: run {
             Timber.e(SilentError(IllegalStateException("Session for token $token not found")))
             return
         }
 
-        //TODO: CTAA-1664 cleanup the files and sessionDao (delete by token)
-
-        when (fullSession.session.processingPhase) {
-            FullBatch -> {
-                Timber.d("Let´s evaluate based on the summary and WarningType the fullbatch")
-                processResultsOfFullBatch(token, configuration, fullSession)
+        // To be safe (form exceptions) assume processing is finished until it is overwritten below
+        var processingFinished = true
+        try {
+            val configuration = configurationRepository.getConfiguration() ?: run {
+                Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+                return
             }
-            DailyBatch -> {
-                Timber.d("Let´s evaluate based on the summary and WarningType the next daily batch")
-                processResultsOfNextDailyBatch(fullSession, configuration)
+
+            when (fullSession.session.processingPhase) {
+                FullBatch -> {
+                    Timber.d("Let´s evaluate the fullbatch based on the summary and the current warning state")
+                    processingFinished = processResultsOfFullBatch(configuration, fullSession)
+                }
+                DailyBatch -> {
+                    Timber.d("Let´s evaluate the next daily batch based on the summary and the current warning state ")
+                    processingFinished = processResultsOfNextDailyBatch(configuration, fullSession)
+                }
+            }
+        } finally {
+            if (processingFinished) {
+                // No further processing has been scheduled.
+                cleanUpSession(fullSession.session)
             }
         }
     }
 
+    private suspend fun cleanUpSession(session: DbSession) {
+        sessionDao.deleteSession(session)
+    }
+
     private suspend fun processResultsOfNextDailyBatch(
-        fullSession: DbFullSession,
-        configuration: DbConfiguration) {
+        configuration: DbConfiguration,
+        fullSession: DbFullSession
+    ): Boolean {
         val exposureInformation =
             exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(fullSession.session.currentToken)
 
         val dates = exposureInformation.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
-        if (dates.firstYellowDay != null && fullSession.session.firstYellowDay == null) {
-            fullSession.session.firstYellowDay = dates.firstYellowDay
-        }
+        val firstRedDay = dates.firstRedDay
+        val firstYellowDay = fullSession.session.firstYellowDay ?: dates.firstYellowDay.also { Timber.e("Yellow warning found") }
+        sessionDao.updateSession(fullSession.session.copy(firstYellowDay = dates.firstYellowDay))
 
-        dates.firstRedDay?.let { firstRedDay ->
-            fullSession.session.firstYellowDay?.let { firstYellowDay ->
+        // Found red warning? Done processing.
+        firstRedDay?.let { _ ->
+            firstYellowDay?.let { _ ->
                 quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
-            }
+            } ?: quarantineRepository.revokeLastYellowContactDate()
 
-            quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dates.firstRedDay)
-            return
+            quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = firstRedDay)
+            Timber.e("Red warning found. Done processing.")
+            return true // Processing done
         }
 
-        if (fullSession.dailyBatchesParts.isEmpty()) {
-            val firstYellowDay = fullSession.session.firstYellowDay
-            if (firstYellowDay != null) {
+        val remainingDailyBatchesParts = fullSession.remainingDailyBatchesParts
+        // End of batch without red warning? Done processing.
+        if (remainingDailyBatchesParts.isEmpty()) {
+            quarantineRepository.revokeLastRedContactDate()
+            firstYellowDay?.let { _ ->
                 quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
-            } else {
-                Timber.e("we´re done processing but it seems there is no yellow date")
+                Timber.e("Done processing. Only Yellow warning(s) found")
+            } ?: run {
+                Timber.e("Done processing. No warnings found")
+                quarantineRepository.revokeLastYellowContactDate()
             }
-        } else {
-            processAndDropNextDayPersistState(fullSession.dailyBatchesParts, fullSession)
+            return true // Processing done
         }
+
+        return processAndDropNextDayPersistState(remainingDailyBatchesParts, fullSession)
     }
 
     private suspend fun processResultsOfFullBatch(
-        token: String,
         configuration: DbConfiguration,
-        fullSession: DbFullSession) {
+        fullSession: DbFullSession
+    ): Boolean {
         val currentWarningType = fullSession.session.warningType
+        val token = fullSession.session.currentToken
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
 
         when (currentWarningType) {
             WarningType.YELLOW, WarningType.RED -> {
                 if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
-                    when (currentWarningType) {
-                        WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
-                        WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
-                        WarningType.GREEN -> { /* Nothing to do */
-                        }
-                    }
+                    quarantineRepository.revokeLastRedContactDate()
+                    quarantineRepository.revokeLastYellowContactDate()
+                    return true // Processing done
                 } else {
                     val exposureInformations = exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(token)
 
                     val dates = exposureInformations.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
-                    dates.firstRedDay?.let { quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay) }
-                    dates.firstYellowDay?.let { quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay) }
+                    dates.firstRedDay?.let {
+                        quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay)
+                    } ?: quarantineRepository.revokeLastRedContactDate()
+                    dates.firstYellowDay?.let {
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay)
+                    } ?: quarantineRepository.revokeLastYellowContactDate()
+                    return true // Processing done
                 }
             }
             WarningType.GREEN -> {
@@ -220,13 +239,12 @@ class InfectionMessengerRepositoryImpl(
                         // we want all the xxxxxxxxxxxxxxx
                         val referenceDate = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong()).endOfTheDay()
                         it.intervalStart < referenceDate.toEpochSecond()
-
-                        //org.threeten.bp.ZonedDateTime.ofInstant(org.threeten.bp.Instant.ofEpochSecond(fullSession.dailyBatchesParts.get(0).intervalStart), ZoneId.systemDefault())
                     }
                     Timber.d("filtered the relevantDailyBatchesParts to length ${relevantDailyBatchesParts.size} ")
-                    processAndDropNextDayPersistState(relevantDailyBatchesParts, fullSession)
+                    return processAndDropNextDayPersistState(relevantDailyBatchesParts, fullSession)
                 } else {
-                    Timber.d("We are still WarningType.REVOKE")
+                    Timber.d("We are still WarningType.GREEN")
+                    return true // Processing done
                 }
             }
         }
@@ -234,28 +252,36 @@ class InfectionMessengerRepositoryImpl(
 
     /**
      * we find the batch files of the next day, process them and drop them from the database
+     *
+     * @return True if processing has finished. False if more batches are expected to come
      */
     private suspend fun processAndDropNextDayPersistState(
-        relevantDailyBatchesParts: List<DbDailyBatchPart>,
+        relevantDailyBatchParts: List<DbDailyBatchPart>,
         fullSession: DbFullSession
-    ) {
-        val listOfDailyBatchParts = relevantDailyBatchesParts
+    ): Boolean {
+        val listOfDailyBatchParts = relevantDailyBatchParts
             .groupBy { dailyBatchPart ->
                 dailyBatchPart.intervalStart
             }.toSortedMap().map { (_, dailyBatchParts) ->
                 dailyBatchParts
             }
 
+        if (listOfDailyBatchParts.isEmpty()) {
+            Timber.e(
+                SilentError(java.lang.IllegalStateException("processAndDropNextDayPersistState should not be called with empty list of batches")))
+            return true // Processing done
+        }
+
         val batchToProcess = listOfDailyBatchParts.first()
-        val remainingBatches = listOfDailyBatchParts.drop(1)
-        fullSession.dailyBatchesParts = remainingBatches.flatten()
+        sessionDao.updateDailyBatchParts(batchToProcess.map { it.copy(processed = true) })
 
         val newToken = UUID.randomUUID().toString()
-        fullSession.session.currentToken = newToken
-        fullSession.session.processingPhase = DailyBatch
-        sessionDao.insertOrUpdateFullSession(fullSession)
+        sessionDao.updateSession(fullSession.session.copy(
+            currentToken = newToken,
+            processingPhase = DailyBatch
+        ))
         Timber.d("Processing the next day files: ${batchToProcess.joinToString(",") { it.fileName }} ")
-        exposureNotificationRepository.processDiagnosisKeyBatch(batchToProcess, newToken)
+        return exposureNotificationRepository.provideDiagnosisKeyBatch(batchToProcess, newToken)
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -284,8 +310,8 @@ class InfectionMessengerRepositoryImpl(
                     dailyBatchesParts = dailyBatchesParts
                 )
 
-                sessionDao.insertOrUpdateFullSession(fullSession)
-                exposureNotificationRepository.processDiagnosisKeyBatch(fullBatchParts, token)
+                sessionDao.insertFullSession(fullSession)
+                exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)

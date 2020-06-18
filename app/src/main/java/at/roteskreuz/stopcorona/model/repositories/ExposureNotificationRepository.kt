@@ -15,8 +15,10 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.io.File
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
@@ -100,7 +102,7 @@ interface ExposureNotificationRepository {
      *
      * @return True if processing has finished. False if more batches are expected to come
      */
-    suspend fun processDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean
+    suspend fun provideDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -235,19 +237,33 @@ class ExposureNotificationRepositoryImpl(
         return exposureNotificationClient.temporaryExposureKeyHistory.await()
     }
 
-    override suspend fun processDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String) {
+    override suspend fun provideDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean {
         val archives = batches
             .sortedBy { it.batchNumber }
             .map { filesRepository.getFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName) }
 
         val configuration = configurationRepository.getConfiguration() ?: run {
             Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
-            return
+            return true // Processing done
         }
 
         val exposureConfiguration = configuration.getExposureConfiguration()
 
+        provideDiagnosisKeys(archives, exposureConfiguration, token)
+        return false // More batches to process
+    }
+
+    var waitingForBroadcast = false
+    private suspend fun provideDiagnosisKeys(
+        archives: List<File>,
+        exposureConfiguration: ExposureConfiguration,
+        token: String
+    ) {
+        waitingForBroadcast = true
         exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
+        launch {
+
+        }
     }
 
     private fun DbConfiguration.getExposureConfiguration(): ExposureConfiguration {
