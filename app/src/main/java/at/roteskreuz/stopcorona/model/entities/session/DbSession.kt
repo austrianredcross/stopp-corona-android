@@ -13,7 +13,7 @@ import org.threeten.bp.ZonedDateTime
     tableName = "session"
 )
 data class DbSession(
-    @PrimaryKey()
+    @PrimaryKey
     var currentToken: String = "",
     val warningType: WarningType,
     var processingPhase: ProcessingPhase,

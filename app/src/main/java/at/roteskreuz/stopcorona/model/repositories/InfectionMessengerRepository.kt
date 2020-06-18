@@ -19,14 +19,12 @@ import at.roteskreuz.stopcorona.model.entities.session.DbSession
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
-import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.utils.endOfTheDay
 import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
@@ -98,18 +96,15 @@ class InfectionMessengerRepositoryImpl(
     private val apiInteractor: ApiInteractor,
     private val sessionDao: SessionDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
-    private val notificationsRepository: NotificationsRepository,
     private val preferences: SharedPreferences,
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
-    private val databaseCleanupManager: DatabaseCleanupManager,
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val configurationRepository: ConfigurationRepository
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
     companion object {
-        private const val PREF_LAST_MESSAGE_ID = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_message_id"
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
     }
 
@@ -117,13 +112,6 @@ class InfectionMessengerRepositoryImpl(
 
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
-
-    /**
-     * Stores and provides last and biggest infection message id.
-     */
-    private var lastMessageId: Long? by preferences.nullableLongSharedPreferencesProperty(
-        PREF_LAST_MESSAGE_ID
-    )
 
     private var someoneHasRecovered: Boolean by preferences.booleanSharedPreferencesProperty(
         PREF_SOMEONE_HAS_RECOVERED,
@@ -145,7 +133,7 @@ class InfectionMessengerRepositoryImpl(
         }
 
         val fullSession = sessionDao.getFullSession(token) ?: run {
-            Timber.e(SilentError(IllegalStateException("Session for token ${token} not found")))
+            Timber.e(SilentError(IllegalStateException("Session for token $token not found")))
             return
         }
 
@@ -163,7 +151,7 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    private suspend fun InfectionMessengerRepositoryImpl.processResultsOfNextDailyBatch(
+    private suspend fun processResultsOfNextDailyBatch(
         fullSession: DbFullSession,
         configuration: DbConfiguration) {
         val exposureInformation =
@@ -196,7 +184,8 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    private suspend fun processResultsOfFullBatch(token: String,
+    private suspend fun processResultsOfFullBatch(
+        token: String,
         configuration: DbConfiguration,
         fullSession: DbFullSession) {
         val currentWarningType = fullSession.session.warningType
@@ -208,6 +197,8 @@ class InfectionMessengerRepositoryImpl(
                     when (currentWarningType) {
                         WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
                         WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
+                        WarningType.GREEN -> { /* Nothing to do */
+                        }
                     }
                 } else {
                     val exposureInformations = exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(token)
@@ -238,7 +229,6 @@ class InfectionMessengerRepositoryImpl(
                     Timber.d("We are still WarningType.REVOKE")
                 }
             }
-
         }
     }
 
@@ -247,11 +237,12 @@ class InfectionMessengerRepositoryImpl(
      */
     private suspend fun processAndDropNextDayPersistState(
         relevantDailyBatchesParts: List<DbDailyBatchPart>,
-        fullSession: DbFullSession) {
+        fullSession: DbFullSession
+    ) {
         val listOfDailyBatchParts = relevantDailyBatchesParts
             .groupBy { dailyBatchPart ->
                 dailyBatchPart.intervalStart
-            }.toSortedMap().map { (intervalStart, dailyBatchParts) ->
+            }.toSortedMap().map { (_, dailyBatchParts) ->
                 dailyBatchParts
             }
 
@@ -263,7 +254,7 @@ class InfectionMessengerRepositoryImpl(
         fullSession.session.currentToken = newToken
         fullSession.session.processingPhase = DailyBatch
         sessionDao.insertOrUpdateFullSession(fullSession)
-        Timber.d("Processing the next day files: ${batchToProcess.map { it.fileName }.joinToString(",")} ")
+        Timber.d("Processing the next day files: ${batchToProcess.joinToString(",") { it.fileName }} ")
         exposureNotificationRepository.processDiagnosisKeyBatch(batchToProcess, newToken)
     }
 

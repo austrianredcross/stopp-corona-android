@@ -97,8 +97,10 @@ interface ExposureNotificationRepository {
 
     /**
      * Process the diagnosis key files of a batch
+     *
+     * @return True if processing has finished. False if more batches are expected to come
      */
-    suspend fun processDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String)
+    suspend fun processDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -238,15 +240,17 @@ class ExposureNotificationRepositoryImpl(
             .sortedBy { it.batchNumber }
             .map { filesRepository.getFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName) }
 
-        val configuration = configurationRepository.getConfiguration()
-            ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
+        val configuration = configurationRepository.getConfiguration() ?: run {
+            Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+            return
+        }
 
-        val exposureConfiguration = configuration.toExposureConfiguration()
+        val exposureConfiguration = configuration.getExposureConfiguration()
 
         exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
     }
 
-    private fun DbConfiguration.toExposureConfiguration(): ExposureConfiguration {
+    private fun DbConfiguration.getExposureConfiguration(): ExposureConfiguration {
         return ExposureConfiguration.ExposureConfigurationBuilder()
             .setMinimumRiskScore(minimumRiskScore)
             .setDurationAtAttenuationThresholds(*attenuationDurationThresholds.toIntArray())
