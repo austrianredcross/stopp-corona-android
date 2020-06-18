@@ -11,11 +11,8 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.Framewo
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
-import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
-import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
+import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
-import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
-import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -94,7 +91,7 @@ class DashboardController(
              * Add single space if own OR contact health state are available AND someone has recovered
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                        contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
+                    contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
                 someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -111,8 +108,8 @@ class DashboardController(
              * Add single space if own or contact health state are available or someone has recovered AND the quarantine should end
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                        contactsHealthStatus != HealthStatusData.NoHealthStatus ||
-                        someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
+                    contactsHealthStatus != HealthStatusData.NoHealthStatus ||
+                    someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
                 showQuarantineEnd
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -164,6 +161,15 @@ class DashboardController(
             phase(exposureNotificationPhase)
             // TODO: 03/06/2020 dusanjencik: Do we need to disable it?
 //            enabled((ownHealthStatus is HealthStatusData.SicknessCertificate).not())
+        }
+
+        if (exposureNotificationPhase is FrameworkRunning) {
+            emptySpace(modelCountBuiltSoFar, 16)
+
+            smallDescription {
+                id("framework_running_description")
+                description(context.getString(R.string.main_automatic_handshake_description_on))
+            }
         }
 
         emptySpace(modelCountBuiltSoFar, 16)
@@ -448,7 +454,7 @@ class DashboardController(
         }
 
         if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-                    ownHealthStatus is HealthStatusData.SicknessCertificate) &&
+                ownHealthStatus is HealthStatusData.SicknessCertificate) &&
             uploadMissingExposureKeys.isPresent
         ) {
             EmptySpaceModel_()
