@@ -9,8 +9,8 @@ import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
  */
 class QuestionnaireViewModel(
     appDispatchers: AppDispatchers,
+    configurationLanguage: ConfigurationLanguage,
     private val configurationRepository: ConfigurationRepository
 ) : ScopedViewModel(appDispatchers) {
 
@@ -33,15 +34,14 @@ class QuestionnaireViewModel(
     private val currentPageSubject = NonNullableBehaviorSubject(0)
     private val decisionSubject = NonNullableBehaviorSubject(SparseArray<Decision>())
     private val executeDecisionSubject = BehaviorSubject.create<Decision>()
-    private val fetchQuestionnaireStateObserver = StateObserver()
-    private val questionnaireSubject = BehaviorSubject.create<List<DbQuestionnaireWithAnswers>>()
+    private val fetchQuestionnaireStateObserver = DataStateObserver<List<DbQuestionnaireWithAnswers>>()
 
     var currentPage: Int
         get() = currentPageSubject.value
         set(value) = currentPageSubject.onNext(value)
 
     init {
-        fetchQuestionnaire()
+        fetchQuestionnaire(configurationLanguage)
     }
 
     fun getNextPage(): Int {
@@ -66,13 +66,14 @@ class QuestionnaireViewModel(
      * Try to fetch fresh questionnaire, but in case of error, the data is already cached in DB,
      * so we can ignore no internet connection case.
      */
-    private fun fetchQuestionnaire() {
+    private fun fetchQuestionnaire(language: ConfigurationLanguage) {
         fetchQuestionnaireStateObserver.loading()
         launch {
             try {
                 configurationRepository.fetchAndStoreConfiguration()
+                fetchQuestionnaireStateObserver.loaded(configurationRepository.getQuestionnaireWithAnswers(language))
             } catch (e: NoInternetConnectionException) {
-                // ignore, this is ok
+                fetchQuestionnaireStateObserver.loaded(configurationRepository.getQuestionnaireWithAnswers(language))
             } catch (e: Exception) {
                 fetchQuestionnaireStateObserver.error(e)
             } finally {
@@ -107,13 +108,5 @@ class QuestionnaireViewModel(
 
     fun observeDecision(): Observable<Decision> = executeDecisionSubject
 
-    fun observeFetchState(): Observable<State> = fetchQuestionnaireStateObserver.observe()
-
-    fun observeQuestionnaireWithQuestions(): Observable<List<DbQuestionnaireWithAnswers>> = questionnaireSubject
-
-    fun getQuestionnaireWithAnswers(language: ConfigurationLanguage) {
-        launch {
-            questionnaireSubject.onNext(configurationRepository.getQuestionnaireWithAnswers(language))
-        }
-    }
+    fun observeQuestionnaireWithQuestions(): Observable<DataState<List<DbQuestionnaireWithAnswers>>> = fetchQuestionnaireStateObserver.observe()
 }
