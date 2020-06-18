@@ -37,7 +37,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbSentTemporaryExposureKeys::class
     ],
     version = 21,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(
     DateTimeConverter::class,
