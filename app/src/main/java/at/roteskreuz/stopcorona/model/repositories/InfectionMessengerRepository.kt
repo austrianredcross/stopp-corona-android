@@ -12,7 +12,11 @@ import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiDiagno
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.entities.session.*
+import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
+import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
@@ -148,41 +152,47 @@ class InfectionMessengerRepositoryImpl(
         //TODO: CTAA-1664 cleanup the files and sessionDao (delete by token)
 
         when (fullSession.session.processingPhase) {
-
             FullBatch -> {
                 Timber.d("Let´s evaluate based on the summary and WarningType the fullbatch")
                 processResultsOfFullBatch(token, configuration, fullSession)
             }
-            ProcessingPhase.DailyBatch -> {
-                val exposureInformation =
-                    exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(fullSession.session.currentToken)
-
-                val dates = exposureInformation.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
-
-                if (dates.firstYellowDay != null && fullSession.session.firstYellowDay == null) {
-                    fullSession.session.firstYellowDay = dates.firstYellowDay
-                }
-
-                dates.firstRedDay?.let { firstRedDay ->
-                    fullSession.session.firstYellowDay?.let { firstYellowDay ->
-                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
-                    }
-
-                    quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dates.firstRedDay)
-                    return
-                }
-
-                if (fullSession.dailyBatchesParts.isEmpty()) {
-                    val firstYellowDay = fullSession.session.firstYellowDay
-                    if (firstYellowDay != null) {
-                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
-                    } else {
-                        Timber.e("we´re done processing but it seems there is no yellow date")
-                    }
-                } else {
-                    processAndDropNextDayPersistState(fullSession.dailyBatchesParts, fullSession)
-                }
+            DailyBatch -> {
+                Timber.d("Let´s evaluate based on the summary and WarningType the next daily batch")
+                processResultsOfNextDailyBatch(fullSession, configuration)
             }
+        }
+    }
+
+    private suspend fun InfectionMessengerRepositoryImpl.processResultsOfNextDailyBatch(
+        fullSession: DbFullSession,
+        configuration: DbConfiguration) {
+        val exposureInformation =
+            exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(fullSession.session.currentToken)
+
+        val dates = exposureInformation.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
+
+        if (dates.firstYellowDay != null && fullSession.session.firstYellowDay == null) {
+            fullSession.session.firstYellowDay = dates.firstYellowDay
+        }
+
+        dates.firstRedDay?.let { firstRedDay ->
+            fullSession.session.firstYellowDay?.let { firstYellowDay ->
+                quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
+            }
+
+            quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dates.firstRedDay)
+            return
+        }
+
+        if (fullSession.dailyBatchesParts.isEmpty()) {
+            val firstYellowDay = fullSession.session.firstYellowDay
+            if (firstYellowDay != null) {
+                quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
+            } else {
+                Timber.e("we´re done processing but it seems there is no yellow date")
+            }
+        } else {
+            processAndDropNextDayPersistState(fullSession.dailyBatchesParts, fullSession)
         }
     }
 
@@ -251,7 +261,7 @@ class InfectionMessengerRepositoryImpl(
 
         val newToken = UUID.randomUUID().toString()
         fullSession.session.currentToken = newToken
-        fullSession.session.processingPhase = ProcessingPhase.DailyBatch
+        fullSession.session.processingPhase = DailyBatch
         sessionDao.insertOrUpdateFullSession(fullSession)
         Timber.d("Processing the next day files: ${batchToProcess.map { it.fileName }.joinToString(",")} ")
         exposureNotificationRepository.processDiagnosisKeyBatch(batchToProcess, newToken)
