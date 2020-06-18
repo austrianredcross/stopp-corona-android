@@ -6,15 +6,14 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
+import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiDiagnosisKeysBatch
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
-import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.*
+import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
@@ -25,7 +24,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
-import at.roteskreuz.stopcorona.skeleton.core.utils.stringSharedPreferencesProperty
+import at.roteskreuz.stopcorona.utils.endOfTheDay
 import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
@@ -108,7 +107,6 @@ class InfectionMessengerRepositoryImpl(
     companion object {
         private const val PREF_LAST_MESSAGE_ID = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_message_id"
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
-        private const val PREF_LAST_SCHEDULED_TOKEN = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_scheduled_token"
     }
 
     private val downloadMessagesStateObserver = StateObserver()
@@ -128,8 +126,6 @@ class InfectionMessengerRepositoryImpl(
         false
     )
 
-    private var lastScheduledToken: String by preferences.stringSharedPreferencesProperty(PREF_LAST_SCHEDULED_TOKEN, "no token ever")
-
     override fun enqueueDownloadingNewMessages() {
         DownloadInfectionMessagesWorker.enqueueDownloadInfection(workManager)
     }
@@ -139,20 +135,63 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun processKeysBasedOnToken(token: String) {
-        if (lastScheduledToken != token) {
-            Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
+        val fullSession = sessionDao.getFullSession(token)
+
+        if (fullSession == null || fullSession.session.currentToken != token) {
+            Timber.e(IllegalStateException("Session for token ${token} not found"))
+            return
         }
         val configuration =
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
-        val fullSession: DbFullSession = sessionDao.getFullSession(token)
-
         //TODO: CTAA-1664 cleanup the files and sessionDao (delete by token)
 
-        val currentWarningType = fullSession.session.warningType
+        when (fullSession.session.processingPhase) {
 
+            FullBatch -> {
+                Timber.d("Let´s evaluate based on the summary and WarningType the fullbatch")
+                processResultsOfFullBatch(token, configuration, fullSession)
+            }
+            ProcessingPhase.DailyBatch -> {
+                val exposureInformation =
+                    exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(fullSession.session.currentToken)
+
+                val dates = exposureInformation.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
+
+                if (dates.firstYellowDay != null && fullSession.session.firstYellowDay == null) {
+                    fullSession.session.firstYellowDay = dates.firstYellowDay
+                }
+
+                dates.firstRedDay?.let { firstRedDay ->
+                    fullSession.session.firstYellowDay?.let { firstYellowDay ->
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
+                    }
+
+                    quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = dates.firstRedDay)
+                    return
+                }
+
+                if (fullSession.dailyBatchesParts.isEmpty()) {
+                    val firstYellowDay = fullSession.session.firstYellowDay
+                    if (firstYellowDay != null) {
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
+                    } else {
+                        Timber.e("we´re done processing but it seems there is no yellow date")
+                    }
+                } else {
+                    processAndDropNextDayPersistState(fullSession.dailyBatchesParts, fullSession)
+                }
+            }
+        }
+    }
+
+    private suspend fun processResultsOfFullBatch(token: String,
+        configuration: DbConfiguration,
+        fullSession: DbFullSession) {
+        val currentWarningType = fullSession.session.warningType
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
+
         when (currentWarningType) {
             WarningType.YELLOW, WarningType.RED -> {
                 if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
@@ -161,7 +200,7 @@ class InfectionMessengerRepositoryImpl(
                         WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
                     }
                 } else {
-                    val exposureInformations = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
+                    val exposureInformations = exposureNotificationRepository.getExposureInformationWithPotentiallyInformingTheUser(token)
 
                     val dates = exposureInformations.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
@@ -172,20 +211,50 @@ class InfectionMessengerRepositoryImpl(
             WarningType.GREEN -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
-                    //we must now identify day by day if we are YELLOW or RED
-                    //process all 7 days!!! find both and yellow red quarantine day
-                    //val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
-                    //process the batches and do one of these:
-                    //TODO find time of contact
-                    //this is a fake calculation:
-                    val dayOfExposure = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong())
-                    quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = dayOfExposure)
-                    var quarantineStatus = quarantineRepository.getQuarantineStatus()
+
+                    //1. let´s remove batches we definitly don´t need
+                    val relevantDailyBatchesParts = fullSession.dailyBatchesParts.filter {
+                        // [   ][   ][ 2 ][   ][now]
+                        // xxxxxxxxxxxxxxx|<- this is the reference date for minusDays(2)
+                        // we want all the xxxxxxxxxxxxxxx
+                        val referenceDate = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong()).endOfTheDay()
+                        it.intervalStart < referenceDate.toEpochSecond()
+
+                        //org.threeten.bp.ZonedDateTime.ofInstant(org.threeten.bp.Instant.ofEpochSecond(fullSession.dailyBatchesParts.get(0).intervalStart), ZoneId.systemDefault())
+                    }
+                    Timber.d("filtered the relevantDailyBatchesParts to length ${relevantDailyBatchesParts.size} ")
+                    processAndDropNextDayPersistState(relevantDailyBatchesParts, fullSession)
                 } else {
                     Timber.d("We are still WarningType.REVOKE")
                 }
             }
+
         }
+    }
+
+    /**
+     * we find the batch files of the next day, process them and drop them from the database
+     */
+    private suspend fun processAndDropNextDayPersistState(
+        relevantDailyBatchesParts: List<DbDailyBatchPart>,
+        fullSession: DbFullSession) {
+        val listOfDailyBatchParts = relevantDailyBatchesParts
+            .groupBy { dailyBatchPart ->
+                dailyBatchPart.intervalStart
+            }.toSortedMap().map { (intervalStart, dailyBatchParts) ->
+                dailyBatchParts
+            }
+
+        val batchToProcess = listOfDailyBatchParts.first()
+        val remainingBatches = listOfDailyBatchParts.drop(1)
+        fullSession.dailyBatchesParts = remainingBatches.flatten()
+
+        val newToken = UUID.randomUUID().toString()
+        fullSession.session.currentToken = newToken
+        fullSession.session.processingPhase = ProcessingPhase.DailyBatch
+        sessionDao.insertOrUpdateFullSession(fullSession)
+        Timber.d("Processing the next day files: ${batchToProcess.map { it.fileName }.joinToString(",")} ")
+        exposureNotificationRepository.processDiagnosisKeyBatch(batchToProcess, newToken)
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -198,23 +267,24 @@ class InfectionMessengerRepositoryImpl(
         withContext(coroutineContext) {
             try {
                 val warningType = quarantineRepository.getCurrentWarningType()
-                val contextToken = UUID.randomUUID().toString()
+                val token = UUID.randomUUID().toString()
                 val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
                 val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
                 val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
 
                 val fullSession = DbFullSession(
                     session = DbSession(
-                        token = contextToken,
-                        warningType = warningType
+                        currentToken = token,
+                        warningType = warningType,
+                        processingPhase = FullBatch,
+                        firstYellowDay = null
                     ),
                     fullBatchParts = fullBatchParts,
                     dailyBatchesParts = dailyBatchesParts
                 )
 
                 sessionDao.insertOrUpdateFullSession(fullSession)
-                lastScheduledToken = contextToken
-                exposureNotificationRepository.processBatchDiagnosisKeys(fullBatchParts, contextToken)
+                exposureNotificationRepository.processDiagnosisKeyBatch(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
@@ -231,7 +301,8 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
-    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>): List<DbDailyBatchPart> {
+    private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>)
+        : List<DbDailyBatchPart> {
         return dailyBatches.flatMap { dailyBatch ->
             dailyBatch.batchFilePaths.mapIndexed { index, path ->
                 DbDailyBatchPart(
@@ -273,8 +344,6 @@ class InfectionMessengerRepositoryImpl(
         ExposureMatchingWorker.enqueueNextExposureMatching(workManager)
     }
 }
-
-
 
 /**
  * Describes a temporary exposure key, it's associated random password and messageType.

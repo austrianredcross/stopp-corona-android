@@ -4,7 +4,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
+import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
+import at.roteskreuz.stopcorona.model.entities.session.DbBatchPart
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -95,9 +96,9 @@ interface ExposureNotificationRepository {
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
 
     /**
-     * Process the diagnosis key files
+     * Process the diagnosis key files of a batch
      */
-    suspend fun processBatchDiagnosisKeys(batches: List<DbFullBatchPart>, token: String)
+    suspend fun processDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String)
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -105,7 +106,7 @@ interface ExposureNotificationRepository {
      */
     suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary
 
-    suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation>
+    suspend fun getExposureInformationWithPotentiallyInformingTheUser(token: String): List<ExposureInformation>
 }
 
 class ExposureNotificationRepositoryImpl(
@@ -232,31 +233,35 @@ class ExposureNotificationRepositoryImpl(
         return exposureNotificationClient.temporaryExposureKeyHistory.await()
     }
 
-    override suspend fun processBatchDiagnosisKeys(batches: List<DbFullBatchPart>, token: String) {
+    override suspend fun processDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String) {
         val archives = batches
-            .sortedWith(compareBy { it.batchNumber })
+            .sortedBy { it.batchNumber }
             .map { filesRepository.getFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName) }
 
         val configuration = configurationRepository.getConfiguration()
             ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
 
-        val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
-            .setMinimumRiskScore(configuration.minimumRiskScore)
-            .setDurationAtAttenuationThresholds(*configuration.attenuationDurationThresholds.toIntArray())
-            .setAttenuationScores(*configuration.attenuationLevelValues.toIntArray())
-            .setDaysSinceLastExposureScores(*configuration.daysSinceLastExposureLevelValues.toIntArray())
-            .setDurationScores(*configuration.durationLevelValues.toIntArray())
-            .setTransmissionRiskScores(*configuration.transmissionRiskLevelValues.toIntArray())
-            .build()
+        val exposureConfiguration = configuration.toExposureConfiguration()
 
         exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
+    }
+
+    private fun DbConfiguration.toExposureConfiguration(): ExposureConfiguration {
+        return ExposureConfiguration.ExposureConfigurationBuilder()
+            .setMinimumRiskScore(minimumRiskScore)
+            .setDurationAtAttenuationThresholds(*attenuationDurationThresholds.toIntArray())
+            .setAttenuationScores(*attenuationLevelValues.toIntArray())
+            .setDaysSinceLastExposureScores(*daysSinceLastExposureLevelValues.toIntArray())
+            .setDurationScores(*durationLevelValues.toIntArray())
+            .setTransmissionRiskScores(*transmissionRiskLevelValues.toIntArray())
+            .build()
     }
 
     override suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary {
         return exposureNotificationClient.getExposureSummary(token).await()
     }
 
-    override suspend fun getExposureSummaryWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
+    override suspend fun getExposureInformationWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
         return exposureNotificationClient.getExposureInformation(token).await()
     }
 }
