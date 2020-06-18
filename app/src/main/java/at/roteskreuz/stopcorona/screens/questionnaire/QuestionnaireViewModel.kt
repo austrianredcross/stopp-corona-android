@@ -3,26 +3,27 @@ package at.roteskreuz.stopcorona.screens.questionnaire
 import android.util.SparseArray
 import androidx.core.util.contains
 import androidx.core.util.set
-import at.roteskreuz.stopcorona.model.entities.configuration.*
+import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
+import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
+import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * Handles the user interaction and provides data for [QuestionnaireFragment].
  */
 class QuestionnaireViewModel(
     appDispatchers: AppDispatchers,
+    configurationLanguage: ConfigurationLanguage,
     private val configurationRepository: ConfigurationRepository
 ) : ScopedViewModel(appDispatchers) {
 
@@ -33,14 +34,14 @@ class QuestionnaireViewModel(
     private val currentPageSubject = NonNullableBehaviorSubject(0)
     private val decisionSubject = NonNullableBehaviorSubject(SparseArray<Decision>())
     private val executeDecisionSubject = BehaviorSubject.create<Decision>()
-    private val questionnaireStateObserver = StateObserver()
+    private val fetchQuestionnaireStateObserver = DataStateObserver<List<DbQuestionnaireWithAnswers>>()
 
     var currentPage: Int
         get() = currentPageSubject.value
         set(value) = currentPageSubject.onNext(value)
 
     init {
-        fetchQuestionnaire()
+        fetchQuestionnaire(configurationLanguage)
     }
 
     fun getNextPage(): Int {
@@ -65,17 +66,18 @@ class QuestionnaireViewModel(
      * Try to fetch fresh questionnaire, but in case of error, the data is already cached in DB,
      * so we can ignore no internet connection case.
      */
-    private fun fetchQuestionnaire() {
-        questionnaireStateObserver.loading()
+    private fun fetchQuestionnaire(language: ConfigurationLanguage) {
+        fetchQuestionnaireStateObserver.loading()
         launch {
             try {
                 configurationRepository.fetchAndStoreConfiguration()
+                fetchQuestionnaireStateObserver.loaded(configurationRepository.getQuestionnaireWithAnswers(language))
             } catch (e: NoInternetConnectionException) {
-                // ignore, this is ok
+                fetchQuestionnaireStateObserver.loaded(configurationRepository.getQuestionnaireWithAnswers(language))
             } catch (e: Exception) {
-                questionnaireStateObserver.error(e)
+                fetchQuestionnaireStateObserver.error(e)
             } finally {
-                questionnaireStateObserver.idle()
+                fetchQuestionnaireStateObserver.idle()
             }
         }
     }
@@ -106,9 +108,5 @@ class QuestionnaireViewModel(
 
     fun observeDecision(): Observable<Decision> = executeDecisionSubject
 
-    fun observeFetchState(): Observable<State> = questionnaireStateObserver.observe()
-
-    fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
-        return configurationRepository.observeQuestionnaireWithAnswers(language)
-    }
+    fun observeQuestionnaireWithQuestions(): Observable<DataState<List<DbQuestionnaireWithAnswers>>> = fetchQuestionnaireStateObserver.observe()
 }

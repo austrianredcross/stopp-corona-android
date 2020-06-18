@@ -59,7 +59,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onAutomaticHandshakeInformationClick = {
                 startHandshakeExplanationFragment()
             },
-            onFeelingClick = { disabled ->
+            onStartQuestionnaireClick = { disabled ->
                 if (disabled) {
                     Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
                 } else {

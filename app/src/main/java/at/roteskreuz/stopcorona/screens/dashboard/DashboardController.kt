@@ -29,7 +29,7 @@ import org.threeten.bp.ZonedDateTime
 class DashboardController(
     private val context: Context,
     private val onAutomaticHandshakeInformationClick: () -> Unit,
-    private val onFeelingClick: (disabled: Boolean) -> Unit,
+    private val onStartQuestionnaireClick: (disabled: Boolean) -> Unit,
     private val onReportClick: (disabled: Boolean) -> Unit,
     private val onHealthStatusClick: (data: HealthStatusData) -> Unit,
     private val onRevokeSuspicionClick: (disabled: Boolean) -> Unit,
@@ -211,11 +211,11 @@ class DashboardController(
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(16),
-                    ButtonType2Model_ { onFeelingClick(false) }
+                    ButtonType2Model_ { onStartQuestionnaireClick(false) }
                         .id("feel_button")
                         .text(context.string(R.string.main_button_feel_today_button))
                         .enabled(exposureNotificationPhase.isReportingEnabled())
-                        .onDisabledClick { onFeelingClick(true) },
+                        .onDisabledClick { onStartQuestionnaireClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(40)
