@@ -222,8 +222,8 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
         disposables += viewModel.observeExposureSDKReadyToStart()
             .observeOnMainThread()
-            .subscribe {
-                if (it) {
+            .subscribe { readyToStart ->
+                if (readyToStart) {
                     startExposureSDK()
                 }
             }

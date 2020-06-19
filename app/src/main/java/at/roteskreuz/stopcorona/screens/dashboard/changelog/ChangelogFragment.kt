@@ -57,7 +57,7 @@ class ChangelogFragment : BottomSheetDialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
 
-        viewModel.flagChangelogAsSeen()
+        viewModel.markChangelogAsSeen()
     }
 }
 

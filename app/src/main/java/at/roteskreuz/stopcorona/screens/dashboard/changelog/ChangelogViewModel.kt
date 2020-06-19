@@ -14,7 +14,7 @@ class ChangelogViewModel(
         return changelogManager.getChangelogForVersion(version)
     }
 
-    fun flagChangelogAsSeen() {
-        changelogManager.flagChangelogAsSeen()
+    fun markChangelogAsSeen() {
+        changelogManager.markChangelogAsSeen()
     }
 }

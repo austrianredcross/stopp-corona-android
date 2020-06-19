@@ -35,7 +35,7 @@ interface ChangelogManager {
     /**
      * Marks the changelog as seen.
      */
-    fun flagChangelogAsSeen()
+    fun markChangelogAsSeen()
 }
 
 class ChangelogManagerImpl(
@@ -85,7 +85,7 @@ class ChangelogManagerImpl(
         }
     }
 
-    override fun flagChangelogAsSeen() {
+    override fun markChangelogAsSeen() {
         lastSeenChangelogId = changelog.id
     }
 
