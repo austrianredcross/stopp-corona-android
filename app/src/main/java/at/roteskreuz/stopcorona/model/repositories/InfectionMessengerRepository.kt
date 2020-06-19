@@ -27,6 +27,8 @@ import at.roteskreuz.stopcorona.utils.endOfTheDay
 import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
@@ -330,13 +332,19 @@ class InfectionMessengerRepositoryImpl(
 
     private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>)
         : List<DbDailyBatchPart> {
-        return dailyBatches.flatMap { dailyBatch ->
-            dailyBatch.batchFilePaths.mapIndexed { index, path ->
-                DbDailyBatchPart(
-                    batchNumber = index,
-                    intervalStart = dailyBatch.intervalToEpochSeconds,
-                    fileName = apiInteractor.downloadContentDeliveryFile(path)
-                )
+        return coroutineScope {
+            dailyBatches.flatMap { dailyBatch ->
+                dailyBatch.batchFilePaths.mapIndexed { index, path ->
+                    async {
+                        DbDailyBatchPart(
+                            batchNumber = index,
+                            intervalStart = dailyBatch.intervalToEpochSeconds,
+                            fileName = apiInteractor.downloadContentDeliveryFile(path)
+                        )
+                    }
+                }.map {
+                    it.await()
+                }
             }
         }
     }
