@@ -9,14 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
-import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.startQuestionnaireHintFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuestionnaireSelfMonitoringFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.suspicion.startQuestionnaireSuspicionFragment
+import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.getFragmentActivityIntent
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
@@ -26,6 +25,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.onViewReady
 import at.roteskreuz.stopcorona.utils.darkTextInStatusBar
+import at.roteskreuz.stopcorona.utils.getCurrentConfigurationLanguage
 import at.roteskreuz.stopcorona.utils.view.CirclePagerIndicatorDecoration
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerWithScrollOption
 import at.roteskreuz.stopcorona.utils.view.safeRun
@@ -33,14 +33,14 @@ import com.airbnb.epoxy.EpoxyVisibilityTracker
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_questionnaire.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
+import org.koin.core.parameter.parametersOf
 
 /**
  * Screen to display questionnaire about health state.
  */
 class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
 
-    private val viewModel: QuestionnaireViewModel by viewModel()
+    private val viewModel: QuestionnaireViewModel by viewModel { parametersOf(requireContext().getCurrentConfigurationLanguage()) }
 
     private val controller: QuestionnaireController by lazy {
         QuestionnaireController(
@@ -75,32 +75,18 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             EpoxyVisibilityTracker().attach(this)
         }
 
-        disposables += viewModel.observeFetchState()
+        disposables += viewModel.observeQuestionnaireWithQuestions()
             .observeOnMainThread()
-            .subscribe { state ->
-                if (state is State.Loading) {
-                    showProgressDialog(R.string.general_loading)
-                } else {
-                    hideProgressDialog()
+            .subscribe { dataState ->
+                when (dataState) {
+                    is DataState.Loaded -> controller.setData(dataState.data)
+                    is State.Error -> handleBaseCoronaErrors(dataState.error)
                 }
-                if (state is State.Error) {
-                    handleBaseCoronaErrors(state.error)
-                }
-            }
 
-        disposables += viewModel.observeQuestionnaireWithAnswers(
-            requireContext().getString(R.string.current_language).let { currentLanguage ->
-                ConfigurationLanguage.parse(currentLanguage).let {
-                    if (it == ConfigurationLanguage.UNDEFINED) {
-                        Timber.e(SilentError("Undefined language for questionnaire: $currentLanguage"))
-                        ConfigurationLanguage.EN // fallback when undefined
-                    } else it
+                when (dataState) {
+                    is State.Loading -> showProgressDialog(R.string.general_loading)
+                    else -> hideProgressDialog()
                 }
-            }
-        )
-            .observeOnMainThread()
-            .subscribe { configuration ->
-                controller.setData(configuration)
             }
 
         btnNext.setOnClickListener {
@@ -162,7 +148,6 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             })
         }
     }
-
 }
 
 fun Activity.startQuestionnaireFragment() {

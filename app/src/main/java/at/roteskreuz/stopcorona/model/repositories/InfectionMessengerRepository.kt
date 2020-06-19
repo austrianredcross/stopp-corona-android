@@ -22,14 +22,15 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
-import at.roteskreuz.stopcorona.utils.endOfTheDay
+import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
 import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
+import at.roteskreuz.stopcorona.utils.minusDays
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.Instant
 import timber.log.Timber
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
@@ -233,12 +234,12 @@ class InfectionMessengerRepositoryImpl(
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
 
                     //1. let´s remove batches we definitly don´t need
-                    val relevantDailyBatchesParts = fullSession.dailyBatchesParts.filter {
+                    val relevantDailyBatchesParts = fullSession.dailyBatchesParts.filter { dailyBatchPart ->
                         // [   ][   ][ 2 ][   ][now]
                         // xxxxxxxxxxxxxxx|<- this is the reference date for minusDays(2)
                         // we want all the xxxxxxxxxxxxxxx
-                        val referenceDate = ZonedDateTime.now().minusDays(summary.daysSinceLastExposure.toLong()).endOfTheDay()
-                        it.intervalStart < referenceDate.toEpochSecond()
+                        val referenceDate = Instant.now().minusDays(summary.daysSinceLastExposure.toLong()).endOfTheUtcDay()
+                        dailyBatchPart.intervalStart < referenceDate.epochSecond
                     }
                     Timber.d("filtered the relevantDailyBatchesParts to length ${relevantDailyBatchesParts.size} ")
                     return processAndDropNextDayPersistState(relevantDailyBatchesParts, fullSession)

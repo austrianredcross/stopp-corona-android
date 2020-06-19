@@ -54,16 +54,14 @@ class DebugViewModel(
 
     fun addOutgoingMessageRed() {
         launch {
-            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
-
+            // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportMedicalConfirmation()
         }
     }
 
     fun addOutgoingMessageYellow() {
         launch {
-            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
-
+            // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportPositiveSelfDiagnose()
         }
     }
