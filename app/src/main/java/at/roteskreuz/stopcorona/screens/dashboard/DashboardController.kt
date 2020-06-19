@@ -159,8 +159,6 @@ class DashboardController(
         automaticHandshakeSwitch(onAutomaticHandshakeEnabled) {
             id("automatic_handshake_switch")
             phase(exposureNotificationPhase)
-            // TODO: 03/06/2020 dusanjencik: Do we need to disable it?
-//            enabled((ownHealthStatus is HealthStatusData.SicknessCertificate).not())
         }
 
         if (exposureNotificationPhase is FrameworkRunning) {
