@@ -165,8 +165,12 @@ class InfectionMessengerRepositoryImpl(
 
                     val dates = exposureInformations.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
-                    dates.firstRedDay?.let { quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay) }
-                    dates.firstYellowDay?.let { quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay) }
+                    dates.firstRedDay?.let {
+                        quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay)
+                    } ?: quarantineRepository.revokeLastRedContactDate()
+                    dates.firstYellowDay?.let {
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay)
+                    } ?: quarantineRepository.revokeLastYellowContactDate()
                 }
             }
             WarningType.GREEN -> {
