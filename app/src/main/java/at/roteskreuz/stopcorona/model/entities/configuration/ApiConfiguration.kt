@@ -39,7 +39,7 @@ data class ApiConfiguration(
      * will not be used.
      */
     @field:Json(name = "scheduled_processing_in_5_min")
-    val scheduledProcessingIn5Min: Boolean? = true
+    val scheduledProcessingIn5Min: Boolean = true
 ) : ApiEntity<DbConfiguration> {
 
     override fun asDbEntity(): DbConfiguration {

@@ -39,7 +39,7 @@ data class DbConfiguration(
     val daysSinceLastExposureLevelValues: List<Int>,         // [1, 1, 1, 1, 1, 1, 1, 1],
     val durationLevelValues: List<Int>,                      // [0, 1, 2, 3, 4, 5, 6, 7],
     val transmissionRiskLevelValues: List<Int>,              // [1, 1, 1, 1, 1, 1, 1, 1]
-    val scheduledProcessingIn5Min: Boolean? = true
+    val scheduledProcessingIn5Min: Boolean = true
 ) : DbEntity
 
 @Entity(

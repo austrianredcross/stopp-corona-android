@@ -15,11 +15,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConvert
 import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
 import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
-import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbScheduledSession
-import at.roteskreuz.stopcorona.model.entities.session.DbSession
-import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhaseConverter
+import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -374,7 +370,7 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(21, 22) {
                 execSQL("CREATE TABLE IF NOT EXISTS `scheduled_sessions` (`token` TEXT NOT NULL, PRIMARY KEY(`token`))")
 
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `scheduledProcessingIn5Min` INTEGER DEFAULT 1")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `scheduledProcessingIn5Min` INTEGER NOT NULL DEFAULT 1")
             }
         )
     }

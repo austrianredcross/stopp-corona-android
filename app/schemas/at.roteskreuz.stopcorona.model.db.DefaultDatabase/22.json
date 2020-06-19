@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 22,
-    "identityHash": "11e1941fdb9bc319ebc74976e4d05e69",
+    "identityHash": "09e21ece6194bbac52929fe201fff61b",
     "entities": [
       {
         "tableName": "configuration",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `warnBeforeSymptoms` INTEGER, `redWarningQuarantine` INTEGER, `yellowWarningQuarantine` INTEGER, `selfDiagnosedQuarantine` INTEGER, `uploadKeysDays` INTEGER, `cacheTime` INTEGER NOT NULL, `minimumRiskScore` INTEGER NOT NULL, `dailyRiskThreshold` INTEGER NOT NULL, `attenuationDurationThresholds` TEXT NOT NULL, `attenuationLevelValues` TEXT NOT NULL, `daysSinceLastExposureLevelValues` TEXT NOT NULL, `durationLevelValues` TEXT NOT NULL, `transmissionRiskLevelValues` TEXT NOT NULL, `scheduledProcessingIn5Min` INTEGER DEFAULT 1)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `warnBeforeSymptoms` INTEGER, `redWarningQuarantine` INTEGER, `yellowWarningQuarantine` INTEGER, `selfDiagnosedQuarantine` INTEGER, `uploadKeysDays` INTEGER, `cacheTime` INTEGER NOT NULL, `minimumRiskScore` INTEGER NOT NULL, `dailyRiskThreshold` INTEGER NOT NULL, `attenuationDurationThresholds` TEXT NOT NULL, `attenuationLevelValues` TEXT NOT NULL, `daysSinceLastExposureLevelValues` TEXT NOT NULL, `durationLevelValues` TEXT NOT NULL, `transmissionRiskLevelValues` TEXT NOT NULL, `scheduledProcessingIn5Min` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -96,7 +96,7 @@
             "fieldPath": "scheduledProcessingIn5Min",
             "columnName": "scheduledProcessingIn5Min",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -680,7 +680,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '11e1941fdb9bc319ebc74976e4d05e69')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '09e21ece6194bbac52929fe201fff61b')"
     ]
   }
 }
