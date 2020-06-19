@@ -223,10 +223,16 @@ class InfectionMessengerRepositoryImpl(
 
                     dates.firstRedDay?.let {
                         quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay)
-                    } ?: quarantineRepository.revokeLastRedContactDate()
+                    }
                     dates.firstYellowDay?.let {
                         quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay)
-                    } ?: quarantineRepository.revokeLastYellowContactDate()
+                    }
+                    // Only revoce quarantines after all new quarantines are known.
+                    // When switching from yellow to red, if we revoke yellow above imediately, the red quarantine is not yet known and the
+                    // quarantine end tile is triggered in the ui
+                    if (dates.firstRedDay == null) quarantineRepository.revokeLastRedContactDate()
+                    if (dates.firstYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
+
                     return true // Processing done
                 }
             }
