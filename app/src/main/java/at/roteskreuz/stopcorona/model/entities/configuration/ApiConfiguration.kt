@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.model.entities.configuration
 
+import at.roteskreuz.stopcorona.model.workers.DelayedExposureBroadcastReceiverCallWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.ApiEntity
 import at.roteskreuz.stopcorona.utils.asEnum
 import com.squareup.moshi.Json
@@ -31,7 +32,14 @@ data class ApiConfiguration(
     @field:Json(name = "upload_keys_days")
     val uploadKeysDays: Int,
     @field:Json(name = "exposure_configuration")
-    val exposureConfiguration: ApiExposureConfiguration
+    val exposureConfiguration: ApiExposureConfiguration,
+    /**
+     * This field is not on the backed yet. But once it is there (false),
+     * the hotfix of [DelayedExposureBroadcastReceiverCallWorker]
+     * will not be used.
+     */
+    @field:Json(name = "scheduled_processing_in_5_min")
+    val scheduledProcessingIn5Min: Boolean = true
 ) : ApiEntity<DbConfiguration> {
 
     override fun asDbEntity(): DbConfiguration {
@@ -47,7 +55,8 @@ data class ApiConfiguration(
             attenuationLevelValues = exposureConfiguration.attenuationLevelValues,
             daysSinceLastExposureLevelValues = exposureConfiguration.daysSinceLastExposureLevelValues,
             durationLevelValues = exposureConfiguration.durationLevelValues,
-            transmissionRiskLevelValues = exposureConfiguration.transmissionRiskLevelValues
+            transmissionRiskLevelValues = exposureConfiguration.transmissionRiskLevelValues,
+            scheduledProcessingIn5Min = scheduledProcessingIn5Min
         )
     }
 }

@@ -1,13 +1,10 @@
 package at.roteskreuz.stopcorona.model.db.dao
 
 import androidx.room.*
-import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
-import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.*
 
 /**
- * Dao to manage [DbSession].
+ * Dao to manage [DbSession], [DbScheduledSession].
  */
 @Dao
 abstract class SessionDao {
@@ -47,4 +44,13 @@ abstract class SessionDao {
     @Transaction
     @Update
     abstract suspend fun updateSession(session: DbSession)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertScheduledSession(scheduledSession: DbScheduledSession)
+
+    @Query("SELECT COUNT(*) = 1 FROM scheduled_sessions WHERE token = :token LIMIT 1")
+    abstract suspend fun isSessionScheduled(token: String): Boolean
+
+    @Query("DELETE FROM scheduled_sessions WHERE token = :token")
+    abstract suspend fun deleteScheduledSession(token: String): Int
 }

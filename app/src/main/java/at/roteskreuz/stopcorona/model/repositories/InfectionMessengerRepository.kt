@@ -16,6 +16,7 @@ import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.workers.DelayedExposureBroadcastReceiverCallWorker
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -138,6 +139,15 @@ class InfectionMessengerRepositoryImpl(
             val configuration = configurationRepository.getConfiguration() ?: run {
                 Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
                 return
+            }
+
+            if (configuration.scheduledProcessingIn5Min) {
+                if (sessionDao.deleteScheduledSession(token) == 0) {
+                    Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
+                    return
+                } else {
+                    Timber.d("ENStatusUpdates: Processing token $token")
+                }
             }
 
             processingFinished = when (fullSession.session.processingPhase) {
@@ -292,7 +302,7 @@ class InfectionMessengerRepositoryImpl(
             processingPhase = DailyBatch
         ))
         Timber.d("Processing the next day files: ${batchToProcess.joinToString(",") { it.fileName }} ")
-        return exposureNotificationRepository.provideDiagnosisKeyBatch(batchToProcess, newToken)
+        return startDiagnosisKeyMatching(batchToProcess, newToken)
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -322,7 +332,7 @@ class InfectionMessengerRepositoryImpl(
                 )
 
                 sessionDao.insertFullSession(fullSession)
-                exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
+                startDiagnosisKeyMatching(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
@@ -330,6 +340,23 @@ class InfectionMessengerRepositoryImpl(
                 downloadMessagesStateObserver.idle()
             }
         }
+    }
+
+    private suspend fun startDiagnosisKeyMatching(
+        fullBatchParts: List<DbBatchPart>,
+        token: String
+    ): Boolean {
+        Timber.d("ENStatusUpdates: Providing diagnosis batch. Token: $token")
+        val finished = exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
+
+        // schedule calling [ExposureNotificationBroadcastReceiver.onExposureStateUpdated] after timeout
+        if (!finished && configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
+            Timber.d("ENStatusUpdates: Scheduling a timeout for the exposure status update broadcast. Token: $token")
+            sessionDao.insertScheduledSession(DbScheduledSession(token))
+            DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)
+        }
+
+        return finished
     }
 
     private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {

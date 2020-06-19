@@ -124,3 +124,15 @@ data class DbDailyBatchPart(
         return intervalStart * 600
     }
 }
+
+/**
+ * This table holds list of tokens to be processed.
+ * Once the token is processed, the token is removed from the table.
+ */
+@Entity(
+    tableName = "scheduled_sessions"
+)
+data class DbScheduledSession(
+    @PrimaryKey
+    val token: String
+) : DbEntity
