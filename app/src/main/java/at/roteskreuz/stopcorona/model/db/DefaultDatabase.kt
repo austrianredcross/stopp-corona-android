@@ -183,7 +183,8 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(12, 13) {
                 // add new tables
                 execSQL(
-                    """CREATE TABLE IF NOT EXISTS `received_infection_message` (
+                    """
+                        CREATE TABLE IF NOT EXISTS `received_infection_message` (
                             `uuid` TEXT NOT NULL, 
                             `messageType` TEXT NOT NULL, 
                             `timeStamp` INTEGER NOT NULL, 
