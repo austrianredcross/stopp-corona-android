@@ -141,13 +141,9 @@ class InfectionMessengerRepositoryImpl(
                 return
             }
 
-            if (sessionDao.isSessionScheduled(token)) {
-                sessionDao.deleteScheduledSession(token)
-            } else {
-                if (configuration.scheduledProcessingIn5Min != false) {
-                    Timber.w("Session $token was already processed")
-                    return
-                }
+            if (sessionDao.deleteScheduledSession(token) == 0 && configuration.scheduledProcessingIn5Min) {
+                Timber.w("Session $token was already processed")
+                return
             }
 
             processingFinished = when (fullSession.session.processingPhase) {

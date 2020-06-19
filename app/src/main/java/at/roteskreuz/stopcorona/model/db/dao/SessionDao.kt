@@ -52,5 +52,5 @@ abstract class SessionDao {
     abstract suspend fun isSessionScheduled(token: String): Boolean
 
     @Query("DELETE FROM scheduled_sessions WHERE token = :token")
-    abstract suspend fun deleteScheduledSession(token: String)
+    abstract suspend fun deleteScheduledSession(token: String): Int
 }
