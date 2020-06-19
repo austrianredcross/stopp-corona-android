@@ -3,7 +3,6 @@ package at.roteskreuz.stopcorona.model.entities.infection.exposure_keys
 import at.roteskreuz.stopcorona.utils.asExposureInterval
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import org.threeten.bp.ZonedDateTime
 
 /**
  * Describes infection info about user with data gathered from the Exposure SDK.
@@ -18,15 +17,7 @@ data class ApiIndexOfDiagnosisKeysArchives(
 
     @field:Json(name = "daily_batches")
     val dailyBatches: List<ApiDiagnosisKeysBatch>
-) {
-
-    // TODO: 16/06/2020 dusanjencik: Not used. Why?
-    fun batchesForLastHours(hour: Long): List<ApiDiagnosisKeysBatch> {
-        return dailyBatches.filter {
-            (it.interval.asExposureInterval().isAfter(ZonedDateTime.now().minusHours(hour)))
-        }
-    }
-}
+)
 
 @JsonClass(generateAdapter = true)
 data class ApiDiagnosisKeysBatch(
