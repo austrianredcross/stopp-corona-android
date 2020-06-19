@@ -88,6 +88,17 @@ object Constants {
          * Local folder name for copy of exposure archives to be processed.
          */
         const val EXPOSURE_ARCHIVES_FOLDER = "exposure_archives"
+
+        /**
+         * In some cases the exposure notification framework will not send the expected
+         * ACTION_EXPOSURE_STATE_UPDATED_BROADCAST.
+         * After this time out we will just assume that the exposure state has been updated.
+         */
+        val ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT = if (isDebug) {
+            Duration.ofMinutes(1)
+        } else {
+            Duration.ofMinutes(5)
+        }
     }
 
     /**

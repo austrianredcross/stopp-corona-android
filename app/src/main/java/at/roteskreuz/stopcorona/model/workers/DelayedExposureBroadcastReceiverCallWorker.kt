@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.workers
 import android.content.Context
 import android.content.Intent
 import androidx.work.*
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT
 import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import org.koin.standalone.KoinComponent
@@ -27,11 +28,6 @@ class DelayedExposureBroadcastReceiverCallWorker(
         private const val ARGUMENT_TOKEN = "token"
 
         /**
-         * This worker is delayed for minimum 5 minutes, but workManager can decide to run it later.
-         */
-        private val DELAY = Duration.ofMinutes(5)
-
-        /**
          * Enqueue download and processing diagnosis keys.
          */
         fun enqueueDelayedExposureReceiverCall(workManager: WorkManager, token: String) {
@@ -40,7 +36,7 @@ class DelayedExposureBroadcastReceiverCallWorker(
 
             val request = OneTimeWorkRequestBuilder<DelayedExposureBroadcastReceiverCallWorker>()
                 .setConstraints(constraints)
-                .setInitialDelay(DELAY.toMillis(), TimeUnit.MILLISECONDS)
+                .setInitialDelay(ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS)
                 .setInputData(
                     Data.Builder()
                         .putString(ARGUMENT_TOKEN, token)
