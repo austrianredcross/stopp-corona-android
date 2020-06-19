@@ -7,16 +7,22 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 
 /**
- * Converter for dateTime using [ZonedDateTime] or [LocalDate].
+ * Converter for dateTime using [Instant], [ZonedDateTime] or [LocalDate].
  */
 class DateTimeConverter {
 
     @TypeConverter
     fun timestampToDateTime(timestamp: Long?): ZonedDateTime? =
-        timestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.of("UTC")) }
+        timestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) }
 
     @TypeConverter
     fun dateTimeToTimestamp(date: ZonedDateTime?): Long? = date?.withZoneSameInstant(ZoneId.of("UTC"))?.toEpochSecond()
+
+    @TypeConverter
+    fun timestampToInstant(timestamp: Long?): Instant? = timestamp?.let { Instant.ofEpochSecond(it) }
+
+    @TypeConverter
+    fun instantToTimestamp(instant: Instant?): Long? = instant?.epochSecond
 
     @TypeConverter
     fun timestampToDate(timestamp: Int?): LocalDate? =

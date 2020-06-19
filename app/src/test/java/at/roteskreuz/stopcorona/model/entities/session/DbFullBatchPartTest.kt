@@ -18,8 +18,8 @@ class DbFullBatchPartTest {
             intervalStart = 1,
             fileName = "/"
         )
-        val unsortedList = arrayListOf(part2,part1)
-        val sorted = unsortedList.sortedWith( compareBy{ it.batchNumber })
+        val unsortedList = arrayListOf(part2, part1)
+        val sorted = unsortedList.sortedWith(compareBy { it.batchNumber })
         assert(sorted[0].batchNumber < sorted[1].batchNumber, { "sorting failed" })
     }
 }
