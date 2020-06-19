@@ -142,7 +142,7 @@ class InfectionMessengerRepositoryImpl(
             }
 
             if (sessionDao.deleteScheduledSession(token) == 0 && configuration.scheduledProcessingIn5Min) {
-                Timber.w("Session $token was already processed")
+                Timber.d("Proceessing of $token was already triggered")
                 return
             }
 
@@ -298,7 +298,7 @@ class InfectionMessengerRepositoryImpl(
             processingPhase = DailyBatch
         ))
         Timber.d("Processing the next day files: ${batchToProcess.joinToString(",") { it.fileName }} ")
-        return exposureNotificationRepository.provideDiagnosisKeyBatch(batchToProcess, newToken)
+        return startDiagnosisKeyMatching(batchToProcess, newToken)
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -309,9 +309,9 @@ class InfectionMessengerRepositoryImpl(
 
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
-            val token = UUID.randomUUID().toString()
             try {
                 val warningType = quarantineRepository.getCurrentWarningType()
+                val token = UUID.randomUUID().toString()
                 val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
                 val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
                 val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
@@ -328,19 +328,29 @@ class InfectionMessengerRepositoryImpl(
                 )
 
                 sessionDao.insertFullSession(fullSession)
-                sessionDao.insertScheduledSession(DbScheduledSession(token))
-                exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
+                startDiagnosisKeyMatching(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
             } finally {
-                // schedule calling [ExposureNotificationBroadcastReceiver.onReceive] in 5 min
-                if (configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
-                    DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)
-                }
                 downloadMessagesStateObserver.idle()
             }
         }
+    }
+
+    private suspend fun startDiagnosisKeyMatching(
+        fullBatchParts: List<DbBatchPart>,
+        token: String
+    ): Boolean {
+        val finished = exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
+
+        // schedule calling [ExposureNotificationBroadcastReceiver.onExposureStateUpdated] after timeout
+        if (!finished && configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
+            sessionDao.insertScheduledSession(DbScheduledSession(token))
+            DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)
+        }
+
+        return finished
     }
 
     private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
