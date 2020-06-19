@@ -420,9 +420,10 @@ class QuarantineRepositoryImpl(
         return Observables.combineLatest(
             preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_RED_CONTACT),
             preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_YELLOW_CONTACT)
-        ).map { (lastDateOfRedContact, lastDateOfYellowContact) ->
-            CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
-        }
+        ).debounce(50, TimeUnit.MILLISECONDS)
+            .map { (lastDateOfRedContact, lastDateOfYellowContact) ->
+                CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
+            }
     }
 
     override fun quarantineEndSeen() {
