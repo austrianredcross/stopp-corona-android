@@ -11,11 +11,8 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.Framewo
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
-import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
-import at.roteskreuz.stopcorona.screens.base.epoxy.additionalInformation
+import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
-import at.roteskreuz.stopcorona.screens.base.epoxy.emptySpace
-import at.roteskreuz.stopcorona.screens.base.epoxy.verticalBackgroundModelGroup
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
@@ -32,7 +29,7 @@ import org.threeten.bp.ZonedDateTime
 class DashboardController(
     private val context: Context,
     private val onAutomaticHandshakeInformationClick: () -> Unit,
-    private val onFeelingClick: (disabled: Boolean) -> Unit,
+    private val onStartQuestionnaireClick: (disabled: Boolean) -> Unit,
     private val onReportClick: (disabled: Boolean) -> Unit,
     private val onHealthStatusClick: (data: HealthStatusData) -> Unit,
     private val onRevokeSuspicionClick: (disabled: Boolean) -> Unit,
@@ -94,7 +91,7 @@ class DashboardController(
              * Add single space if own OR contact health state are available AND someone has recovered
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                        contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
+                    contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
                 someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -111,8 +108,8 @@ class DashboardController(
              * Add single space if own or contact health state are available or someone has recovered AND the quarantine should end
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                        contactsHealthStatus != HealthStatusData.NoHealthStatus ||
-                        someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
+                    contactsHealthStatus != HealthStatusData.NoHealthStatus ||
+                    someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
                 showQuarantineEnd
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -162,8 +159,15 @@ class DashboardController(
         automaticHandshakeSwitch(onAutomaticHandshakeEnabled) {
             id("automatic_handshake_switch")
             phase(exposureNotificationPhase)
-            // TODO: 03/06/2020 dusanjencik: Do we need to disable it?
-//            enabled((ownHealthStatus is HealthStatusData.SicknessCertificate).not())
+        }
+
+        if (exposureNotificationPhase is FrameworkRunning) {
+            emptySpace(modelCountBuiltSoFar, 16)
+
+            smallDescription {
+                id("framework_running_description")
+                description(context.getString(R.string.main_automatic_handshake_description_on))
+            }
         }
 
         emptySpace(modelCountBuiltSoFar, 16)
@@ -205,11 +209,11 @@ class DashboardController(
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(16),
-                    ButtonType2Model_ { onFeelingClick(false) }
+                    ButtonType2Model_ { onStartQuestionnaireClick(false) }
                         .id("feel_button")
                         .text(context.string(R.string.main_button_feel_today_button))
                         .enabled(exposureNotificationPhase.isReportingEnabled())
-                        .onDisabledClick { onFeelingClick(true) },
+                        .onDisabledClick { onStartQuestionnaireClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(40)
@@ -448,7 +452,7 @@ class DashboardController(
         }
 
         if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-                    ownHealthStatus is HealthStatusData.SicknessCertificate) &&
+                ownHealthStatus is HealthStatusData.SicknessCertificate) &&
             uploadMissingExposureKeys.isPresent
         ) {
             EmptySpaceModel_()

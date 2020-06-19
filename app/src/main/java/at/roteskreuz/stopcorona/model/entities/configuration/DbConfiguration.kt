@@ -101,9 +101,10 @@ class ConfigurationLanguageConverter {
 }
 
 class ArrayOfIntegerConverter {
-    companion object{
+    companion object {
         private const val SEPARATOR = ","
     }
+
     @TypeConverter
     fun get(listOfIntegers: List<Int>?): String? {
         return listOfIntegers?.joinToString(SEPARATOR)
@@ -114,7 +115,7 @@ class ArrayOfIntegerConverter {
         if (commaSeparatedListOfIntegers == null) {
             return null
         }
-        if (commaSeparatedListOfIntegers.isEmpty()){
+        if (commaSeparatedListOfIntegers.isEmpty()) {
             return emptyList()
         }
 
@@ -192,12 +193,6 @@ data class DbTextContent(
  * This entity is wrapping one question with list of possible answers.
  */
 data class DbQuestionnaireWithAnswers(
-    @Embedded
     var question: DbQuestionnaire,
-    @Relation(
-        entity = DbQuestionnaireAnswer::class,
-        parentColumn = "id",
-        entityColumn = "questionnaireId"
-    )
     var answers: List<DbQuestionnaireAnswer> = listOf()
 )
