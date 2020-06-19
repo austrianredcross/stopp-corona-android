@@ -139,26 +139,28 @@ class InfectionMessengerRepositoryImpl(
                 return
             }
 
-            when (fullSession.session.processingPhase) {
+            processingFinished = when (fullSession.session.processingPhase) {
                 FullBatch -> {
                     Timber.d("Let´s evaluate the fullbatch based on the summary and the current warning state")
-                    processingFinished = processResultsOfFullBatch(configuration, fullSession)
+                    processResultsOfFullBatch(configuration, fullSession)
                 }
                 DailyBatch -> {
                     Timber.d("Let´s evaluate the next daily batch based on the summary and the current warning state ")
-                    processingFinished = processResultsOfNextDailyBatch(configuration, fullSession)
+                    processResultsOfNextDailyBatch(configuration, fullSession)
                 }
             }
         } finally {
             if (processingFinished) {
                 // No further processing has been scheduled.
-                cleanUpSession(fullSession.session)
+                cleanUpSession(fullSession)
             }
         }
     }
 
-    private suspend fun cleanUpSession(session: DbSession) {
-        sessionDao.deleteSession(session)
+    private suspend fun cleanUpSession(fullSession: DbFullSession) {
+        exposureNotificationRepository.removeDiagnosisKeyBatchParts(fullSession.fullBatchParts)
+        exposureNotificationRepository.removeDiagnosisKeyBatchParts(fullSession.dailyBatchesParts)
+        sessionDao.deleteSession(fullSession.session)
     }
 
     private suspend fun processResultsOfNextDailyBatch(
