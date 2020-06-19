@@ -4,6 +4,7 @@ import androidx.room.*
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.EnumTypeConverter
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.DbEntity
+import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -21,7 +22,7 @@ data class DbSession(
     val currentToken: String,
     val warningType: WarningType,
     val processingPhase: ProcessingPhase,
-    val firstYellowDay: ZonedDateTime?,
+    val firstYellowDay: Instant?,
     val created: ZonedDateTime = ZonedDateTime.now()
 ) : DbEntity
 

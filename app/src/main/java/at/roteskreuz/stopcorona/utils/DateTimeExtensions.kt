@@ -4,9 +4,11 @@ import android.content.Context
 import android.text.format.DateUtils
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
+import timber.log.Timber
 import kotlin.math.abs
 
 /**
@@ -157,7 +159,7 @@ fun ZonedDateTime.isInTheFuture(): Boolean {
  * Converts a unix timestamp to a rolling start interval number.
  */
 fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
-    return (withZoneSameInstant(UTC_TIMEZONE).toEpochSecond() / Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds).toInt()
+    return (toInstant().epochSecond / Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds).toInt()
 }
 
 /**
@@ -173,20 +175,72 @@ fun Long.asExposureInterval(): ZonedDateTime {
 /**
  * Returns start of the day of the provided [ZonedDateTime].
  */
-fun ZonedDateTime.startOfTheDay(): ZonedDateTime {
-    return truncatedTo(ChronoUnit.DAYS)
+fun ZonedDateTime.startOfTheDay() = truncatedTo(ChronoUnit.DAYS)
+
+/**
+ * Returns start of the UTC day of the provided [ZonedDateTime].
+ */
+fun ZonedDateTime.startOfTheUtcDay(): ZonedDateTime {
+    val startOfUtcDay = toInstant().truncatedTo(ChronoUnit.DAYS)
+    return ZonedDateTime.ofInstant(startOfUtcDay, zone)
 }
 
 /**
  * Returns end of the day of the provided [ZonedDateTime].
  */
 fun ZonedDateTime.endOfTheDay(): ZonedDateTime {
-    return withHour(23).withMinute(59).withSecond(59)
+    return startOfTheDay().plusDays(1).minusNanos(1)
 }
 
 /**
- * Evaluates if two dates are on the same calendar day
+ * Returns end of the UTC day of the provided [ZonedDateTime].
+ */
+fun ZonedDateTime.endOfTheUtcDay(): ZonedDateTime {
+    val endOfTheUtcDay = toInstant().truncatedTo(ChronoUnit.DAYS).plusDays(1).minusNanos(1)
+    return ZonedDateTime.ofInstant(endOfTheUtcDay, zone)
+}
+
+/**
+ * Returns start of the UTC day of the provided [Instant].
+ */
+fun Instant.startOfTheUtcDay() = truncatedTo(ChronoUnit.DAYS)
+
+/**
+ * Returns end of the UTC day of the provided [Instant].
+ */
+fun Instant.endOfTheUtcDay(): Instant {
+    return truncatedTo(ChronoUnit.DAYS).plusDays(1).minusNanos(1)
+}
+
+/**
+ * Evaluates if two dates are on the same calendar day.
+ *
+ * Both dates must be in the same time zone! Otherwise it is not clear when the day starts.
  */
 fun ZonedDateTime.areOnTheSameDay(otherDateTime: ZonedDateTime): Boolean {
-    return toLocalDate() == otherDateTime.toLocalDate()
+    if (zone != otherDateTime.zone) {
+        Timber.e(SilentError(IllegalArgumentException("areOnTheSameDay called with different time zones. This does not make sense")))
+    }
+    return startOfTheDay() == otherDateTime.startOfTheDay()
 }
+
+/**
+ * Evaluates if two dates are on the same calendar day in UTC
+ */
+fun Instant.areOnTheSameUtcDay(otherDateTime: Instant): Boolean {
+    return startOfTheUtcDay() == otherDateTime.startOfTheUtcDay()
+}
+
+/**
+ * Add days to [Instant]
+ *
+ * Provides method known from ZonedDateTime
+ */
+fun Instant.plusDays(days: Long) = plus(days, ChronoUnit.DAYS)
+
+/**
+ * Subtracts days from [Instant]
+ *
+ * Provides method known from ZonedDateTime
+ */
+fun Instant.minusDays(days: Long) = minus(days, ChronoUnit.DAYS)

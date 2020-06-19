@@ -13,7 +13,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
-import at.roteskreuz.stopcorona.utils.areOnTheSameDay
+import at.roteskreuz.stopcorona.utils.areOnTheSameUtcDay
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
@@ -21,6 +21,8 @@ import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -86,7 +88,7 @@ interface QuarantineRepository {
     /**
      * Some contact has reported [warningType].
      */
-    fun receivedWarning(warningType: WarningType, timeOfContact: ZonedDateTime = ZonedDateTime.now())
+    fun receivedWarning(warningType: WarningType, timeOfContact: Instant = Instant.now())
 
     /**
      * User completed the questionnaire and has to monitor his symptoms
@@ -201,13 +203,13 @@ class QuarantineRepositoryImpl(
     private var dateOfLastSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
 
-    private var dateOfLastRedContact: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+    private var dateOfLastRedContact: Instant?
+        by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_RED_CONTACT
         )
 
-    private var dateOfLastYellowContact: ZonedDateTime?
-        by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+    private var dateOfLastYellowContact: Instant?
+        by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_YELLOW_CONTACT
         )
 
@@ -232,8 +234,8 @@ class QuarantineRepositoryImpl(
         configurationRepository.observeConfiguration(),
         preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION),
         preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE),
-        preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_RED_CONTACT),
-        preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_YELLOW_CONTACT),
+        preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT),
+        preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT),
         preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_MONITORING)
     ) { configuration,
         medicalConfirmationFirstDateTime,
@@ -290,9 +292,13 @@ class QuarantineRepositoryImpl(
                     .safeMap("selfDiagnosedQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(7L))
 
                 // Quarantine end in contact time + 14 days
-                val redWarningQuarantineUntil = redContactLastDateTime?.plusHours(redWarningQuarantinedHours)
+                val redWarningQuarantineUntil = redContactLastDateTime?.let {
+                    ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(redWarningQuarantinedHours)
+                }
                 // Quarantine end in contact time + 7 days
-                val yellowWarningQuarantineUntil = yellowContactLastDateTime?.plusHours(yellowWarningQuarantinedHours)
+                val yellowWarningQuarantineUntil = yellowContactLastDateTime?.let {
+                    ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(yellowWarningQuarantinedHours)
+                }
                 // Quarantine end in diagnose time + 7 days
                 val selfDiagnoseQuarantineUntil = selfDiagnoseLastDateTime?.plusHours(selfDiagnoseQuarantinedHours)
 
@@ -384,23 +390,23 @@ class QuarantineRepositoryImpl(
         dateOfLastSelfMonitoringInstruction = null
     }
 
-    override fun receivedWarning(warningType: WarningType, timeOfContact: ZonedDateTime) {
+    override fun receivedWarning(warningType: WarningType, timeOfContact: Instant) {
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (warningType) {
             WarningType.YELLOW -> {
-                if (dateOfLastYellowContact == null || dateOfLastYellowContact!!.areOnTheSameDay(timeOfContact).not()) {
+                if (dateOfLastYellowContact == null || dateOfLastYellowContact!!.areOnTheSameUtcDay(timeOfContact).not()) {
                     dateOfLastYellowContact = timeOfContact
                 } else {
                     Timber.d("no update of the yellow quarantine neccesary, we stay at " +
-                        "$dateOfLastYellowContact. $timeOfContact can be discarted")
+                        "$dateOfLastYellowContact. Update to $timeOfContact can be discarded")
                 }
             }
             WarningType.RED -> {
-                if (dateOfLastRedContact == null || dateOfLastRedContact!!.areOnTheSameDay(timeOfContact)) {
+                if (dateOfLastRedContact == null || dateOfLastRedContact!!.areOnTheSameUtcDay(timeOfContact).not()) {
                     dateOfLastRedContact = timeOfContact
                 } else {
                     Timber.d("no update of the red quarantine neccesary, we stay at " +
-                        "$dateOfLastYellowContact. $timeOfContact can be discarted")
+                        "$dateOfLastRedContact. Update to $timeOfContact can be discarded")
                 }
             }
         }
@@ -418,8 +424,8 @@ class QuarantineRepositoryImpl(
 
     override fun observeCombinedWarningType(): Observable<CombinedWarningType> {
         return Observables.combineLatest(
-            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_RED_CONTACT),
-            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_YELLOW_CONTACT)
+            preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT),
+            preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT)
         ).map { (lastDateOfRedContact, lastDateOfYellowContact) ->
             CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
         }
@@ -491,8 +497,8 @@ private data class QuarantinePrerequisitesHolder(
     val configuration: DbConfiguration,
     val medicalConfirmationFirstDateTime: ZonedDateTime?,
     val selfDiagnoseLastDateTime: ZonedDateTime?,
-    val redContactLastDateTime: ZonedDateTime?,
-    val yellowContactLastDateTime: ZonedDateTime?,
+    val redContactLastDateTime: Instant?,
+    val yellowContactLastDateTime: Instant?,
     val selfMonitoringLastDateTime: ZonedDateTime?
 )
 
