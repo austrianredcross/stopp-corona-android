@@ -35,7 +35,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = false
 )
 @TypeConverters(
@@ -135,10 +135,15 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(12, 13) {
                 // add new tables
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `received_infection_message` (`uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"
+                    """CREATE TABLE IF NOT EXISTS `received_infection_message` (
+                        `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
+|                       `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"""
                 )
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `sent_infection_message` (`uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, `timeStamp` INTEGER NOT NULL, `publicKey` BLOB NOT NULL, PRIMARY KEY(`uuid`))"
+                    """CREATE TABLE IF NOT EXISTS `sent_infection_message` (
+                        `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
+                        `timeStamp` INTEGER NOT NULL, 
+                        `publicKey` BLOB NOT NULL, PRIMARY KEY(`uuid`))"""
                 )
                 // copy data from old table to new tables
                 execSQL(
@@ -168,14 +173,21 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(14, 15) {
                 // create new temp table
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (`answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionnaireId` INTEGER NOT NULL, `text` TEXT, `decision` TEXT, FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )"
+                    """
+                    CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (
+                    `answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionnaireId` INTEGER NOT NULL, 
+                    `text` TEXT, `decision` TEXT, FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )
+                    """
                 )
                 execSQL(
                     "CREATE INDEX IF NOT EXISTS `index_configuration_questionnaire_answer_temp_questionnaireId` ON `configuration_questionnaire_answer_temp` (`questionnaireId`)"
                 )
                 // copy data from old table to temp
                 execSQL(
-                    "INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`"
+                    """
+                    INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) 
+                    SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`
+                    """
                 )
                 // delete old table
                 execSQL("DROP TABLE `configuration_questionnaire_answer`")
@@ -211,7 +223,11 @@ abstract class DefaultDatabase : RoomDatabase() {
              */
             migration(18, 19) {
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (`rollingStartIntervalNumber` INTEGER NOT NULL, `password` TEXT NOT NULL, `messageType` TEXT NOT NULL, PRIMARY KEY(`rollingStartIntervalNumber`))"
+                    """CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (
+                        `rollingStartIntervalNumber` INTEGER NOT NULL, 
+                        `password` TEXT NOT NULL, 
+                        `messageType` TEXT NOT NULL, PRIMARY KEY(`rollingStartIntervalNumber`))
+                        """
                 )
             },
             /**
@@ -225,6 +241,39 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `daysSinceLastExposureLevelValues` String")
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `durationLevelValues` String")
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
+            },
+            /**
+             * adding the exposure configuration parameters to the database
+             */
+            migration(20, 21) {
+                execSQL(
+                    "CREATE TABLE IF NOT EXISTS `session` (`token` TEXT NOT NULL, `warningType` TEXT NOT NULL, PRIMARY KEY(`token`))"
+                )
+                execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `full_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE )
+                        """
+                )
+                execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_full_batch_token` ON `full_batch` (`token`)"
+                )
+                execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `daily_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE )
+                        """
+                )
+                execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_daily_batch_token` ON `daily_batch` (`token`)"
+                )
             }
         )
     }

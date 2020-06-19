@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.di
 
+import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
@@ -57,7 +58,8 @@ val viewModelModule = module {
             exposureNotificationRepository = get(),
             exposureNotificationClient = get(),
             infectionMessengerRepository = get(),
-            filesRepository = get()
+            filesRepository = get(),
+            configurationRepository = get()
         )
     }
 
@@ -67,7 +69,6 @@ val viewModelModule = module {
             dashboardRepository = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get(),
-            configurationRepository = get(),
             databaseCleanupManager = get(),
             changelogManager = get(),
             exposureNotificationManager = get()
@@ -77,7 +78,6 @@ val viewModelModule = module {
     viewModel {
         InfectionInfoViewModel(
             appDispatchers = get(),
-            infectionMessengerRepository = get(),
             quarantineRepository = get()
         )
     }
@@ -97,9 +97,10 @@ val viewModelModule = module {
         )
     }
 
-    viewModel {
+    viewModel { (configurationLanguage: ConfigurationLanguage) ->
         QuestionnaireViewModel(
             appDispatchers = get(),
+            configurationLanguage = configurationLanguage,
             configurationRepository = get()
         )
     }

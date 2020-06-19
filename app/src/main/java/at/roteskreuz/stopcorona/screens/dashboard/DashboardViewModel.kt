@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
-import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.managers.ChangelogManager
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
@@ -11,6 +10,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 
@@ -22,16 +22,10 @@ class DashboardViewModel(
     private val dashboardRepository: DashboardRepository,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
-    private val configurationRepository: ConfigurationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager,
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager
 ) : ScopedViewModel(appDispatchers) {
-
-    companion object {
-        const val DEFAULT_RED_WARNING_QUARANTINE = 336 // hours
-        const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
-    }
 
     private var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
@@ -66,15 +60,16 @@ class DashboardViewModel(
     }
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
-        return quarantineRepository.observeQuarantineState()
-            .map { quarantineStatus ->
-                val warningType = quarantineRepository.getCurrentWarningType()
-                if (warningType != WarningType.GREEN) {
-                    HealthStatusData.ContactsSicknessInfo(quarantineStatus, warningType)
-                } else {
-                    HealthStatusData.NoHealthStatus
-                }
+        return Observables.combineLatest(
+            quarantineRepository.observeQuarantineState(),
+            quarantineRepository.observeCombinedWarningType()
+        ).map { (quarantineStatus, combinedWarningType) ->
+            if (combinedWarningType.redContactsDetected || combinedWarningType.yellowContactsDetected) {
+                HealthStatusData.ContactsSicknessInfo(quarantineStatus, combinedWarningType)
+            } else {
+                HealthStatusData.NoHealthStatus
             }
+        }
     }
 
     fun observeOwnHealthStatus(): Observable<HealthStatusData> {
@@ -151,7 +146,13 @@ class DashboardViewModel(
         exposureNotificationManager.refreshPrerequisitesErrorStatement(ignoreErrors)
     }
 
-    fun unseenChangelogForVersionAvailable(version: String) = changelogManager.unseenChangelogForVersionAvailable(version)
+    fun unseenChangelogForVersionAvailable(version: String): Boolean {
+        return changelogManager.unseenChangelogForVersionAvailable(version)
+    }
+
+    fun observeExposureSDKReadyToStart(): Observable<Boolean> {
+        return changelogManager.observeExposureSDKReadyToStart().distinctUntilChanged()
+    }
 }
 
 /**
@@ -181,7 +182,7 @@ sealed class HealthStatusData {
      */
     class ContactsSicknessInfo(
         val quarantineStatus: QuarantineStatus,
-        val warningType: WarningType
+        val warningType: CombinedWarningType
     ) : HealthStatusData()
 
     /**

@@ -13,6 +13,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
+import at.roteskreuz.stopcorona.utils.areOnTheSameDay
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
@@ -148,6 +149,12 @@ interface QuarantineRepository {
      * Mark the upload of the missing exposure keys as not done.
      */
     fun markMissingExposureKeysAsNotUploaded()
+
+    /**
+     * Observe a combined warning type, this warning type provides information about
+     * the red and yellow contacts.
+     */
+    fun observeCombinedWarningType(): Observable<CombinedWarningType>
 }
 
 class QuarantineRepositoryImpl(
@@ -380,8 +387,22 @@ class QuarantineRepositoryImpl(
     override fun receivedWarning(warningType: WarningType, timeOfContact: ZonedDateTime) {
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (warningType) {
-            WarningType.YELLOW -> dateOfLastYellowContact = timeOfContact
-            WarningType.RED -> dateOfLastRedContact = timeOfContact
+            WarningType.YELLOW -> {
+                if (dateOfLastYellowContact == null || dateOfLastYellowContact!!.areOnTheSameDay(timeOfContact).not()) {
+                    dateOfLastYellowContact = timeOfContact
+                } else {
+                    Timber.d("no update of the yellow quarantine neccesary, we stay at " +
+                        "$dateOfLastYellowContact. $timeOfContact can be discarted")
+                }
+            }
+            WarningType.RED -> {
+                if (dateOfLastRedContact == null || dateOfLastRedContact!!.areOnTheSameDay(timeOfContact)) {
+                    dateOfLastRedContact = timeOfContact
+                } else {
+                    Timber.d("no update of the red quarantine neccesary, we stay at " +
+                        "$dateOfLastYellowContact. $timeOfContact can be discarted")
+                }
+            }
         }
     }
 
@@ -393,6 +414,15 @@ class QuarantineRepositoryImpl(
 
     override fun setShowQuarantineEnd() {
         showQuarantineEnd = true
+    }
+
+    override fun observeCombinedWarningType(): Observable<CombinedWarningType> {
+        return Observables.combineLatest(
+            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_RED_CONTACT),
+            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_YELLOW_CONTACT)
+        ).map { (lastDateOfRedContact, lastDateOfYellowContact) ->
+            CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
+        }
     }
 
     override fun quarantineEndSeen() {
@@ -499,3 +529,8 @@ sealed class QuarantineStatus {
  * the associated diagnostic.
  */
 data class UploadMissingExposureKeys(val date: ZonedDateTime, val messageType: MessageType)
+
+/**
+ * Describes a warning type that provides information about the red and yellow contacts.
+ */
+data class CombinedWarningType(val yellowContactsDetected: Boolean, val redContactsDetected: Boolean)

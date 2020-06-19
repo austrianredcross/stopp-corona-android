@@ -26,6 +26,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProp
 import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.skeleton.core.utils.stringSharedPreferencesProperty
+import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
@@ -138,7 +139,6 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun processKeysBasedOnToken(token: String) {
-        //we´re processing the batches
         if (lastScheduledToken != token) {
             Timber.e(IllegalArgumentException("processing of token ${token} when we expect to process ${lastScheduledToken}"))
         }
@@ -146,30 +146,34 @@ class InfectionMessengerRepositoryImpl(
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
 
-        //TODO: delete the old diagnosis key files as they have been processed
         val fullSession: DbFullSession = sessionDao.getFullSession(token)
-        val warningType = WarningType.valueOf(fullSession.session.warningType)
+
+        //TODO: CTAA-1664 cleanup the files and sessionDao (delete by token)
+
+        val currentWarningType = fullSession.session.warningType
 
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
-        when (warningType) {
+        when (currentWarningType) {
             WarningType.YELLOW, WarningType.RED -> {
-                //TODO finish this decision branch
-                if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
-                    val summary = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
-                    //go through the days and check if the day is the first RED/YELLOW day
-                    // TODO: go through the summary and check if the day is the first RED/YELLOW day
-                } else {
-                    when (warningType) {
+                if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
+                    when (currentWarningType) {
                         WarningType.RED -> quarantineRepository.revokeLastRedContactDate()
                         WarningType.YELLOW -> quarantineRepository.revokeLastYellowContactDate()
                     }
-                    quarantineRepository.setShowQuarantineEnd()
+                } else {
+                    val exposureInformations = exposureNotificationRepository.getExposureSummaryWithPotentiallyInformingTheUser(token)
+
+                    val dates = exposureInformations.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
+
+                    dates.firstRedDay?.let { quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay) }
+                    dates.firstYellowDay?.let { quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay) }
                 }
             }
             WarningType.GREEN -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
                     //we must now identify day by day if we are YELLOW or RED
+                    //process all 7 days!!! find both and yellow red quarantine day
                     //val listOfDaysWithDownloadedFilesSortedByServer = apiInteractor.fetchDailyBatchDiagnosisKeys()
                     //process the batches and do one of these:
                     //TODO find time of contact
@@ -202,7 +206,7 @@ class InfectionMessengerRepositoryImpl(
                 val fullSession = DbFullSession(
                     session = DbSession(
                         token = contextToken,
-                        warningType = warningType.name
+                        warningType = warningType
                     ),
                     fullBatchParts = fullBatchParts,
                     dailyBatchesParts = dailyBatchesParts
@@ -269,6 +273,8 @@ class InfectionMessengerRepositoryImpl(
         ExposureMatchingWorker.enqueueNextExposureMatching(workManager)
     }
 }
+
+
 
 /**
  * Describes a temporary exposure key, it's associated random password and messageType.

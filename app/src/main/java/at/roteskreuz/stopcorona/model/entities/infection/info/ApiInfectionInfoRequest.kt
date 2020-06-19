@@ -8,15 +8,29 @@ import com.squareup.moshi.ToJson
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
-enum class WarningType {
+/**
+ * transmissionRiskLevel in this enum are as per Android-Exposure-Notification-API-documentation-v1.3.2 Page 7:
+ * a ​transmissionRiskLevel​, which specifies the level of risk of cross-exposure during the interaction between devices.
+   The following are suggested uses. Your app should set this value before uploading each key to the server:
+        ● 0: Unused
+        ● 1: Confirmed test - Low transmission risk level
+        ● 2: Confirmed test - Standard transmission risk level
+        ● 3: Confirmed test - High transmission risk level
+        ● 4: Confirmed clinical diagnosis
+        ● 5: Self report
+        ● 6: Negative case
+        ● 7: Recursive case
+        ● 8: Unused/custom
+ */
+enum class WarningType(val transmissionRiskLevel: Int) {
     @field:Json(name = "yellow-warning")
-    YELLOW,
+    YELLOW(5),
 
     @field:Json(name = "red-warning")
-    RED,
+    RED(2),
 
     @field:Json(name = "green-warning")
-    GREEN
+    GREEN(6)
 }
 
 class WarningTypeConverter : EnumTypeConverter<WarningType>({ enumValueOf(it) })

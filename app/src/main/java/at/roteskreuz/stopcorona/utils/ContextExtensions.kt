@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.PowerManager
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
@@ -21,7 +20,10 @@ import androidx.core.graphics.drawable.DrawableCompat
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.constants.Constants.Misc.SPACE
+import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
+import timber.log.Timber
 
 /**
  * Extensions for context class.
@@ -210,9 +212,16 @@ private fun getSpace(insertSpace: Boolean): String {
 }
 
 /**
- * Check if battery optimisations are ignored = doze mode won't kill our services.
+ * Get the current language and convert it to configuration language.
+ * Returns EN as fallback.
  */
-fun Context.isBatteryOptimizationIgnored(): Boolean {
-    val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-    return powerManager.isIgnoringBatteryOptimizations(packageName)
+fun Context.getCurrentConfigurationLanguage(): ConfigurationLanguage {
+    return getString(R.string.current_language).let { currentLanguage ->
+        ConfigurationLanguage.parse(currentLanguage).let {
+            if (it == ConfigurationLanguage.UNDEFINED) {
+                Timber.e(SilentError("Undefined language for questionnaire: $currentLanguage"))
+                ConfigurationLanguage.EN // fallback when undefined
+            } else it
+        }
+    }
 }
