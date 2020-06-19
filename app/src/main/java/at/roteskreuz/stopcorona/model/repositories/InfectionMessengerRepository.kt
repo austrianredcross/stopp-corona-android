@@ -11,12 +11,9 @@ import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiDiagno
 import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullSession
-import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
+import at.roteskreuz.stopcorona.model.workers.DelayedExposureBroadcastReceiverCallWorker
 import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -95,11 +92,9 @@ class InfectionMessengerRepositoryImpl(
     private val apiInteractor: ApiInteractor,
     private val sessionDao: SessionDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
-    private val notificationsRepository: NotificationsRepository,
     private val preferences: SharedPreferences,
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
-    private val databaseCleanupManager: DatabaseCleanupManager,
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val configurationRepository: ConfigurationRepository
 ) : InfectionMessengerRepository,
@@ -145,6 +140,15 @@ class InfectionMessengerRepositoryImpl(
         val configuration =
             configurationRepository.getConfiguration()
                 ?: throw IllegalStateException("we have no configuration values here, it doesn´t make sense to continue")
+
+        if (sessionDao.isSessionScheduled(token)) {
+            sessionDao.deleteScheduledSession(token)
+        } else {
+            if (configuration.scheduledProcessingIn5Min != false) {
+                Timber.w("Session $token was already processed")
+                return
+            }
+        }
 
         val fullSession: DbFullSession = sessionDao.getFullSession(token)
 
@@ -196,9 +200,9 @@ class InfectionMessengerRepositoryImpl(
 
         downloadMessagesStateObserver.loading()
         withContext(coroutineContext) {
+            val contextToken = UUID.randomUUID().toString()
             try {
                 val warningType = quarantineRepository.getCurrentWarningType()
-                val contextToken = UUID.randomUUID().toString()
                 val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
                 val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
                 val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
@@ -219,6 +223,11 @@ class InfectionMessengerRepositoryImpl(
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
             } finally {
+                sessionDao.insertScheduledSession(DbScheduledSession(contextToken))
+                // schedule calling [ExposureNotificationBroadcastReceiver.onReceive] in 5 min
+                if (configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
+                    DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, contextToken)
+                }
                 downloadMessagesStateObserver.idle()
             }
         }
@@ -273,8 +282,6 @@ class InfectionMessengerRepositoryImpl(
         ExposureMatchingWorker.enqueueNextExposureMatching(workManager)
     }
 }
-
-
 
 /**
  * Describes a temporary exposure key, it's associated random password and messageType.
