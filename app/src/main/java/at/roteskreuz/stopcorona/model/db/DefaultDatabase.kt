@@ -6,15 +6,13 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
+import at.roteskreuz.stopcorona.model.entities.exposure.MessageTypeConverter
+import at.roteskreuz.stopcorona.model.entities.exposure.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConverter
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
-import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbSession
@@ -33,21 +31,20 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbDailyBatchPart::class,
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
-        DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 21,
+    version = 22,
     exportSchema = true
 )
 @TypeConverters(
     DateTimeConverter::class,
     ConfigurationLanguageConverter::class,
-    MessageTypeConverter::class,
     WarningTypeConverter::class,
     ProcessingPhaseConverter::class,
     UUIDConverter::class,
     DecisionConverter::class,
-    ArrayOfIntegerConverter::class
+    ArrayOfIntegerConverter::class,
+    MessageTypeConverter::class
 )
 abstract class DefaultDatabase : RoomDatabase() {
 
@@ -139,7 +136,7 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL(
                     """CREATE TABLE IF NOT EXISTS `received_infection_message` (
                        `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
-|                       `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"""
+                       `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"""
                 )
                 execSQL(
                     """CREATE TABLE IF NOT EXISTS `sent_infection_message` (
@@ -287,6 +284,13 @@ abstract class DefaultDatabase : RoomDatabase() {
                     CREATE INDEX IF NOT EXISTS `index_daily_batch_currentToken` ON `daily_batch` (`currentToken`)
                     """
                 )
+            },
+            /**
+             * Deleted received_infection_message table.
+             */
+            migration(21, 22) {
+                // delete old table
+                execSQL("DROP TABLE `received_infection_message`")
             }
         )
     }
@@ -294,8 +298,6 @@ abstract class DefaultDatabase : RoomDatabase() {
     abstract fun configurationDao(): ConfigurationDao
 
     abstract fun sessionDao(): SessionDao
-
-    abstract fun infectionMessageDao(): InfectionMessageDao
 
     abstract fun temporaryExposureKeysDao(): TemporaryExposureKeysDao
 }

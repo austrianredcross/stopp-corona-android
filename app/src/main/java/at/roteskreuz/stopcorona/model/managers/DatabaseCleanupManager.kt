@@ -1,9 +1,7 @@
 package at.roteskreuz.stopcorona.model.managers
 
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.startOfTheDay
@@ -14,7 +12,6 @@ import org.koin.standalone.KoinComponent
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
-import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -22,11 +19,6 @@ import kotlin.coroutines.CoroutineContext
  * in the database.
  */
 interface DatabaseCleanupManager {
-
-    /**
-     * Remove incoming green messages immediately.
-     */
-    suspend fun removeReceivedGreenMessages()
 
     /**
      * Removes all outgoing yellow temporary exposure keys when the user revokes probably sick status.
@@ -37,12 +29,10 @@ interface DatabaseCleanupManager {
 class DatabaseCleanupManagerImpl(
     private val appDispatchers: AppDispatchers,
     private val configurationRepository: ConfigurationRepository,
-    private val infectionMessageDao: InfectionMessageDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao
 ) : DatabaseCleanupManager, CoroutineScope, KoinComponent {
 
     companion object {
-        private const val THRESHOLD_REMOVE_INCOMING_GREEN_MESSAGES = 3L //in days
         private val UNIX_TIME_START: ZonedDateTime =
             ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault())
     }
@@ -54,13 +44,6 @@ class DatabaseCleanupManagerImpl(
         cleanupInfectionMessages()
     }
 
-    override suspend fun removeReceivedGreenMessages() {
-        infectionMessageDao.removeReceivedInfectionMessagesOlderThan(
-            MessageType.Revoke.Suspicion,
-            ZonedDateTime.now()
-        )
-    }
-
     override suspend fun removeSentYellowTemporaryExposureKeys() {
         temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
             MessageType.InfectionLevel.Yellow,
@@ -69,46 +52,7 @@ class DatabaseCleanupManagerImpl(
     }
 
     private fun cleanupInfectionMessages() {
-        cleanupReceivedInfectionMessages()
         cleanupSentTemporaryExposureKeys()
-    }
-
-    private fun cleanupReceivedInfectionMessages() {
-        launch {
-            val configuration = configurationRepository.getConfiguration() ?: run {
-                Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
-                return@launch
-            }
-
-            val redWarningQuarantine = configuration.redWarningQuarantine?.toLong()
-            val thresholdRedMessages = if (redWarningQuarantine != null) {
-                ZonedDateTime.now().minusHours(redWarningQuarantine)
-            } else {
-                UNIX_TIME_START
-            }
-            infectionMessageDao.removeReceivedInfectionMessagesOlderThan(
-                MessageType.InfectionLevel.Red,
-                thresholdRedMessages
-            )
-
-            val yellowWarningQuarantine = configuration.yellowWarningQuarantine?.toLong()
-            val thresholdYellowMessages = if (yellowWarningQuarantine != null) {
-                ZonedDateTime.now().minusHours(yellowWarningQuarantine)
-            } else {
-                UNIX_TIME_START
-            }
-            infectionMessageDao.removeReceivedInfectionMessagesOlderThan(
-                MessageType.InfectionLevel.Yellow,
-                thresholdYellowMessages
-            )
-
-            val thresholdGreenMessages =
-                ZonedDateTime.now().minusDays(THRESHOLD_REMOVE_INCOMING_GREEN_MESSAGES)
-            infectionMessageDao.removeReceivedInfectionMessagesOlderThan(
-                MessageType.Revoke.Suspicion,
-                thresholdGreenMessages
-            )
-        }
     }
 
     private fun cleanupSentTemporaryExposureKeys() {

@@ -15,14 +15,11 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
-import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
-import at.roteskreuz.stopcorona.skeleton.core.utils.nullableLongSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
 import at.roteskreuz.stopcorona.utils.endOfTheDay
 import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
@@ -38,11 +35,6 @@ import kotlin.coroutines.CoroutineContext
  * Repository for managing infection messages.
  */
 interface InfectionMessengerRepository {
-
-    /**
-     * Enqueue download and processing infection messages.
-     */
-    fun enqueueDownloadingNewMessages()
 
     /**
      * Store to DB the sent temporary exposure keys.
@@ -94,18 +86,15 @@ class InfectionMessengerRepositoryImpl(
     private val apiInteractor: ApiInteractor,
     private val sessionDao: SessionDao,
     private val temporaryExposureKeysDao: TemporaryExposureKeysDao,
-    private val notificationsRepository: NotificationsRepository,
     private val preferences: SharedPreferences,
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
-    private val databaseCleanupManager: DatabaseCleanupManager,
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val configurationRepository: ConfigurationRepository
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
     companion object {
-        private const val PREF_LAST_MESSAGE_ID = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "last_message_id"
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
     }
 
@@ -114,21 +103,10 @@ class InfectionMessengerRepositoryImpl(
     override val coroutineContext: CoroutineContext
         get() = appDispatchers.Default
 
-    /**
-     * Stores and provides last and biggest infection message id.
-     */
-    private var lastMessageId: Long? by preferences.nullableLongSharedPreferencesProperty(
-        PREF_LAST_MESSAGE_ID
-    )
-
     private var someoneHasRecovered: Boolean by preferences.booleanSharedPreferencesProperty(
         PREF_SOMEONE_HAS_RECOVERED,
         false
     )
-
-    override fun enqueueDownloadingNewMessages() {
-        DownloadInfectionMessagesWorker.enqueueDownloadInfection(workManager)
-    }
 
     override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>) {
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)

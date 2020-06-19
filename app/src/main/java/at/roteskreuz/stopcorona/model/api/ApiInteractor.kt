@@ -7,7 +7,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRe
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
-import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
@@ -31,17 +30,6 @@ interface ApiInteractor {
      * @throws [ApiError]
      */
     suspend fun getConfiguration(): ApiConfiguration
-
-    /**
-     * Get infection messages.
-     * Returns the last if [fromId] is null.
-     * Otherwise it returns one page of 100 messages from [fromId] (not included).
-     *
-     * Messages are filtered by our supplied [addressPrefix]
-     *
-     * @throws [ApiError]
-     */
-    suspend fun getInfectionMessages(addressPrefix: String, fromId: Long? = null): ApiInfectionMessages
 
     /**
      * Request the server to send a TAN via text message
@@ -119,15 +107,6 @@ class ApiInteractorImpl(
             dataPrivacyRepository.assertDataPrivacyAccepted()
             checkGeneralErrors {
                 apiDescription.configuration().configuration
-            }
-        }
-    }
-
-    override suspend fun getInfectionMessages(addressPrefix: String, fromId: Long?): ApiInfectionMessages {
-        return withContext(appDispatchers.IO) {
-            dataPrivacyRepository.assertDataPrivacyAccepted()
-            checkGeneralErrors {
-                apiDescription.infectionMessages(addressPrefix, fromId)
             }
         }
     }

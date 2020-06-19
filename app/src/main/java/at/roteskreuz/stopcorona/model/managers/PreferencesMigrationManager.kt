@@ -22,7 +22,7 @@ class PreferencesMigrationManagerImpl(
 ) : PreferencesMigrationManager {
 
     companion object {
-        private const val VERSION = 3
+        private const val VERSION = 4
         private const val PREF_CURRENT_VERSION = Constants.Prefs.PREFERENCES_MIGRATION_MANAGER_PREFIX + "current_version"
     }
 
@@ -57,6 +57,9 @@ class PreferencesMigrationManagerImpl(
                 val serviceEnabled = getBoolean("pref_corona_detection_repository_service_enabled_on_first_start", false)
                 removeAndApply("pref_corona_detection_repository_service_enabled_on_first_start")
                 putAndApply("pref_dashboard_service_exposure_framework_enabled_on_first_start", serviceEnabled)
+            },
+            migration(3, 4) {
+                removeAndApply("pref_infection_messenger_repository_last_message_id")
             }
         )
 
