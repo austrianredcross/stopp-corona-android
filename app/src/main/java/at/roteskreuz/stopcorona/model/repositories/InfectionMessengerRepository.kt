@@ -142,8 +142,10 @@ class InfectionMessengerRepositoryImpl(
             }
 
             if (sessionDao.deleteScheduledSession(token) == 0 && configuration.scheduledProcessingIn5Min) {
-                Timber.d("Proceessing of $token was already triggered")
+                Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
                 return
+            } else {
+                Timber.d("ENStatusUpdates: Processing token $token")
             }
 
             processingFinished = when (fullSession.session.processingPhase) {
@@ -342,10 +344,12 @@ class InfectionMessengerRepositoryImpl(
         fullBatchParts: List<DbBatchPart>,
         token: String
     ): Boolean {
+        Timber.d("ENStatusUpdates: Providing diagnosis batch. Token: $token")
         val finished = exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
 
         // schedule calling [ExposureNotificationBroadcastReceiver.onExposureStateUpdated] after timeout
         if (!finished && configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
+            Timber.d("ENStatusUpdates: Scheduling a timeout for the exposure status update broadcast. Token: $token")
             sessionDao.insertScheduledSession(DbScheduledSession(token))
             DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)
         }
