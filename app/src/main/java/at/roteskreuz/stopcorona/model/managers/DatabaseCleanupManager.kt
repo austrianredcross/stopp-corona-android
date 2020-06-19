@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.model.managers
 
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.startOfTheDay
@@ -12,6 +13,7 @@ import org.koin.standalone.KoinComponent
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 /**
