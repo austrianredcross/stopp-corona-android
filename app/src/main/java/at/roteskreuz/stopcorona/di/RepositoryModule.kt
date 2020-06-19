@@ -46,11 +46,9 @@ val repositoryModule = module {
             apiInteractor = get(),
             sessionDao = get(),
             temporaryExposureKeysDao = get(),
-            notificationsRepository = get(),
             preferences = get(),
             quarantineRepository = get(),
             workManager = get(),
-            databaseCleanupManager = get(),
             exposureNotificationRepository = get(),
             configurationRepository = get()
         )
