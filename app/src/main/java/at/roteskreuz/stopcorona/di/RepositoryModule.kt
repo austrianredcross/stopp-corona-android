@@ -18,13 +18,6 @@ val repositoryModule = module {
         )
     }
 
-    @Suppress("DEPRECATION")
-    single<CryptoRepository> {
-        CryptoRepositoryImpl(
-            keyPairGeneratorSpecBuilder = get()
-        )
-    }
-
     single<OnboardingRepository> {
         OnboardingRepositoryImpl(
             preferences = get()
@@ -51,14 +44,13 @@ val repositoryModule = module {
         InfectionMessengerRepositoryImpl(
             appDispatchers = get(),
             apiInteractor = get(),
-            infectionMessageDao = get(),
+            sessionDao = get(),
             temporaryExposureKeysDao = get(),
-            cryptoRepository = get(),
-            notificationsRepository = get(),
             preferences = get(),
             quarantineRepository = get(),
             workManager = get(),
-            databaseCleanupManager = get()
+            exposureNotificationRepository = get(),
+            configurationRepository = get()
         )
     }
 
@@ -94,7 +86,9 @@ val repositoryModule = module {
         ExposureNotificationRepositoryImpl(
             appDispatchers = get(),
             bluetoothManager = get(),
-            exposureNotificationClient = get()
+            configurationRepository = get(),
+            exposureNotificationClient = get(),
+            filesRepository = get()
         )
     }
 

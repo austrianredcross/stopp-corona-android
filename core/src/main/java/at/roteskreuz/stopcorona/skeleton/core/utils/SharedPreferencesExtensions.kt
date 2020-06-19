@@ -1,11 +1,13 @@
 package at.roteskreuz.stopcorona.skeleton.core.utils
 
 import android.content.SharedPreferences
+import at.roteskreuz.stopcorona.skeleton.core.model.api.converters.Rfc3339InstantAdapter
 import at.roteskreuz.stopcorona.skeleton.core.model.api.converters.Rfc3339ZonedDateTimeAdapter
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
+import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -197,6 +199,29 @@ fun SharedPreferences.nullableZonedDateTimeSharedPreferencesProperty(
 }
 
 /**
+ * Nullable ZonedDateTime property that is stored directly into the given [SharedPreferences]
+ */
+fun SharedPreferences.nullableInstantSharedPreferencesProperty(
+    key: String,
+    defaultValue: Instant? = null
+): ReadWriteProperty<Any?, Instant?> {
+    return object : ReadWriteProperty<Any?, Instant?> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Instant? {
+            val timestamp = getString(key, Rfc3339InstantAdapter.toJson(defaultValue))
+            return Rfc3339InstantAdapter.fromJson(timestamp)
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Instant?) {
+            if (value == null) {
+                edit().remove(key).apply()
+            } else {
+                edit().putString(key, Rfc3339InstantAdapter.toJson(value)).apply()
+            }
+        }
+    }
+}
+
+/**
  * Generic property that stores its not null value directly into the [SharedPreferences] using the given accessor functions.
  */
 inline fun <T> SharedPreferences.sharedPreferencesProperty(
@@ -273,6 +298,16 @@ fun SharedPreferences.observeNullableZonedDateTime(key: String, defaultValue: Zo
     ) { _key, _defValue ->
         val timestamp = getString(_key, Rfc3339ZonedDateTimeAdapter.toJson(_defValue))
         Rfc3339ZonedDateTimeAdapter.fromJson(timestamp)
+    }
+}
+
+fun SharedPreferences.observeNullableInstant(key: String, defaultValue: Instant? = null): Observable<Optional<Instant>> {
+    return observe(
+        key,
+        defaultValue
+    ) { _key, _defValue ->
+        val timestamp = getString(_key, Rfc3339InstantAdapter.toJson(_defValue))
+        Rfc3339InstantAdapter.fromJson(timestamp)
     }
 }
 

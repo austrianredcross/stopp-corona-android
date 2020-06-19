@@ -15,9 +15,10 @@ fun createOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level = BODY,
     builder: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
 ): OkHttpClient {
+    val httpLoggingInterceptor = HttpLoggingInterceptor()
     return OkHttpClient.Builder()
         .builder()
-        .addNetworkInterceptor(HttpLoggingInterceptor().setLevel(loggingLevel))
+        .addNetworkInterceptor(httpLoggingInterceptor.apply { httpLoggingInterceptor.level = loggingLevel })
         .build()
 }
 
@@ -58,5 +59,6 @@ fun createMoshi(
         .add(InstantAdapter)
         .add(LocalDateAdapter)
         .add(Rfc3339ZonedDateTimeAdapter)
+        .add(Rfc3339InstantAdapter)
         .build()
 }

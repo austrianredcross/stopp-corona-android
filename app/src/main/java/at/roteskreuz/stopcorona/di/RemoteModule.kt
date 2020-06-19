@@ -1,6 +1,5 @@
 package at.roteskreuz.stopcorona.di
 
-import android.content.Context
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.Constants.API.CERTIFICATE_CHAIN_CDN
 import at.roteskreuz.stopcorona.constants.Constants.API.CERTIFICATE_CHAIN_DEFAULT
@@ -24,7 +23,6 @@ import at.roteskreuz.stopcorona.skeleton.core.di.createApi
 import at.roteskreuz.stopcorona.skeleton.core.di.createMoshi
 import at.roteskreuz.stopcorona.skeleton.core.di.createOkHttpClient
 import at.roteskreuz.stopcorona.skeleton.core.model.api.addHeaders
-import okhttp3.Cache
 import okhttp3.CertificatePinner
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import okhttp3.logging.HttpLoggingInterceptor.Level.NONE
@@ -40,10 +38,6 @@ object CertificatePinnerTag {
  * Module for Rest Service.
  */
 val remoteModule = module {
-
-    single {
-        Cache(get<Context>().cacheDir, Constants.API.HTTP_CACHE_SIZE)
-    }
 
     single(name = defaultCertificatePinnerTag) {
         CertificatePinner.Builder().apply {
@@ -75,7 +69,6 @@ val remoteModule = module {
                 Header.AUTHORIZATION_KEY to Header.AUTHORIZATION_VALUE,
                 Header.APP_ID_KEY to Header.APP_ID_VALUE
             )
-            cache(get())
             certificatePinner(get(defaultCertificatePinnerTag))
         }
     }
@@ -86,7 +79,6 @@ val remoteModule = module {
                 Header.AUTHORIZATION_KEY to Header.AUTHORIZATION_VALUE,
                 Header.APP_ID_KEY to Header.APP_ID_VALUE
             )
-            cache(get())
             certificatePinner(get(tanCertificatePinnerTag))
         }
     }
@@ -97,7 +89,6 @@ val remoteModule = module {
                 Header.AUTHORIZATION_KEY to Header.AUTHORIZATION_VALUE,
                 Header.APP_ID_KEY to Header.APP_ID_VALUE
             )
-            cache(get())
             certificatePinner(get(cdnCertificatePinnerTag))
         }
     }
@@ -137,9 +128,10 @@ val remoteModule = module {
         ApiInteractorImpl(
             appDispatchers = get(),
             apiDescription = get(),
-            tanApiDescription = get(),
             contentDeliveryNetworkDescription = get(),
-            dataPrivacyRepository = get()
+            tanApiDescription = get(),
+            dataPrivacyRepository = get(),
+            filesRepository = get()
         )
     }
 

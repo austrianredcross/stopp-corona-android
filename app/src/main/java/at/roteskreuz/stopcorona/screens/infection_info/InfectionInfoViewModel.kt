@@ -1,8 +1,6 @@
 package at.roteskreuz.stopcorona.screens.infection_info
 
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
+import at.roteskreuz.stopcorona.model.repositories.CombinedWarningType
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -16,17 +14,16 @@ import org.threeten.bp.LocalDate
  */
 class InfectionInfoViewModel(
     appDispatchers: AppDispatchers,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository
 ) : ScopedViewModel(appDispatchers) {
 
     fun observeInfectedContacts(): Observable<InfectedContactsViewState> {
         return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
+            quarantineRepository.observeCombinedWarningType(),
             quarantineRepository.observeQuarantineState()
-        ).map { (messages, quarantineStatus) ->
+        ).map { (combinedWarningType, quarantineStatus) ->
             InfectedContactsViewState(
-                messages = messages,
+                combinedWarningType = combinedWarningType,
                 quarantinedUntil = if (quarantineStatus is QuarantineStatus.Jailed.Limited) quarantineStatus.end.toLocalDate()
                 else null
             )
@@ -34,11 +31,11 @@ class InfectionInfoViewModel(
     }
 }
 
+/**
+ * Describes our state [combinedWarningType] based on the risk data received for our contacts.
+ * And the date until which we are in quarantine.
+ */
 data class InfectedContactsViewState(
-    val messages: List<DbReceivedInfectionMessage>,
+    val combinedWarningType: CombinedWarningType,
     val quarantinedUntil: LocalDate? = null
-) {
-
-    val yellowMessages by lazy { messages.filter { it.messageType == MessageType.InfectionLevel.Yellow } }
-    val redMessages by lazy { messages.filter { it.messageType == MessageType.InfectionLevel.Red } }
-}
+)

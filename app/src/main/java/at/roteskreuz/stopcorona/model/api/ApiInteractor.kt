@@ -1,12 +1,16 @@
 package at.roteskreuz.stopcorona.model.api
 
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
 import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
-import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.IndexOfDiagnosisKeysArchives
-import at.roteskreuz.stopcorona.model.entities.infection.info.*
-import at.roteskreuz.stopcorona.model.entities.infection.message.ApiInfectionMessages
+import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexOfDiagnosisKeysArchives
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRequest
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
+import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
+import at.roteskreuz.stopcorona.model.repositories.FilesRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.ExceptionMapperHelper
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
@@ -26,17 +30,6 @@ interface ApiInteractor {
      * @throws [ApiError]
      */
     suspend fun getConfiguration(): ApiConfiguration
-
-    /**
-     * Get infection messages.
-     * Returns the last if [fromId] is null.
-     * Otherwise it returns one page of 100 messages from [fromId] (not included).
-     *
-     * Messages are filtered by our supplied [addressPrefix]
-     *
-     * @throws [ApiError]
-     */
-    suspend fun getInfectionMessages(addressPrefix: String, fromId: Long? = null): ApiInfectionMessages
 
     /**
      * Request the server to send a TAN via text message
@@ -60,7 +53,14 @@ interface ApiInteractor {
     /**
      * retrieve listing of exposure key archives
      */
-    suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives
+    suspend fun getIndexOfDiagnosisKeysArchives(): ApiIndexOfDiagnosisKeysArchives
+
+    /**
+     * Save one file from the Content Delivery Network API to a local file.
+     *
+     * @return fileName
+     */
+    suspend fun downloadContentDeliveryFile(pathToArchive: String): String
 }
 
 class ApiInteractorImpl(
@@ -68,7 +68,8 @@ class ApiInteractorImpl(
     private val apiDescription: ApiDescription,
     private val tanApiDescription: TanApiDescription,
     private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
-    private val dataPrivacyRepository: DataPrivacyRepository
+    private val dataPrivacyRepository: DataPrivacyRepository,
+    private val filesRepository: FilesRepository
 ) : ApiInteractor,
     ExceptionMapperHelper {
 
@@ -110,16 +111,7 @@ class ApiInteractorImpl(
         }
     }
 
-    override suspend fun getInfectionMessages(addressPrefix: String, fromId: Long?): ApiInfectionMessages {
-        return withContext(appDispatchers.IO) {
-            dataPrivacyRepository.assertDataPrivacyAccepted()
-            checkGeneralErrors {
-                apiDescription.infectionMessages(addressPrefix, fromId)
-            }
-        }
-    }
-
-    override suspend fun getIndexOfDiagnosisKeysArchives(): IndexOfDiagnosisKeysArchives {
+    override suspend fun getIndexOfDiagnosisKeysArchives(): ApiIndexOfDiagnosisKeysArchives {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()
             checkGeneralErrors {
@@ -127,6 +119,22 @@ class ApiInteractorImpl(
             }
         }
     }
+
+    override suspend fun downloadContentDeliveryFile(pathToArchive: String): String {
+        return withContext(appDispatchers.IO) {
+            checkGeneralErrors {
+                contentDeliveryNetworkDescription.downloadExposureKeyArchive(pathToArchive).use { body ->
+                    val fileName = pathToArchive.replace("/", "-")
+                    filesRepository.removeFile(EXPOSURE_ARCHIVES_FOLDER, fileName)
+                    body.byteStream().use { inputStream ->
+                        filesRepository.createFileFromInputStream(inputStream, EXPOSURE_ARCHIVES_FOLDER, fileName)
+                    }
+                    fileName
+                }
+            }
+        }
+    }
+
     override suspend fun requestTan(mobileNumber: String): ApiRequestTan {
         return withContext(appDispatchers.IO) {
             dataPrivacyRepository.assertDataPrivacyAccepted()

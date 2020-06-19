@@ -59,7 +59,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onAutomaticHandshakeInformationClick = {
                 startHandshakeExplanationFragment()
             },
-            onFeelingClick = { disabled ->
+            onStartQuestionnaireClick = { disabled ->
                 if (disabled) {
                     Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
                 } else {
@@ -220,18 +220,11 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.someoneHasRecoveredHealthStatus = it
             }
 
-        disposables += viewModel.observeExposureNotificationPhase()
+        disposables += viewModel.observeExposureSDKReadyToStart()
             .observeOnMainThread()
-            .subscribe { phase ->
-                controller.exposureNotificationPhase = phase
-                when (phase) {
-                    is FrameworkError.Critical.ResolutionRequired -> {
-                        phase.exception.status.startResolutionForResult(
-                            requireActivity(),
-                            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
-                        )
-                    }
-                    is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
+            .subscribe { readyToStart ->
+                if (readyToStart) {
+                    startExposureSDK()
                 }
             }
 
@@ -284,5 +277,22 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 }
             }
         }
+    }
+
+    private fun startExposureSDK() {
+        disposables += viewModel.observeExposureNotificationPhase()
+            .observeOnMainThread()
+            .subscribe { phase ->
+                controller.exposureNotificationPhase = phase
+                when (phase) {
+                    is FrameworkError.Critical.ResolutionRequired -> {
+                        phase.exception.status.startResolutionForResult(
+                            requireActivity(),
+                            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
+                        )
+                    }
+                    is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
+                }
+            }
     }
 }

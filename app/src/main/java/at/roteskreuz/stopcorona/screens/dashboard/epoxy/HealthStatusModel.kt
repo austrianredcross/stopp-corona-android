@@ -1,6 +1,5 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
-import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,7 +13,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.color
 import at.roteskreuz.stopcorona.utils.daysTo
-import at.roteskreuz.stopcorona.utils.getBoldSpan
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
@@ -43,10 +41,10 @@ abstract class HealthStatusModel(
     var description: String? = null
 
     override fun Holder.onBind() {
-        val data = data
-        if (data != null) {
+        val healthStatusData: HealthStatusData? = data
+        if (healthStatusData != null) {
 
-            when (data) {
+            when (healthStatusData) {
                 HealthStatusData.SicknessCertificate -> {
                     txtTitle.text = context.string(R.string.sickness_certificate_attest_headline)
                     txtDescription.text = context.string(R.string.sickness_certificate_attest_description)
@@ -55,7 +53,7 @@ abstract class HealthStatusModel(
                     cardViewContainer.setCardBackgroundColor(color(R.color.red))
                 }
                 is HealthStatusData.SelfTestingSuspicionOfSickness -> {
-                    val days = data.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
+                    val days = healthStatusData.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
                     txtDescription.text = context.string(R.string.self_testing_suspicion_description)
                     txtActionButton.text = if (days == 1L) string(R.string.contacts_quarantine_day_single)
@@ -72,8 +70,8 @@ abstract class HealthStatusModel(
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
                 }
                 is HealthStatusData.ContactsSicknessInfo -> {
-                    val days = if (data.quarantineStatus is QuarantineStatus.Jailed.Limited) {
-                        data.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
+                    val days = if (healthStatusData.quarantineStatus is QuarantineStatus.Jailed.Limited) {
+                        healthStatusData.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
                     } else {
                         Timber.e(SilentError("HealthStatusData.ContactsSicknessInfo must have QuarantineStatus.Jailed.Limited"))
                         0L
@@ -84,48 +82,24 @@ abstract class HealthStatusModel(
                     else string(R.string.contacts_quarantine_day_many)
 
                     when {
-                        data.confirmed == 1 && data.confirmed + data.suspicion == 1 -> {
-                            txtTitle.text = context.string(R.string.contacts_confirmed_one_case_headline)
-                            txtDescription.text = context.string(R.string.contacts_confirmed_one_case_description)
+                        healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected.not() -> {
+                            txtTitle.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline)
+                            txtDescription.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_checkmark_white_red)
                             cardViewContainer.setCardBackgroundColor(color(R.color.red))
                         }
-                        data.confirmed >= 1 && data.suspicion >= 1 -> {
-                            txtTitle.text = context.string(R.string.contacts_confirmed_multiple_case_headline)
-
-                            val builder = SpannableStringBuilder()
-                            builder.append(context.string(R.string.contacts_confirmed_multiple_case_description_1, data.confirmed))
-                            builder.append(context.getBoldSpan(R.string.contacts_confirmed_multiple_case_description_2))
-                            builder.append(context.getString(R.string.contacts_confirmed_multiple_case_description_3))
-                            builder.append("\n\n")
-                            builder.append(context.string(R.string.contacts_suspicion_multiple_case_description_1, data.suspicion))
-                            builder.append(context.getBoldSpan(R.string.contacts_suspicion_multiple_case_description_2))
-                            builder.append(context.getString(R.string.contacts_suspicion_multiple_case_description_3))
-                            txtDescription.text = builder
-
-                            txtActionButton.text = quarantineDayActionText
-                            imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
-                            cardViewContainer.setCardBackgroundColor(color(R.color.red))
-                        }
-                        data.confirmed > 1 || (data.confirmed >= 1 && data.confirmed + data.suspicion > 1) -> {
-                            txtTitle.text = context.string(R.string.contacts_confirmed_multiple_case_headline)
+                        healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected -> {
+                            txtTitle.text = context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_headline)
                             txtDescription.text =
-                                context.string(R.string.contacts_confirmed_multiple_case_description, data.confirmed + data.suspicion)
+                                context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                             cardViewContainer.setCardBackgroundColor(color(R.color.red))
                         }
-                        data.suspicion == 1 -> {
-                            txtTitle.text = context.string(R.string.contacts_suspicion_one_case_headline)
-                            txtDescription.text = context.string(R.string.contacts_suspicion_one_case_description, data.suspicion)
-                            txtActionButton.text = quarantineDayActionText
-                            imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
-                            cardViewContainer.setCardBackgroundColor(color(R.color.orange))
-                        }
-                        data.suspicion > 1 -> {
-                            txtTitle.text = context.string(R.string.contacts_confirmed_multiple_case_headline)
-                            txtDescription.text = context.string(R.string.contacts_confirmed_multiple_case_description, data.suspicion)
+                        healthStatusData.warningType.redContactsDetected.not() && healthStatusData.warningType.yellowContactsDetected -> {
+                            txtTitle.text = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_headline)
+                            txtDescription.text = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                             cardViewContainer.setCardBackgroundColor(color(R.color.orange))
@@ -149,7 +123,7 @@ abstract class HealthStatusModel(
                 onClick(
                     when (ownHealthStatus) {
                         is HealthStatusData.SicknessCertificate -> HealthStatusData.SicknessCertificate
-                        else -> data
+                        else -> healthStatusData
                     }
                 )
             }
@@ -158,7 +132,7 @@ abstract class HealthStatusModel(
         }
 
         val visibleQuarantine =
-            (data is HealthStatusData.ContactsSicknessInfo && ownHealthStatus !is HealthStatusData.SicknessCertificate) || data is HealthStatusData.SelfTestingSuspicionOfSickness
+            (healthStatusData is HealthStatusData.ContactsSicknessInfo && ownHealthStatus !is HealthStatusData.SicknessCertificate) || healthStatusData is HealthStatusData.SelfTestingSuspicionOfSickness
         txtQuarantineDays.visible = visibleQuarantine
         backgroundQuarantineDays.visible = visibleQuarantine
     }

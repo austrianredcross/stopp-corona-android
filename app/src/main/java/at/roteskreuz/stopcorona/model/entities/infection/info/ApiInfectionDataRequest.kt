@@ -5,7 +5,7 @@ import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.ToJson
-import java.util.*
+import java.util.UUID
 
 /**
  * Describes infection info about user with data gathered from the Exposure SDK.
@@ -24,7 +24,7 @@ data class ApiInfectionDataRequest(
 @JsonClass(generateAdapter = true)
 data class ApiTemporaryTracingKey(
     val key: String,
-    val password: UUID,
+    val password: String,
     /**
      * rollingStartIntervalNumber = A number describing when a key starts.
      * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10). */
@@ -42,16 +42,13 @@ data class ApiVerificationPayload(
 )
 
 fun List<Pair<List<TemporaryExposureKey>, UUID>>.asApiEntity(): List<ApiTemporaryTracingKey> {
-    return this.map { pair ->
-        val temporaryExposureKeys = pair.first
-        val password = pair.second
-
+    return this.map { (temporaryExposureKeys, password) ->
         temporaryExposureKeys.map { temporaryExposureKey ->
             val base64Key = Base64.encodeToString(temporaryExposureKey.keyData, Base64.NO_WRAP)
 
             ApiTemporaryTracingKey(
                 key = base64Key,
-                password = password,
+                password = password.toString(),
                 intervalNumber = temporaryExposureKey.rollingStartIntervalNumber,
                 intervalCount = temporaryExposureKey.rollingPeriod
             )

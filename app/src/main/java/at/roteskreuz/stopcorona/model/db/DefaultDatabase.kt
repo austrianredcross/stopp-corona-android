@@ -6,14 +6,17 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
+import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
+import at.roteskreuz.stopcorona.model.entities.exposure.MessageTypeConverter
+import at.roteskreuz.stopcorona.model.entities.exposure.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConverter
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
-import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
+import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
+import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhaseConverter
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -23,21 +26,25 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     entities = [
         DbConfiguration::class,
         DbQuestionnaire::class,
+        DbSession::class,
+        DbFullBatchPart::class,
+        DbDailyBatchPart::class,
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
-        DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class
     ],
-    version = 19,
-    exportSchema = false
+    version = 22,
+    exportSchema = true
 )
 @TypeConverters(
     DateTimeConverter::class,
     ConfigurationLanguageConverter::class,
-    MessageTypeConverter::class,
     WarningTypeConverter::class,
+    ProcessingPhaseConverter::class,
     UUIDConverter::class,
-    DecisionConverter::class
+    DecisionConverter::class,
+    ArrayOfIntegerConverter::class,
+    MessageTypeConverter::class
 )
 abstract class DefaultDatabase : RoomDatabase() {
 
@@ -127,10 +134,15 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(12, 13) {
                 // add new tables
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `received_infection_message` (`uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"
+                    """CREATE TABLE IF NOT EXISTS `received_infection_message` (
+                       `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
+                       `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"""
                 )
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `sent_infection_message` (`uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, `timeStamp` INTEGER NOT NULL, `publicKey` BLOB NOT NULL, PRIMARY KEY(`uuid`))"
+                    """CREATE TABLE IF NOT EXISTS `sent_infection_message` (
+                        `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
+                        `timeStamp` INTEGER NOT NULL, 
+                        `publicKey` BLOB NOT NULL, PRIMARY KEY(`uuid`))"""
                 )
                 // copy data from old table to new tables
                 execSQL(
@@ -160,14 +172,21 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(14, 15) {
                 // create new temp table
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (`answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionnaireId` INTEGER NOT NULL, `text` TEXT, `decision` TEXT, FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )"
+                    """
+                    CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (
+                    `answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionnaireId` INTEGER NOT NULL, 
+                    `text` TEXT, `decision` TEXT, FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )
+                    """
                 )
                 execSQL(
                     "CREATE INDEX IF NOT EXISTS `index_configuration_questionnaire_answer_temp_questionnaireId` ON `configuration_questionnaire_answer_temp` (`questionnaireId`)"
                 )
                 // copy data from old table to temp
                 execSQL(
-                    "INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`"
+                    """
+                    INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) 
+                    SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`
+                    """
                 )
                 // delete old table
                 execSQL("DROP TABLE `configuration_questionnaire_answer`")
@@ -203,15 +222,89 @@ abstract class DefaultDatabase : RoomDatabase() {
              */
             migration(18, 19) {
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (`rollingStartIntervalNumber` INTEGER NOT NULL, `password` TEXT NOT NULL, `messageType` TEXT NOT NULL, PRIMARY KEY(`rollingStartIntervalNumber`))"
+                    """CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (
+                        `rollingStartIntervalNumber` INTEGER NOT NULL, 
+                        `password` TEXT NOT NULL, 
+                        `messageType` TEXT NOT NULL, PRIMARY KEY(`rollingStartIntervalNumber`))
+                        """
                 )
+            },
+            /**
+             * adding the exposure configuration parameters to the database
+             */
+            migration(19, 20) {
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `minimumRiskScore` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `dailyRiskThreshold` INTEGER")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationDurationThresholds` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `daysSinceLastExposureLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `durationLevelValues` String")
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
+            },
+            /**
+             * adding the exposure configuration parameters to the database
+             */
+            migration(20, 21) {
+                execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `session` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `currentToken` TEXT NOT NULL, 
+                        `warningType` TEXT NOT NULL, 
+                        `processingPhase` TEXT NOT NULL, 
+                        `firstYellowDay` INTEGER, 
+                        `created` INTEGER NOT NULL)
+                    )
+                    """
+                )
+                execSQL("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS `index_session_currentToken` ON `session` (`currentToken`)
+                """)
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `full_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `sessionId` INTEGER NOT NULL, 
+                        `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE 
+                    )
+                    """
+                )
+                execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_full_batch_sessionId` ON `full_batch` (`sessionId`)
+                    """
+                )
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `daily_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `sessionId` INTEGER NOT NULL, 
+                        `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        `processed` INTEGER NOT NULL,
+                        FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+                    )
+                    """
+                )
+                execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_daily_batch_sessionId` ON `daily_batch` (`sessionId`)
+                    """
+                )
+            },
+            /**
+             * Deleted received_infection_message table.
+             */
+            migration(21, 22) {
+                // delete old table
+                execSQL("DROP TABLE `received_infection_message`")
             }
         )
     }
 
     abstract fun configurationDao(): ConfigurationDao
 
-    abstract fun infectionMessageDao(): InfectionMessageDao
+    abstract fun sessionDao(): SessionDao
 
     abstract fun temporaryExposureKeysDao(): TemporaryExposureKeysDao
 }

@@ -1,7 +1,5 @@
 package at.roteskreuz.stopcorona.screens.base
 
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
-import at.roteskreuz.stopcorona.model.entities.infection.message.InfectionMessageContent
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
@@ -9,9 +7,7 @@ import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
-import at.roteskreuz.stopcorona.utils.view.safeRun
 import kotlinx.coroutines.launch
-import org.threeten.bp.ZonedDateTime
 
 /**
  * Special viewModel for managing debug tasks.
@@ -22,8 +18,7 @@ class DebugViewModel(
     appDispatchers: AppDispatchers,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val notificationsRepository: NotificationsRepository,
-    private val quarantineRepository: QuarantineRepository,
-    private val infectionMessageDao: InfectionMessageDao
+    private val quarantineRepository: QuarantineRepository
 ) : ScopedViewModel(appDispatchers) {
 
 
@@ -59,50 +54,15 @@ class DebugViewModel(
 
     fun addOutgoingMessageRed() {
         launch {
-            val infectionMessageContent =
-                InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
-
-            // TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
-
+            // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportMedicalConfirmation()
         }
     }
 
     fun addOutgoingMessageYellow() {
         launch {
-            val infectionMessageContent =
-                InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
-
-            // TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
-
+            // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportPositiveSelfDiagnose()
-        }
-    }
-
-    fun addIncomingMessageRed() {
-        launch {
-            val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
-            val dbMessage = infectionMessageContent.asReceivedDbEntity()
-            infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
-        }
-    }
-
-    fun addIncomingMessageYellow() {
-        launch {
-            val infectionMessageContent = InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
-            val dbMessage = infectionMessageContent.asReceivedDbEntity()
-            infectionMessageDao.insertOrUpdateInfectionMessage(dbMessage)
-        }
-    }
-
-    fun addIncomingMessageGreen() {
-        launch {
-            infectionMessageDao.observeReceivedInfectionMessages().blockingFirst()
-                .firstOrNull { infectionMessage -> infectionMessage.messageType == MessageType.InfectionLevel.Yellow }
-                .safeRun("Yellow message not available!") { yellowMessage ->
-                    infectionMessageDao.insertOrUpdateInfectionMessage(yellowMessage.copy(messageType = MessageType.Revoke.Suspicion))
-                    infectionMessengerRepository.setSomeoneHasRecovered()
-                }
         }
     }
 }

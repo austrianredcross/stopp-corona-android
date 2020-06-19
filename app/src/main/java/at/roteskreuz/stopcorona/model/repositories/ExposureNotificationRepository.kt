@@ -3,21 +3,23 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
+import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
+import at.roteskreuz.stopcorona.model.entities.session.DbBatchPart
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
-import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
+import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.io.File
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
 
 /**
  * Repository for managing Exposure notification framework.
@@ -86,19 +88,41 @@ interface ExposureNotificationRepository {
     /**
      * Get the current (refreshed) state of the Exposure Notifications Framework state.
      */
-    suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean
+    suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean
 
     /**
      * Retrieve the TemporaryExposureKey from the Google Exposure Notifications framework
      * in a blocking manner.
      */
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
+
+    /**
+     * Provide the diagnosis key files of a batch to the framework
+     *
+     * @return True if processing has finished. False if more batches are expected to come
+     */
+    suspend fun provideDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean
+
+    /**
+     * Remove diagnosis key files
+     */
+    suspend fun removeDiagnosisKeyBatchParts(batchParts: List<DbBatchPart>)
+
+    /**
+     * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
+     * at least YELLOW
+     */
+    suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary
+
+    suspend fun getExposureInformationWithPotentiallyInformingTheUser(token: String): List<ExposureInformation>
 }
 
 class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val bluetoothManager: BluetoothManager,
-    private val exposureNotificationClient: ExposureNotificationClient
+    private val configurationRepository: ConfigurationRepository,
+    private val exposureNotificationClient: ExposureNotificationClient,
+    private val filesRepository: FilesRepository
 ) : ExposureNotificationRepository,
     CoroutineScope {
 
@@ -183,17 +207,11 @@ class ExposureNotificationRepositoryImpl(
     override fun refreshExposureNotificationAppRegisteredState() {
         exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
-                if (enabled) {
-                    bluetoothManager.startListeningForChanges()
-                } else {
-                    bluetoothManager.stopListeningForChanges()
-                }
-                frameworkEnabledStateSubject.onNext(enabled)
+                updateAppRegisteredState(enabled)
             }
             .addOnFailureListener {
-                bluetoothManager.stopListeningForChanges()
+                updateAppRegisteredState(false)
                 Timber.e(SilentError(it))
-                frameworkEnabledStateSubject.onNext(false)
             }
     }
 
@@ -204,28 +222,71 @@ class ExposureNotificationRepositoryImpl(
         return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 
-    override suspend fun isAppRegisteredForExposureNotificationsCurrentState(): Boolean {
-        return suspendCancellableCoroutine { cancellableContinuation ->
-            exposureNotificationClient.isEnabled
-                .addOnSuccessListener {
-                    cancellableContinuation.resume(it)
-                }
-                .addOnFailureListener {
-                    Timber.e(SilentError(it))
-                    cancellableContinuation.resume(false)
-                }
+    private fun updateAppRegisteredState(frameworkEnabled: Boolean) {
+        if (frameworkEnabled) {
+            bluetoothManager.startListeningForChanges()
+        } else {
+            bluetoothManager.stopListeningForChanges()
         }
+        frameworkEnabledStateSubject.onNext(frameworkEnabled)
+    }
+
+    override suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean {
+        val enabled = exposureNotificationClient.isEnabled.await()
+        updateAppRegisteredState(enabled) // update the state while reading
+        return enabled
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
-        return suspendCancellableCoroutine { continuation ->
-            exposureNotificationClient.temporaryExposureKeyHistory
-                .addOnSuccessListener {
-                    continuation.resume(it)
-                }
-                .addOnFailureListener {
-                    continuation.cancel(it)
-                }
+        return exposureNotificationClient.temporaryExposureKeyHistory.await()
+    }
+
+    override suspend fun provideDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean {
+        val archives = batches
+            .sortedBy { it.batchNumber }
+            .map { filesRepository.getFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName) }
+
+        val configuration = configurationRepository.getConfiguration() ?: run {
+            Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+            return true // Processing done
         }
+
+        val exposureConfiguration = configuration.getExposureConfiguration()
+
+        provideDiagnosisKeys(archives, exposureConfiguration, token)
+        return false // More batches to process
+    }
+
+    override suspend fun removeDiagnosisKeyBatchParts(batchParts: List<DbBatchPart>) {
+        batchParts.forEach {
+            filesRepository.removeFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName)
+        }
+    }
+
+    private suspend fun provideDiagnosisKeys(
+        archives: List<File>,
+        exposureConfiguration: ExposureConfiguration,
+        token: String
+    ) {
+        exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
+    }
+
+    private fun DbConfiguration.getExposureConfiguration(): ExposureConfiguration {
+        return ExposureConfiguration.ExposureConfigurationBuilder()
+            .setMinimumRiskScore(minimumRiskScore)
+            .setDurationAtAttenuationThresholds(*attenuationDurationThresholds.toIntArray())
+            .setAttenuationScores(*attenuationLevelValues.toIntArray())
+            .setDaysSinceLastExposureScores(*daysSinceLastExposureLevelValues.toIntArray())
+            .setDurationScores(*durationLevelValues.toIntArray())
+            .setTransmissionRiskScores(*transmissionRiskLevelValues.toIntArray())
+            .build()
+    }
+
+    override suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary {
+        return exposureNotificationClient.getExposureSummary(token).await()
+    }
+
+    override suspend fun getExposureInformationWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
+        return exposureNotificationClient.getExposureInformation(token).await()
     }
 }

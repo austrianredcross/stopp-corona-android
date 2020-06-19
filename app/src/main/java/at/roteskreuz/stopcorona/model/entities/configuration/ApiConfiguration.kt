@@ -1,11 +1,10 @@
 package at.roteskreuz.stopcorona.model.entities.configuration
 
-import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.model.entities.ApiEntity
 import at.roteskreuz.stopcorona.utils.asEnum
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.util.*
+import java.util.Locale
 
 /**
  * Describes configuration of questionnaire content.
@@ -30,9 +29,9 @@ data class ApiConfiguration(
     @field:Json(name = "page_list")
     val pageList: ApiPageList?,
     @field:Json(name = "upload_keys_days")
-    // TODO mihbat 12-Jun: The constant can be removed when the backend will start providing
-    //  this value.
-    val uploadKeysDays: Int = Constants.ConfigurationDefaults.UPLOAD_KEYS_DAYS
+    val uploadKeysDays: Int,
+    @field:Json(name = "exposure_configuration")
+    val exposureConfiguration: ApiExposureConfiguration
 ) : ApiEntity<DbConfiguration> {
 
     override fun asDbEntity(): DbConfiguration {
@@ -41,10 +40,36 @@ data class ApiConfiguration(
             redWarningQuarantine = redWarningQuarantine,
             yellowWarningQuarantine = yellowWarningQuarantine,
             selfDiagnosedQuarantine = selfDiagnosedQuarantine,
-            uploadKeysDays = uploadKeysDays
+            uploadKeysDays = uploadKeysDays,
+            minimumRiskScore = exposureConfiguration.minimumRiskScore,
+            dailyRiskThreshold = exposureConfiguration.dailyRiskThreshold,
+            attenuationDurationThresholds = exposureConfiguration.attenuationDurationThresholds,
+            attenuationLevelValues = exposureConfiguration.attenuationLevelValues,
+            daysSinceLastExposureLevelValues = exposureConfiguration.daysSinceLastExposureLevelValues,
+            durationLevelValues = exposureConfiguration.durationLevelValues,
+            transmissionRiskLevelValues = exposureConfiguration.transmissionRiskLevelValues
         )
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class ApiExposureConfiguration (
+    @field:Json(name = "minimum_risk_score")
+    val minimumRiskScore: Int,
+    @field:Json(name = "daily_risk_threshold")
+    val dailyRiskThreshold: Int,
+    @field:Json(name = "attenuation_duration_thresholds")
+    val attenuationDurationThresholds: List<Int>,
+    @field:Json(name = "attenuation_level_values")
+    val attenuationLevelValues: List<Int>,
+    @field:Json(name = "days_since_last_exposure_level_values")
+    val daysSinceLastExposureLevelValues: List<Int>,
+    @field:Json(name = "duration_level_values")
+    val durationLevelValues: List<Int>,
+    @field:Json(name = "transmission_risk_level_values")
+    val transmissionRiskLevelValues: List<Int>
+)
+
 
 @JsonClass(generateAdapter = true)
 data class ApiDiagnosticQuestionnaire(

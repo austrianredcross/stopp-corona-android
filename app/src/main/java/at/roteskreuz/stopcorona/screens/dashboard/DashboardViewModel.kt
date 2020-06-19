@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.managers.ChangelogManager
 import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
@@ -12,7 +11,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
-import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -23,16 +21,10 @@ class DashboardViewModel(
     private val dashboardRepository: DashboardRepository,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
-    private val configurationRepository: ConfigurationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager,
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager
 ) : ScopedViewModel(appDispatchers) {
-
-    companion object {
-        const val DEFAULT_RED_WARNING_QUARANTINE = 336 // hours
-        const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
-    }
 
     private var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
@@ -68,29 +60,11 @@ class DashboardViewModel(
 
     fun observeContactsHealthStatus(): Observable<HealthStatusData> {
         return Observables.combineLatest(
-            infectionMessengerRepository.observeReceivedInfectionMessages(),
             quarantineRepository.observeQuarantineState(),
-            configurationRepository.observeConfiguration()
-        ).map { (infectionMessageList, quarantineStatus, configuration) ->
-            val filteredInfectionMessages = infectionMessageList.filter { it.messageType != MessageType.Revoke.Suspicion }
-            Triple(filteredInfectionMessages, quarantineStatus, configuration)
-        }.map { (infectionMessageList, quarantineStatus, configuration) ->
-            if (infectionMessageList.isNotEmpty()) {
-                val redWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
-                    (configuration.redWarningQuarantine ?: DEFAULT_RED_WARNING_QUARANTINE).toLong()
-                )
-                val yellowWarningQuarantineThreshold = ZonedDateTime.now().minusHours(
-                    (configuration.yellowWarningQuarantine ?: DEFAULT_YELLOW_WARNING_QUARANTINE).toLong()
-                )
-                HealthStatusData.ContactsSicknessInfo(
-                    infectionMessageList
-                        .filter { it.timeStamp > redWarningQuarantineThreshold }
-                        .count { it.messageType == MessageType.InfectionLevel.Red },
-                    infectionMessageList
-                        .filter { it.timeStamp > yellowWarningQuarantineThreshold }
-                        .count { it.messageType == MessageType.InfectionLevel.Yellow },
-                    quarantineStatus
-                )
+            quarantineRepository.observeCombinedWarningType()
+        ).map { (quarantineStatus, combinedWarningType) ->
+            if (combinedWarningType.redContactsDetected || combinedWarningType.yellowContactsDetected) {
+                HealthStatusData.ContactsSicknessInfo(quarantineStatus, combinedWarningType)
             } else {
                 HealthStatusData.NoHealthStatus
             }
@@ -143,10 +117,6 @@ class DashboardViewModel(
 
     fun someoneHasRecoveredSeen() {
         infectionMessengerRepository.someoneHasRecoveredMessageSeen()
-
-        launch {
-            databaseCleanupManager.removeReceivedGreenMessages()
-        }
     }
 
     fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
@@ -171,7 +141,13 @@ class DashboardViewModel(
         exposureNotificationManager.refreshPrerequisitesErrorStatement(ignoreErrors)
     }
 
-    fun unseenChangelogForVersionAvailable(version: String) = changelogManager.unseenChangelogForVersionAvailable(version)
+    fun unseenChangelogForVersionAvailable(version: String): Boolean {
+        return changelogManager.unseenChangelogForVersionAvailable(version)
+    }
+
+    fun observeExposureSDKReadyToStart(): Observable<Boolean> {
+        return changelogManager.observeExposureSDKReadyToStart().distinctUntilChanged()
+    }
 }
 
 /**
@@ -200,9 +176,8 @@ sealed class HealthStatusData {
      * The user has received sickness info his contacts.
      */
     class ContactsSicknessInfo(
-        val confirmed: Int = 0,
-        val suspicion: Int = 0,
-        val quarantineStatus: QuarantineStatus
+        val quarantineStatus: QuarantineStatus,
+        val warningType: CombinedWarningType
     ) : HealthStatusData()
 
     /**

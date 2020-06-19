@@ -12,8 +12,8 @@ import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.Scope
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import at.roteskreuz.stopcorona.utils.endOfTheDay
-import at.roteskreuz.stopcorona.utils.startOfTheDay
+import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
+import at.roteskreuz.stopcorona.utils.startOfTheUtcDay
 import at.roteskreuz.stopcorona.utils.toRollingStartIntervalNumber
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
@@ -23,7 +23,7 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
-import java.util.*
+import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -168,13 +168,13 @@ class ReportingRepositoryImpl(
         return withContext(coroutineContext) {
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel
                 ?: throw InvalidConfigurationException.InfectionLevelNotSet
-
-            val configuration = configurationRepository.observeConfiguration().blockingFirst()
+            val configuration = configurationRepository.getConfiguration()
+                ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
             var thresholdTime = ZonedDateTime.now()
                 .minusDays(uploadKeysDays.toLong())
-                .startOfTheDay()
+                .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
 
             val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
@@ -184,10 +184,8 @@ class ReportingRepositoryImpl(
                 // Report only the exposure keys that have not been uploaded in the day of the previous submission.
                 val temporaryExposureKeyWrappers = temporaryExposureKeysFromSDK
                     .filter {
-                        it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.startOfTheDay()
-                            .toRollingStartIntervalNumber() &&
-                                it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheDay()
-                            .toRollingStartIntervalNumber()
+                        it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.startOfTheUtcDay().toRollingStartIntervalNumber() &&
+                            it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay().toRollingStartIntervalNumber()
                     }.groupBy { it.rollingStartIntervalNumber }
                     .map { (rollingStartIntervalNumber, _) ->
                         TemporaryExposureKeysWrapper(
@@ -488,4 +486,9 @@ sealed class InvalidConfigurationException(override val message: String) : Excep
      */
     object NullNumberOfDaysToUpload :
         InvalidConfigurationException("The number of days of temporary exposure keys to be uploaded is not provided.")
+
+    /**
+     * No configuration present, not even the bundled config.
+     */
+    object ConfigurationNotPresent : InvalidConfigurationException("No configuration present, not even the bundled config")
 }
