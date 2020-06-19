@@ -54,8 +54,7 @@ class DebugViewModel(
 
     fun addOutgoingMessageRed() {
         launch {
-            // DEBUG-TODO 11-Jun-2020 mihbat: This method was intended for debugging the
-            //        reporting of a red diagnostic.
+            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
 
             quarantineRepository.reportMedicalConfirmation()
         }
@@ -63,8 +62,7 @@ class DebugViewModel(
 
     fun addOutgoingMessageYellow() {
         launch {
-            // DEBUG-TODO 11-Jun-2020 mihbat: This method was intended for debugging the
-            //        reporting of a yellow diagnostic.
+            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
 
             quarantineRepository.reportPositiveSelfDiagnose()
         }
