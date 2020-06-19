@@ -6,11 +6,18 @@ import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Prefs.CHANGELOG_MANAGER_PREFIX
 import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
+import at.roteskreuz.stopcorona.skeleton.core.utils.observeInt
+import io.reactivex.Observable
 
 /**
  * Manages changelog information.
  */
 interface ChangelogManager {
+
+    /**
+     * Observes if the exposure SDK is ready to start.
+     */
+    fun observeExposureSDKReadyToStart(): Observable<Boolean>
 
     /**
      * Checks if there is an unseen changelog for the given [version].
@@ -24,10 +31,15 @@ interface ChangelogManager {
      * or the changelog has already been displayed.
      */
     fun getChangelogForVersion(version: String): Changelog?
+
+    /**
+     * Marks the changelog as seen.
+     */
+    fun flagChangelogAsSeen()
 }
 
 class ChangelogManagerImpl(
-    preferences: SharedPreferences
+    private val preferences: SharedPreferences
 ) : ChangelogManager {
 
     companion object {
@@ -55,20 +67,26 @@ class ChangelogManagerImpl(
 
     private var lastSeenChangelogId: Int by preferences.intSharedPreferencesProperty(PREF_LAST_SEEN_CHANGELOG_ID, 0)
 
-    private val hasBeenDisplayed: Boolean
-        get() = changelog.id <= lastSeenChangelogId
-
     override fun unseenChangelogForVersionAvailable(version: String): Boolean {
-        return changelog.versions.contains(convertVersionName(version)) && hasBeenDisplayed.not()
+        return changelog.versions.contains(convertVersionName(version)) && hasBeenDisplayed(lastSeenChangelogId).not()
     }
 
     override fun getChangelogForVersion(version: String): Changelog? {
         return if (unseenChangelogForVersionAvailable(convertVersionName(version))) {
-            lastSeenChangelogId = changelog.id
             changelog
         } else {
             null
         }
+    }
+
+    override fun observeExposureSDKReadyToStart(): Observable<Boolean> {
+        return preferences.observeInt(PREF_LAST_SEEN_CHANGELOG_ID, 0).map {
+            hasBeenDisplayed(it)
+        }
+    }
+
+    override fun flagChangelogAsSeen() {
+        lastSeenChangelogId = changelog.id
     }
 
     /**
@@ -77,6 +95,10 @@ class ChangelogManagerImpl(
      */
     private fun convertVersionName(version: String): String {
         return version.split(".").take(3).joinToString(".")
+    }
+
+    private fun hasBeenDisplayed(lastSeenChangelogId: Int): Boolean {
+        return changelog.id <= lastSeenChangelogId
     }
 }
 
