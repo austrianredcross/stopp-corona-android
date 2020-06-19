@@ -62,8 +62,7 @@ class DebugViewModel(
             val infectionMessageContent =
                 InfectionMessageContent(MessageType.InfectionLevel.Red, ZonedDateTime.now())
 
-            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
-
+            // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportMedicalConfirmation()
         }
     }
@@ -73,8 +72,7 @@ class DebugViewModel(
             val infectionMessageContent =
                 InfectionMessageContent(MessageType.InfectionLevel.Yellow, ZonedDateTime.now())
 
-            // DEBUG-TODO 11-Jun-2020 mihbat: Insert debug temporary exposure keys in database
-
+            // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportPositiveSelfDiagnose()
         }
     }
