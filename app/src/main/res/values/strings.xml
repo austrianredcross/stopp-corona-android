@@ -98,7 +98,7 @@
 	<string name="main_exposure_error_declined_message">Framework was not found.</string>
 	<string name="main_exposure_error_network_error_message">Network failure.</string>
 	<string name="main_exposure_error_internal_message">Internal error. An error has occurred in the COVID-19 contact notifications.</string>
-	<string name="main_exposure_error_developer_message">We made a mistake here. An exception was logged, we will fix it in the later version of the app. Sorry for the inconvenience.</string>
+	<string name="main_exposure_error_developer_message">An error within Google Play Services has been detected. It was logged. Please try again later.</string>
 	<string name="main_exposure_error_bluetooth_off_message">Bluetooth is switched off. For COVID-19 contact notifications to work properly, you must enable Bluetooth.</string>
 	<string name="main_exposure_error_bluetooth_off_action">Activate</string>
 	<string name="main_exposure_error_action">Try again</string>
