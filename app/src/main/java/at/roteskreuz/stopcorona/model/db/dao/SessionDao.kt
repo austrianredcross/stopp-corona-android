@@ -23,9 +23,7 @@ abstract class SessionDao {
 
     @Transaction
     open suspend fun insertFullSession(fullSession: DbFullSession) {
-        val session = fullSession.session
-        deleteSession(session)
-        val sessionId = insertSession(session)
+        val sessionId = insertSession(fullSession.session)
         fullSession.fullBatchParts.forEach { fullBatchPathPath ->
             insertFullBatchPath(fullBatchPathPath.copy(sessionId = sessionId))
         }
