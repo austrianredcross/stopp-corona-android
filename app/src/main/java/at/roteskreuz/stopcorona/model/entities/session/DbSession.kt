@@ -10,14 +10,19 @@ import org.threeten.bp.ZonedDateTime
  * Keep state of an exposure matching session.
  */
 @Entity(
-    tableName = "session"
+    tableName = "session",
+    indices = [
+        Index("currentToken", unique = true)
+    ]
 )
 data class DbSession(
-    @PrimaryKey()
-    var currentToken: String = "",
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val currentToken: String,
     val warningType: WarningType,
-    var processingPhase: ProcessingPhase,
-    var firstYellowDay: ZonedDateTime?
+    val processingPhase: ProcessingPhase,
+    val firstYellowDay: ZonedDateTime?,
+    val created: ZonedDateTime = ZonedDateTime.now()
 ) : DbEntity
 
 enum class ProcessingPhase {
@@ -32,25 +37,28 @@ class ProcessingPhaseConverter : EnumTypeConverter<ProcessingPhase>({ enumValueO
  */
 data class DbFullSession(
     @Embedded
-    var session: DbSession,
+    val session: DbSession,
 
     @Relation(
         entity = DbFullBatchPart::class,
-        parentColumn = "currentToken",
-        entityColumn = "currentToken"
+        parentColumn = "id",
+        entityColumn = "sessionId"
     )
     val fullBatchParts: List<DbFullBatchPart>,
 
     @Relation(
         entity = DbDailyBatchPart::class,
-        parentColumn = "currentToken",
-        entityColumn = "currentToken"
+        parentColumn = "id",
+        entityColumn = "sessionId"
     )
-    var dailyBatchesParts: List<DbDailyBatchPart>
+    val dailyBatchesParts: List<DbDailyBatchPart>
 )
 
+val DbFullSession.remainingDailyBatchesParts
+    get() = dailyBatchesParts.filter { !it.processed }
+
 interface DbBatchPart {
-    val currentToken: String
+    val sessionId: Long
     val batchNumber: Int
     val intervalStart: Long
     val fileName: String
@@ -59,13 +67,13 @@ interface DbBatchPart {
 @Entity(
     tableName = "full_batch",
     indices = [
-        Index("currentToken")
+        Index("sessionId")
     ],
     foreignKeys = [
         ForeignKey(
             entity = DbSession::class,
-            parentColumns = ["currentToken"],
-            childColumns = ["currentToken"],
+            parentColumns = ["id"],
+            childColumns = ["sessionId"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
@@ -73,8 +81,8 @@ interface DbBatchPart {
 )
 data class DbFullBatchPart(
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
-    override val currentToken: String = "", // will be set up during inserting to DB
+    val id: Long = 0,
+    override val sessionId: Long = 0, // will be set up during inserting to DB
     override val batchNumber: Int,
     override val intervalStart: Long,
     override val fileName: String
@@ -83,13 +91,13 @@ data class DbFullBatchPart(
 @Entity(
     tableName = "daily_batch",
     indices = [
-        Index("currentToken")
+        Index("sessionId")
     ],
     foreignKeys = [
         ForeignKey(
             entity = DbSession::class,
-            parentColumns = ["currentToken"],
-            childColumns = ["currentToken"],
+            parentColumns = ["id"],
+            childColumns = ["sessionId"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
@@ -98,11 +106,12 @@ data class DbFullBatchPart(
 
 data class DbDailyBatchPart(
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
-    override val currentToken: String = "", // will be set up during inserting to DB
+    val id: Long = 0,
+    override val sessionId: Long = 0, // will be set up during inserting to DB
     override val batchNumber: Int,
     override val intervalStart: Long,
-    override val fileName: String
+    override val fileName: String,
+    val processed: Boolean = false
 ) : DbEntity, DbBatchPart {
 
     /**

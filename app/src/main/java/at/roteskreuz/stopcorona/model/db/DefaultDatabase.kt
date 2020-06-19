@@ -245,43 +245,50 @@ abstract class DefaultDatabase : RoomDatabase() {
              * adding the exposure configuration parameters to the database
              */
             migration(20, 21) {
-                execSQL("""
+                execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `session` (
-                        `currentToken` TEXT NOT NULL, `warningType` TEXT NOT NULL, 
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `currentToken` TEXT NOT NULL, 
+                        `warningType` TEXT NOT NULL, 
                         `processingPhase` TEXT NOT NULL, 
                         `firstYellowDay` INTEGER, 
-                        PRIMARY KEY(`currentToken`)
+                        `created` INTEGER NOT NULL)
                     )
                     """
                 )
+                execSQL("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS `index_session_currentToken` ON `session` (`currentToken`)
+                """)
                 execSQL("""
                     CREATE TABLE IF NOT EXISTS `full_batch` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                        `currentToken` TEXT NOT NULL, 
+                        `sessionId` INTEGER NOT NULL, 
                         `batchNumber` INTEGER NOT NULL, 
                         `intervalStart` INTEGER NOT NULL, 
                         `fileName` TEXT NOT NULL, 
-                        FOREIGN KEY(`currentToken`) REFERENCES `session`(`currentToken`) ON UPDATE CASCADE ON DELETE CASCADE 
+                        FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE 
                     )
                     """
                 )
                 execSQL("""
-                    CREATE INDEX IF NOT EXISTS `index_full_batch_currentToken` ON `full_batch` (`currentToken`)
+                    CREATE INDEX IF NOT EXISTS `index_full_batch_sessionId` ON `full_batch` (`sessionId`)
                     """
                 )
                 execSQL("""
                     CREATE TABLE IF NOT EXISTS `daily_batch` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                        `currentToken` TEXT NOT NULL, 
+                        `sessionId` INTEGER NOT NULL, 
                         `batchNumber` INTEGER NOT NULL, 
                         `intervalStart` INTEGER NOT NULL, 
                         `fileName` TEXT NOT NULL, 
-                        FOREIGN KEY(`currentToken`) REFERENCES `session`(`currentToken`) ON UPDATE CASCADE ON DELETE CASCADE
+                        `processed` INTEGER NOT NULL,
+                        FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
                     )
                     """
                 )
                 execSQL("""
-                    CREATE INDEX IF NOT EXISTS `index_daily_batch_currentToken` ON `daily_batch` (`currentToken`)
+                    CREATE INDEX IF NOT EXISTS `index_daily_batch_sessionId` ON `daily_batch` (`sessionId`)
                     """
                 )
             },
