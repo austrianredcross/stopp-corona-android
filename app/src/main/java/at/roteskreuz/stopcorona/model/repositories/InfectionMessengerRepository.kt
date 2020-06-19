@@ -16,7 +16,6 @@ import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.workers.DownloadInfectionMessagesWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -40,11 +39,6 @@ import kotlin.coroutines.CoroutineContext
  * Repository for managing infection messages.
  */
 interface InfectionMessengerRepository {
-
-    /**
-     * Enqueue download and processing infection messages.
-     */
-    fun enqueueDownloadingNewMessages()
 
     /**
      * Store to DB the sent temporary exposure keys.
@@ -117,10 +111,6 @@ class InfectionMessengerRepositoryImpl(
         PREF_SOMEONE_HAS_RECOVERED,
         false
     )
-
-    override fun enqueueDownloadingNewMessages() {
-        DownloadInfectionMessagesWorker.enqueueDownloadInfection(workManager)
-    }
 
     override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>) {
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)

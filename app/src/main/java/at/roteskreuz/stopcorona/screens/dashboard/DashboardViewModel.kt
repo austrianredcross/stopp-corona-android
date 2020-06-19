@@ -11,7 +11,6 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
-import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -118,10 +117,6 @@ class DashboardViewModel(
 
     fun someoneHasRecoveredSeen() {
         infectionMessengerRepository.someoneHasRecoveredMessageSeen()
-
-        launch {
-            databaseCleanupManager.removeReceivedGreenMessages()
-        }
     }
 
     fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
