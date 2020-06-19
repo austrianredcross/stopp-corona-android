@@ -33,7 +33,7 @@ interface FilesRepository {
     /**
      * Get a [File] with path [folder]/[fileName], relative to the application's base folder.
      */
-    fun getFile(folder: String, fileName: String): File
+    suspend fun getFile(folder: String, fileName: String): File
 
     /**
      * Remove a [File] on path [folder]/[fileName], relative to the application's base folder.
@@ -111,8 +111,10 @@ class FilesRepositoryImpl(
         }
     }
 
-    override fun getFile(folder: String, fileName: String): File {
-        return File(getFolder(folder).mkdirsIfNeeded(), fileName)
+    override suspend fun getFile(folder: String, fileName: String): File {
+        return withContext(coroutineContext) {
+            File(getFolder(folder).mkdirsIfNeeded(), fileName)
+        }
     }
 
     private fun getFolder(folder: String): File {

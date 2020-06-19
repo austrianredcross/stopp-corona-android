@@ -19,6 +19,7 @@ import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
 import at.roteskreuz.stopcorona.model.entities.session.DbScheduledSession
 import at.roteskreuz.stopcorona.model.entities.session.DbSession
+import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhaseConverter
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -38,13 +39,14 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbScheduledSession::class
     ],
     version = 22,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(
     DateTimeConverter::class,
     ConfigurationLanguageConverter::class,
     MessageTypeConverter::class,
     WarningTypeConverter::class,
+    ProcessingPhaseConverter::class,
     UUIDConverter::class,
     DecisionConverter::class,
     ArrayOfIntegerConverter::class
@@ -319,35 +321,50 @@ abstract class DefaultDatabase : RoomDatabase() {
              */
             migration(20, 21) {
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `session` (`token` TEXT NOT NULL, `warningType` TEXT NOT NULL, PRIMARY KEY(`token`))"
-                )
-                execSQL(
                     """
-                        CREATE TABLE IF NOT EXISTS `full_batch` (
-                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                            `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
-                            `intervalStart` INTEGER NOT NULL, 
-                            `fileName` TEXT NOT NULL, 
-                            FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE 
-                        )
-                        """
-                )
-                execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_full_batch_token` ON `full_batch` (`token`)"
-                )
-                execSQL(
+                    CREATE TABLE IF NOT EXISTS `session` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `currentToken` TEXT NOT NULL, 
+                        `warningType` TEXT NOT NULL, 
+                        `processingPhase` TEXT NOT NULL, 
+                        `firstYellowDay` INTEGER, 
+                        `created` INTEGER NOT NULL
+                    )
                     """
-                        CREATE TABLE IF NOT EXISTS `daily_batch` (
-                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                            `token` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, 
-                            `intervalStart` INTEGER NOT NULL, 
-                            `fileName` TEXT NOT NULL, 
-                            FOREIGN KEY(`token`) REFERENCES `session`(`token`) ON UPDATE CASCADE ON DELETE CASCADE 
-                        )
-                        """
                 )
-                execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_daily_batch_token` ON `daily_batch` (`token`)"
+                execSQL("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS `index_session_currentToken` ON `session` (`currentToken`)
+                """)
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `full_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `sessionId` INTEGER NOT NULL, 
+                        `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE 
+                    )
+                    """
+                )
+                execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_full_batch_sessionId` ON `full_batch` (`sessionId`)
+                    """
+                )
+                execSQL("""
+                    CREATE TABLE IF NOT EXISTS `daily_batch` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `sessionId` INTEGER NOT NULL, 
+                        `batchNumber` INTEGER NOT NULL, 
+                        `intervalStart` INTEGER NOT NULL, 
+                        `fileName` TEXT NOT NULL, 
+                        `processed` INTEGER NOT NULL,
+                        FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+                    )
+                    """
+                )
+                execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_daily_batch_sessionId` ON `daily_batch` (`sessionId`)
+                    """
                 )
             },
             /**

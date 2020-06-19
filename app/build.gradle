@@ -22,6 +22,13 @@ android {
         versionCode buildCode
         versionName buildName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation":
+                                      "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     signingConfigs {

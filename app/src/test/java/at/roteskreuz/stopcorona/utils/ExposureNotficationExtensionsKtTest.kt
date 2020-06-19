@@ -2,31 +2,30 @@ package at.roteskreuz.stopcorona.utils
 
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
-import org.junit.Test
-
 import org.junit.Assert.*
-import org.threeten.bp.ZonedDateTime
+import org.junit.Test
+import org.threeten.bp.Instant
 
 class ExposureNotficationExtensionsKtTest {
 
-    private val YESTERDAY = ZonedDateTime.now().minusDays(1)
+    private val YESTERDAY = Instant.now().minusDays(1)
 
     private val THRESHOLD = 100
 
     private val RED_YESTERDAY: ExposureInformation = ExposureInformation.ExposureInformationBuilder()
-        .setDateMillisSinceEpoch(YESTERDAY.toEpochSecond() * 1000)
+        .setDateMillisSinceEpoch(YESTERDAY.toEpochMilli())
         .setTransmissionRiskLevel(WarningType.RED.transmissionRiskLevel)
         .setTotalRiskScore(THRESHOLD)
         .build()
 
     private val RED_TWO_DAYS_AGO: ExposureInformation = ExposureInformation.ExposureInformationBuilder()
-        .setDateMillisSinceEpoch(YESTERDAY.toEpochSecond() * 1000)
+        .setDateMillisSinceEpoch(YESTERDAY.toEpochMilli())
         .setTransmissionRiskLevel(WarningType.RED.transmissionRiskLevel)
         .setTotalRiskScore(THRESHOLD)
         .build()
 
     private val SHORT_YELLOW_TWO_DAYS_AGO: ExposureInformation = ExposureInformation.ExposureInformationBuilder()
-        .setDateMillisSinceEpoch(YESTERDAY.toEpochSecond() * 1000)
+        .setDateMillisSinceEpoch(YESTERDAY.toEpochMilli())
         .setTransmissionRiskLevel(WarningType.YELLOW.transmissionRiskLevel)
         .setTotalRiskScore(THRESHOLD / 2)
         .build()
@@ -58,7 +57,7 @@ class ExposureNotficationExtensionsKtTest {
         val dates = listUnderTest.extractLatestRedAndYellowContactDate(THRESHOLD)
 
         assertNotNull(dates.firstYellowDay)
-        assertTrue(dates.firstYellowDay!!.areOnTheSameDay(YESTERDAY))
+        assertTrue(dates.firstYellowDay!!.areOnTheSameUtcDay(YESTERDAY))
         assertNull(dates.firstRedDay)
     }
 
@@ -71,7 +70,7 @@ class ExposureNotficationExtensionsKtTest {
 
         assert(dates.firstYellowDay == null)
         assertNotNull(dates.firstRedDay)
-        assert(dates.firstRedDay!!.areOnTheSameDay(YESTERDAY))
+        assert(dates.firstRedDay!!.areOnTheSameUtcDay(YESTERDAY))
     }
 
     @Test
@@ -85,7 +84,7 @@ class ExposureNotficationExtensionsKtTest {
 
             assert(dates.firstYellowDay == null)
             assertNotNull(dates.firstRedDay)
-            assert(dates.firstRedDay!!.areOnTheSameDay(YESTERDAY))
+            assert(dates.firstRedDay!!.areOnTheSameUtcDay(YESTERDAY))
         }
     }
 }
