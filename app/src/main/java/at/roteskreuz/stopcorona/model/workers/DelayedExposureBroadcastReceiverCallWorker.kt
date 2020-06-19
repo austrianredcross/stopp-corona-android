@@ -1,22 +1,19 @@
 package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
-import android.content.Intent
 import androidx.work.*
 import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT
 import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
-import org.threeten.bp.Duration
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
- * Worker that is scheduled for 5 minutes to call [ExposureNotificationBroadcastReceiver.onReceive] with
- * the token.
+ * Worker that is scheduled for [ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT] minutes to call
+ * [ExposureNotificationBroadcastReceiver.onExposureStateUpdated] with the token.
  * This is a hotfix which can be later deleted.
- * Currently Exposure framework can ignore calling of [ExposureNotificationBroadcastReceiver.onReceive]
- * if there is zero risk.
+ * Currently Exposure framework can drop broadcasts if there are zero matched keys risk.
  */
 class DelayedExposureBroadcastReceiverCallWorker(
     appContext: Context,
@@ -57,15 +54,11 @@ class DelayedExposureBroadcastReceiverCallWorker(
 
     override suspend fun doWork(): Result {
         val token = inputData.getString(ARGUMENT_TOKEN)
+        Timber.d("Matching of $token timed out, let's trigger an artificial notification")
         // fake call to be sure that the zero risk is processed
-        receiver.onReceive(
-            applicationContext,
-            Intent(ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED).apply {
-                if (token != null) {
-                    putExtra(ExposureNotificationClient.EXTRA_TOKEN, token)
-                }
-            }
-        )
+        token?.let {
+            receiver.onExposureStateUpdated(applicationContext, token)
+        }
 
         return Result.failure()
     }
