@@ -41,7 +41,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
         val action = intent.action
         if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
             val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN)
-            Timber.d("got a token $token to process the diagnosis keys, we should check it")
+            Timber.d("Matching of $token finished, let's check it")
 
             if (isDebug) {
                 showDebugNotificationProcessingFinished(context, token)

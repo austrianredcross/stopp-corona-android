@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 21,
-    "identityHash": "3ec9efad749f2cbe60148a783a39595d",
+    "identityHash": "07ae16ca792bfe309920d0b7ad1f5328",
     "entities": [
       {
         "tableName": "configuration",
@@ -177,8 +177,14 @@
       },
       {
         "tableName": "session",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`currentToken` TEXT NOT NULL, `warningType` TEXT NOT NULL, `processingPhase` TEXT NOT NULL, `firstYellowDay` INTEGER, PRIMARY KEY(`currentToken`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `currentToken` TEXT NOT NULL, `warningType` TEXT NOT NULL, `processingPhase` TEXT NOT NULL, `firstYellowDay` INTEGER, `created` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "currentToken",
             "columnName": "currentToken",
@@ -202,20 +208,35 @@
             "columnName": "firstYellowDay",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "currentToken"
+            "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_session_currentToken",
+            "unique": true,
+            "columnNames": [
+              "currentToken"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_session_currentToken` ON `${TABLE_NAME}` (`currentToken`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
         "tableName": "full_batch",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `currentToken` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, `intervalStart` INTEGER NOT NULL, `fileName` TEXT NOT NULL, FOREIGN KEY(`currentToken`) REFERENCES `session`(`currentToken`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sessionId` INTEGER NOT NULL, `batchNumber` INTEGER NOT NULL, `intervalStart` INTEGER NOT NULL, `fileName` TEXT NOT NULL, FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -224,9 +245,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "currentToken",
-            "columnName": "currentToken",
-            "affinity": "TEXT",
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -256,12 +277,12 @@
         },
         "indices": [
           {
-            "name": "index_full_batch_currentToken",
+            "name": "index_full_batch_sessionId",
             "unique": false,
             "columnNames": [
-              "currentToken"
+              "sessionId"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_full_batch_currentToken` ON `${TABLE_NAME}` (`currentToken`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_full_batch_sessionId` ON `${TABLE_NAME}` (`sessionId`)"
           }
         ],
         "foreignKeys": [
@@ -270,17 +291,17 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "currentToken"
+              "sessionId"
             ],
             "referencedColumns": [
-              "currentToken"
+              "id"
             ]
           }
         ]
       },
       {
         "tableName": "daily_batch",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `currentToken` TEXT NOT NULL, `batchNumber` INTEGER NOT NULL, `intervalStart` INTEGER NOT NULL, `fileName` TEXT NOT NULL, FOREIGN KEY(`currentToken`) REFERENCES `session`(`currentToken`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sessionId` INTEGER NOT NULL, `batchNumber` INTEGER NOT NULL, `intervalStart` INTEGER NOT NULL, `fileName` TEXT NOT NULL, `processed` INTEGER NOT NULL, FOREIGN KEY(`sessionId`) REFERENCES `session`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -289,9 +310,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "currentToken",
-            "columnName": "currentToken",
-            "affinity": "TEXT",
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -311,6 +332,12 @@
             "columnName": "fileName",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "processed",
+            "columnName": "processed",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -321,12 +348,12 @@
         },
         "indices": [
           {
-            "name": "index_daily_batch_currentToken",
+            "name": "index_daily_batch_sessionId",
             "unique": false,
             "columnNames": [
-              "currentToken"
+              "sessionId"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_daily_batch_currentToken` ON `${TABLE_NAME}` (`currentToken`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_daily_batch_sessionId` ON `${TABLE_NAME}` (`sessionId`)"
           }
         ],
         "foreignKeys": [
@@ -335,10 +362,10 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "currentToken"
+              "sessionId"
             ],
             "referencedColumns": [
-              "currentToken"
+              "id"
             ]
           }
         ]
@@ -627,7 +654,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ec9efad749f2cbe60148a783a39595d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '07ae16ca792bfe309920d0b7ad1f5328')"
     ]
   }
 }

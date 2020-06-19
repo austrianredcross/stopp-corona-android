@@ -113,7 +113,10 @@ class DatabaseCleanupManagerImpl(
 
     private fun cleanupSentTemporaryExposureKeys() {
         launch {
-            val configuration = configurationRepository.getConfiguration() ?: return@launch
+            val configuration = configurationRepository.getConfiguration() ?: run {
+                Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+                return@launch
+            }
 
             val nowAsRollingStartIntervalNumber = ZonedDateTime.now()
                 .toRollingStartIntervalNumber()

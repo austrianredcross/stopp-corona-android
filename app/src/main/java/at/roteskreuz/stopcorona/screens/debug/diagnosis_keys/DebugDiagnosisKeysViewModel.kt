@@ -176,8 +176,10 @@ class DebugDiagnosisKeysViewModel(
                 delay(1000)
 
                 exposureNotificationsTextSubject.onNext("providing diagnosis keys")
-                val configuration = configurationRepository.getConfiguration()
-                    ?: throw IllegalStateException("no sense in continuing if there is not even a configuration")
+                val configuration = configurationRepository.getConfiguration() ?: run {
+                    Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+                    return@launch
+                }
 
                 val exposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
                     .setMinimumRiskScore(configuration.minimumRiskScore)
