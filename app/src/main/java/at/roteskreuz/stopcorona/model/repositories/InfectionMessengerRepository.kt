@@ -13,7 +13,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.exposure_keys.ApiIndexO
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.entities.session.*
-import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
@@ -333,12 +332,12 @@ class InfectionMessengerRepositoryImpl(
                 )
 
                 sessionDao.insertFullSession(fullSession)
+                sessionDao.insertScheduledSession(DbScheduledSession(token))
                 exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
             } finally {
-                sessionDao.insertScheduledSession(DbScheduledSession(token))
                 // schedule calling [ExposureNotificationBroadcastReceiver.onReceive] in 5 min
                 if (configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
                     DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)
