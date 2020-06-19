@@ -39,16 +39,6 @@
                     <item
                         android:id="@+id/debugMenuInfectionMessagesOutgoingYellow"
                         android:title="Outgoing Yellow" />
-
-                    <item
-                        android:id="@+id/debugMenuInfectionMessagesIncomingRed"
-                        android:title="Incoming Red" />
-                    <item
-                        android:id="@+id/debugMenuInfectionMessagesIncomingYellow"
-                        android:title="Incoming Yellow" />
-                    <item
-                        android:id="@+id/debugMenuInfectionMessagesIncomingGreen"
-                        android:title="Incoming Green" />
                 </menu>
             </item>
             <item
