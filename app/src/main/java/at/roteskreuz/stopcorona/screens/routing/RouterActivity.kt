@@ -10,7 +10,10 @@ import at.roteskreuz.stopcorona.screens.dashboard.startDashboardActivity
 import at.roteskreuz.stopcorona.screens.onboarding.startOnboardingFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.argument
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
@@ -44,13 +47,13 @@ class RouterActivity : FragmentActivity(), KoinComponent {
 
     private val appDispatchers = get<AppDispatchers>()
 
-    private var activityScope: CoroutineScope? = null
+    private var mainScope: CoroutineScope = CoroutineScope(SupervisorJob() + appDispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         fun routeInternal() {
-            when (val routerAction = viewModel.route(deepLinkUri = intent.data)) {
+            when (viewModel.route(deepLinkUri = intent.data)) {
                 is RouterAction.Onboarding -> {
                     startOnboardingFragment()
                 }
@@ -64,10 +67,8 @@ class RouterActivity : FragmentActivity(), KoinComponent {
             routeInternal()
             finishAffinity()
         } else {
-            activityScope = CoroutineScope(SupervisorJob() + appDispatchers.Main)
-
             // Postpone routing until all databases are populated
-            activityScope?.launch {
+            mainScope.launch {
                 val offlineSyncer = get<OfflineSyncer>()
                 offlineSyncer.awaitDatabasePopulation()
 
@@ -78,11 +79,6 @@ class RouterActivity : FragmentActivity(), KoinComponent {
                 finishAffinity()
             }
         }
-    }
-
-    override fun onStop() {
-        activityScope?.cancel()
-        super.onStop()
     }
 }
 
