@@ -42,9 +42,9 @@ interface ConfigurationRepository {
     fun observeConfiguration(): Observable<DbConfiguration>
 
     /**
-     * Observe cached version of questions with answers for current [language].
+     * Get cached version of questions with answers for current [language].
      */
-    fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>>
+    suspend fun getQuestionnaireWithAnswers(language: ConfigurationLanguage): List<DbQuestionnaireWithAnswers>
 }
 
 class ConfigurationRepositoryImpl(
@@ -82,7 +82,9 @@ class ConfigurationRepositoryImpl(
         return configurationDao.observeConfiguration().asDbObservable()
     }
 
-    override fun observeQuestionnaireWithAnswers(language: ConfigurationLanguage): Observable<List<DbQuestionnaireWithAnswers>> {
-        return configurationDao.observeQuestionnaireWithAnswers(language).asDbObservable()
+    override suspend fun getQuestionnaireWithAnswers(language: ConfigurationLanguage): List<DbQuestionnaireWithAnswers> {
+        return withContext(coroutineContext) {
+            configurationDao.getQuestionnaireWithAnswers(language)
+        }
     }
 }

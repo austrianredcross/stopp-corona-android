@@ -69,8 +69,6 @@ android {
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", '{}'
             buildConfigField "String[]", "CERTIFICATE_CHAIN_CDN", '{}'
             buildConfigField "String", "AUTHORIZATION_VALUE", '"dummy"'
-
-            resValue "string", "NEARBY_API_KEY", '"dummy"'
         }
 
         stageApi {
@@ -87,8 +85,6 @@ android {
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("STAGE_CERTIFICATE_CHAIN_TAN", '{}')
             buildConfigField "String[]", "CERTIFICATE_CHAIN_CDN", resolveProperty("STAGE_CERTIFICATE_CHAIN_CDN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("STAGE_AUTHORIZATION_VALUE", '"dummy"')
-
-            resValue "string", "NEARBY_API_KEY", resolveProperty("STAGE_NEARBY_API_KEY", '"dummy"')
         }
 
         prodApi {
@@ -102,8 +98,6 @@ android {
             buildConfigField "String[]", "CERTIFICATE_CHAIN_TAN", resolveProperty("PROD_CERTIFICATE_CHAIN_TAN", '{}')
             buildConfigField "String[]", "CERTIFICATE_CHAIN_CDN", resolveProperty("PROD_CERTIFICATE_CHAIN_CDN", '{}')
             buildConfigField "String", "AUTHORIZATION_VALUE", resolveProperty("PROD_AUTHORIZATION_VALUE", '"dummy"')
-
-            resValue "string", "NEARBY_API_KEY", resolveProperty("PROD_NEARBY_API_KEY", '"dummy"')
         }
     }
 
@@ -170,7 +164,6 @@ dependencies {
 
     def work_version = "2.3.4"
     implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation "androidx.work:work-rxjava2:$work_version"
 
     implementation "com.airbnb.android:lottie:3.4.0"
 

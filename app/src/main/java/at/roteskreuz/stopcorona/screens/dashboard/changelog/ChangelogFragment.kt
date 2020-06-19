@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard.changelog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +52,12 @@ class ChangelogFragment : BottomSheetDialogFragment() {
         viewModel.getChangelogForVersion(VERSION_NAME)?.let {
             controller.setData(it)
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        viewModel.markChangelogAsSeen()
     }
 }
 

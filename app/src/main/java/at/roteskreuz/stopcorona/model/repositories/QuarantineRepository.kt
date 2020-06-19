@@ -427,7 +427,7 @@ class QuarantineRepositoryImpl(
             preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT),
             preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT)
         ).map { (lastDateOfRedContact, lastDateOfYellowContact) ->
-            CombinedWarningType(lastDateOfRedContact.isPresent, lastDateOfYellowContact.isPresent)
+            CombinedWarningType(lastDateOfYellowContact.isPresent, lastDateOfRedContact.isPresent)
         }
     }
 

@@ -22,16 +22,10 @@ class DashboardViewModel(
     private val dashboardRepository: DashboardRepository,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val quarantineRepository: QuarantineRepository,
-    private val configurationRepository: ConfigurationRepository,
     private val databaseCleanupManager: DatabaseCleanupManager,
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager
 ) : ScopedViewModel(appDispatchers) {
-
-    companion object {
-        const val DEFAULT_RED_WARNING_QUARANTINE = 336 // hours
-        const val DEFAULT_YELLOW_WARNING_QUARANTINE = 168 // hours
-    }
 
     private var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
@@ -152,7 +146,13 @@ class DashboardViewModel(
         exposureNotificationManager.refreshPrerequisitesErrorStatement(ignoreErrors)
     }
 
-    fun unseenChangelogForVersionAvailable(version: String) = changelogManager.unseenChangelogForVersionAvailable(version)
+    fun unseenChangelogForVersionAvailable(version: String): Boolean {
+        return changelogManager.unseenChangelogForVersionAvailable(version)
+    }
+
+    fun observeExposureSDKReadyToStart(): Observable<Boolean> {
+        return changelogManager.observeExposureSDKReadyToStart().distinctUntilChanged()
+    }
 }
 
 /**

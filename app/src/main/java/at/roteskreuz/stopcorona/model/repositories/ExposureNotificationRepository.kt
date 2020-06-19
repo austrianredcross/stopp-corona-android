@@ -15,7 +15,6 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.io.File
@@ -98,11 +97,16 @@ interface ExposureNotificationRepository {
     suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey>
 
     /**
-     * Process the diagnosis key files of a batch
+     * Provide the diagnosis key files of a batch to the framework
      *
      * @return True if processing has finished. False if more batches are expected to come
      */
     suspend fun provideDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean
+
+    /**
+     * Remove diagnosis key files
+     */
+    suspend fun removeDiagnosisKeyBatchParts(batchParts: List<DbBatchPart>)
 
     /**
      * use the [ExposureNotificationClient.getExposureSummary] to check if the batch is GREEN or
@@ -253,17 +257,18 @@ class ExposureNotificationRepositoryImpl(
         return false // More batches to process
     }
 
-    var waitingForBroadcast = false
+    override suspend fun removeDiagnosisKeyBatchParts(batchParts: List<DbBatchPart>) {
+        batchParts.forEach {
+            filesRepository.removeFile(EXPOSURE_ARCHIVES_FOLDER, it.fileName)
+        }
+    }
+
     private suspend fun provideDiagnosisKeys(
         archives: List<File>,
         exposureConfiguration: ExposureConfiguration,
         token: String
     ) {
-        waitingForBroadcast = true
         exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
-        launch {
-
-        }
     }
 
     private fun DbConfiguration.getExposureConfiguration(): ExposureConfiguration {

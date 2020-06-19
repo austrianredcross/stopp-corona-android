@@ -28,6 +28,8 @@ import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
 import at.roteskreuz.stopcorona.utils.minusDays
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Instant
 import timber.log.Timber
@@ -138,27 +140,28 @@ class InfectionMessengerRepositoryImpl(
                 return
             }
 
-            when (fullSession.session.processingPhase) {
+            processingFinished = when (fullSession.session.processingPhase) {
                 FullBatch -> {
                     Timber.d("Let´s evaluate the fullbatch based on the summary and the current warning state")
-                    processingFinished = processResultsOfFullBatch(configuration, fullSession)
+                    processResultsOfFullBatch(configuration, fullSession)
                 }
                 DailyBatch -> {
                     Timber.d("Let´s evaluate the next daily batch based on the summary and the current warning state ")
-                    processingFinished = processResultsOfNextDailyBatch(configuration, fullSession)
+                    processResultsOfNextDailyBatch(configuration, fullSession)
                 }
             }
         } finally {
             if (processingFinished) {
                 // No further processing has been scheduled.
-                cleanUpSession(fullSession.session)
+                cleanUpSession(fullSession)
             }
         }
     }
 
-    private suspend fun cleanUpSession(session: DbSession) {
-        Timber.d("Session completed. Cleaning up")
-        sessionDao.deleteSession(session)
+    private suspend fun cleanUpSession(fullSession: DbFullSession) {
+        exposureNotificationRepository.removeDiagnosisKeyBatchParts(fullSession.fullBatchParts)
+        exposureNotificationRepository.removeDiagnosisKeyBatchParts(fullSession.dailyBatchesParts)
+        sessionDao.deleteSession(fullSession.session)
     }
 
     private suspend fun processResultsOfNextDailyBatch(
@@ -223,10 +226,16 @@ class InfectionMessengerRepositoryImpl(
 
                     dates.firstRedDay?.let {
                         quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay)
-                    } ?: quarantineRepository.revokeLastRedContactDate()
+                    }
                     dates.firstYellowDay?.let {
                         quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay)
-                    } ?: quarantineRepository.revokeLastYellowContactDate()
+                    }
+                    // Only revoce quarantines after all new quarantines are known.
+                    // When switching from yellow to red, if we revoke yellow above imediately, the red quarantine is not yet known and the
+                    // quarantine end tile is triggered in the ui
+                    if (dates.firstRedDay == null) quarantineRepository.revokeLastRedContactDate()
+                    if (dates.firstYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
+
                     return true // Processing done
                 }
             }
@@ -332,13 +341,19 @@ class InfectionMessengerRepositoryImpl(
 
     private suspend fun fetchDailyBatchesDiagnosisKeys(dailyBatches: List<ApiDiagnosisKeysBatch>)
         : List<DbDailyBatchPart> {
-        return dailyBatches.flatMap { dailyBatch ->
-            dailyBatch.batchFilePaths.mapIndexed { index, path ->
-                DbDailyBatchPart(
-                    batchNumber = index,
-                    intervalStart = dailyBatch.intervalToEpochSeconds,
-                    fileName = apiInteractor.downloadContentDeliveryFile(path)
-                )
+        return coroutineScope {
+            dailyBatches.flatMap { dailyBatch ->
+                dailyBatch.batchFilePaths.mapIndexed { index, path ->
+                    async {
+                        DbDailyBatchPart(
+                            batchNumber = index,
+                            intervalStart = dailyBatch.intervalToEpochSeconds,
+                            fileName = apiInteractor.downloadContentDeliveryFile(path)
+                        )
+                    }
+                }.map {
+                    it.await()
+                }
             }
         }
     }
