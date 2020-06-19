@@ -141,11 +141,13 @@ class InfectionMessengerRepositoryImpl(
                 return
             }
 
-            if (sessionDao.deleteScheduledSession(token) == 0 && configuration.scheduledProcessingIn5Min) {
-                Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
-                return
-            } else {
-                Timber.d("ENStatusUpdates: Processing token $token")
+            if (configuration.scheduledProcessingIn5Min) {
+                if (sessionDao.deleteScheduledSession(token) == 0) {
+                    Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
+                    return
+                } else {
+                    Timber.d("ENStatusUpdates: Processing token $token")
+                }
             }
 
             processingFinished = when (fullSession.session.processingPhase) {
