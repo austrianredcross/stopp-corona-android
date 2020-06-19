@@ -263,7 +263,7 @@ class ExposureNotificationRepositoryImpl(
         }
     }
 
-    private fun provideDiagnosisKeys(
+    private suspend fun provideDiagnosisKeys(
         archives: List<File>,
         exposureConfiguration: ExposureConfiguration,
         token: String

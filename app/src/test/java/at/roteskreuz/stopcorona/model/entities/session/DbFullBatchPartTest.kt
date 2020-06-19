@@ -1,19 +1,19 @@
 package at.roteskreuz.stopcorona.model.entities.session
 
-import org.junit.Test;
+import org.junit.Test
 
 class DbFullBatchPartTest {
 
     @Test
     fun getIntervalStart() {
         val part1 = DbFullBatchPart(
-            currentToken= "egal",
+            sessionId = 1,
             batchNumber = 1,
             intervalStart = 1,
             fileName = "/"
         )
         val part2 = DbFullBatchPart(
-            currentToken= "egal",
+            sessionId = 1,
             batchNumber = 2,
             intervalStart = 1,
             fileName = "/"
