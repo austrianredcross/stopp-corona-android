@@ -5,7 +5,6 @@ import androidx.work.*
 import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT
 import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
 import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -43,8 +42,8 @@ class DelayedExposureBroadcastReceiverCallWorker(
                 .build()
 
             workManager.enqueueUniqueWork(
-                TAG,
-                ExistingWorkPolicy.APPEND,
+                "$TAG-$token",
+                ExistingWorkPolicy.REPLACE,
                 request
             )
         }
