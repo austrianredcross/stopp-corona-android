@@ -224,6 +224,7 @@ class InfectionMessengerRepositoryImpl(
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
 
         when (currentWarningType) {
+            WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
             WarningType.YELLOW, WarningType.RED -> {
                 if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
                     quarantineRepository.revokeLastRedContactDate()
@@ -249,7 +250,9 @@ class InfectionMessengerRepositoryImpl(
                     return true // Processing done
                 }
             }
-            WarningType.GREEN -> {
+            // This branch is disabled (i.e. will never be reached). It is an optimized handling of WarningType.GREEN which is currently broken
+            // due to a bug in Google's EN framework which drops broadcasts if no keys matched at all.
+            else -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
 
@@ -361,8 +364,11 @@ class InfectionMessengerRepositoryImpl(
 
     private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
         return when (warningType) {
+            WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
             WarningType.YELLOW, WarningType.RED -> full14DaysBatch
-            WarningType.GREEN -> full07DaysBatch
+            // This branch is disabled (i.e. will never be reached). It is an optimized handling of WarningType.GREEN which is currently broken
+            // due to a bug in Google's EN framework which drops broadcasts if no keys matched at all.
+            else -> full07DaysBatch
         }
     }
 
