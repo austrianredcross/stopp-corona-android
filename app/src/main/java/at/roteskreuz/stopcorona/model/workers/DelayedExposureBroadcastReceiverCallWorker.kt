@@ -49,16 +49,14 @@ class DelayedExposureBroadcastReceiverCallWorker(
         }
     }
 
-    private val receiver: ExposureNotificationBroadcastReceiver by inject()
-
     override suspend fun doWork(): Result {
         val token = inputData.getString(ARGUMENT_TOKEN)
         Timber.d("ENStatusUpdates: Timeout for $token expired, let's check if it has been processed")
         // fake call to be sure that the zero risk is processed
         token?.let {
-            receiver.onExposureStateUpdated(applicationContext, token)
+            ExposureNotificationBroadcastReceiver.onExposureStateUpdated(applicationContext, token)
         }
 
-        return Result.failure()
+        return Result.success()
     }
 }
