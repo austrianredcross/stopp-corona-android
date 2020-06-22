@@ -14,6 +14,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
 import at.roteskreuz.stopcorona.utils.areOnTheSameUtcDay
+import at.roteskreuz.stopcorona.utils.daysTo
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
@@ -517,7 +518,15 @@ sealed class QuarantineStatus {
          * Quarantine ends at [end] time.
          * After this time user's state is [Free].
          */
-        data class Limited(val end: ZonedDateTime, val byContact: Boolean) : Jailed()
+        data class Limited(val end: ZonedDateTime, val byContact: Boolean) : Jailed(){
+
+            /**
+             * number if days displayed to the user until he is off quarantine
+             */
+            fun daysUntilEnd(): Long {
+                return this.end.toLocalDate().daysTo(ZonedDateTime.now().startOfTheDay().toLocalDate())
+            }
+        }
 
         /**
          * Quarantine never ends.
