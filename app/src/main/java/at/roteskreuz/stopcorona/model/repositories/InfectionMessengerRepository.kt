@@ -128,28 +128,28 @@ class InfectionMessengerRepositoryImpl(
     }
 
     override suspend fun processKeysBasedOnToken(token: String) {
+        val configuration = configurationRepository.getConfiguration() ?: run {
+            Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+            return
+        }
+
+        if (configuration.scheduledProcessingIn5Min) {
+            if (sessionDao.deleteScheduledSession(token) == 0) {
+                Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
+                return
+            } else {
+                Timber.d("ENStatusUpdates: Processing token $token")
+            }
+        }
+
         val fullSession = sessionDao.getFullSession(token) ?: run {
-            Timber.e(SilentError(IllegalStateException("Session for token $token not found")))
+            Timber.e(SilentError(IllegalStateException("ENStatusUpdates: Session for token $token not found")))
             return
         }
 
         // To be safe (form exceptions) assume processing is finished until it is overwritten below
         var processingFinished = true
         try {
-            val configuration = configurationRepository.getConfiguration() ?: run {
-                Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
-                return
-            }
-
-            if (configuration.scheduledProcessingIn5Min) {
-                if (sessionDao.deleteScheduledSession(token) == 0) {
-                    Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
-                    return
-                } else {
-                    Timber.d("ENStatusUpdates: Processing token $token")
-                }
-            }
-
             processingFinished = when (fullSession.session.processingPhase) {
                 FullBatch -> {
                     Timber.d("Let´s evaluate the fullbatch based on the summary and the current warning state")
