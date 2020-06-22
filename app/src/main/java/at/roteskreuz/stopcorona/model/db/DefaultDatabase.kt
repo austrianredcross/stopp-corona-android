@@ -6,15 +6,13 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
-import at.roteskreuz.stopcorona.model.db.dao.InfectionMessageDao
 import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
+import at.roteskreuz.stopcorona.model.entities.exposure.MessageTypeConverter
+import at.roteskreuz.stopcorona.model.entities.exposure.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConverter
-import at.roteskreuz.stopcorona.model.entities.infection.message.DbReceivedInfectionMessage
-import at.roteskreuz.stopcorona.model.entities.infection.message.MessageTypeConverter
-import at.roteskreuz.stopcorona.model.entities.infection.message.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
@@ -30,22 +28,21 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbDailyBatchPart::class,
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
-        DbReceivedInfectionMessage::class,
         DbSentTemporaryExposureKeys::class,
         DbScheduledSession::class
     ],
-    version = 22,
+    version = 23,
     exportSchema = true
 )
 @TypeConverters(
     DateTimeConverter::class,
     ConfigurationLanguageConverter::class,
-    MessageTypeConverter::class,
     WarningTypeConverter::class,
     ProcessingPhaseConverter::class,
     UUIDConverter::class,
     DecisionConverter::class,
-    ArrayOfIntegerConverter::class
+    ArrayOfIntegerConverter::class,
+    MessageTypeConverter::class
 )
 abstract class DefaultDatabase : RoomDatabase() {
 
@@ -371,6 +368,13 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("CREATE TABLE IF NOT EXISTS `scheduled_sessions` (`token` TEXT NOT NULL, PRIMARY KEY(`token`))")
 
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `scheduledProcessingIn5Min` INTEGER NOT NULL DEFAULT 1")
+            },
+            /**
+             * Deleted received_infection_message table.
+             */
+            migration(22, 23) {
+                // delete old table
+                execSQL("DROP TABLE `received_infection_message`")
             }
         )
     }
@@ -378,8 +382,6 @@ abstract class DefaultDatabase : RoomDatabase() {
     abstract fun configurationDao(): ConfigurationDao
 
     abstract fun sessionDao(): SessionDao
-
-    abstract fun infectionMessageDao(): InfectionMessageDao
 
     abstract fun temporaryExposureKeysDao(): TemporaryExposureKeysDao
 }

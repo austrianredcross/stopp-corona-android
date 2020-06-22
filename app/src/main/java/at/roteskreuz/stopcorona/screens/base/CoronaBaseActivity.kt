@@ -70,18 +70,6 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 debugViewModel.addOutgoingMessageYellow()
                 true
             }
-            R.id.debugMenuInfectionMessagesIncomingRed -> {
-                debugViewModel.addIncomingMessageRed()
-                true
-            }
-            R.id.debugMenuInfectionMessagesIncomingYellow -> {
-                debugViewModel.addIncomingMessageYellow()
-                true
-            }
-            R.id.debugMenuInfectionMessagesIncomingGreen -> {
-                debugViewModel.addIncomingMessageGreen()
-                true
-            }
             R.id.debugExposureNotifications -> {
                 startDebugExposureNotificationsFragment()
                 true
