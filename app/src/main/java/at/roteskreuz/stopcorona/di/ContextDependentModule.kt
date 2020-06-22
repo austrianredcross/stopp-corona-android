@@ -73,7 +73,7 @@ internal val contextDependentModule = module {
         GoogleApiAvailability.getInstance()
     }
 
-    single {
+    factory {
         ExposureNotificationBroadcastReceiver()
     }
 }
