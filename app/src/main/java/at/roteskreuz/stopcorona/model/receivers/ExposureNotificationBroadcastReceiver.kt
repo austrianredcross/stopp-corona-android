@@ -33,32 +33,9 @@ import timber.log.Timber
 /**
  * Broadcast receiver for callbacks from exposure notification API.
  */
-class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
+class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
-    companion object : KoinComponent {
-        private val workManager: WorkManager by inject()
-
-        fun onExposureStateUpdated(context: Context, token: String) {
-            if (isDebug) {
-                showDebugNotificationProcessingFinished(context, token)
-            }
-
-            ProcessDiagnosisKeysWorker.enqueueProcessingOfDiagnosisKeys(workManager, token)
-        }
-
-        private fun showDebugNotificationProcessingFinished(context: Context, token: String) {
-            val notification = NotificationCompat.Builder(context, "channel_automatic_detection")
-                .setContentTitle("processing done")
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setSmallIcon(R.drawable.ic_red_cross)
-                .setContentText("processing of $token finished")
-                .setStyle(NotificationCompat.BigTextStyle().bigText("processing of $token finished"))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .build()
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(hashCode(), notification)
-        }
-    }
+    private val workManager: WorkManager by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
@@ -68,5 +45,26 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
 
             onExposureStateUpdated(context, token)
         }
+    }
+
+    fun onExposureStateUpdated(context: Context, token: String) {
+        if (isDebug) {
+            showDebugNotificationProcessingFinished(context, token)
+        }
+
+        ProcessDiagnosisKeysWorker.enqueueProcessingOfDiagnosisKeys(workManager, token)
+    }
+
+    private fun showDebugNotificationProcessingFinished(context: Context, token: String) {
+        val notification = NotificationCompat.Builder(context, "channel_automatic_detection")
+            .setContentTitle("processing done")
+            .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+            .setSmallIcon(R.drawable.ic_red_cross)
+            .setContentText("processing of $token finished")
+            .setStyle(NotificationCompat.BigTextStyle().bigText("processing of $token finished"))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .build()
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(hashCode(), notification)
     }
 }

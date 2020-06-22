@@ -5,6 +5,7 @@ import androidx.work.*
 import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT
 import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
 import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -49,12 +50,14 @@ class DelayedExposureBroadcastReceiverCallWorker(
         }
     }
 
+    private val receiver: ExposureNotificationBroadcastReceiver by inject()
+
     override suspend fun doWork(): Result {
         val token = inputData.getString(ARGUMENT_TOKEN)
         Timber.d("ENStatusUpdates: Timeout for $token expired, let's check if it has been processed")
         // fake call to be sure that the zero risk is processed
         token?.let {
-            ExposureNotificationBroadcastReceiver.onExposureStateUpdated(applicationContext, token)
+            receiver.onExposureStateUpdated(applicationContext, token)
         }
 
         return Result.success()
