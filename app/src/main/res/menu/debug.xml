@@ -51,6 +51,12 @@
             <item
                 android:id="@+id/debugDiagnosisKeys"
                 android:title="Diagnosis Keys" />
+            <item
+                android:id="@+id/debugZeroDaysOfRedQuarantine"
+                android:title="Red quarantine for 'zero' days" />
+            <item
+                android:id="@+id/debugZeroDaysOfYellowQuarantine"
+                android:title="Yellow quarantine for 'zero' days" />
         </menu>
     </item>
 </menu>
