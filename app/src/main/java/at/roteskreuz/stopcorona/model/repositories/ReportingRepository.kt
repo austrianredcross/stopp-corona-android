@@ -293,8 +293,11 @@ class ReportingRepositoryImpl(
         temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
         thresholdTime: Int
     ): List<TemporaryExposureKeysWrapper> {
-        return prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(temporaryExposureKeysFromSDK, thresholdTime,
-            MessageType.InfectionLevel.Yellow)
+        return prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(
+            temporaryExposureKeysFromSDK,
+            thresholdTime,
+            MessageType.InfectionLevel.Yellow
+        )
     }
 
     /**
