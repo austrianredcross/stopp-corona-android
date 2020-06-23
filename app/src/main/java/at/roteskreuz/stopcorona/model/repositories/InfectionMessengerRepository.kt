@@ -95,7 +95,8 @@ class InfectionMessengerRepositoryImpl(
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
     private val exposureNotificationRepository: ExposureNotificationRepository,
-    private val configurationRepository: ConfigurationRepository
+    private val configurationRepository: ConfigurationRepository,
+    val notificationsRepository: NotificationsRepository
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
@@ -236,6 +237,10 @@ class InfectionMessengerRepositoryImpl(
                     // quarantine end tile is triggered in the ui
                     if (dates.firstRedDay == null) quarantineRepository.revokeLastRedContactDate()
                     if (dates.firstYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
+
+                    if (currentWarningType == WarningType.GREEN && dates.noDates()){
+                        notificationsRepository.displayNotificationForLowRisc()
+                    }
 
                     return true // Processing done
                 }

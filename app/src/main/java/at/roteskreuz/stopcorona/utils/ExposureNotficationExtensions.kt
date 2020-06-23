@@ -76,7 +76,11 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
 data class ExposureDates(
     val firstRedDay: Instant?,
     val firstYellowDay: Instant?
-)
+) {
+    fun noDates(): Boolean {
+        return firstRedDay == null && firstYellowDay == null
+    }
+}
 
 data class InfectionMessageDay(
     val day: Instant,
