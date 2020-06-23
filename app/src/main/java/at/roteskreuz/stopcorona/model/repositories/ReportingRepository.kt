@@ -242,7 +242,7 @@ class ReportingRepositoryImpl(
         temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
         thresholdTime: Int
     ): List<TemporaryExposureKeysWrapper> {
-        val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
+        val temporaryExposureKeysList = mutableListOf<TemporaryExposureKeysWrapper>()
 
         val sentYellowTemporaryExposureKeys =
             infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
@@ -252,7 +252,7 @@ class ReportingRepositoryImpl(
         // In case a yellow reporting happened in the past we report the keys reported yellow and
         // the newer keys from Exposure SDK.
         if (sentYellowTemporaryExposureKeys.isNotEmpty()) {
-            infectionMessages.addAll(
+            temporaryExposureKeysList.addAll(
                 sentYellowTemporaryExposureKeys
                     .map { message ->
                         TemporaryExposureKeysWrapper(
@@ -266,7 +266,7 @@ class ReportingRepositoryImpl(
             val latestYellowExposureKeys =
                 sentYellowTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: thresholdTime
 
-            infectionMessages.addAll(
+            temporaryExposureKeysList.addAll(
                 temporaryExposureKeysFromSDK
                     .filter { it.rollingStartIntervalNumber > latestYellowExposureKeys }
                     .groupBy { it.rollingStartIntervalNumber }
@@ -280,13 +280,13 @@ class ReportingRepositoryImpl(
             )
         } else {
             // Either is a completely new reporting or the reporting takes place after a revokation.
-            infectionMessages.addAll(
+            temporaryExposureKeysList.addAll(
                 prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(temporaryExposureKeysFromSDK, thresholdTime,
                     MessageType.InfectionLevel.Red)
             )
         }
 
-        return infectionMessages
+        return temporaryExposureKeysList
     }
 
     private suspend fun prepareListOfTemporaryExposureKeysForYellowReporting(
@@ -310,7 +310,7 @@ class ReportingRepositoryImpl(
         thresholdTime: Int,
         infectionLevel: MessageType
     ): List<TemporaryExposureKeysWrapper> {
-        val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
+        val temporaryExposureKeysList = mutableListOf<TemporaryExposureKeysWrapper>()
 
         val sentGreenTemporaryExposureKeys =
             infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
@@ -323,7 +323,7 @@ class ReportingRepositoryImpl(
         if (latestGreenRollingStartIntervalNumber <= thresholdTime) {
             // The latest revoked key it's older than the reporting threshold,
             // we will get all the keys from the Exposure SDK.
-            infectionMessages.addAll(
+            temporaryExposureKeysList.addAll(
                 temporaryExposureKeysFromSDK
                     .filter { it.rollingStartIntervalNumber > thresholdTime }
                     .groupBy { it.rollingStartIntervalNumber }
@@ -338,7 +338,7 @@ class ReportingRepositoryImpl(
         } else if (latestGreenRollingStartIntervalNumber > thresholdTime) {
             // There are revoked keys that are valid for the current reporting window (> thresholdTime)
             // We report these revoked keys + newer keys provided by the Exposure SDK.
-            infectionMessages.addAll(
+            temporaryExposureKeysList.addAll(
                 sentGreenTemporaryExposureKeys.filter {
                     it.rollingStartIntervalNumber > thresholdTime
                 }.map { temporaryExposureKey ->
@@ -350,7 +350,7 @@ class ReportingRepositoryImpl(
                 }
             )
 
-            infectionMessages.addAll(
+            temporaryExposureKeysList.addAll(
                 temporaryExposureKeysFromSDK
                     .filter { it.rollingStartIntervalNumber > latestGreenRollingStartIntervalNumber }
                     .groupBy { it.rollingStartIntervalNumber }
@@ -364,7 +364,7 @@ class ReportingRepositoryImpl(
             )
         }
 
-        return infectionMessages
+        return temporaryExposureKeysList
     }
 
     private suspend fun uploadData(
