@@ -281,21 +281,27 @@ class ReportingRepositoryImpl(
         return withContext(coroutineContext) {
             val yellowTemporaryExposureKeys =
                 infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(MessageType.InfectionLevel.Yellow)
-            val greenTemporaryExposureWrappersList = yellowTemporaryExposureKeys
+            val listOfYellowTemporaryExposureKeysFromSDK = yellowTemporaryExposureKeys
                 .map { temporaryExposureKey ->
                     TemporaryExposureKeysWrapper(
                         temporaryExposureKey.rollingStartIntervalNumber,
                         temporaryExposureKey.password,
-                        MessageType.GeneralRevoke
+                        temporaryExposureKey.messageType
                     )
-                }
+                }.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
 
-            val greenTemporaryExposureKeys = greenTemporaryExposureWrappersList.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
-
-            uploadData(MessageType.Revoke.Suspicion.warningType, greenTemporaryExposureKeys)
+            uploadData(MessageType.Revoke.Suspicion.warningType, listOfYellowTemporaryExposureKeysFromSDK)
 
             quarantineRepository.revokePositiveSelfDiagnose(backup = false)
-            infectionMessengerRepository.storeSentTemporaryExposureKeys(greenTemporaryExposureWrappersList)
+            // Mark the yellow exposure keys as green in database.
+            val greenTemporaryExposureKeys = yellowTemporaryExposureKeys.map { temporaryExposureKey ->
+                TemporaryExposureKeysWrapper(
+                    temporaryExposureKey.rollingStartIntervalNumber,
+                    temporaryExposureKey.password,
+                    MessageType.GeneralRevoke
+                )
+            }
+            infectionMessengerRepository.storeSentTemporaryExposureKeys(greenTemporaryExposureKeys)
             quarantineRepository.markMissingExposureKeysAsNotUploaded()
 
             MessageType.Revoke.Suspicion
