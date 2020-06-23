@@ -78,6 +78,14 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 startDebugDiagnosisKeysFragment()
                 true
             }
+            R.id.debugZeroDaysOfRedQuarantine -> {
+                debugViewModel.quarantineRedForZeroDays()
+                true
+            }
+            R.id.debugZeroDaysOfYellowQuarantine -> {
+                debugViewModel.quarantineYellowForZeroDays()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

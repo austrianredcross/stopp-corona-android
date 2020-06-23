@@ -1,13 +1,13 @@
 package at.roteskreuz.stopcorona.screens.base
 
+import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
-import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
-import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
-import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
+import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.utils.minusDays
 import kotlinx.coroutines.launch
+import org.threeten.bp.Instant
 
 /**
  * Special viewModel for managing debug tasks.
@@ -18,7 +18,8 @@ class DebugViewModel(
     appDispatchers: AppDispatchers,
     private val infectionMessengerRepository: InfectionMessengerRepository,
     private val notificationsRepository: NotificationsRepository,
-    private val quarantineRepository: QuarantineRepository
+    private val quarantineRepository: QuarantineRepository,
+    private val configurationRepository: ConfigurationRepository
 ) : ScopedViewModel(appDispatchers) {
 
 
@@ -63,6 +64,30 @@ class DebugViewModel(
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportPositiveSelfDiagnose()
+        }
+    }
+
+    fun quarantineRedForZeroDays() {
+        launch(appDispatchers.IO) {
+            val redQuarantineHours = configurationRepository.getConfiguration()!!.redWarningQuarantine!!
+            val quarantineDay = Instant.now().minusDays((redQuarantineHours / 24).toLong())
+            quarantineRepository.receivedWarning(WarningType.RED, quarantineDay)
+        }
+    }
+
+    fun quarantineYellowForZeroDays() {
+        launch(appDispatchers.IO) {
+            val yellowQuaratineHours = configurationRepository.getConfiguration()!!.yellowWarningQuarantine!!
+            val quarantineDay = Instant.now().minusDays((yellowQuaratineHours / 24).toLong())
+            quarantineRepository.receivedWarning(WarningType.YELLOW, quarantineDay)
+        }
+    }
+
+    fun quarantineYellowForOneDay() {
+        launch(appDispatchers.IO) {
+            val yellowQuaratineHours = configurationRepository.getConfiguration()!!.yellowWarningQuarantine!! - 24
+            val quarantineDay = Instant.now().minusDays((yellowQuaratineHours / 24).toLong())
+            quarantineRepository.receivedWarning(WarningType.YELLOW, quarantineDay)
         }
     }
 }
