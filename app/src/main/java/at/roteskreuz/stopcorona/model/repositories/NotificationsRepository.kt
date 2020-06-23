@@ -218,7 +218,7 @@ class NotificationsRepositoryImpl(
                 addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
             },
             channelId = NotificationChannels.CHANNEL_INFECTION_MESSAGE,
-            ongoing = true
+            ongoing = false
         ).show()
     }
 
