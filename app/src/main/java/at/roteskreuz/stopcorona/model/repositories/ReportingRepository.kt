@@ -263,12 +263,12 @@ class ReportingRepositoryImpl(
                     }
             )
 
-            val latestYellowExposureKeys =
+            val latestYellowRollingStartIntervalNumber =
                 sentYellowTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: thresholdTime
 
             temporaryExposureKeysList.addAll(
                 temporaryExposureKeysFromSDK
-                    .filter { it.rollingStartIntervalNumber > latestYellowExposureKeys }
+                    .filter { it.rollingStartIntervalNumber > latestYellowRollingStartIntervalNumber }
                     .groupBy { it.rollingStartIntervalNumber }
                     .map { (rollingStartIntervalNumber, _) ->
                         TemporaryExposureKeysWrapper(
