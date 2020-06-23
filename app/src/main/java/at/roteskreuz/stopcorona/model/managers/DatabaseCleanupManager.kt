@@ -20,13 +20,7 @@ import kotlin.coroutines.CoroutineContext
  * Manages the cleanup of old contact, received messages entries and sent temporary exposure keys
  * in the database.
  */
-interface DatabaseCleanupManager {
-
-    /**
-     * Removes all outgoing yellow temporary exposure keys when the user revokes probably sick status.
-     */
-    suspend fun removeSentYellowTemporaryExposureKeys()
-}
+interface DatabaseCleanupManager
 
 class DatabaseCleanupManagerImpl(
     private val appDispatchers: AppDispatchers,
@@ -46,17 +40,11 @@ class DatabaseCleanupManagerImpl(
         cleanupInfectionMessages()
     }
 
-    override suspend fun removeSentYellowTemporaryExposureKeys() {
-        temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
-            MessageType.InfectionLevel.Yellow,
-            ZonedDateTime.now().toRollingStartIntervalNumber()
-        )
-    }
-
     private fun cleanupInfectionMessages() {
         cleanupSentTemporaryExposureKeys()
     }
 
+    // TODO: Adjust the clean-up knowing that we might need to re-use old keys.
     private fun cleanupSentTemporaryExposureKeys() {
         launch {
             val configuration = configurationRepository.getConfiguration() ?: run {

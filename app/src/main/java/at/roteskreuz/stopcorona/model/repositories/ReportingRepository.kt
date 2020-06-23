@@ -177,7 +177,6 @@ class ReportingRepositoryImpl(
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
 
-            val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
             val dateWithMissingExposureKeys = dateWithMissingExposureKeys
 
             if (dateWithMissingExposureKeys != null) {
@@ -209,55 +208,11 @@ class ReportingRepositoryImpl(
                 quarantineRepository.markMissingExposureKeysAsUploaded()
             } else {
                 // The regular flow of reporting the exposure keys.
-                if (infectionLevel == MessageType.InfectionLevel.Red) {
-                    val sentTemporaryExposureKeys =
-                        infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
-                            MessageType.InfectionLevel.Yellow
-                        )
-
-                    infectionMessages.addAll(
-                        sentTemporaryExposureKeys
-                            .map { message ->
-                                TemporaryExposureKeysWrapper(
-                                    message.rollingStartIntervalNumber,
-                                    message.password,
-                                    MessageType.InfectionLevel.Red
-                                )
-                            }
-                    )
-
-                    if (infectionMessages.isNotEmpty()) {
-                        infectionMessages.sortByDescending { content -> content.rollingStartIntervalNumber }
-                        thresholdTime = infectionMessages.first().rollingStartIntervalNumber
-                    }
-                } else if (infectionLevel == MessageType.InfectionLevel.Yellow) {
-                    val resetMessages =
-                        infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
-                            MessageType.InfectionLevel.Yellow
-                        )
-                            .map { temporaryExposureKey ->
-                                TemporaryExposureKeysWrapper(
-                                    temporaryExposureKey.rollingStartIntervalNumber,
-                                    temporaryExposureKey.password,
-                                    MessageType.Revoke.Suspicion
-                                )
-                            }
-
-                    infectionMessengerRepository.storeSentTemporaryExposureKeys(resetMessages)
+                val infectionMessages = if (infectionLevel == MessageType.InfectionLevel.Red) {
+                    prepareListOfTemporaryExposureKeysForRedReporting(temporaryExposureKeysFromSDK, thresholdTime)
+                } else {
+                    prepareListOfTemporaryExposureKeysForYellowReporting(temporaryExposureKeysFromSDK, thresholdTime)
                 }
-
-                infectionMessages.addAll(
-                    temporaryExposureKeysFromSDK
-                        .filter { it.rollingStartIntervalNumber > thresholdTime }
-                        .groupBy { it.rollingStartIntervalNumber }
-                        .map { (rollingStartIntervalNumber, _) ->
-                            TemporaryExposureKeysWrapper(
-                                rollingStartIntervalNumber,
-                                UUID.randomUUID(),
-                                infectionLevel
-                            )
-                        }
-                )
 
                 val infectionMessagesAsTemporaryExposureKeys =
                     infectionMessages.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
@@ -283,6 +238,131 @@ class ReportingRepositoryImpl(
         }
     }
 
+    private suspend fun prepareListOfTemporaryExposureKeysForRedReporting(
+        temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
+        thresholdTime: Int
+    ): List<TemporaryExposureKeysWrapper> {
+        val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
+
+        val sentYellowTemporaryExposureKeys =
+            infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
+                MessageType.InfectionLevel.Yellow
+            )
+
+        // In case a yellow reporting happened in the past we report the keys reported yellow and
+        // the newer keys from Exposure SDK.
+        if (sentYellowTemporaryExposureKeys.isNotEmpty()) {
+            infectionMessages.addAll(
+                sentYellowTemporaryExposureKeys
+                    .map { message ->
+                        TemporaryExposureKeysWrapper(
+                            message.rollingStartIntervalNumber,
+                            message.password,
+                            MessageType.InfectionLevel.Red
+                        )
+                    }
+            )
+
+            val latestYellowExposureKeys =
+                sentYellowTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: thresholdTime
+
+            infectionMessages.addAll(
+                temporaryExposureKeysFromSDK
+                    .filter { it.rollingStartIntervalNumber > latestYellowExposureKeys }
+                    .groupBy { it.rollingStartIntervalNumber }
+                    .map { (rollingStartIntervalNumber, _) ->
+                        TemporaryExposureKeysWrapper(
+                            rollingStartIntervalNumber,
+                            UUID.randomUUID(),
+                            MessageType.InfectionLevel.Red
+                        )
+                    }
+            )
+        } else {
+            // Either is a completely new reporting or the reporting takes place after a revokation.
+            infectionMessages.addAll(
+                prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(temporaryExposureKeysFromSDK, thresholdTime,
+                    MessageType.InfectionLevel.Red)
+            )
+        }
+
+        return infectionMessages
+    }
+
+    private suspend fun prepareListOfTemporaryExposureKeysForYellowReporting(
+        temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
+        thresholdTime: Int
+    ): List<TemporaryExposureKeysWrapper> {
+        return prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(temporaryExposureKeysFromSDK, thresholdTime,
+            MessageType.InfectionLevel.Yellow)
+    }
+
+    /**
+     * Search in database for green (revoked) exposure keys that are newer than the reporting threshold [thresholdTime].
+     * In case such keys are present we use them and for the rest of the period (> latest green key found)
+     * we report the keys from the Exposure SDK.
+     */
+    private suspend fun prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(
+        temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
+        thresholdTime: Int,
+        infectionLevel: MessageType
+    ): List<TemporaryExposureKeysWrapper> {
+        val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
+
+        val sentGreenTemporaryExposureKeys =
+            infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
+                MessageType.GeneralRevoke
+            )
+
+        val latestGreenRollingStartIntervalNumber =
+            sentGreenTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: Int.MIN_VALUE
+
+        if (latestGreenRollingStartIntervalNumber <= thresholdTime) {
+            // The latest revoked key it's older than the reporting threshold, we will get all the keys from the SDK.
+            infectionMessages.addAll(
+                temporaryExposureKeysFromSDK
+                    .filter { it.rollingStartIntervalNumber > thresholdTime }
+                    .groupBy { it.rollingStartIntervalNumber }
+                    .map { (rollingStartIntervalNumber, _) ->
+                        TemporaryExposureKeysWrapper(
+                            rollingStartIntervalNumber,
+                            UUID.randomUUID(),
+                            infectionLevel
+                        )
+                    }
+            )
+        } else if (latestGreenRollingStartIntervalNumber > thresholdTime) {
+            // There are revoked keys that are valid for the current reporting window (> thresholdTime)
+            // We report these revoked keys + new keys provided by the SDK.
+            infectionMessages.addAll(
+                sentGreenTemporaryExposureKeys.filter {
+                    it.rollingStartIntervalNumber > thresholdTime
+                }.map { temporaryExposureKey ->
+                    TemporaryExposureKeysWrapper(
+                        temporaryExposureKey.rollingStartIntervalNumber,
+                        temporaryExposureKey.password,
+                        infectionLevel
+                    )
+                }
+            )
+
+            infectionMessages.addAll(
+                temporaryExposureKeysFromSDK
+                    .filter { it.rollingStartIntervalNumber > latestGreenRollingStartIntervalNumber }
+                    .groupBy { it.rollingStartIntervalNumber }
+                    .map { (rollingStartIntervalNumber, _) ->
+                        TemporaryExposureKeysWrapper(
+                            rollingStartIntervalNumber,
+                            UUID.randomUUID(),
+                            infectionLevel
+                        )
+                    }
+            )
+        }
+
+        return infectionMessages
+    }
+
     private suspend fun uploadData(
         warningType: WarningType,
         temporaryExposureKeys: List<Pair<List<TemporaryExposureKey>, UUID>>
@@ -300,20 +380,29 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadRevokeSuspicionInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
-            val infectionMessages =
+            val yellowTemporaryExposureKeys =
                 infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(MessageType.InfectionLevel.Yellow)
-                    .map { message ->
-                        TemporaryExposureKeysWrapper(
-                            message.rollingStartIntervalNumber,
-                            message.password,
-                            message.messageType
-                        )
-                    }.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
+            val listOfYellowTemporaryExposureKeysFromSDK = yellowTemporaryExposureKeys
+                .map { temporaryExposureKey ->
+                    TemporaryExposureKeysWrapper(
+                        temporaryExposureKey.rollingStartIntervalNumber,
+                        temporaryExposureKey.password,
+                        temporaryExposureKey.messageType
+                    )
+                }.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
 
-            uploadData(MessageType.Revoke.Suspicion.warningType, infectionMessages)
+            uploadData(MessageType.Revoke.Suspicion.warningType, listOfYellowTemporaryExposureKeysFromSDK)
 
             quarantineRepository.revokePositiveSelfDiagnose(backup = false)
-            databaseCleanupManager.removeSentYellowTemporaryExposureKeys()
+            // Mark the yellow exposure keys as green in database.
+            val greenTemporaryExposureKeys = yellowTemporaryExposureKeys.map { temporaryExposureKey ->
+                TemporaryExposureKeysWrapper(
+                    temporaryExposureKey.rollingStartIntervalNumber,
+                    temporaryExposureKey.password,
+                    MessageType.GeneralRevoke
+                )
+            }
+            infectionMessengerRepository.storeSentTemporaryExposureKeys(greenTemporaryExposureKeys)
             quarantineRepository.markMissingExposureKeysAsNotUploaded()
 
             MessageType.Revoke.Suspicion
@@ -325,7 +414,7 @@ class ReportingRepositoryImpl(
 
             val updateStatus = when {
                 quarantineRepository.hasSelfDiagnoseBackup -> MessageType.InfectionLevel.Yellow
-                else -> MessageType.Revoke.Suspicion
+                else -> MessageType.GeneralRevoke
             }
 
             val infectionMessages =
