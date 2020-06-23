@@ -40,7 +40,7 @@ abstract class TemporaryExposureKeysDao {
     }
 
     @Query("DELETE FROM sent_temporary_exposure_keys WHERE messageType = :messageType AND rollingStartIntervalNumber < :olderThan")
-    abstract suspend fun removeSentInfectionMessagesOlderThan(
+    abstract suspend fun removeSentTemporarelyExposureKeysOlderThan(
         messageType: MessageType,
         olderThan: Int
     )

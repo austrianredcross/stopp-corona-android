@@ -53,14 +53,14 @@ class DebugViewModel(
         return quarantineRepository.observeQuarantineState().blockingFirst()
     }
 
-    fun addOutgoingMessageRed() {
+    fun reportMedicalConfirmation() {
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportMedicalConfirmation()
         }
     }
 
-    fun addOutgoingMessageYellow() {
+    fun reportPositiveSelfDiagnose() {
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportPositiveSelfDiagnose()
