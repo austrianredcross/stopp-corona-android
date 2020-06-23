@@ -68,6 +68,12 @@ interface NotificationsRepository {
      * Hide notification by [id].
      */
     fun hideNotification(id: Int)
+
+    /**
+     * Display a notification, informing the user that the combined risk of the exposures from
+     * the Exposure Notifications Framework was too low to qualify for a quarantine.
+     */
+    fun displayNotificationForLowRisc()
 }
 
 class NotificationsRepositoryImpl(
@@ -199,6 +205,21 @@ class NotificationsRepositoryImpl(
 
     override fun hideNotification(id: Int) {
         notificationManager.cancel(id)
+    }
+
+    override fun displayNotificationForLowRisc() {
+        val title = context.string(R.string.local_notification_low_risk_title)
+        val message = context.string(R.string.local_notification_low_risk_message)
+
+        buildNotification(
+            title = title,
+            message = message,
+            pendingIntent = buildPendingIntentWithActivityStack {
+                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
+            },
+            channelId = NotificationChannels.CHANNEL_INFECTION_MESSAGE,
+            ongoing = false
+        ).show()
     }
 
     private fun buildNotification(
