@@ -60,8 +60,7 @@ Care for you. Care for me. That's how we protect ourselves.
 
 ## Checklist to make project buildable
 
-1. Add your own google-services.json.
-2. Add your own hostname & api-key.
+1. Add your own `HOSTNAME`, `BASE_URL`, `HOSTNAME_TAN`, `BASE_URL_TAN`, `HOSTNAME_CDN`, `BASE_URL_CDN` and potentially other `buildConfigField`s as shown in the [app/build.gradle](https://github.com/austrianredcross/stopp-corona-android/blob/develop/app/build.gradle#L75)
 
 ## Download
 
