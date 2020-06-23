@@ -170,7 +170,7 @@ class ReportingRepositoryImpl(
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            var thresholdTime = ZonedDateTime.now()
+            val thresholdTime = ZonedDateTime.now()
                 .minusDays(uploadKeysDays.toLong())
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
