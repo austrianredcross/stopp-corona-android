@@ -5,7 +5,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.utils.startOfTheDay
+import at.roteskreuz.stopcorona.utils.startOfTheUtcDay
 import at.roteskreuz.stopcorona.utils.toRollingStartIntervalNumber
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,7 +54,7 @@ class DatabaseCleanupManagerImpl(
 
             val nowAsRollingStartIntervalNumber = ZonedDateTime.now()
                 .minusDays(NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT)
-                .startOfTheDay()
+                .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
             temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
                 MessageType.Revoke.Suspicion,
@@ -64,7 +64,7 @@ class DatabaseCleanupManagerImpl(
             val yellowWarningQuarantine = configuration.yellowWarningQuarantine?.toLong()
             val thresholdYellowMessageAsRollingStart = if (yellowWarningQuarantine != null) {
                 ZonedDateTime.now()
-                    .startOfTheDay()
+                    .startOfTheUtcDay()
                     // +1 hour buffer time to avoid removing from midnight, since at this moment (12-Jun-2020)
                     // the rolling start interval is set by the framework at midnight (start of the day)
                     .minusHours(yellowWarningQuarantine + 1)
@@ -80,7 +80,7 @@ class DatabaseCleanupManagerImpl(
             val redWarningQuarantine = configuration.redWarningQuarantine?.toLong()
             val thresholdRedMessagesAsRollingStart = if (redWarningQuarantine != null) {
                 ZonedDateTime.now()
-                    .startOfTheDay()
+                    .startOfTheUtcDay()
                     // +1 hour buffer time to avoid removing from midnight, since at this moment (12-Jun-2020)
                     // the rolling start interval is set by the framework at midnight (start of the day)
                     .minusHours(redWarningQuarantine + 1)
