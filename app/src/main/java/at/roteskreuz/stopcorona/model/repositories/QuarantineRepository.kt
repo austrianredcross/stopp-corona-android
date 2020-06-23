@@ -521,10 +521,10 @@ sealed class QuarantineStatus {
         data class Limited(val end: ZonedDateTime, val byContact: Boolean) : Jailed(){
 
             /**
-             * number if days displayed to the user until he is off quarantine
+             * number if days displayed to the user until he is off quarantine (we add one to account for the offset on the last day)
              */
             fun daysUntilEnd(): Long {
-                return this.end.toLocalDate().daysTo(ZonedDateTime.now().startOfTheDay().toLocalDate())
+                return this.end.toLocalDate().daysTo(ZonedDateTime.now().startOfTheDay().toLocalDate()) + 1
             }
         }
 

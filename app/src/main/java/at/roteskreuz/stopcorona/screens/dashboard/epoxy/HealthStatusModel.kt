@@ -43,10 +43,6 @@ abstract class HealthStatusModel(
     override fun Holder.onBind() {
         val healthStatusData: HealthStatusData? = data
 
-        var visibleQuarantine =
-            (healthStatusData is HealthStatusData.ContactsSicknessInfo && ownHealthStatus !is HealthStatusData.SicknessCertificate) ||
-                healthStatusData is HealthStatusData.SelfTestingSuspicionOfSickness
-
         if (healthStatusData != null) {
 
             when (healthStatusData) {
@@ -62,14 +58,9 @@ abstract class HealthStatusModel(
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
                     txtDescription.text = context.string(R.string.self_testing_suspicion_description)
                     txtActionButton.text = when {
-                        days == 0L -> "Your quarantine ends today."
                         days == 1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
-                    if (days == 0L) {
-                        visibleQuarantine = false
-                    }
-
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     txtQuarantineDays.text = days.toString()
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
@@ -88,18 +79,11 @@ abstract class HealthStatusModel(
                         Timber.e(SilentError("HealthStatusData.ContactsSicknessInfo must have QuarantineStatus.Jailed.Limited"))
                         0L
                     }
-
                     txtQuarantineDays.text = days.toString()
                     val quarantineDayActionText = when {
-                        days == 0L -> "Your quarantine ends today."
                         days == 1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
-
-                    if (days == 0L) {
-                        visibleQuarantine = false
-                    }
-
                     when {
                         healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected.not() -> {
                             txtTitle.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline)
@@ -150,6 +134,9 @@ abstract class HealthStatusModel(
             resetFields()
         }
 
+        val visibleQuarantine =
+            (healthStatusData is HealthStatusData.ContactsSicknessInfo && ownHealthStatus !is HealthStatusData.SicknessCertificate) ||
+                    healthStatusData is HealthStatusData.SelfTestingSuspicionOfSickness
 
         txtQuarantineDays.visible = visibleQuarantine
         backgroundQuarantineDays.visible = visibleQuarantine
