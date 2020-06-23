@@ -208,18 +208,18 @@ class ReportingRepositoryImpl(
                 quarantineRepository.markMissingExposureKeysAsUploaded()
             } else {
                 // The regular flow of reporting the exposure keys.
-                val infectionMessages = if (infectionLevel == MessageType.InfectionLevel.Red) {
+                val temporaryExposureKeys = if (infectionLevel == MessageType.InfectionLevel.Red) {
                     prepareListOfTemporaryExposureKeysForRedReporting(temporaryExposureKeysFromSDK, thresholdTime)
                 } else {
                     prepareListOfTemporaryExposureKeysForYellowReporting(temporaryExposureKeysFromSDK, thresholdTime)
                 }
 
                 val infectionMessagesAsTemporaryExposureKeys =
-                    infectionMessages.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
+                    temporaryExposureKeys.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
 
                 uploadData(infectionLevel.warningType, infectionMessagesAsTemporaryExposureKeys)
 
-                infectionMessengerRepository.storeSentTemporaryExposureKeys(infectionMessages)
+                infectionMessengerRepository.storeSentTemporaryExposureKeys(temporaryExposureKeys)
 
                 when (infectionLevel) {
                     MessageType.InfectionLevel.Red -> {
