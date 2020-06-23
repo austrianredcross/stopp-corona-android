@@ -6,7 +6,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPay
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion.SCOPE_NAME
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -120,8 +119,7 @@ class ReportingRepositoryImpl(
     private val quarantineRepository: QuarantineRepository,
     private val contextInteractor: ContextInteractor,
     private val infectionMessengerRepository: InfectionMessengerRepository,
-    private val configurationRepository: ConfigurationRepository,
-    private val databaseCleanupManager: DatabaseCleanupManager
+    private val configurationRepository: ConfigurationRepository
 ) : Scope(SCOPE_NAME),
     ReportingRepository,
     CoroutineScope {
