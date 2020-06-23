@@ -31,7 +31,7 @@ class DatabaseCleanupManagerImpl(
     companion object {
         private val UNIX_TIME_START: ZonedDateTime =
             ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault())
-        private const val NUMBER_OF_DAYS_FOR_WHICH_THE_GREEN_KEYS_ARE_KEPT = 14L
+        private const val NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT = 14L
     }
 
     override val coroutineContext: CoroutineContext
@@ -53,7 +53,7 @@ class DatabaseCleanupManagerImpl(
             }
 
             val nowAsRollingStartIntervalNumber = ZonedDateTime.now()
-                .minusDays(NUMBER_OF_DAYS_FOR_WHICH_THE_GREEN_KEYS_ARE_KEPT)
+                .minusDays(NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT)
                 .startOfTheDay()
                 .toRollingStartIntervalNumber()
             temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
