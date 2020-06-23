@@ -103,6 +103,8 @@
 	<string name="main_exposure_error_bluetooth_off_action">Activate</string>
 	<string name="main_exposure_error_action">Try again</string>
 	<string name="main_reporting_disable_btn">Activate the automatic handshake for this function.</string>
+	<string name="local_notification_low_risk_title">No COVID-19 infection risk </string>
+	<string name="local_notification_low_risk_message">The evaluation of the possible encounter with COVID-19 infected persons did not reveal any relevant risk of infection due to the stored duration or distance of the possible encounter. Please continue to observe the applicable hygiene recommendations.</string>
 
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Download the current version</string>
