@@ -170,7 +170,7 @@ class ReportingRepositoryImpl(
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            val thresholdTime = ZonedDateTime.now()
+            val thresholdTimeFromConfiguration = ZonedDateTime.now()
                 .minusDays(uploadKeysDays.toLong())
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
@@ -206,18 +206,44 @@ class ReportingRepositoryImpl(
                 quarantineRepository.markMissingExposureKeysAsUploaded()
             } else {
                 // The regular flow of reporting the exposure keys.
-                val temporaryExposureKeyWrappers = if (infectionLevel == MessageType.InfectionLevel.Red) {
-                    prepareListOfTemporaryExposureKeysForRedReporting(temporaryExposureKeysFromSDK, thresholdTime)
+                val thresholdTime = if (infectionLevel == MessageType.InfectionLevel.Red) {
+                    infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
+                        MessageType.InfectionLevel.Yellow
+                    ).minBy {
+                        it.rollingStartIntervalNumber
+                    }?.rollingStartIntervalNumber ?: thresholdTimeFromConfiguration
                 } else {
-                    prepareListOfTemporaryExposureKeysForYellowReporting(temporaryExposureKeysFromSDK, thresholdTime)
+                    thresholdTimeFromConfiguration
+                }
+
+                val temporaryExposureKeysFromDb = infectionMessengerRepository.getSentTemporaryExposureKeys()
+
+                val temporaryExposureKeysWrapperList = temporaryExposureKeysFromSDK.filter {
+                    it.rollingStartIntervalNumber > thresholdTime
+                }.map { temporaryExposureKeyFromSDK ->
+                    temporaryExposureKeysFromDb.firstOrNull {
+                        it.rollingStartIntervalNumber == temporaryExposureKeyFromSDK.rollingStartIntervalNumber
+                    }?.let { temporaryExposureKeyFromDb ->
+                        TemporaryExposureKeysWrapper(
+                            rollingStartIntervalNumber = temporaryExposureKeyFromDb.rollingStartIntervalNumber,
+                            password = temporaryExposureKeyFromDb.password,
+                            messageType = infectionLevel
+                        )
+                    } ?: run {
+                        TemporaryExposureKeysWrapper(
+                            temporaryExposureKeyFromSDK.rollingStartIntervalNumber,
+                            UUID.randomUUID(),
+                            infectionLevel
+                        )
+                    }
                 }
 
                 val temporaryExposureKeys =
-                    temporaryExposureKeyWrappers.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
+                    temporaryExposureKeysWrapperList.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
 
                 uploadData(infectionLevel.warningType, temporaryExposureKeys)
 
-                infectionMessengerRepository.storeSentTemporaryExposureKeys(temporaryExposureKeyWrappers)
+                infectionMessengerRepository.storeSentTemporaryExposureKeys(temporaryExposureKeysWrapperList)
 
                 when (infectionLevel) {
                     MessageType.InfectionLevel.Red -> {
@@ -234,135 +260,6 @@ class ReportingRepositoryImpl(
 
             infectionLevel
         }
-    }
-
-    private suspend fun prepareListOfTemporaryExposureKeysForRedReporting(
-        temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
-        thresholdTime: Int
-    ): List<TemporaryExposureKeysWrapper> {
-        val temporaryExposureKeysList = mutableListOf<TemporaryExposureKeysWrapper>()
-
-        val sentYellowTemporaryExposureKeys =
-            infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
-                MessageType.InfectionLevel.Yellow
-            )
-
-        // In case a yellow reporting happened in the past we report the keys reported yellow and
-        // the newer keys from Exposure SDK.
-        if (sentYellowTemporaryExposureKeys.isNotEmpty()) {
-            temporaryExposureKeysList.addAll(
-                sentYellowTemporaryExposureKeys
-                    .map { message ->
-                        TemporaryExposureKeysWrapper(
-                            message.rollingStartIntervalNumber,
-                            message.password,
-                            MessageType.InfectionLevel.Red
-                        )
-                    }
-            )
-
-            val latestYellowRollingStartIntervalNumber =
-                sentYellowTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: thresholdTime
-
-            temporaryExposureKeysList.addAll(
-                temporaryExposureKeysFromSDK
-                    .filter { it.rollingStartIntervalNumber > latestYellowRollingStartIntervalNumber }
-                    .groupBy { it.rollingStartIntervalNumber }
-                    .map { (rollingStartIntervalNumber, _) ->
-                        TemporaryExposureKeysWrapper(
-                            rollingStartIntervalNumber,
-                            UUID.randomUUID(),
-                            MessageType.InfectionLevel.Red
-                        )
-                    }
-            )
-        } else {
-            // Either is a completely new reporting or the reporting takes place after a revokation.
-            temporaryExposureKeysList.addAll(
-                prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(temporaryExposureKeysFromSDK, thresholdTime,
-                    MessageType.InfectionLevel.Red)
-            )
-        }
-
-        return temporaryExposureKeysList
-    }
-
-    private suspend fun prepareListOfTemporaryExposureKeysForYellowReporting(
-        temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
-        thresholdTime: Int
-    ): List<TemporaryExposureKeysWrapper> {
-        return prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(
-            temporaryExposureKeysFromSDK,
-            thresholdTime,
-            MessageType.InfectionLevel.Yellow
-        )
-    }
-
-    /**
-     * Search in database for green (revoked) exposure keys that are newer than the reporting threshold [thresholdTime].
-     * In case such keys are present we use them and for the rest of the period (> latest green key found)
-     * we report the keys from the Exposure SDK.
-     */
-    private suspend fun prepareListWithGreenTemporaryExposureKeysFromDbAndNewKeysFromTheSDK(
-        temporaryExposureKeysFromSDK: List<TemporaryExposureKey>,
-        thresholdTime: Int,
-        infectionLevel: MessageType
-    ): List<TemporaryExposureKeysWrapper> {
-        val temporaryExposureKeysList = mutableListOf<TemporaryExposureKeysWrapper>()
-
-        val sentGreenTemporaryExposureKeys =
-            infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
-                MessageType.GeneralRevoke
-            )
-
-        val latestGreenRollingStartIntervalNumber =
-            sentGreenTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: Int.MIN_VALUE
-
-        if (latestGreenRollingStartIntervalNumber <= thresholdTime) {
-            // The latest revoked key it's older than the reporting threshold,
-            // we will get all the keys from the Exposure SDK.
-            temporaryExposureKeysList.addAll(
-                temporaryExposureKeysFromSDK
-                    .filter { it.rollingStartIntervalNumber > thresholdTime }
-                    .groupBy { it.rollingStartIntervalNumber }
-                    .map { (rollingStartIntervalNumber, _) ->
-                        TemporaryExposureKeysWrapper(
-                            rollingStartIntervalNumber,
-                            UUID.randomUUID(),
-                            infectionLevel
-                        )
-                    }
-            )
-        } else if (latestGreenRollingStartIntervalNumber > thresholdTime) {
-            // There are revoked keys that are valid for the current reporting window (> thresholdTime)
-            // We report these revoked keys + newer keys provided by the Exposure SDK.
-            temporaryExposureKeysList.addAll(
-                sentGreenTemporaryExposureKeys.filter {
-                    it.rollingStartIntervalNumber > thresholdTime
-                }.map { temporaryExposureKey ->
-                    TemporaryExposureKeysWrapper(
-                        temporaryExposureKey.rollingStartIntervalNumber,
-                        temporaryExposureKey.password,
-                        infectionLevel
-                    )
-                }
-            )
-
-            temporaryExposureKeysList.addAll(
-                temporaryExposureKeysFromSDK
-                    .filter { it.rollingStartIntervalNumber > latestGreenRollingStartIntervalNumber }
-                    .groupBy { it.rollingStartIntervalNumber }
-                    .map { (rollingStartIntervalNumber, _) ->
-                        TemporaryExposureKeysWrapper(
-                            rollingStartIntervalNumber,
-                            UUID.randomUUID(),
-                            infectionLevel
-                        )
-                    }
-            )
-        }
-
-        return temporaryExposureKeysList
     }
 
     private suspend fun uploadData(
