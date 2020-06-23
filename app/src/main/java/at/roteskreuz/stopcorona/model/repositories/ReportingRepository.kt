@@ -321,7 +321,8 @@ class ReportingRepositoryImpl(
             sentGreenTemporaryExposureKeys.maxBy { it.rollingStartIntervalNumber }?.rollingStartIntervalNumber ?: Int.MIN_VALUE
 
         if (latestGreenRollingStartIntervalNumber <= thresholdTime) {
-            // The latest revoked key it's older than the reporting threshold, we will get all the keys from the SDK.
+            // The latest revoked key it's older than the reporting threshold,
+            // we will get all the keys from the Exposure SDK.
             infectionMessages.addAll(
                 temporaryExposureKeysFromSDK
                     .filter { it.rollingStartIntervalNumber > thresholdTime }
@@ -336,7 +337,7 @@ class ReportingRepositoryImpl(
             )
         } else if (latestGreenRollingStartIntervalNumber > thresholdTime) {
             // There are revoked keys that are valid for the current reporting window (> thresholdTime)
-            // We report these revoked keys + new keys provided by the SDK.
+            // We report these revoked keys + newer keys provided by the Exposure SDK.
             infectionMessages.addAll(
                 sentGreenTemporaryExposureKeys.filter {
                     it.rollingStartIntervalNumber > thresholdTime
