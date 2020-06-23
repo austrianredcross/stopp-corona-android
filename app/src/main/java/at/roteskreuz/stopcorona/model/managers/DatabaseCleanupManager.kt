@@ -31,6 +31,7 @@ class DatabaseCleanupManagerImpl(
     companion object {
         private val UNIX_TIME_START: ZonedDateTime =
             ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault())
+        private const val NUMBER_OF_DAYS_FOR_WHICH_THE_GREEN_KEYS_ARE_KEPT = 14L
     }
 
     override val coroutineContext: CoroutineContext
@@ -44,7 +45,6 @@ class DatabaseCleanupManagerImpl(
         cleanupSentTemporaryExposureKeys()
     }
 
-    // TODO: Adjust the clean-up knowing that we might need to re-use old keys.
     private fun cleanupSentTemporaryExposureKeys() {
         launch {
             val configuration = configurationRepository.getConfiguration() ?: run {
@@ -53,6 +53,8 @@ class DatabaseCleanupManagerImpl(
             }
 
             val nowAsRollingStartIntervalNumber = ZonedDateTime.now()
+                .minusDays(NUMBER_OF_DAYS_FOR_WHICH_THE_GREEN_KEYS_ARE_KEPT)
+                .startOfTheDay()
                 .toRollingStartIntervalNumber()
             temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
                 MessageType.Revoke.Suspicion,
