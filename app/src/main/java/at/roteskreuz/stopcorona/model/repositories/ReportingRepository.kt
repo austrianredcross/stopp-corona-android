@@ -444,7 +444,7 @@ class ReportingRepositoryImpl(
                 is MessageType.InfectionLevel.Yellow -> {
                     quarantineRepository.reportPositiveSelfDiagnoseFromBackup()
                 }
-                is MessageType.Revoke.Suspicion -> {
+                is MessageType.GeneralRevoke -> {
                     quarantineRepository.revokePositiveSelfDiagnose(backup = false)
                     quarantineRepository.markMissingExposureKeysAsNotUploaded()
                 }
