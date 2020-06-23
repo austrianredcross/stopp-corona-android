@@ -55,6 +55,16 @@ sealed class MessageType(val identifier: String) : Parcelable {
     }
 
     /**
+     * Describes a revokation after a self-test reporting or a medical confirmation reporting.
+     */
+    @Parcelize
+    object GeneralRevoke : MessageType("g") {
+
+        @IgnoredOnParcel
+        override val warningType: WarningType = WarningType.GREEN
+    }
+
+    /**
      * Revoke-from options.
      */
     sealed class Revoke(identifier: String) : MessageType(identifier) {

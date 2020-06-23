@@ -57,6 +57,11 @@ interface InfectionMessengerRepository {
     suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
 
     /**
+     * Get all the sent temporary exposure keys.
+     */
+    suspend fun getSentTemporaryExposureKeys(): List<DbSentTemporaryExposureKeys>
+
+    /**
      * Observe info if someone has recovered.
      * To hide it user must call [someoneHasRecoveredMessageSeen].
      */
@@ -409,6 +414,10 @@ class InfectionMessengerRepositoryImpl(
 
     override suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
         return temporaryExposureKeysDao.getSentTemporaryExposureKeysByMessageType(messageType)
+    }
+
+    override suspend fun getSentTemporaryExposureKeys(): List<DbSentTemporaryExposureKeys> {
+        return temporaryExposureKeysDao.getSentTemporaryExposureKeys()
     }
 
     override fun setSomeoneHasRecovered() {
