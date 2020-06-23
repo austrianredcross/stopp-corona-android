@@ -44,7 +44,7 @@ interface InfectionMessengerRepository {
     /**
      * Store to DB the sent temporary exposure keys.
      */
-    suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>)
+    suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TekMetadata>)
 
     /**
      * Start a process of downloading diagnosis keys (previously known as infection messages)
@@ -54,7 +54,7 @@ interface InfectionMessengerRepository {
     /**
      * Get the sent temporary exposure keys.
      */
-    suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
+    suspend fun getSentTeksByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
 
     /**
      * Get all the sent temporary exposure keys.
@@ -119,7 +119,7 @@ class InfectionMessengerRepositoryImpl(
         false
     )
 
-    override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>) {
+    override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TekMetadata>) {
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
     }
 
@@ -243,7 +243,7 @@ class InfectionMessengerRepositoryImpl(
                     if (dates.firstRedDay == null) quarantineRepository.revokeLastRedContactDate()
                     if (dates.firstYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
 
-                    if (currentWarningType == WarningType.GREEN && dates.noDates()){
+                    if (currentWarningType == WarningType.GREEN && dates.noDates()) {
                         notificationsRepository.displayNotificationForLowRisc()
                     }
 
@@ -412,7 +412,7 @@ class InfectionMessengerRepositoryImpl(
         return preferences.observeBoolean(PREF_SOMEONE_HAS_RECOVERED, false)
     }
 
-    override suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
+    override suspend fun getSentTeksByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
         return temporaryExposureKeysDao.getSentTemporaryExposureKeysByMessageType(messageType)
     }
 
@@ -436,7 +436,7 @@ class InfectionMessengerRepositoryImpl(
 /**
  * Describes a temporary exposure key, it's associated random password and messageType.
  */
-data class TemporaryExposureKeysWrapper(
+data class TekMetadata(
     val rollingStartIntervalNumber: Int,
     val password: UUID,
     val messageType: MessageType

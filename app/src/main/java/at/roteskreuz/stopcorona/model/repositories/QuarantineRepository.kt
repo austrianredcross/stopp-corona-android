@@ -15,6 +15,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
 import at.roteskreuz.stopcorona.utils.areOnTheSameUtcDay
 import at.roteskreuz.stopcorona.utils.daysTo
+import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
@@ -464,25 +465,25 @@ class QuarantineRepositoryImpl(
             .map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
                 if (dateOfFirstMedicalConfirmation.isPresent &&
                     ZonedDateTime.now()
-                        .isAfter(dateOfFirstMedicalConfirmation.get().plusDays(1).startOfTheDay()) &&
+                        .isAfter(dateOfFirstMedicalConfirmation.get().endOfTheUtcDay()) &&
                     areMissingKeysUploaded.not()
                 ) {
-                    UploadMissingExposureKeys(
+                    Optional.of(UploadMissingExposureKeys(
                         dateOfFirstMedicalConfirmation.get(),
                         MessageType.InfectionLevel.Red
-                    )
-                }
-                if (dateOfLastSelfDiagnose.isPresent &&
+                    ))
+                } else if (dateOfLastSelfDiagnose.isPresent &&
                     ZonedDateTime.now()
-                        .isAfter(dateOfLastSelfDiagnose.get().plusDays(1).startOfTheDay()) &&
+                        .isAfter(dateOfLastSelfDiagnose.get().endOfTheUtcDay()) &&
                     areMissingKeysUploaded.not()
                 ) {
-                    UploadMissingExposureKeys(
+                    Optional.of(UploadMissingExposureKeys(
                         dateOfLastSelfDiagnose.get(),
                         MessageType.InfectionLevel.Yellow
-                    )
+                    ))
+                } else {
+                    Optional.empty<UploadMissingExposureKeys>()
                 }
-                Optional.empty<UploadMissingExposureKeys>()
             }
     }
 
@@ -518,7 +519,7 @@ sealed class QuarantineStatus {
          * Quarantine ends at [end] time.
          * After this time user's state is [Free].
          */
-        data class Limited(val end: ZonedDateTime, val byContact: Boolean) : Jailed(){
+        data class Limited(val end: ZonedDateTime, val byContact: Boolean) : Jailed() {
 
             /**
              * number if days displayed to the user until he is off quarantine (we add one to account for the offset on the last day)
