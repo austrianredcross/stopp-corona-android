@@ -16,7 +16,7 @@ import org.threeten.bp.Instant
  */
 class DebugViewModel(
     appDispatchers: AppDispatchers,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
+    private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val notificationsRepository: NotificationsRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository
@@ -37,7 +37,7 @@ class DebugViewModel(
 
     fun displaySomeoneHasRecoveredNotification() {
         launch {
-            infectionMessengerRepository.setSomeoneHasRecovered()
+            diagnosisKeysRepository.setSomeoneHasRecovered()
             notificationsRepository.displaySomeoneHasRecoveredNotification()
         }
     }
