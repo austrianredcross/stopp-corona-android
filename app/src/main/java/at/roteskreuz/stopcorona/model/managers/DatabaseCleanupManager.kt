@@ -52,13 +52,13 @@ class DatabaseCleanupManagerImpl(
                 return@launch
             }
 
-            val nowAsRollingStartIntervalNumber = ZonedDateTime.now()
+            val thresholdRevokedMessagesAsRollingStart = ZonedDateTime.now()
                 .minusDays(NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT)
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
             temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
                 MessageType.Revoke.Suspicion,
-                nowAsRollingStartIntervalNumber
+                thresholdRevokedMessagesAsRollingStart
             )
 
             val yellowWarningQuarantine = configuration.yellowWarningQuarantine?.toLong()
