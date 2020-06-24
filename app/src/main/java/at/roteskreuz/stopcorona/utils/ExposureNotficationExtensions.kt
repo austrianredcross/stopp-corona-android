@@ -61,7 +61,8 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
             }
 
     val firstRedDay = infectionMessagesDays
-        .firstOrNull { it.warningType == WarningType.RED }
+        .filter { it.warningType == WarningType.RED }
+        .minBy { it.day }
         ?.day
 
     val firstYellowDay = infectionMessagesDays
