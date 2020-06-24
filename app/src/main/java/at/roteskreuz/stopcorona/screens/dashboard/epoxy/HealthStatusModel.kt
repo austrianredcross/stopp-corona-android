@@ -12,11 +12,9 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.color
-import at.roteskreuz.stopcorona.utils.daysTo
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
-import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 
 /**
