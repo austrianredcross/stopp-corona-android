@@ -52,7 +52,7 @@ class DatabaseCleanupManagerImpl(
                 .minusDays(NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT)
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
-            temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
+            temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
                 MessageType.Revoke.Suspicion,
                 thresholdRevokedMessagesAsRollingStart
             )
@@ -66,7 +66,7 @@ class DatabaseCleanupManagerImpl(
                     .minusHours(yellowWarningQuarantine + 1)
                     .toRollingStartIntervalNumber()
 
-                temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
+                temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
                     MessageType.InfectionLevel.Yellow,
                     thresholdYellowMessageAsRollingStart
                 )
@@ -81,7 +81,7 @@ class DatabaseCleanupManagerImpl(
                     .minusHours(redWarningQuarantine + 1)
                     .toRollingStartIntervalNumber()
 
-                temporaryExposureKeysDao.removeSentInfectionMessagesOlderThan(
+                temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
                     MessageType.InfectionLevel.Red,
                     thresholdRedMessagesAsRollingStart
                 )

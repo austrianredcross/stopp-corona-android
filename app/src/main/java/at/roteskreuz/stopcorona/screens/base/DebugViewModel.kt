@@ -16,7 +16,7 @@ import org.threeten.bp.Instant
  */
 class DebugViewModel(
     appDispatchers: AppDispatchers,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
+    private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val notificationsRepository: NotificationsRepository,
     private val quarantineRepository: QuarantineRepository,
     private val configurationRepository: ConfigurationRepository
@@ -37,7 +37,7 @@ class DebugViewModel(
 
     fun displaySomeoneHasRecoveredNotification() {
         launch {
-            infectionMessengerRepository.setSomeoneHasRecovered()
+            diagnosisKeysRepository.setSomeoneHasRecovered()
             notificationsRepository.displaySomeoneHasRecoveredNotification()
         }
     }
@@ -53,14 +53,14 @@ class DebugViewModel(
         return quarantineRepository.observeQuarantineState().blockingFirst()
     }
 
-    fun addOutgoingMessageRed() {
+    fun reportMedicalConfirmation() {
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportMedicalConfirmation()
         }
     }
 
-    fun addOutgoingMessageYellow() {
+    fun reportPositiveSelfDiagnose() {
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
             quarantineRepository.reportPositiveSelfDiagnose()

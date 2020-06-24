@@ -62,12 +62,12 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 Toast.makeText(this, quarantineStatus.toString(), Toast.LENGTH_LONG).show()
                 true
             }
-            R.id.debugMenuInfectionMessagesOutgoingRed -> {
-                debugViewModel.addOutgoingMessageRed()
+            R.id.debugMenuReportMedicalConfirmation -> {
+                debugViewModel.reportMedicalConfirmation()
                 true
             }
-            R.id.debugMenuInfectionMessagesOutgoingYellow -> {
-                debugViewModel.addOutgoingMessageYellow()
+            R.id.debugMenuReportPositiveSelfDiagnose -> {
+                debugViewModel.reportPositiveSelfDiagnose()
                 true
             }
             R.id.debugExposureNotifications -> {

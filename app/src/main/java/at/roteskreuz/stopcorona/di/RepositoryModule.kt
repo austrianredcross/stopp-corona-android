@@ -40,8 +40,8 @@ val repositoryModule = module {
     }
 
 
-    single<InfectionMessengerRepository> {
-        InfectionMessengerRepositoryImpl(
+    single<DiagnosisKeysRepository> {
+        DiagnosisKeysRepositoryImpl(
             appDispatchers = get(),
             apiInteractor = get(),
             sessionDao = get(),

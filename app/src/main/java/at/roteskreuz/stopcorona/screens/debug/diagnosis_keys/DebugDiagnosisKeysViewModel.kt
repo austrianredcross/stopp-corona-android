@@ -10,7 +10,7 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
+import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -35,7 +35,7 @@ class DebugDiagnosisKeysViewModel(
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val exposureNotificationClient: ExposureNotificationClient,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
+    private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val filesRepository: FilesRepository,
     private val configurationRepository: ConfigurationRepository
 ) : ScopedViewModel(appDispatchers) {
@@ -243,7 +243,7 @@ class DebugDiagnosisKeysViewModel(
         launch(appDispatchers.Default) {
             try {
                 exposureNotificationsTextSubject.onNext("launching the diagnosis keys background processing")
-                infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
+                diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
                 exposureNotificationsTextSubject.onNext("sucessfully launched the background processing")
             } catch (ex: Exception) {
                 exposureNotificationsTextSubject.onNext("error while launching the diagnosis keys background processing: $ex")

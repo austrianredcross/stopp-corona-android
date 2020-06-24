@@ -3,7 +3,7 @@ package at.roteskreuz.stopcorona.model.workers
 import android.content.Context
 import androidx.work.*
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
+import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
@@ -47,13 +47,13 @@ class ProcessDiagnosisKeysWorker(
         }
     }
 
-    private val infectionMessengerRepository: InfectionMessengerRepository by inject()
+    private val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
 
     override suspend fun doWork(): Result {
         val token = inputData.getString(ARGUMENT_TOKEN)
         try {
             token?.let {
-                infectionMessengerRepository.processKeysBasedOnToken(token)
+                diagnosisKeysRepository.processKeysBasedOnToken(token)
                 return@doWork Result.success()
             }
             Timber.e(SilentError(IllegalArgumentException("No Token was provided, no work can be done")))

@@ -3,7 +3,7 @@ package at.roteskreuz.stopcorona.model.workers
 import android.content.Context
 import androidx.work.*
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
+import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import at.roteskreuz.stopcorona.utils.minus
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -66,11 +66,11 @@ class ExposureMatchingWorker(
     }
 
     private val workManager: WorkManager by inject()
-    private val infectionMessengerRepository: InfectionMessengerRepository by inject()
+    private val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
 
     override suspend fun doWork(): Result {
         try {
-            infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
+            diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
         } catch (ex: Exception){
             //we agreed to silently fail in case of errors here
             Timber.e(SilentError(ex))

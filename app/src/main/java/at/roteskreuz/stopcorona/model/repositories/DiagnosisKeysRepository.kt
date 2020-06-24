@@ -37,9 +37,9 @@ import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 /**
- * Repository for managing infection messages.
+ * Repository for managing diagnosis keys and infection related user status
  */
-interface InfectionMessengerRepository {
+interface DiagnosisKeysRepository {
 
     /**
      * Store to DB the sent temporary exposure keys.
@@ -91,7 +91,7 @@ interface InfectionMessengerRepository {
     suspend fun processKeysBasedOnToken(token: String)
 }
 
-class InfectionMessengerRepositoryImpl(
+class DiagnosisKeysRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val apiInteractor: ApiInteractor,
     private val sessionDao: SessionDao,
@@ -102,7 +102,7 @@ class InfectionMessengerRepositoryImpl(
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val configurationRepository: ConfigurationRepository,
     val notificationsRepository: NotificationsRepository
-) : InfectionMessengerRepository,
+) : DiagnosisKeysRepository,
     CoroutineScope {
 
     companion object {

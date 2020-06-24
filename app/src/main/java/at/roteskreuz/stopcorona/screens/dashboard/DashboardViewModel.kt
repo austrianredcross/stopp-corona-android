@@ -18,7 +18,7 @@ import org.threeten.bp.ZonedDateTime
 class DashboardViewModel(
     appDispatchers: AppDispatchers,
     private val dashboardRepository: DashboardRepository,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
+    private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val quarantineRepository: QuarantineRepository,
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager
@@ -103,7 +103,7 @@ class DashboardViewModel(
     }
 
     fun observeSomeoneHasRecoveredStatus(): Observable<HealthStatusData> {
-        return infectionMessengerRepository.observeSomeoneHasRecoveredMessage()
+        return diagnosisKeysRepository.observeSomeoneHasRecoveredMessage()
             .map { shouldShow ->
                 if (shouldShow) {
                     HealthStatusData.SomeoneHasRecovered
@@ -114,7 +114,7 @@ class DashboardViewModel(
     }
 
     fun someoneHasRecoveredSeen() {
-        infectionMessengerRepository.someoneHasRecoveredMessageSeen()
+        diagnosisKeysRepository.someoneHasRecoveredMessageSeen()
     }
 
     fun observeExposureNotificationPhase(): Observable<ExposureNotificationPhase> {
