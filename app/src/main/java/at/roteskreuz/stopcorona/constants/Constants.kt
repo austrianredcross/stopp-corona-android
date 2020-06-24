@@ -71,7 +71,7 @@ object Constants {
          * ACTION_EXPOSURE_STATE_UPDATED_BROADCAST.
          * After this time out we will just assume that the exposure state has been updated.
          */
-        val ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT = if (isDebug) {
+        val ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT: Duration = if (isDebug) {
             Duration.ofMinutes(1)
         } else {
             Duration.ofMinutes(5)

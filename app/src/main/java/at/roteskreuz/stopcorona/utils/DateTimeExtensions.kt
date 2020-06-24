@@ -175,7 +175,7 @@ fun Long.asExposureInterval(): ZonedDateTime {
 /**
  * Returns start of the day of the provided [ZonedDateTime].
  */
-fun ZonedDateTime.startOfTheDay() = truncatedTo(ChronoUnit.DAYS)
+fun ZonedDateTime.startOfTheDay(): ZonedDateTime = truncatedTo(ChronoUnit.DAYS)
 
 /**
  * Returns start of the UTC day of the provided [ZonedDateTime].
@@ -203,7 +203,7 @@ fun ZonedDateTime.endOfTheUtcDay(): ZonedDateTime {
 /**
  * Returns start of the UTC day of the provided [Instant].
  */
-fun Instant.startOfTheUtcDay() = truncatedTo(ChronoUnit.DAYS)
+fun Instant.startOfTheUtcDay(): Instant = truncatedTo(ChronoUnit.DAYS)
 
 /**
  * Returns end of the UTC day of the provided [Instant].
@@ -236,11 +236,11 @@ fun Instant.areOnTheSameUtcDay(otherDateTime: Instant): Boolean {
  *
  * Provides method known from ZonedDateTime
  */
-fun Instant.plusDays(days: Long) = plus(days, ChronoUnit.DAYS)
+fun Instant.plusDays(days: Long): Instant = plus(days, ChronoUnit.DAYS)
 
 /**
  * Subtracts days from [Instant]
  *
  * Provides method known from ZonedDateTime
  */
-fun Instant.minusDays(days: Long) = minus(days, ChronoUnit.DAYS)
+fun Instant.minusDays(days: Long): Instant = minus(days, ChronoUnit.DAYS)
