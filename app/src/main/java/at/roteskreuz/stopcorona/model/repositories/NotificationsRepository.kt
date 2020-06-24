@@ -79,8 +79,7 @@ interface NotificationsRepository {
 class NotificationsRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val contextInteractor: ContextInteractor,
-    private val dataPrivacyRepository: DataPrivacyRepository,
-    private val exposureNotificationRepository: ExposureNotificationRepository
+    private val dataPrivacyRepository: DataPrivacyRepository
 ) : NotificationsRepository,
     CoroutineScope {
 

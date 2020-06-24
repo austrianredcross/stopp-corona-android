@@ -59,8 +59,7 @@ val repositoryModule = module {
         NotificationsRepositoryImpl(
             appDispatchers = get(),
             contextInteractor = get(),
-            dataPrivacyRepository = get(),
-            exposureNotificationRepository = get()
+            dataPrivacyRepository = get()
         )
     }
 

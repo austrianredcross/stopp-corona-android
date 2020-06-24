@@ -69,7 +69,6 @@ val viewModelModule = module {
             dashboardRepository = get(),
             infectionMessengerRepository = get(),
             quarantineRepository = get(),
-            databaseCleanupManager = get(),
             changelogManager = get(),
             exposureNotificationManager = get()
         )

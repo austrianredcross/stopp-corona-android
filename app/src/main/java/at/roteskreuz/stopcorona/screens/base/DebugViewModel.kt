@@ -82,12 +82,4 @@ class DebugViewModel(
             quarantineRepository.receivedWarning(WarningType.YELLOW, quarantineDay)
         }
     }
-
-    fun quarantineYellowForOneDay() {
-        launch(appDispatchers.IO) {
-            val yellowQuaratineHours = configurationRepository.getConfiguration()!!.yellowWarningQuarantine!! - 24
-            val quarantineDay = Instant.now().minusDays((yellowQuaratineHours / 24).toLong())
-            quarantineRepository.receivedWarning(WarningType.YELLOW, quarantineDay)
-        }
-    }
 }

@@ -19,7 +19,6 @@ import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
@@ -107,21 +106,6 @@ class ReportingStatusViewModel(
 
     fun observeResolutionError(): Observable<DataState<ResolutionType>> {
         return exposureNotificationsErrorState.observe()
-    }
-
-    fun resolutionForRegistrationSucceeded() {
-        uploadReportDataStateObserver.loading()
-        launch {
-            //we need to do this as the framework is slow and does not know about the resolution yet
-            delay(2000)
-            uploadReportDataStateObserver.idle()
-            uploadData()
-        }
-    }
-
-    fun resolutionForRegistrationFailed() {
-        Timber.e(SilentError("User declined app registration with Exposure Notification Framework"))
-        uploadReportDataStateObserver.idle()
     }
 
     fun resolutionForExposureKeyHistorySucceeded() {

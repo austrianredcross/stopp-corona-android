@@ -113,17 +113,7 @@ data class DbDailyBatchPart(
     override val intervalStart: Long,
     override val fileName: String,
     val processed: Boolean = false
-) : DbEntity, DbBatchPart {
-
-    /**
-     * From Android-Exposure-Notification-API-documentation-v1.3.2 Page 16:
-     * A number describing when a key starts.
-     * It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
-     * */
-    fun intervalStartAsEpochSeconds(): Long {
-        return intervalStart * 600
-    }
-}
+) : DbEntity, DbBatchPart
 
 /**
  * This table holds list of tokens to be processed.
