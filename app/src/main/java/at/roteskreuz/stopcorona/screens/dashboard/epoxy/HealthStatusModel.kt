@@ -42,6 +42,7 @@ abstract class HealthStatusModel(
 
     override fun Holder.onBind() {
         val healthStatusData: HealthStatusData? = data
+
         if (healthStatusData != null) {
 
             when (healthStatusData) {
@@ -53,11 +54,13 @@ abstract class HealthStatusModel(
                     cardViewContainer.setCardBackgroundColor(color(R.color.red))
                 }
                 is HealthStatusData.SelfTestingSuspicionOfSickness -> {
-                    val days = healthStatusData.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
+                    val days = healthStatusData.quarantineStatus.daysUntilEnd()
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
                     txtDescription.text = context.string(R.string.self_testing_suspicion_description)
-                    txtActionButton.text = if (days == 1L) string(R.string.contacts_quarantine_day_single)
-                    else string(R.string.contacts_quarantine_day_many)
+                    txtActionButton.text = when {
+                        days == 1L -> string(R.string.contacts_quarantine_day_single)
+                        else -> string(R.string.contacts_quarantine_day_many)
+                    }
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     txtQuarantineDays.text = days.toString()
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
@@ -71,16 +74,16 @@ abstract class HealthStatusModel(
                 }
                 is HealthStatusData.ContactsSicknessInfo -> {
                     val days = if (healthStatusData.quarantineStatus is QuarantineStatus.Jailed.Limited) {
-                        healthStatusData.quarantineStatus.end.toLocalDate().daysTo(ZonedDateTime.now().toLocalDate())
+                        healthStatusData.quarantineStatus.daysUntilEnd()
                     } else {
                         Timber.e(SilentError("HealthStatusData.ContactsSicknessInfo must have QuarantineStatus.Jailed.Limited"))
                         0L
                     }
-
                     txtQuarantineDays.text = days.toString()
-                    val quarantineDayActionText = if (days == 1L) string(R.string.contacts_quarantine_day_single)
-                    else string(R.string.contacts_quarantine_day_many)
-
+                    val quarantineDayActionText = when {
+                        days == 1L -> string(R.string.contacts_quarantine_day_single)
+                        else -> string(R.string.contacts_quarantine_day_many)
+                    }
                     when {
                         healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected.not() -> {
                             txtTitle.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline)
@@ -132,7 +135,9 @@ abstract class HealthStatusModel(
         }
 
         val visibleQuarantine =
-            (healthStatusData is HealthStatusData.ContactsSicknessInfo && ownHealthStatus !is HealthStatusData.SicknessCertificate) || healthStatusData is HealthStatusData.SelfTestingSuspicionOfSickness
+            (healthStatusData is HealthStatusData.ContactsSicknessInfo && ownHealthStatus !is HealthStatusData.SicknessCertificate) ||
+                    healthStatusData is HealthStatusData.SelfTestingSuspicionOfSickness
+
         txtQuarantineDays.visible = visibleQuarantine
         backgroundQuarantineDays.visible = visibleQuarantine
     }

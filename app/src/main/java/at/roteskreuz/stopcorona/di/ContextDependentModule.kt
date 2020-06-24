@@ -7,6 +7,7 @@ import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.model.assets.AssetInteractor
 import at.roteskreuz.stopcorona.model.assets.AssetInteractorImpl
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
+import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractorImpl
 import at.roteskreuz.stopcorona.model.repositories.other.OfflineSyncer
@@ -70,5 +71,9 @@ internal val contextDependentModule = module {
 
     single {
         GoogleApiAvailability.getInstance()
+    }
+
+    factory {
+        ExposureNotificationBroadcastReceiver()
     }
 }

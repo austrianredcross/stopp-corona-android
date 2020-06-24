@@ -41,19 +41,17 @@ data class ApiVerificationPayload(
     val authorization: String
 )
 
-fun List<Pair<List<TemporaryExposureKey>, UUID>>.asApiEntity(): List<ApiTemporaryTracingKey> {
-    return this.map { (temporaryExposureKeys, password) ->
-        temporaryExposureKeys.map { temporaryExposureKey ->
-            val base64Key = Base64.encodeToString(temporaryExposureKey.keyData, Base64.NO_WRAP)
+fun List<Pair<TemporaryExposureKey, UUID>>.asApiEntity(): List<ApiTemporaryTracingKey> {
+    return map { (tek, password) ->
+        val base64Key = Base64.encodeToString(tek.keyData, Base64.NO_WRAP)
 
-            ApiTemporaryTracingKey(
-                key = base64Key,
-                password = password.toString(),
-                intervalNumber = temporaryExposureKey.rollingStartIntervalNumber,
-                intervalCount = temporaryExposureKey.rollingPeriod
-            )
-        }
-    }.flatten()
+        ApiTemporaryTracingKey(
+            key = base64Key,
+            password = password.toString(),
+            intervalNumber = tek.rollingStartIntervalNumber,
+            intervalCount = tek.rollingPeriod
+        )
+    }
 }
 
 /**

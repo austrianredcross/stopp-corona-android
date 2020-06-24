@@ -3,7 +3,7 @@ package at.roteskreuz.stopcorona.model.db.dao
 import androidx.room.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.TemporaryExposureKeysWrapper
+import at.roteskreuz.stopcorona.model.repositories.TekMetadata
 import io.reactivex.Flowable
 
 /**
@@ -21,9 +21,12 @@ abstract class TemporaryExposureKeysDao {
     @Query("SELECT * FROM sent_temporary_exposure_keys WHERE messageType = :messageType")
     abstract suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
 
+    @Query("SELECT * FROM sent_temporary_exposure_keys")
+    abstract suspend fun getSentTemporaryExposureKeys(): List<DbSentTemporaryExposureKeys>
+
     @Transaction
     open suspend fun insertSentTemporaryExposureKeys(
-        exposureKeys: List<TemporaryExposureKeysWrapper>
+        exposureKeys: List<TekMetadata>
     ) {
         exposureKeys.forEach { exposureKeyWrapper ->
             insertOrUpdateTemporaryExposureKey(

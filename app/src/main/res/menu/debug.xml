@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
@@ -50,6 +51,12 @@
             <item
                 android:id="@+id/debugDiagnosisKeys"
                 android:title="Diagnosis Keys" />
+            <item
+                android:id="@+id/debugZeroDaysOfRedQuarantine"
+                android:title="Red quarantine for 'zero' days" />
+            <item
+                android:id="@+id/debugZeroDaysOfYellowQuarantine"
+                android:title="Yellow quarantine for 'zero' days" />
         </menu>
     </item>
 </menu>

@@ -91,11 +91,11 @@
 	<string name="main_exposure_error_google_play_wrong_version_message">The installed version of Google Play Services is outdated. Please check for updates. You need at least version 20.18.13, which may be in the beta channel.</string>
 	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to the Play Store</string>
 	<string name="main_exposure_error_bluetooth_not_supported_title">Bluetooth is not supported</string>
-	<string name="main_exposure_error_bluetooth_not_supported_message">The Bluetooth adapter in this unit is not supported by the COVID-19 contact notification framework.</string>
-	<string name="main_exposure_error_title">Error with COVID-19 contact notifications</string>
+	<string name="main_exposure_error_bluetooth_not_supported_message">The Bluetooth adapter in this device is not supported by the COVID-19 contact notification framework.</string>
+	<string name="main_exposure_error_title">Error with COVID-19 Exposure Notifications framework</string>
 	<string name="main_exposure_error_sign_in_message">Registration required.</string>
 	<string name="main_exposure_error_invalid_account_message">Invalid account.</string>
-	<string name="main_exposure_error_declined_message">Framework was not found.</string>
+	<string name="main_exposure_error_declined_message">Framework was not activated.</string>
 	<string name="main_exposure_error_network_error_message">Network failure.</string>
 	<string name="main_exposure_error_internal_message">Internal error. An error has occurred in the COVID-19 contact notifications.</string>
 	<string name="main_exposure_error_developer_message">An error within Google Play Services has been detected. It was logged. Please try again later.</string>
@@ -103,6 +103,8 @@
 	<string name="main_exposure_error_bluetooth_off_action">Activate</string>
 	<string name="main_exposure_error_action">Try again</string>
 	<string name="main_reporting_disable_btn">Activate the automatic handshake for this function.</string>
+	<string name="local_notification_low_risk_title">No COVID-19 infection risk </string>
+	<string name="local_notification_low_risk_message">The evaluation of the possible encounter with COVID-19 infected persons did not reveal any relevant risk of infection due to the stored duration or distance of the possible encounter. Please continue to observe the applicable hygiene recommendations.</string>
 
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Download the current version</string>

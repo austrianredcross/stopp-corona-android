@@ -16,6 +16,7 @@ import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatch
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.workers.DelayedExposureBroadcastReceiverCallWorker
 import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -43,7 +44,7 @@ interface InfectionMessengerRepository {
     /**
      * Store to DB the sent temporary exposure keys.
      */
-    suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>)
+    suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TekMetadata>)
 
     /**
      * Start a process of downloading diagnosis keys (previously known as infection messages)
@@ -53,7 +54,12 @@ interface InfectionMessengerRepository {
     /**
      * Get the sent temporary exposure keys.
      */
-    suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
+    suspend fun getSentTeksByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys>
+
+    /**
+     * Get all the sent temporary exposure keys.
+     */
+    suspend fun getSentTemporaryExposureKeys(): List<DbSentTemporaryExposureKeys>
 
     /**
      * Observe info if someone has recovered.
@@ -94,7 +100,8 @@ class InfectionMessengerRepositoryImpl(
     private val quarantineRepository: QuarantineRepository,
     private val workManager: WorkManager,
     private val exposureNotificationRepository: ExposureNotificationRepository,
-    private val configurationRepository: ConfigurationRepository
+    private val configurationRepository: ConfigurationRepository,
+    val notificationsRepository: NotificationsRepository
 ) : InfectionMessengerRepository,
     CoroutineScope {
 
@@ -112,24 +119,33 @@ class InfectionMessengerRepositoryImpl(
         false
     )
 
-    override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TemporaryExposureKeysWrapper>) {
+    override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TekMetadata>) {
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
     }
 
     override suspend fun processKeysBasedOnToken(token: String) {
+        val configuration = configurationRepository.getConfiguration() ?: run {
+            Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
+            return
+        }
+
+        if (configuration.scheduledProcessingIn5Min) {
+            if (sessionDao.deleteScheduledSession(token) == 0) {
+                Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
+                return
+            } else {
+                Timber.d("ENStatusUpdates: Processing token $token")
+            }
+        }
+
         val fullSession = sessionDao.getFullSession(token) ?: run {
-            Timber.e(SilentError(IllegalStateException("Session for token $token not found")))
+            Timber.e(SilentError(IllegalStateException("ENStatusUpdates: Session for token $token not found")))
             return
         }
 
         // To be safe (form exceptions) assume processing is finished until it is overwritten below
         var processingFinished = true
         try {
-            val configuration = configurationRepository.getConfiguration() ?: run {
-                Timber.e(SilentError(IllegalStateException("no configuration present, failing silently")))
-                return
-            }
-
             processingFinished = when (fullSession.session.processingPhase) {
                 FullBatch -> {
                     Timber.d("Let´s evaluate the fullbatch based on the summary and the current warning state")
@@ -204,6 +220,7 @@ class InfectionMessengerRepositoryImpl(
         val summary = exposureNotificationRepository.determineRiskWithoutInformingUser(token)
 
         when (currentWarningType) {
+            WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
             WarningType.YELLOW, WarningType.RED -> {
                 if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
                     quarantineRepository.revokeLastRedContactDate()
@@ -226,10 +243,16 @@ class InfectionMessengerRepositoryImpl(
                     if (dates.firstRedDay == null) quarantineRepository.revokeLastRedContactDate()
                     if (dates.firstYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
 
+                    if (currentWarningType == WarningType.GREEN && dates.noDates()) {
+                        notificationsRepository.displayNotificationForLowRisc()
+                    }
+
                     return true // Processing done
                 }
             }
-            WarningType.GREEN -> {
+            // This branch is disabled (i.e. will never be reached). It is an optimized handling of WarningType.GREEN which is currently broken
+            // due to a bug in Google's EN framework which drops broadcasts if no keys matched at all.
+            else -> {
                 //we are above risc for the last days!!!
                 if (summary.summationRiskScore >= configuration.dailyRiskThreshold) {
 
@@ -282,7 +305,7 @@ class InfectionMessengerRepositoryImpl(
             processingPhase = DailyBatch
         ))
         Timber.d("Processing the next day files: ${batchToProcess.joinToString(",") { it.fileName }} ")
-        return exposureNotificationRepository.provideDiagnosisKeyBatch(batchToProcess, newToken)
+        return startDiagnosisKeyMatching(batchToProcess, newToken)
     }
 
     override suspend fun fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework() {
@@ -295,10 +318,17 @@ class InfectionMessengerRepositoryImpl(
         withContext(coroutineContext) {
             try {
                 val warningType = quarantineRepository.getCurrentWarningType()
+                val fetchDaily = when (warningType) {
+                    WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
+                    WarningType.YELLOW, WarningType.RED -> false
+                    // This branch is disabled (i.e. will never be reached). It is an optimized handling of WarningType.GREEN which is currently broken
+                    // due to a bug in Google's EN framework which drops broadcasts if no keys matched at all.
+                    else -> true
+                }
                 val token = UUID.randomUUID().toString()
                 val index = apiInteractor.getIndexOfDiagnosisKeysArchives()
                 val fullBatchParts = fetchFullBatchDiagnosisKeys(index.fullBatchForWarningType(warningType))
-                val dailyBatchesParts = fetchDailyBatchesDiagnosisKeys(index.dailyBatches)
+                val dailyBatchesParts = if (fetchDaily) fetchDailyBatchesDiagnosisKeys(index.dailyBatches) else emptyList()
 
                 val fullSession = DbFullSession(
                     session = DbSession(
@@ -312,7 +342,7 @@ class InfectionMessengerRepositoryImpl(
                 )
 
                 sessionDao.insertFullSession(fullSession)
-                exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
+                startDiagnosisKeyMatching(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")
                 downloadMessagesStateObserver.error(e)
@@ -322,10 +352,30 @@ class InfectionMessengerRepositoryImpl(
         }
     }
 
+    private suspend fun startDiagnosisKeyMatching(
+        fullBatchParts: List<DbBatchPart>,
+        token: String
+    ): Boolean {
+        Timber.d("ENStatusUpdates: Providing diagnosis batch. Token: $token")
+        val finished = exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
+
+        // schedule calling [ExposureNotificationBroadcastReceiver.onExposureStateUpdated] after timeout
+        if (!finished && configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
+            Timber.d("ENStatusUpdates: Scheduling a timeout for the exposure status update broadcast. Token: $token")
+            sessionDao.insertScheduledSession(DbScheduledSession(token))
+            DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)
+        }
+
+        return finished
+    }
+
     private fun ApiIndexOfDiagnosisKeysArchives.fullBatchForWarningType(warningType: WarningType): ApiDiagnosisKeysBatch {
         return when (warningType) {
+            WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
             WarningType.YELLOW, WarningType.RED -> full14DaysBatch
-            WarningType.GREEN -> full07DaysBatch
+            // This branch is disabled (i.e. will never be reached). It is an optimized handling of WarningType.GREEN which is currently broken
+            // due to a bug in Google's EN framework which drops broadcasts if no keys matched at all.
+            else -> full07DaysBatch
         }
     }
 
@@ -362,8 +412,12 @@ class InfectionMessengerRepositoryImpl(
         return preferences.observeBoolean(PREF_SOMEONE_HAS_RECOVERED, false)
     }
 
-    override suspend fun getSentTemporaryExposureKeysByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
+    override suspend fun getSentTeksByMessageType(messageType: MessageType): List<DbSentTemporaryExposureKeys> {
         return temporaryExposureKeysDao.getSentTemporaryExposureKeysByMessageType(messageType)
+    }
+
+    override suspend fun getSentTemporaryExposureKeys(): List<DbSentTemporaryExposureKeys> {
+        return temporaryExposureKeysDao.getSentTemporaryExposureKeys()
     }
 
     override fun setSomeoneHasRecovered() {
@@ -382,7 +436,7 @@ class InfectionMessengerRepositoryImpl(
 /**
  * Describes a temporary exposure key, it's associated random password and messageType.
  */
-data class TemporaryExposureKeysWrapper(
+data class TekMetadata(
     val rollingStartIntervalNumber: Int,
     val password: UUID,
     val messageType: MessageType

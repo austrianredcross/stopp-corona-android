@@ -13,10 +13,7 @@ import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureK
 import at.roteskreuz.stopcorona.model.entities.exposure.MessageTypeConverter
 import at.roteskreuz.stopcorona.model.entities.exposure.UUIDConverter
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningTypeConverter
-import at.roteskreuz.stopcorona.model.entities.session.DbDailyBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbFullBatchPart
-import at.roteskreuz.stopcorona.model.entities.session.DbSession
-import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhaseConverter
+import at.roteskreuz.stopcorona.model.entities.session.*
 import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConverter
 
 /**
@@ -31,9 +28,10 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbDailyBatchPart::class,
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
-        DbSentTemporaryExposureKeys::class
+        DbSentTemporaryExposureKeys::class,
+        DbScheduledSession::class
     ],
-    version = 22,
+    version = 23,
     exportSchema = true
 )
 @TypeConverters(
@@ -66,7 +64,14 @@ abstract class DefaultDatabase : RoomDatabase() {
              */
             migration(7, 8) {
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `debug_playground_entity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timeStamp` INTEGER NOT NULL, `publicKey` TEXT NOT NULL, `proximity` INTEGER NOT NULL)"
+                    """
+                        CREATE TABLE IF NOT EXISTS `debug_playground_entity` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                            `timeStamp` INTEGER NOT NULL, 
+                            `publicKey` TEXT NOT NULL, 
+                            `proximity` INTEGER NOT NULL
+                        )
+                        """
                 )
                 execSQL("CREATE INDEX IF NOT EXISTS `index_debug_playground_entity_publicKey` ON `debug_playground_entity` (`publicKey`)")
                 execSQL("ALTER TABLE `nearby_record` ADD COLUMN `detectedAutomatically` INTEGER DEFAULT 0 NOT NULL")
@@ -76,7 +81,14 @@ abstract class DefaultDatabase : RoomDatabase() {
              */
             migration(8, 9) {
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `automatic_discovery` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timeStamp` INTEGER NOT NULL, `publicKey` BLOB NOT NULL, `proximity` INTEGER NOT NULL)"
+                    """
+                        CREATE TABLE IF NOT EXISTS `automatic_discovery` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                            `timeStamp` INTEGER NOT NULL, 
+                            `publicKey` BLOB NOT NULL, 
+                            `proximity` INTEGER NOT NULL
+                        )
+                        """
                 )
                 execSQL("CREATE INDEX IF NOT EXISTS `index_automatic_discovery_publicKey` ON `automatic_discovery` (`publicKey`)")
             },
@@ -88,16 +100,37 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("DROP TABLE `automatic_discovery`")
                 // create new table
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `automatic_discovery` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `publicKey` BLOB NOT NULL, `proximity` INTEGER NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER)"
+                    """
+                        CREATE TABLE IF NOT EXISTS `automatic_discovery` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                            `publicKey` BLOB NOT NULL, 
+                            `proximity` INTEGER NOT NULL, 
+                            `startTime` INTEGER NOT NULL, 
+                            `endTime` INTEGER
+                        )
+                        """
                 )
                 execSQL("CREATE INDEX IF NOT EXISTS `index_automatic_discovery_publicKey` ON `automatic_discovery` (`publicKey`)")
 
                 // create new temp table
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `nearby_record_temp` (`publicKey` BLOB NOT NULL, `timestamp` INTEGER NOT NULL, `detectedAutomatically` INTEGER NOT NULL, PRIMARY KEY(`publicKey`))")
+                    """
+                        CREATE TABLE IF NOT EXISTS `nearby_record_temp` (
+                            `publicKey` BLOB NOT NULL, 
+                            `timestamp` INTEGER NOT NULL, 
+                            `detectedAutomatically` INTEGER NOT NULL, 
+                            PRIMARY KEY(`publicKey`)
+                        )
+                        """
+                )
                 // copy data from old table to temp
                 execSQL(
-                    "INSERT INTO `nearby_record_temp` (`publicKey`, `timestamp`, `detectedAutomatically`) SELECT `publicKey`, max(`timestamp`), `detectedAutomatically` FROM `nearby_record` GROUP BY `publicKey`"
+                    """
+                        INSERT INTO `nearby_record_temp` (`publicKey`, `timestamp`, `detectedAutomatically`) 
+                        SELECT `publicKey`, max(`timestamp`), `detectedAutomatically` 
+                        FROM `nearby_record` 
+                        GROUP BY `publicKey`
+                        """
                 )
                 // delete old table
                 execSQL("DROP TABLE `nearby_record`")
@@ -117,11 +150,22 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(11, 12) {
                 // create temp table
                 execSQL(
-                    "CREATE TABLE IF NOT EXISTS `contact_with_infection_message_temp` (`messageUuid` TEXT NOT NULL, `publicKey` BLOB NOT NULL, PRIMARY KEY(`messageUuid`), FOREIGN KEY(`messageUuid`) REFERENCES `infection_message`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )"
+                    """
+                        CREATE TABLE IF NOT EXISTS `contact_with_infection_message_temp` (
+                            `messageUuid` TEXT NOT NULL, 
+                            `publicKey` BLOB NOT NULL, 
+                            PRIMARY KEY(`messageUuid`), 
+                            FOREIGN KEY(`messageUuid`) REFERENCES `infection_message`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE 
+                        )
+                        """
                 )
                 // copy data from old table to temp
                 execSQL(
-                    "INSERT INTO `contact_with_infection_message_temp` (`messageUuid`, `publicKey`) SELECT `messageUuid`, `publicKey` FROM `contact_with_infection_message`"
+                    """
+                        INSERT INTO `contact_with_infection_message_temp` (`messageUuid`, `publicKey`) 
+                        SELECT `messageUuid`, `publicKey` 
+                        FROM `contact_with_infection_message`
+                        """
                 )
                 // delete old table
                 execSQL("DROP TABLE `contact_with_infection_message`")
@@ -134,27 +178,44 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(12, 13) {
                 // add new tables
                 execSQL(
-                    """CREATE TABLE IF NOT EXISTS `received_infection_message` (
-                       `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
-                       `timeStamp` INTEGER NOT NULL, PRIMARY KEY(`uuid`))"""
+                    """
+                        CREATE TABLE IF NOT EXISTS `received_infection_message` (
+                            `uuid` TEXT NOT NULL, 
+                            `messageType` TEXT NOT NULL, 
+                            `timeStamp` INTEGER NOT NULL, 
+                            PRIMARY KEY(`uuid`)
+                        )
+                        """
                 )
                 execSQL(
-                    """CREATE TABLE IF NOT EXISTS `sent_infection_message` (
-                        `uuid` TEXT NOT NULL, `messageType` TEXT NOT NULL, 
-                        `timeStamp` INTEGER NOT NULL, 
-                        `publicKey` BLOB NOT NULL, PRIMARY KEY(`uuid`))"""
+                    """
+                        CREATE TABLE IF NOT EXISTS `sent_infection_message` (
+                            `uuid` TEXT NOT NULL, 
+                            `messageType` TEXT NOT NULL, 
+                            `timeStamp` INTEGER NOT NULL, 
+                            `publicKey` BLOB NOT NULL, 
+                            PRIMARY KEY(`uuid`)
+                        )
+                        """
                 )
                 // copy data from old table to new tables
                 execSQL(
-                    "INSERT INTO `received_infection_message` (`uuid`, `messageType`, `timeStamp`) SELECT `uuid`, `messageType`, `timeStamp` FROM `infection_message` WHERE `isReceived` = 1"
+                    """
+                        INSERT INTO `received_infection_message` (`uuid`, `messageType`, `timeStamp`) 
+                        SELECT `uuid`, `messageType`, `timeStamp` 
+                        FROM `infection_message` 
+                        WHERE `isReceived` = 1
+                        """
                 )
-                execSQL("""
+                execSQL(
+                    """
                         INSERT INTO `sent_infection_message` (`uuid`, `messageType`, `timeStamp`, `publicKey`) 
                         SELECT `infection_message`.`uuid`, `infection_message`.`messageType`, `infection_message`.`timeStamp`, `contact_with_infection_message`.`publicKey` 
                         FROM `infection_message` JOIN `contact_with_infection_message`
                         ON (`infection_message`.`uuid` = `contact_with_infection_message`.`messageUuid`)
                         WHERE `infection_message`.`isReceived` = 0
-                        """)
+                        """
+                )
 
                 // delete old tables
                 execSQL("DROP TABLE `infection_message`")
@@ -173,10 +234,14 @@ abstract class DefaultDatabase : RoomDatabase() {
                 // create new temp table
                 execSQL(
                     """
-                    CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (
-                    `answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionnaireId` INTEGER NOT NULL, 
-                    `text` TEXT, `decision` TEXT, FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )
-                    """
+                        CREATE TABLE IF NOT EXISTS `configuration_questionnaire_answer_temp` (
+                            `answerId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                            `questionnaireId` INTEGER NOT NULL, 
+                            `text` TEXT, 
+                            `decision` TEXT, 
+                            FOREIGN KEY(`questionnaireId`) REFERENCES `configuration_questionnaire`(`id`) ON UPDATE CASCADE ON DELETE CASCADE 
+                        )
+                        """
                 )
                 execSQL(
                     "CREATE INDEX IF NOT EXISTS `index_configuration_questionnaire_answer_temp_questionnaireId` ON `configuration_questionnaire_answer_temp` (`questionnaireId`)"
@@ -184,9 +249,9 @@ abstract class DefaultDatabase : RoomDatabase() {
                 // copy data from old table to temp
                 execSQL(
                     """
-                    INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) 
-                    SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`
-                    """
+                        INSERT INTO `configuration_questionnaire_answer_temp` (`answerId`, `questionnaireId`, `text`, `decision`) 
+                        SELECT `id`, `questionnaireId`, `text`, `decision` FROM `configuration_questionnaire_answer`
+                        """
                 )
                 // delete old table
                 execSQL("DROP TABLE `configuration_questionnaire_answer`")
@@ -194,7 +259,7 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("ALTER TABLE `configuration_questionnaire_answer_temp` RENAME TO `configuration_questionnaire_answer`")
             },
             /**
-             * Removing [DbNearbyRecord], [DbAutomaticDiscoveryEvent].
+             * Remove [DbNearbyRecord], [DbAutomaticDiscoveryEvent].
              */
             migration(15, 16) {
                 // delete DbNearbyRecord
@@ -203,7 +268,7 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("DROP TABLE `automatic_discovery`")
             },
             /**
-             * Removing [DbSentInfectionMessage].
+             * Remove [DbSentInfectionMessage].
              */
             migration(16, 17) {
                 // delete DbSentInfectionMessage
@@ -222,15 +287,18 @@ abstract class DefaultDatabase : RoomDatabase() {
              */
             migration(18, 19) {
                 execSQL(
-                    """CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (
-                        `rollingStartIntervalNumber` INTEGER NOT NULL, 
-                        `password` TEXT NOT NULL, 
-                        `messageType` TEXT NOT NULL, PRIMARY KEY(`rollingStartIntervalNumber`))
+                    """
+                        CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys` (
+                            `rollingStartIntervalNumber` INTEGER NOT NULL, 
+                            `password` TEXT NOT NULL, 
+                            `messageType` TEXT NOT NULL, 
+                            PRIMARY KEY(`rollingStartIntervalNumber`)
+                        )
                         """
                 )
             },
             /**
-             * adding the exposure configuration parameters to the database
+             * Add new fields to the [DbConfiguration].
              */
             migration(19, 20) {
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `minimumRiskScore` INTEGER")
@@ -242,7 +310,7 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
             },
             /**
-             * adding the exposure configuration parameters to the database
+             * Add new tables [DbSession], [DbFullBatchPart], [DbDailyBatchPart].
              */
             migration(20, 21) {
                 execSQL(
@@ -253,7 +321,7 @@ abstract class DefaultDatabase : RoomDatabase() {
                         `warningType` TEXT NOT NULL, 
                         `processingPhase` TEXT NOT NULL, 
                         `firstYellowDay` INTEGER, 
-                        `created` INTEGER NOT NULL)
+                        `created` INTEGER NOT NULL
                     )
                     """
                 )
@@ -293,9 +361,18 @@ abstract class DefaultDatabase : RoomDatabase() {
                 )
             },
             /**
-             * Deleted received_infection_message table.
+             * Add [DbScheduledSession] table.
+             * Add new field to the [DbConfiguration].
              */
             migration(21, 22) {
+                execSQL("CREATE TABLE IF NOT EXISTS `scheduled_sessions` (`token` TEXT NOT NULL, PRIMARY KEY(`token`))")
+
+                execSQL("ALTER TABLE `configuration` ADD COLUMN `scheduledProcessingIn5Min` INTEGER NOT NULL DEFAULT 1")
+            },
+            /**
+             * Deleted received_infection_message table.
+             */
+            migration(22, 23) {
                 // delete old table
                 execSQL("DROP TABLE `received_infection_message`")
             }

@@ -6,7 +6,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPay
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository.Companion.SCOPE_NAME
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -120,8 +119,7 @@ class ReportingRepositoryImpl(
     private val quarantineRepository: QuarantineRepository,
     private val contextInteractor: ContextInteractor,
     private val infectionMessengerRepository: InfectionMessengerRepository,
-    private val configurationRepository: ConfigurationRepository,
-    private val databaseCleanupManager: DatabaseCleanupManager
+    private val configurationRepository: ConfigurationRepository
 ) : Scope(SCOPE_NAME),
     ReportingRepository,
     CoroutineScope {
@@ -156,15 +154,15 @@ class ReportingRepositoryImpl(
         tanUuid = apiInteractor.requestTan(mobileNumber).uuid
     }
 
-    override suspend fun uploadReportInformation(temporaryTracingKeys: List<TemporaryExposureKey>): MessageType {
+    override suspend fun uploadReportInformation(teks: List<TemporaryExposureKey>): MessageType {
         return when (messageTypeSubject.value) {
-            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo(temporaryTracingKeys)
-            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo(temporaryTracingKeys)
-            else -> uploadInfectionInfo(temporaryTracingKeys)
+            MessageType.Revoke.Suspicion -> uploadRevokeSuspicionInfo(teks)
+            MessageType.Revoke.Sickness -> uploadRevokeSicknessInfo(teks)
+            else -> uploadInfectionInfo(teks)
         }
     }
 
-    private suspend fun uploadInfectionInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.InfectionLevel {
+    private suspend fun uploadInfectionInfo(teks: List<TemporaryExposureKey>): MessageType.InfectionLevel {
         return withContext(coroutineContext) {
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel
                 ?: throw InvalidConfigurationException.InfectionLevelNotSet
@@ -172,99 +170,39 @@ class ReportingRepositoryImpl(
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            var thresholdTime = ZonedDateTime.now()
+            val thresholdTimeFromConfiguration = ZonedDateTime.now()
                 .minusDays(uploadKeysDays.toLong())
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
 
-            val infectionMessages = mutableListOf<TemporaryExposureKeysWrapper>()
             val dateWithMissingExposureKeys = dateWithMissingExposureKeys
 
             if (dateWithMissingExposureKeys != null) {
                 // Report only the exposure keys that have not been uploaded in the day of the previous submission.
-                val temporaryExposureKeyWrappers = temporaryExposureKeysFromSDK
-                    .filter {
-                        it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.startOfTheUtcDay().toRollingStartIntervalNumber() &&
-                            it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay().toRollingStartIntervalNumber()
-                    }.groupBy { it.rollingStartIntervalNumber }
-                    .map { (rollingStartIntervalNumber, _) ->
-                        TemporaryExposureKeysWrapper(
-                            rollingStartIntervalNumber,
-                            UUID.randomUUID(),
-                            infectionLevel
-                        )
-                    }
+                val keysToUpload = teks.filter {
+                    it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.startOfTheUtcDay().toRollingStartIntervalNumber() &&
+                        it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay().toRollingStartIntervalNumber()
+                }
 
-                uploadData(
-                    infectionLevel.warningType,
-                    temporaryExposureKeyWrappers.asTemporaryExposureKeys(
-                        temporaryExposureKeysFromSDK
-                    )
-                )
-
-                infectionMessengerRepository.storeSentTemporaryExposureKeys(
-                    temporaryExposureKeyWrappers
-                )
+                uploadTeksWithMessageType(keysToUpload, infectionLevel)
 
                 quarantineRepository.markMissingExposureKeysAsUploaded()
             } else {
                 // The regular flow of reporting the exposure keys.
-                if (infectionLevel == MessageType.InfectionLevel.Red) {
-                    val sentTemporaryExposureKeys =
-                        infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
-                            MessageType.InfectionLevel.Yellow
-                        )
-
-                    infectionMessages.addAll(
-                        sentTemporaryExposureKeys
-                            .map { message ->
-                                TemporaryExposureKeysWrapper(
-                                    message.rollingStartIntervalNumber,
-                                    message.password,
-                                    MessageType.InfectionLevel.Red
-                                )
-                            }
-                    )
-
-                    if (infectionMessages.isNotEmpty()) {
-                        infectionMessages.sortByDescending { content -> content.rollingStartIntervalNumber }
-                        thresholdTime = infectionMessages.first().rollingStartIntervalNumber
-                    }
-                } else if (infectionLevel == MessageType.InfectionLevel.Yellow) {
-                    val resetMessages =
-                        infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(
-                            MessageType.InfectionLevel.Yellow
-                        )
-                            .map { temporaryExposureKey ->
-                                TemporaryExposureKeysWrapper(
-                                    temporaryExposureKey.rollingStartIntervalNumber,
-                                    temporaryExposureKey.password,
-                                    MessageType.Revoke.Suspicion
-                                )
-                            }
-
-                    infectionMessengerRepository.storeSentTemporaryExposureKeys(resetMessages)
+                val thresholdTime = if (infectionLevel == MessageType.InfectionLevel.Red) {
+                    infectionMessengerRepository.getSentTeksByMessageType(
+                        MessageType.InfectionLevel.Yellow
+                    ).minBy { tekMetadata ->
+                        tekMetadata.rollingStartIntervalNumber
+                    }?.rollingStartIntervalNumber ?: thresholdTimeFromConfiguration
+                } else {
+                    thresholdTimeFromConfiguration
                 }
 
-                infectionMessages.addAll(
-                    temporaryExposureKeysFromSDK
-                        .filter { it.rollingStartIntervalNumber > thresholdTime }
-                        .groupBy { it.rollingStartIntervalNumber }
-                        .map { (rollingStartIntervalNumber, _) ->
-                            TemporaryExposureKeysWrapper(
-                                rollingStartIntervalNumber,
-                                UUID.randomUUID(),
-                                infectionLevel
-                            )
-                        }
-                )
-
-                val infectionMessagesAsTemporaryExposureKeys =
-                    infectionMessages.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
-
-                uploadData(infectionLevel.warningType, infectionMessagesAsTemporaryExposureKeys)
-
-                infectionMessengerRepository.storeSentTemporaryExposureKeys(infectionMessages)
+                val teksToUpload = teks.filter {
+                    it.rollingStartIntervalNumber >= thresholdTime
+                }
+                uploadTeksWithMessageType(teksToUpload, infectionLevel)
 
                 when (infectionLevel) {
                     MessageType.InfectionLevel.Red -> {
@@ -283,12 +221,46 @@ class ReportingRepositoryImpl(
         }
     }
 
+    /**
+     * Upload keys and store the password and new infection level to the database.
+     *
+     * Passwords are taken from the DB if available or random ones created if the key is published for the first time.
+     */
+    private suspend fun uploadTeksWithMessageType(
+        teks: List<TemporaryExposureKey>,
+        messageType: MessageType
+    ) {
+        val passwordsByRollingStartInterval = infectionMessengerRepository
+            .getSentTemporaryExposureKeys()
+            .associateBy(
+                keySelector = { it.rollingStartIntervalNumber },
+                valueTransform = { it.password }
+            )
+
+        val tekMetadata = teks.map { tek ->
+            val passwordForKey = passwordsByRollingStartInterval[tek.rollingStartIntervalNumber] ?: UUID.randomUUID()
+
+            TekMetadata(
+                tek.rollingStartIntervalNumber,
+                passwordForKey,
+                messageType
+            )
+        }
+
+        val tekPasswordPairs =
+            teks.pairWithPassword(tekMetadata)
+
+        uploadData(messageType.warningType, tekPasswordPairs)
+
+        infectionMessengerRepository.storeSentTemporaryExposureKeys(tekMetadata)
+    }
+
     private suspend fun uploadData(
         warningType: WarningType,
-        temporaryExposureKeys: List<Pair<List<TemporaryExposureKey>, UUID>>
+        tekPasswordPairs: List<Pair<TemporaryExposureKey, UUID>>
     ) {
         apiInteractor.uploadInfectionData(
-            temporaryExposureKeys.asApiEntity(),
+            tekPasswordPairs.asApiEntity(),
             contextInteractor.packageName,
             warningType,
             ApiVerificationPayload(
@@ -298,52 +270,39 @@ class ReportingRepositoryImpl(
         )
     }
 
-    private suspend fun uploadRevokeSuspicionInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
+    private suspend fun uploadRevokeSuspicionInfo(teks: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
-            val infectionMessages =
-                infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(MessageType.InfectionLevel.Yellow)
-                    .map { message ->
-                        TemporaryExposureKeysWrapper(
-                            message.rollingStartIntervalNumber,
-                            message.password,
-                            message.messageType
-                        )
-                    }.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
+            val rollingStartIntervalsToRevoke = infectionMessengerRepository
+                .getSentTeksByMessageType(MessageType.InfectionLevel.Yellow)
+                .map {
+                    it.rollingStartIntervalNumber
+                }.toSet()
 
-            uploadData(MessageType.Revoke.Suspicion.warningType, infectionMessages)
+            val teksToRevoke = teks.filter { it.rollingStartIntervalNumber in rollingStartIntervalsToRevoke }
+            uploadTeksWithMessageType(teksToRevoke, MessageType.GeneralRevoke)
 
             quarantineRepository.revokePositiveSelfDiagnose(backup = false)
-            databaseCleanupManager.removeSentYellowTemporaryExposureKeys()
             quarantineRepository.markMissingExposureKeysAsNotUploaded()
-
             MessageType.Revoke.Suspicion
         }
     }
 
-    private suspend fun uploadRevokeSicknessInfo(temporaryExposureKeysFromSDK: List<TemporaryExposureKey>): MessageType.Revoke.Sickness {
+    private suspend fun uploadRevokeSicknessInfo(teks: List<TemporaryExposureKey>): MessageType.Revoke.Sickness {
         return withContext(coroutineContext) {
 
             val updateStatus = when {
                 quarantineRepository.hasSelfDiagnoseBackup -> MessageType.InfectionLevel.Yellow
-                else -> MessageType.Revoke.Suspicion
+                else -> MessageType.GeneralRevoke
             }
 
-            val infectionMessages =
-                infectionMessengerRepository.getSentTemporaryExposureKeysByMessageType(MessageType.InfectionLevel.Red)
-                    .map { message ->
-                        TemporaryExposureKeysWrapper(
-                            message.rollingStartIntervalNumber,
-                            message.password,
-                            updateStatus
-                        )
-                    }
+            val rollingStartIntervalsToRevoke = infectionMessengerRepository
+                .getSentTeksByMessageType(MessageType.InfectionLevel.Red)
+                .map {
+                    it.rollingStartIntervalNumber
+                }.toSet()
 
-            val infectionMessagesAsTemporaryExposureKeys =
-                infectionMessages.asTemporaryExposureKeys(temporaryExposureKeysFromSDK)
-
-            uploadData(updateStatus.warningType, infectionMessagesAsTemporaryExposureKeys)
-
-            infectionMessengerRepository.storeSentTemporaryExposureKeys(infectionMessages)
+            val teksToRevoke = teks.filter { it.rollingStartIntervalNumber in rollingStartIntervalsToRevoke }
+            uploadTeksWithMessageType(teksToRevoke, updateStatus)
 
             quarantineRepository.revokeMedicalConfirmation()
 
@@ -351,7 +310,7 @@ class ReportingRepositoryImpl(
                 is MessageType.InfectionLevel.Yellow -> {
                     quarantineRepository.reportPositiveSelfDiagnoseFromBackup()
                 }
-                is MessageType.Revoke.Suspicion -> {
+                is MessageType.GeneralRevoke -> {
                     quarantineRepository.revokePositiveSelfDiagnose(backup = false)
                     quarantineRepository.markMissingExposureKeysAsNotUploaded()
                 }
@@ -361,18 +320,15 @@ class ReportingRepositoryImpl(
         }
     }
 
-    private fun List<TemporaryExposureKeysWrapper>.asTemporaryExposureKeys(
-        listOfKeysFromSDK: List<TemporaryExposureKey>
-    ): List<Pair<List<TemporaryExposureKey>, UUID>> {
-        return this.mapNotNull { temporaryExposureKeysWrapper ->
-            val temporaryExposureKeysFromSdk =
-                listOfKeysFromSDK.filter {
-                    it.rollingStartIntervalNumber == temporaryExposureKeysWrapper.rollingStartIntervalNumber
-                }
-            if (temporaryExposureKeysFromSdk.isNotEmpty()) {
-                temporaryExposureKeysFromSdk to temporaryExposureKeysWrapper.password
-            } else {
-                null
+    private fun List<TemporaryExposureKey>.pairWithPassword(
+        tekMetadata: List<TekMetadata>
+    ): List<Pair<TemporaryExposureKey, UUID>> {
+        val tekMetaDataByRollingStartIntervalNumber = tekMetadata.associateBy { it.rollingStartIntervalNumber }
+
+        return mapNotNull { tek ->
+            val matchingMetadata = tekMetaDataByRollingStartIntervalNumber[tek.rollingStartIntervalNumber]
+            matchingMetadata?.let { tekMetadata ->
+                tek to tekMetadata.password
             }
         }
     }

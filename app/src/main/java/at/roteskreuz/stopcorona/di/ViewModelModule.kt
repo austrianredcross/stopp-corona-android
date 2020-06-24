@@ -35,7 +35,8 @@ val viewModelModule = module {
             appDispatchers = get(),
             infectionMessengerRepository = get(),
             notificationsRepository = get(),
-            quarantineRepository = get()
+            quarantineRepository = get(),
+            configurationRepository = get()
         )
     }
 
