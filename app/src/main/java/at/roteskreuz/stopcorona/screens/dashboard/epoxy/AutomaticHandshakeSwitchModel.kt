@@ -21,7 +21,6 @@ abstract class AutomaticHandshakeSwitchModel(
     var phase: ExposureNotificationPhase? = null
 
     override fun Holder.onBind() {
-        switch.isChecked = phase !is WaitingForWantedState
         switch.setOnCheckedChangeListener(null)
         when (phase) {
             null,
