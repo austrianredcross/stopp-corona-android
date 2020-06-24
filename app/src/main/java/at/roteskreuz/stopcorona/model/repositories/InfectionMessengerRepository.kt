@@ -187,9 +187,17 @@ class InfectionMessengerRepositoryImpl(
         firstRedDay?.let { _ ->
             firstYellowDay?.let { _ ->
                 quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
-            } ?: quarantineRepository.revokeLastYellowContactDate()
+            }
 
             quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = firstRedDay)
+
+            // Only revoce quarantines after all new quarantines are known.
+            // When switching from yellow to red, if we revoke yellow above imediately, the red quarantine is not yet known and the
+            // quarantine end tile is triggered in the ui
+            if (dates.firstYellowDay == null) {
+                quarantineRepository.revokeLastYellowContactDate()
+            }
+
             Timber.e("Red warning found. Done processing.")
             return true // Processing done
         }
@@ -205,6 +213,7 @@ class InfectionMessengerRepositoryImpl(
                 Timber.e("Done processing. No warnings found")
                 quarantineRepository.revokeLastYellowContactDate()
             }
+            quarantineRepository.revokeLastRedContactDate()
             return true // Processing done
         }
 
