@@ -31,14 +31,14 @@
                 </menu>
             </item>
             <item
-                android:id="@+id/debugMenuInfectionMessages"
-                android:title="InfectionMessages">
+                android:id="@+id/debugMenuReporting"
+                android:title="Reporting">
                 <menu>
                     <item
-                        android:id="@+id/debugMenuInfectionMessagesOutgoingRed"
+                        android:id="@+id/debugMenuReportMedicalConfirmation"
                         android:title="Outgoing Red" />
                     <item
-                        android:id="@+id/debugMenuInfectionMessagesOutgoingYellow"
+                        android:id="@+id/debugMenuReportPositiveSelfDiagnose"
                         android:title="Outgoing Yellow" />
                 </menu>
             </item>

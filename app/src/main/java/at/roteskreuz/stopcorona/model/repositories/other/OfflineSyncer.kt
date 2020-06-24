@@ -13,7 +13,7 @@ import at.roteskreuz.stopcorona.model.exceptions.DataPopulationFailedException
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
-import at.roteskreuz.stopcorona.model.repositories.InfectionMessengerRepository
+import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import at.roteskreuz.stopcorona.screens.mandatory_update.startMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.screens.routing.RouterActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -45,7 +45,7 @@ class OfflineSyncerImpl(
     private val processLifecycleOwner: LifecycleOwner,
     private val configurationRepository: ConfigurationRepository,
     private val dataPrivacyRepository: DataPrivacyRepository,
-    private val infectionMessengerRepository: InfectionMessengerRepository
+    private val diagnosisKeysRepository: DiagnosisKeysRepository
 ) : OfflineSyncer {
 
     companion object {
@@ -121,7 +121,7 @@ class OfflineSyncerImpl(
     private fun CoroutineScope.populateDatabasesAsync(): List<Deferred<Unit>> {
         return listOf(
             async { runPopulationAndLogExceptions { configurationRepository.populateConfigurationIfEmpty() } },
-            async { runPopulationAndLogExceptions { infectionMessengerRepository.enqueueNextExposureMatching() } }
+            async { runPopulationAndLogExceptions { diagnosisKeysRepository.enqueueNextExposureMatching() } }
         )
     }
 
@@ -136,7 +136,7 @@ class OfflineSyncerImpl(
             }
             // read all infection messages
             runFetcherIfNeeded(PREF_LAST_FETCH_INFECTION_MESSAGES) {
-                infectionMessengerRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
+                diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
             }
         }
     }

@@ -118,7 +118,7 @@ class ReportingRepositoryImpl(
     private val apiInteractor: ApiInteractor,
     private val quarantineRepository: QuarantineRepository,
     private val contextInteractor: ContextInteractor,
-    private val infectionMessengerRepository: InfectionMessengerRepository,
+    private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val configurationRepository: ConfigurationRepository
 ) : Scope(SCOPE_NAME),
     ReportingRepository,
@@ -190,7 +190,7 @@ class ReportingRepositoryImpl(
             } else {
                 // The regular flow of reporting the exposure keys.
                 val thresholdTime = if (infectionLevel == MessageType.InfectionLevel.Red) {
-                    infectionMessengerRepository.getSentTeksByMessageType(
+                    diagnosisKeysRepository.getSentTeksByMessageType(
                         MessageType.InfectionLevel.Yellow
                     ).minBy { tekMetadata ->
                         tekMetadata.rollingStartIntervalNumber
@@ -230,7 +230,7 @@ class ReportingRepositoryImpl(
         teks: List<TemporaryExposureKey>,
         messageType: MessageType
     ) {
-        val passwordsByRollingStartInterval = infectionMessengerRepository
+        val passwordsByRollingStartInterval = diagnosisKeysRepository
             .getSentTemporaryExposureKeys()
             .associateBy(
                 keySelector = { it.rollingStartIntervalNumber },
@@ -252,7 +252,7 @@ class ReportingRepositoryImpl(
 
         uploadData(messageType.warningType, tekPasswordPairs)
 
-        infectionMessengerRepository.storeSentTemporaryExposureKeys(tekMetadata)
+        diagnosisKeysRepository.storeSentTemporaryExposureKeys(tekMetadata)
     }
 
     private suspend fun uploadData(
@@ -272,7 +272,7 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadRevokeSuspicionInfo(teks: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
-            val rollingStartIntervalsToRevoke = infectionMessengerRepository
+            val rollingStartIntervalsToRevoke = diagnosisKeysRepository
                 .getSentTeksByMessageType(MessageType.InfectionLevel.Yellow)
                 .map {
                     it.rollingStartIntervalNumber
@@ -295,7 +295,7 @@ class ReportingRepositoryImpl(
                 else -> MessageType.GeneralRevoke
             }
 
-            val rollingStartIntervalsToRevoke = infectionMessengerRepository
+            val rollingStartIntervalsToRevoke = diagnosisKeysRepository
                 .getSentTeksByMessageType(MessageType.InfectionLevel.Red)
                 .map {
                     it.rollingStartIntervalNumber
