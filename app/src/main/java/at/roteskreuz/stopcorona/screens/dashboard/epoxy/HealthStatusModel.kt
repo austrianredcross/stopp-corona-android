@@ -55,8 +55,8 @@ abstract class HealthStatusModel(
                     val days = healthStatusData.quarantineStatus.daysUntilEnd()
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
                     txtDescription.text = context.string(R.string.self_testing_suspicion_description)
-                    txtActionButton.text = when {
-                        days == 1L -> string(R.string.contacts_quarantine_day_single)
+                    txtActionButton.text = when (days) {
+                        1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
@@ -78,8 +78,8 @@ abstract class HealthStatusModel(
                         0L
                     }
                     txtQuarantineDays.text = days.toString()
-                    val quarantineDayActionText = when {
-                        days == 1L -> string(R.string.contacts_quarantine_day_single)
+                    val quarantineDayActionText = when (days) {
+                        1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
                     when {

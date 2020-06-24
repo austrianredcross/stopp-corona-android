@@ -35,8 +35,8 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
 
                     val totalRedRiscScoreOfTheDay = listOfExposureInformationsOfThisDay
                         .filter { it.transmissionRiskLevel == WarningType.RED.transmissionRiskLevel }
-                        .mapNotNull { it.totalRiskScore }
-                        .takeIf { it.size > 0 }
+                        .map { it.totalRiskScore }
+                        .takeIf { it.isNotEmpty() }
                         ?.reduce { acc, totalRiskScore ->
                             acc + totalRiskScore
                         } ?: 0
@@ -61,14 +61,12 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
             }
 
     val firstRedDay = infectionMessagesDays
-        .filter { it.warningType == WarningType.RED }
-        .firstOrNull()
+        .firstOrNull { it.warningType == WarningType.RED }
         ?.day
 
     val firstYellowDay = infectionMessagesDays
         .filter { it.warningType == WarningType.YELLOW }
-        .sortedBy { it.day }
-        .firstOrNull()
+        .minBy { it.day }
         ?.day
     return ExposureDates(firstRedDay = firstRedDay, firstYellowDay = firstYellowDay)
 }

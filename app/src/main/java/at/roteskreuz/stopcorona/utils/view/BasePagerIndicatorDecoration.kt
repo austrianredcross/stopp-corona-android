@@ -37,6 +37,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.skeleton.core.utils.color
 import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
+import kotlin.math.max
 
 /**
  * Base pager indicator for recycler view.
@@ -82,7 +83,7 @@ abstract class BasePagerIndicatorDecoration(
 
         // center horizontally, calculate width and subtract half from center
         val totalLength = indicatorItemLength * itemCount
-        val paddingBetweenItems = Math.max(0, itemCount - 1) * indicatorItemPadding
+        val paddingBetweenItems = max(0, itemCount - 1) * indicatorItemPadding
         val indicatorTotalWidth = totalLength + paddingBetweenItems
         val indicatorStartX = (parent.width - indicatorTotalWidth) / 2f
         val indicatorPosY = getIndicatorPosY(parent)
@@ -191,7 +192,7 @@ class LinePagerIndicatorDecoration(
 
         // center horizontally, calculate width and subtract half from center
         val totalLength = indicatorItemLength * itemCount
-        val paddingBetweenItems = Math.max(0, itemCount - 1) * indicatorItemPadding
+        val paddingBetweenItems = max(0, itemCount - 1) * indicatorItemPadding
         val indicatorTotalWidth = totalLength + paddingBetweenItems
         val indicatorStartX = (parent.width - indicatorTotalWidth) / 2f
         val indicatorPosY = getIndicatorPosY(parent)
