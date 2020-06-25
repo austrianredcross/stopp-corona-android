@@ -3,8 +3,6 @@ package at.roteskreuz.stopcorona.screens.questionnaire
 import android.content.Context
 import android.view.Gravity
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.model.entities.configuration.ApiConfiguration
-import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
@@ -12,10 +10,8 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.HeadlineH1Model_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.QuestionnaireAnswerModel_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.QuestionnaireRadioGroupModel_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.questionnairePage
-import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.skeleton.core.utils.rawDimen
-import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 

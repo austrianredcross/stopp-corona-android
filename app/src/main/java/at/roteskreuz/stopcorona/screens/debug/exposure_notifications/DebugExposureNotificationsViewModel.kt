@@ -34,14 +34,14 @@ class DebugExposureNotificationsViewModel(
     private val exposureNotificationClient: ExposureNotificationClient
 ) : ScopedViewModel(appDispatchers) {
 
-    private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false);
-    private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error");
+    private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false)
+    private val exposureNotificationsTextSubject = NonNullableBehaviorSubject("no error")
     private val exposureNotificationsErrorState = DataStateObserver<ResolutionType>()
     private val lastTemporaryExposureKeysSubject = NonNullableBehaviorSubject<List<TemporaryExposureKey>>(emptyList())
-    private val tanRequestUUIDSubject = NonNullableBehaviorSubject<String>("no-tan")
+    private val tanRequestUUIDSubject = NonNullableBehaviorSubject("no-tan")
 
     fun checkEnabledState() {
-        exposureNotificationClient.isEnabled()
+        exposureNotificationClient.isEnabled
             .addOnSuccessListener { enabled: Boolean ->
                 exposureNotificationsEnabledSubject.onNext(enabled)
             }
@@ -121,7 +121,7 @@ class DebugExposureNotificationsViewModel(
 
     fun jumpToSystemSettings() {
         val intent = exposureNotificationRepository.getExposureSettingsIntent()
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         contextInteractor.applicationContext.startActivity(intent)
     }
 
@@ -135,7 +135,7 @@ class DebugExposureNotificationsViewModel(
     /** Gets the version name for a specified package. Returns a debug string if not found.  */
     private fun getVersionNameForPackage(packageName: String): String? {
         try {
-            return contextInteractor.applicationContext.getPackageManager()
+            return contextInteractor.applicationContext.packageManager
                 .getPackageInfo(packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             Timber.e(e, "Couldn't get the app version")
@@ -199,7 +199,7 @@ class DebugExposureNotificationsViewModel(
                 tanRequestUUIDSubject.onNext(tanRequestUUID)
                 exposureNotificationsTextSubject.onNext("TAN for $mobileNumber was requested with UUID $tanRequestUUID")
             } catch (e: Exception) {
-                exposureNotificationsTextSubject.onNext("TAN for  ${mobileNumber} failed because of $e")
+                exposureNotificationsTextSubject.onNext("TAN for  $mobileNumber failed because of $e")
                 Timber.e(e)
             }
         }

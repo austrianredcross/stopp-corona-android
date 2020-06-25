@@ -12,11 +12,9 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.color
-import at.roteskreuz.stopcorona.utils.daysTo
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
-import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 
 /**
@@ -57,8 +55,8 @@ abstract class HealthStatusModel(
                     val days = healthStatusData.quarantineStatus.daysUntilEnd()
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
                     txtDescription.text = context.string(R.string.self_testing_suspicion_description)
-                    txtActionButton.text = when {
-                        days == 1L -> string(R.string.contacts_quarantine_day_single)
+                    txtActionButton.text = when (days) {
+                        1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
@@ -80,8 +78,8 @@ abstract class HealthStatusModel(
                         0L
                     }
                     txtQuarantineDays.text = days.toString()
-                    val quarantineDayActionText = when {
-                        days == 1L -> string(R.string.contacts_quarantine_day_single)
+                    val quarantineDayActionText = when (days) {
+                        1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
                     when {

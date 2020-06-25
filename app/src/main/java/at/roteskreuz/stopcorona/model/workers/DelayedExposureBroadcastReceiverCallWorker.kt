@@ -6,7 +6,6 @@ import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ACTION_
 import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
-import org.koin.standalone.inject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -50,8 +49,6 @@ class DelayedExposureBroadcastReceiverCallWorker(
             )
         }
     }
-
-    private val receiver: ExposureNotificationBroadcastReceiver by inject()
 
     override suspend fun doWork(): Result {
         val token = inputData.getString(ARGUMENT_TOKEN)

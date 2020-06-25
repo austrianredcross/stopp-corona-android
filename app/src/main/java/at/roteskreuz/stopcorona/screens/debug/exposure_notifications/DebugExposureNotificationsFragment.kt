@@ -43,11 +43,11 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         val uploadKeylistener = View.OnClickListener {button ->
             val tan = exposureNotificationsTanEditText.text.toString()
-            if (tan.isNullOrBlank()){
-                activity?.let { Toast.makeText(activity,"please add TAN", Toast.LENGTH_SHORT)}
+            if (tan.isBlank()) {
+                activity?.let { Toast.makeText(activity, "please add TAN", Toast.LENGTH_SHORT) }
                 exposureNotificationsTanEditText.error = "please provide TAN"
                 return@OnClickListener
-            }else {
+            } else {
                 exposureNotificationsTanEditText.error = null
             }
             val warningType = when (button) {
@@ -81,7 +81,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
                 exposureNotificationsErrorMessage.text = it
             }
 
-        var uploadButtons = listOf(exposureNotificationsUploadTemporaryExposureKeysGreenButton,
+        val uploadButtons = listOf(exposureNotificationsUploadTemporaryExposureKeysGreenButton,
             exposureNotificationsUploadTemporaryExposureKeysRedButton,
             exposureNotificationsUploadTemporaryExposureKeysYellowButton
         )

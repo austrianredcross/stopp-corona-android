@@ -2,7 +2,6 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
 import at.roteskreuz.stopcorona.model.managers.ChangelogManager
-import at.roteskreuz.stopcorona.model.managers.DatabaseCleanupManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.repositories.*
@@ -21,7 +20,6 @@ class DashboardViewModel(
     private val dashboardRepository: DashboardRepository,
     private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val quarantineRepository: QuarantineRepository,
-    private val databaseCleanupManager: DatabaseCleanupManager,
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager
 ) : ScopedViewModel(appDispatchers) {

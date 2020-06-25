@@ -54,8 +54,8 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
         disposables += viewModel.observeDiagnosisKeyToken()
             .observeOnMainThread()
             .subscribe{
-                diagnosisKeysGetExposureSummaryButton.text = "Get Summary for ${it}"
-                diagnosisKeysGetExposureInformationButton.text = "Get Information for ${it}"
+                diagnosisKeysGetExposureSummaryButton.text = "Get Summary for $it"
+                diagnosisKeysGetExposureInformationButton.text = "Get Information for $it"
             }
 
         disposables += viewModel.observeEnabledState()

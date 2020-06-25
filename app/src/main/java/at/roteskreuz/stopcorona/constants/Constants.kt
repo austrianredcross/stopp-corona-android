@@ -45,29 +45,6 @@ object Constants {
     }
 
     /**
-     * Constants related to the domain.
-     */
-    object Domain {
-
-        /**
-         * Array of weights to calculate the risk of being in a proximity class for one minute.
-         *
-         * [PROXIMITY_SCORE_WEIGHT]\[0\] means PeerLost and must always have a weight of 0.0
-         */
-        val PROXIMITY_SCORE_WEIGHT = arrayOf(0.0, 0.0, 0.0, 1.0, 2.0, 15.0)
-
-        /**
-         * Interval (sliding window) of time to consider when detecting intensive contacts.
-         */
-        val INTENSIVE_CONTACT_DETECTION_INTERVAL: Duration = Duration.ofHours(1)
-
-        /**
-         * Score from which a contact is considered an intensive contact.
-         */
-        const val INTENSIVE_CONTACT_SCORE = 30.0
-    }
-
-    /**
      * Constants related to the exposure notification framework.
      */
     object ExposureNotification {
@@ -94,7 +71,7 @@ object Constants {
          * ACTION_EXPOSURE_STATE_UPDATED_BROADCAST.
          * After this time out we will just assume that the exposure state has been updated.
          */
-        val ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT = if (isDebug) {
+        val ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT: Duration = if (isDebug) {
             Duration.ofMinutes(1)
         } else {
             Duration.ofMinutes(5)
@@ -171,24 +148,6 @@ object Constants {
 
         const val REQUEST_DASHBOARD = APP_BASE_REQUEST + (1 shl OFFSET)
         const val REQUEST_REPORTING_STATUS_FRAGMENT = APP_BASE_REQUEST + (2 shl OFFSET)
-    }
-
-    /**
-     * Constants related to security.
-     */
-    object Security {
-
-        const val KEYSTORE = "AndroidKeyStore"
-        const val KEYSTORE_ALIAS = "CoronaAppAlias"
-        const val KEY_ALGORITHM = "RSA"
-        const val FULL_ALGORITHM = "RSA/None/PKCS1Padding"
-        const val KEY_SIZE = 1024
-        const val BLOCK_SIZE = KEY_SIZE / 8 - 42
-        const val X500_PRINCIPAL_NAME = "CN=$KEYSTORE_ALIAS, O=Android Authority"
-        const val KEY_VALIDILITY_YEARS = 20
-        const val CRYPTO_PROVIDER_CALLER_POSITION = 99
-        const val FINGERPRINT_ALGORITHM = "SHA256"
-        const val ADDRESS_PREFIX_LENGTH = 8
     }
 
     /**

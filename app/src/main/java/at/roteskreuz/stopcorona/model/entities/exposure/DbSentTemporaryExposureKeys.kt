@@ -22,26 +22,7 @@ data class DbSentTemporaryExposureKeys(
     val rollingStartIntervalNumber: Int,
     val password: UUID,
     val messageType: MessageType
-) : DbEntity, Parcelable {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DbSentTemporaryExposureKeys) return false
-
-        if (rollingStartIntervalNumber != other.rollingStartIntervalNumber) return false
-        if (password != other.password) return false
-        if (messageType != other.messageType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = password.hashCode()
-        result = 31 * result + rollingStartIntervalNumber.hashCode()
-        result = 31 * result + messageType.hashCode()
-        return result
-    }
-}
+) : DbEntity, Parcelable
 
 /**
  * Converter from and to UUID.

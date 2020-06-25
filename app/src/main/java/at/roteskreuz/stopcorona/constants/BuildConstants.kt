@@ -20,7 +20,7 @@ val isEmulator = Build.FINGERPRINT?.contains("generic") ?: false
 /**
  * Global property indicating if is a beta application.
  */
-val isBeta = BuildConfig.BUILD_TYPE == "beta"
+const val isBeta = BuildConfig.BUILD_TYPE == "beta"
 
 /**
  * Global property indicating the version name of the current build.

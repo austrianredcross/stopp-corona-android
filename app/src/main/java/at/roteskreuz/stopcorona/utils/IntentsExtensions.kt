@@ -93,6 +93,6 @@ fun Fragment.enableBluetoothForResult(requestCode: Int) {
 fun Fragment.shareApp() {
     val sharingIntent = Intent(Intent.ACTION_SEND)
     sharingIntent.type = "text/plain"
-    sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_content));
+    sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_content))
     startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_app_chooser)))
 }
