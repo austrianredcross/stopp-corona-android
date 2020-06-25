@@ -205,7 +205,6 @@ class DiagnosisKeysRepositoryImpl(
         val remainingDailyBatchesParts = fullSession.remainingDailyBatchesParts
         // End of batch without red warning? Done processing.
         if (remainingDailyBatchesParts.isEmpty()) {
-            quarantineRepository.revokeLastRedContactDate()
             firstYellowDay?.let { _ ->
                 quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
                 Timber.e("Done processing. Only Yellow warning(s) found")
