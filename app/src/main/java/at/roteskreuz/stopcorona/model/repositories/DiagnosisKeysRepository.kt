@@ -191,7 +191,7 @@ class DiagnosisKeysRepositoryImpl(
 
             quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = firstRedDay)
 
-            // Only revoce quarantines after all new quarantines are known.
+            // Only revoke quarantines after all new quarantines are known.
             // When switching from yellow to red, if we revoke yellow above imediately, the red quarantine is not yet known and the
             // quarantine end tile is triggered in the ui
             if (dates.firstYellowDay == null) {
