@@ -160,6 +160,7 @@ object Constants {
         const val CHANNEL_RECOVERED = "channel_recovered"
         const val CHANNEL_QUARANTINE = "channel_quarantine"
         const val CHANNEL_AUTOMATIC_DETECTION = "channel_automatic_detection"
+        const val CHANNEL_UPLOAD_KEYS = "channel_upload_keys"
     }
 
     /**
