@@ -279,6 +279,8 @@ abstract class DefaultDatabase : RoomDatabase() {
              * exposure keys to be uploaded.
              */
             migration(17, 18) {
+                // needed empty table to set default value by init population
+                execSQL("DELETE FROM `configuration`")
                 // add new column for the number of days of temporary exposure keys that will be uploaded
                 execSQL("ALTER TABLE `configuration` ADD COLUMN `uploadKeysDays` INTEGER")
             },
@@ -299,15 +301,32 @@ abstract class DefaultDatabase : RoomDatabase() {
             },
             /**
              * Add new fields to the [DbConfiguration].
+             * Needed to drop and recreate table, because we have some fields non nullable without default values.
+             * Default values are set by init population to the empty table.
              */
             migration(19, 20) {
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `minimumRiskScore` INTEGER")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `dailyRiskThreshold` INTEGER")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationDurationThresholds` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `attenuationLevelValues` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `daysSinceLastExposureLevelValues` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `durationLevelValues` String")
-                execSQL("ALTER TABLE `configuration` ADD COLUMN `transmissionRiskLevelValues` String")
+                execSQL("DROP TABLE `configuration`")
+
+                execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `configuration` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                            `warnBeforeSymptoms` INTEGER, 
+                            `redWarningQuarantine` INTEGER, 
+                            `yellowWarningQuarantine` INTEGER, 
+                            `selfDiagnosedQuarantine` INTEGER, 
+                            `uploadKeysDays` INTEGER, 
+                            `cacheTime` INTEGER NOT NULL, 
+                            `minimumRiskScore` INTEGER NOT NULL, 
+                            `dailyRiskThreshold` INTEGER NOT NULL, 
+                            `attenuationDurationThresholds` TEXT NOT NULL, 
+                            `attenuationLevelValues` TEXT NOT NULL, 
+                            `daysSinceLastExposureLevelValues` TEXT NOT NULL, 
+                            `durationLevelValues` TEXT NOT NULL, 
+                            `transmissionRiskLevelValues` TEXT NOT NULL
+                        )
+                        """
+                )
             },
             /**
              * Add new tables [DbSession], [DbFullBatchPart], [DbDailyBatchPart].
