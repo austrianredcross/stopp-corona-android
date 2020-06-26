@@ -244,3 +244,7 @@ fun Instant.plusDays(days: Long): Instant = plus(days, ChronoUnit.DAYS)
  * Provides method known from ZonedDateTime
  */
 fun Instant.minusDays(days: Long): Instant = minus(days, ChronoUnit.DAYS)
+
+fun ZonedDateTime.millisUntilTheStartOfTheNextUtcDay(): Long {
+    return (ZonedDateTime.now().plusDays(1).startOfTheUtcDay() - this).toMillis()
+}
