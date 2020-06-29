@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.reporting.personalData
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -7,7 +8,9 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.DialogFragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.SicknessCertificateUploadException
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
@@ -25,14 +28,14 @@ import at.roteskreuz.stopcorona.utils.view.applyText
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.fragment_reporting_personal_data.*
+import kotlinx.android.synthetic.main.fragment_reporting_phone_number.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Screen for entering personal data, part of the flow for reporting a medical certificate or
  * the result of a self-testing to the authorities.
  */
-class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_personal_data) {
+class ReportingPhoneNumberFragment : BaseFragment(R.layout.fragment_reporting_phone_number) {
 
     companion object {
         const val CURRENT_SCREEN = 1
@@ -40,7 +43,7 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
         const val SCROLLED_DISTANCE_THRESHOLD = 2 // dp
     }
 
-    private val viewModel: ReportingPersonalDataViewModel by viewModel()
+    private val viewModel: ReportingPhoneNumberViewModel by viewModel()
 
     override val isToolbarVisible: Boolean = true
 
@@ -66,6 +69,9 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
 
         txtProgress.text = getString(R.string.certificate_personal_progress_label, CURRENT_SCREEN, TOTAL_NUMBER_OF_SCREENS)
 
+
+        MissingKeysExplanationDialog().show()
+
         disposables += viewModel.observeMessageType()
             .observeOnMainThread()
             .subscribe { messageType ->
@@ -83,7 +89,7 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
                 }
             }
 
-        disposables += viewModel.observePersonalData()
+        disposables += viewModel.observePhoneNumber()
             .observeOnMainThread()
             .subscribe {
                 textInputEditTextMobileNumber.applyText(it.mobileNumber)
@@ -190,6 +196,17 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
         super.onDestroyView()
     }
 }
+
+class MissingKeysExplanationDialog : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireContext())
+            .setTitle("Kontakte von gestern über ihre Krankmeldung informieren")
+            .setMessage("Benachrichtigen Sie jetzt Kontakte von gestern. Teilen Sie dafür jetzt die IDs aus dem Kontaktprotokoll Ihres Gerätes mit der Stopp Corona App\\n\\nDas Melden ist weiterhin freiwillig.")
+            .setPositiveButton("Jetzt IDs teilen", null)
+            .show()
+    }
+}
+
 
 fun listenForTextChanges(
     textInputLayout: TextInputLayout,

@@ -94,7 +94,7 @@ interface ReportingRepository {
     /**
      * Observe the personal data.
      */
-    fun observePersonalData(): Observable<PersonalData>
+    fun observePersonalData(): Observable<PhoneNumberData>
 
     /**
      * Observe the TAN related data.
@@ -128,7 +128,7 @@ class ReportingRepositoryImpl(
         get() = appDispatchers.Default
 
     private val personalDataSubject = NonNullableBehaviorSubject(
-        PersonalData()
+        PhoneNumberData()
     )
 
     private val tanDataSubject = NonNullableBehaviorSubject(
@@ -335,7 +335,7 @@ class ReportingRepositoryImpl(
 
     override fun setPersonalDataAndTanRequestSuccess(mobileNumber: String) {
         personalDataSubject.onNext(
-            PersonalData(
+            PhoneNumberData(
                 mobileNumber,
                 true
             )
@@ -380,7 +380,7 @@ class ReportingRepositoryImpl(
         agreementDataSubject.onNext(agreementDataSubject.value.copy(userHasAgreed = false))
     }
 
-    override fun observePersonalData(): Observable<PersonalData> {
+    override fun observePersonalData(): Observable<PhoneNumberData> {
         return personalDataSubject
     }
 
@@ -401,7 +401,7 @@ data class AgreementData(val userHasAgreed: Boolean = false)
 
 data class TanData(val tan: String = EMPTY_STRING, val tanIsFilled: Boolean = false)
 
-data class PersonalData(
+data class PhoneNumberData(
     val mobileNumber: String = EMPTY_STRING,
     val tanSuccessfullyRequested: Boolean = false
 )

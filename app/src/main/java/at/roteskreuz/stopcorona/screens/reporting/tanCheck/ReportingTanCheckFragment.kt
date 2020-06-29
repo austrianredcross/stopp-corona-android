@@ -10,7 +10,7 @@ import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
+import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPhoneNumberFragment
 import at.roteskreuz.stopcorona.screens.reporting.personalData.displayFieldInlineError
 import at.roteskreuz.stopcorona.screens.reporting.personalData.listenForTextChanges
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -70,7 +70,7 @@ class ReportingTanCheckFragment : BaseFragment(R.layout.fragment_reporting_tan_c
         txtProgress.text = getString(
             R.string.certificate_personal_progress_label,
             CURRENT_SCREEN,
-            ReportingPersonalDataFragment.TOTAL_NUMBER_OF_SCREENS
+            ReportingPhoneNumberFragment.TOTAL_NUMBER_OF_SCREENS
         )
 
         disposables += viewModel.observeMessageType()
@@ -135,7 +135,7 @@ class ReportingTanCheckFragment : BaseFragment(R.layout.fragment_reporting_tan_c
         listenForTextChanges(textInputLayoutTan, textInputEditTextTan, viewModel::setTan)
 
         scrollViewContainer.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            transparentAppBar.elevation = if (scrollY > requireContext().dip(ReportingPersonalDataFragment.SCROLLED_DISTANCE_THRESHOLD)) {
+            transparentAppBar.elevation = if (scrollY > requireContext().dip(ReportingPhoneNumberFragment.SCROLLED_DISTANCE_THRESHOLD)) {
                 requireContext().dipif(4)
             } else {
                 0f

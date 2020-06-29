@@ -14,8 +14,8 @@ import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
 import at.roteskreuz.stopcorona.screens.questionnaire.success.startQuestionnaireReportSuccessFragment
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment.Companion.SCROLLED_DISTANCE_THRESHOLD
+import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPhoneNumberFragment
+import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPhoneNumberFragment.Companion.SCROLLED_DISTANCE_THRESHOLD
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.success.startCertificateReportSuccessFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.success.startRevokeSicknessSuccessFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.success.startRevokeSuspicionSuccessFragment
@@ -88,7 +88,7 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
         txtProgress.text = getString(
             R.string.certificate_personal_progress_label,
             CURRENT_SCREEN,
-            ReportingPersonalDataFragment.TOTAL_NUMBER_OF_SCREENS
+            ReportingPhoneNumberFragment.TOTAL_NUMBER_OF_SCREENS
         )
 
         with(contentRecyclerView) {
