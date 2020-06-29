@@ -9,7 +9,7 @@ import org.threeten.bp.ZonedDateTime
 class DateTimeExtensionsKtTest {
 
     @Test
-    fun millisUntilTheStartOfTheNextUtcDay() {
+    fun `test milliseconds calculation to the next UTC day`() {
 
         val todayNoon: ZonedDateTime = ZonedDateTime.now()
             .withZoneSameLocal(ZoneId.of("UTC+2"))
