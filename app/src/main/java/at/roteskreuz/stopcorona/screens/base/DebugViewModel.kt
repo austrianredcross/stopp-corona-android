@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.base
 
+import android.content.SharedPreferences
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.*
@@ -85,5 +86,9 @@ class DebugViewModel(
 
     fun displayNotificationForUploadingKeysFromTheDayBefore() {
         notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore()
+    }
+
+    fun fakeReportWithMissingKeysYesterday() {
+        quarantineRepository.fakeReportWithMissingKeysYesterday();
     }
 }

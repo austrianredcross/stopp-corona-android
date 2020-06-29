@@ -159,6 +159,11 @@ interface QuarantineRepository {
      * the red and yellow contacts.
      */
     fun observeCombinedWarningType(): Observable<CombinedWarningType>
+
+    /**
+     * Fake state where the user uploaded keys yesterday and needs to upload the missing key today
+     */
+    fun fakeReportWithMissingKeysYesterday()
 }
 
 class QuarantineRepositoryImpl(
@@ -454,6 +459,12 @@ class QuarantineRepositoryImpl(
         return withContext(coroutineContext) {
             quarantineStateObservable.blockingFirst()
         }
+    }
+
+    override fun fakeReportWithMissingKeysYesterday() {
+        missingKeysUploaded = false
+        dateOfFirstMedicalConfirmation = ZonedDateTime.now().minusDays(1)
+        //dateOfLastSelfDiagnose = ZonedDateTime.now().minusDays(1)
     }
 
     override fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>> {
