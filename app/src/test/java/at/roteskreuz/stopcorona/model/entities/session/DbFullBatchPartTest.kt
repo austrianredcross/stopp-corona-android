@@ -5,7 +5,7 @@ import org.junit.Test
 class DbFullBatchPartTest {
 
     @Test
-    fun getIntervalStart() {
+    fun testSomeSorting() {
         val part1 = DbFullBatchPart(
             sessionId = 1,
             batchNumber = 1,
