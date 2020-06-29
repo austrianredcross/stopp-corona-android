@@ -5,8 +5,9 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Prefs.CHANGELOG_MANAGER_PREFIX
-import at.roteskreuz.stopcorona.skeleton.core.utils.intSharedPreferencesProperty
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeInt
+import at.roteskreuz.stopcorona.constants.VERSION_NAME
+import at.roteskreuz.stopcorona.skeleton.core.utils.nullableIntSharedPreferencesProperty
+import at.roteskreuz.stopcorona.skeleton.core.utils.observeNullableInt
 import io.reactivex.Observable
 
 /**
@@ -15,25 +16,23 @@ import io.reactivex.Observable
 interface ChangelogManager {
 
     /**
-     * Observes if the exposure SDK is ready to start.
+     * Get true if changelog should be displayed.
+     * False if changelog is not provided for the current version or changelog was already displayed.
      */
-    fun observeExposureSDKReadyToStart(): Observable<Boolean>
+    val shouldDisplayChangelog: Boolean
 
     /**
-     * Checks if there is an unseen changelog for the given [version].
+     * Get the changelog for the current version or null if changelog is not present.
      */
-    fun unseenChangelogForVersionAvailable(version: String): Boolean
+    val currentChangelog: Changelog?
 
     /**
-     * Get the changelog for the given [version].
-     *
-     * @return null when there is no changelog for the given [version]
-     * or the changelog has already been displayed.
+     * Observe true if the current changelog has been seen, otherwise false.
      */
-    fun getChangelogForVersion(version: String): Changelog?
+    fun observeIsChangelogSeen(): Observable<Boolean>
 
     /**
-     * Marks the changelog as seen.
+     * Marks the valid changelog as seen.
      */
     fun markChangelogAsSeen()
 }
@@ -52,41 +51,50 @@ class ChangelogManagerImpl(
      * [Changelog.id] has to be increased for every new changelog.
      * [Changelog.versions] contains the list of versions this changelog applies to.
      */
-    private val changelog = Changelog(
-        id = 1,
-        versions = listOf("2.0.0"),
-        title = R.string.changelog_title_v2_0_0,
-        description = listOf(
-            SpanTextWrapper.NoStyle(R.string.changelog_description_1_v2_0_0),
-            SpanTextWrapper.Styled(textRes = R.string.changelog_description_2_v2_0_0, colored = true, insertTrailingSpace = false),
-            SpanTextWrapper.NoStyle(R.string.changelog_description_3_v2_0_0)
-        ),
-        callToAction = R.string.changelog_cta_v2_0_0,
-        image = R.drawable.ic_changelog
+    private val changelogs = listOf(
+        Changelog(
+            id = 1,
+            versions = listOf("2.0.0", "2.0.3", "2.0.4"),
+            title = R.string.changelog_title_v2_0_0,
+            description = listOf(
+                SpanTextWrapper.NoStyle(R.string.changelog_description_1_v2_0_0),
+                SpanTextWrapper.Styled(textRes = R.string.changelog_description_2_v2_0_0, colored = true, insertTrailingSpace = false),
+                SpanTextWrapper.NoStyle(R.string.changelog_description_3_v2_0_0)
+            ),
+            callToAction = R.string.changelog_cta_v2_0_0,
+            image = R.drawable.ic_changelog
+        )
     )
+    private val currentVersionName = VERSION_NAME
 
-    private var lastSeenChangelogId: Int by preferences.intSharedPreferencesProperty(PREF_LAST_SEEN_CHANGELOG_ID, 0)
+    private var lastSeenChangelogId: Int? by preferences.nullableIntSharedPreferencesProperty(PREF_LAST_SEEN_CHANGELOG_ID)
 
-    override fun unseenChangelogForVersionAvailable(version: String): Boolean {
-        return changelog.versions.contains(convertVersionName(version)) && hasBeenDisplayed(lastSeenChangelogId).not()
-    }
+    override val shouldDisplayChangelog: Boolean
+        get() {
+            return currentChangelog?.let {
+                (lastSeenChangelogId ?: 0) < it.id
+            } ?: false
+        }
 
-    override fun getChangelogForVersion(version: String): Changelog? {
-        return if (unseenChangelogForVersionAvailable(convertVersionName(version))) {
-            changelog
-        } else {
-            null
+    override val currentChangelog: Changelog? by lazy {
+        changelogs.firstOrNull {
+            it.versions.contains(convertVersionName(currentVersionName))
         }
     }
 
-    override fun observeExposureSDKReadyToStart(): Observable<Boolean> {
-        return preferences.observeInt(PREF_LAST_SEEN_CHANGELOG_ID, 0).map {
-            hasBeenDisplayed(it)
-        }
+    override fun observeIsChangelogSeen(): Observable<Boolean> {
+        return preferences.observeNullableInt(PREF_LAST_SEEN_CHANGELOG_ID)
+            .map {
+                if (it.isPresent) {
+                    currentChangelog?.id == it.get()
+                } else {
+                    false
+                }
+            }
     }
 
     override fun markChangelogAsSeen() {
-        lastSeenChangelogId = changelog.id
+        lastSeenChangelogId = currentChangelog?.id
     }
 
     /**
@@ -95,10 +103,6 @@ class ChangelogManagerImpl(
      */
     private fun convertVersionName(version: String): String {
         return version.split(".").take(3).joinToString(".")
-    }
-
-    private fun hasBeenDisplayed(lastSeenChangelogId: Int): Boolean {
-        return changelog.id <= lastSeenChangelogId
     }
 }
 

@@ -24,11 +24,13 @@ class DashboardViewModel(
     private val exposureNotificationManager: ExposureNotificationManager
 ) : ScopedViewModel(appDispatchers) {
 
-    private var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
+    var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
         set(value) {
             dashboardRepository.exposureFrameworkEnabledOnFirstStart = value
         }
+
+    val shouldDisplayWhatsNew = changelogManager.shouldDisplayChangelog
 
     var userWantsToRegisterAppForExposureNotifications: Boolean
         get() = exposureNotificationManager.userWantsToRegisterAppForExposureNotifications
@@ -46,7 +48,7 @@ class DashboardViewModel(
         /**
          * If the user starts the app for the first time the exposure notification framework will be started automatically.
          */
-        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
+        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not() && shouldDisplayWhatsNew.not()) {
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
@@ -139,12 +141,11 @@ class DashboardViewModel(
         exposureNotificationManager.refreshPrerequisitesErrorStatement(ignoreErrors)
     }
 
-    fun unseenChangelogForVersionAvailable(version: String): Boolean {
-        return changelogManager.unseenChangelogForVersionAvailable(version)
-    }
-
-    fun observeExposureSDKReadyToStart(): Observable<Boolean> {
-        return changelogManager.observeExposureSDKReadyToStart().distinctUntilChanged()
+    fun observeCurrentChangelogSeen(): Observable<Boolean> {
+        return changelogManager.observeIsChangelogSeen()
+            .map { seen ->
+                seen && shouldDisplayWhatsNew
+            }
     }
 }
 

@@ -76,6 +76,23 @@ fun SharedPreferences.intSharedPreferencesProperty(key: String, defaultValue: In
 }
 
 /**
+ * Nullable int property that is stored directly into the given [SharedPreferences]
+ */
+fun SharedPreferences.nullableIntSharedPreferencesProperty(
+    key: String,
+    defaultValue: Int? = null
+): ReadWriteProperty<Any?, Int?> {
+    return sharedPreferencesNullableProperty(
+        key,
+        defaultValue,
+        { _key: String, _defaultValue: Int? ->
+            getInt(_key, _defaultValue ?: -1).let { if (it == (_defaultValue ?: -1)) null else it }
+        },
+        SharedPreferences.Editor::putInt
+    )
+}
+
+/**
  * Boolean property that is stored directly into the given [SharedPreferences]
  */
 fun SharedPreferences.booleanSharedPreferencesProperty(
@@ -272,6 +289,15 @@ fun SharedPreferences.observeInt(key: String, defaultValue: Int): Observable<Int
     ) { _key: String, _defValue: Int? ->
         getInt(_key, _defValue!!)
     }.map { it.get() }
+}
+
+fun SharedPreferences.observeNullableInt(key: String, defaultValue: Int? = null): Observable<Optional<Int>> {
+    return observe(
+        key,
+        defaultValue
+    ) { _key, _defValue ->
+        getInt(_key, _defValue ?: -1).let { if (it == (_defValue ?: -1)) null else it }
+    }
 }
 
 fun SharedPreferences.observeBoolean(key: String, defaultValue: Boolean = false): Observable<Boolean> {
