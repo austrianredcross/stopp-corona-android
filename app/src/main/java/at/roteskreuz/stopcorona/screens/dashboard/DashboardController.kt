@@ -451,10 +451,11 @@ class DashboardController(
                 .addTo(modelList)
         }
 
-        if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-                ownHealthStatus is HealthStatusData.SicknessCertificate) &&
-            uploadMissingExposureKeys.isPresent
-        ) {
+        val healthStatusDataMatches =
+            ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
+            ownHealthStatus is HealthStatusData.SicknessCertificate
+
+        if (healthStatusDataMatches && uploadMissingExposureKeys.isPresent) {
             EmptySpaceModel_()
                 .id(modelCountBuiltSoFar)
                 .height(16)

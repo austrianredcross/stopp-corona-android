@@ -2,13 +2,16 @@ package at.roteskreuz.stopcorona.model.managers
 
 import android.app.Activity
 import android.content.SharedPreferences
+import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
+import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
+import at.roteskreuz.stopcorona.model.workers.UploadKeysFromDayBeforeWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
@@ -78,7 +81,9 @@ class ExposureNotificationManagerImpl(
     exposureNotificationRepository: ExposureNotificationRepository,
     bluetoothRepository: BluetoothRepository,
     googlePlayAvailability: GoogleApiAvailability,
-    contextInteractor: ContextInteractor
+    contextInteractor: ContextInteractor,
+    quarantineRepository: QuarantineRepository,
+    workManager: WorkManager
 ) : ExposureNotificationManager,
     CoroutineScope {
 
@@ -127,6 +132,13 @@ class ExposureNotificationManagerImpl(
                 state.onCreate { newState ->
                     state.onCleared()
                     exposureNotificationPhaseSubject.onNext(newState)
+                }
+            }
+        @Suppress("CheckResult")
+        quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
+            .subscribe {
+                if (it.isPresent) {
+                    UploadKeysFromDayBeforeWorker.enqueueUploadKeysFromDayBeforeWorkerOnTheStartOfTheNextUtcDay(workManager)
                 }
             }
     }

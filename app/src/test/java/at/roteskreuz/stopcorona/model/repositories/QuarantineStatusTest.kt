@@ -18,7 +18,7 @@ import org.threeten.bp.ZonedDateTime
 class QuarantineStatusTest {
 
     @Test
-    fun testDaysUntilTodayToBeOne(){
+    fun `days until end of quarantine today needs to be 1`(){
         val endsToday = ZonedDateTime.now().plusHours(1)
         val limited = QuarantineStatus.Jailed.Limited(end = endsToday, byContact = true)
 
@@ -26,7 +26,7 @@ class QuarantineStatusTest {
     }
 
     @Test
-    fun testDaysUntilSevenDaysToBeEight(){
+    fun `7 days of quarantine actually show as 8 days`(){
         val endsToday = ZonedDateTime.now().plusDays(7)
         val limited = QuarantineStatus.Jailed.Limited(end = endsToday, byContact = true)
 

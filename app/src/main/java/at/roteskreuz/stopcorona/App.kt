@@ -7,7 +7,9 @@ import android.os.Build
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.di.*
+import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.skeleton.core.BaseApp
+import org.koin.android.ext.android.get
 import org.koin.dsl.module.Module
 
 /**
@@ -73,6 +75,14 @@ class App : BaseApp() {
             )
             channelAutomaticDetection.setShowBadge(false)
             notificationManager.createNotificationChannel(channelAutomaticDetection)
+
+            val channelUploadKeys = NotificationChannel(
+                Constants.NotificationChannels.CHANNEL_UPLOAD_KEYS,
+                getString(R.string.general_uploading_keys_channel_name),
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            channelUploadKeys.setShowBadge(true)
+            notificationManager.createNotificationChannel(channelUploadKeys)
         }
     }
 }

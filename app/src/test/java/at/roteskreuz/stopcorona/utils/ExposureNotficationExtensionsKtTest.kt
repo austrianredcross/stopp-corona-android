@@ -31,7 +31,7 @@ class ExposureNotficationExtensionsKtTest {
         .build()
 
     @Test
-    fun testEmpty() {
+    fun `no exposures lead to no exposure dates`() {
         val listUnderTest: List<ExposureInformation> = emptyList()
 
         val dates = listUnderTest.extractLatestRedAndYellowContactDate(THRESHOLD)
@@ -41,7 +41,7 @@ class ExposureNotficationExtensionsKtTest {
     }
 
     @Test
-    fun ignoreSingleUnriskyYellow() {
+    fun `a single yellow exposure information leads to a the yellow date on that day`() {
         val listUnderTest: List<ExposureInformation> = arrayListOf(SHORT_YELLOW_TWO_DAYS_AGO)
 
         val dates = listUnderTest.extractLatestRedAndYellowContactDate(THRESHOLD)
@@ -51,7 +51,7 @@ class ExposureNotficationExtensionsKtTest {
     }
 
     @Test
-    fun twoUnriskyTriggerYellowWarning() {
+    fun `two individual yellow exposures, individually not relevant must lead to a combined yellow warning`() {
         val listUnderTest: List<ExposureInformation> = arrayListOf(SHORT_YELLOW_TWO_DAYS_AGO, SHORT_YELLOW_TWO_DAYS_AGO)
 
         val dates = listUnderTest.extractLatestRedAndYellowContactDate(THRESHOLD)
@@ -62,7 +62,7 @@ class ExposureNotficationExtensionsKtTest {
     }
 
     @Test
-    fun detectSimpleRed() {
+    fun `detect a single red exposure day`() {
 
         val listUnderTest: List<ExposureInformation> = arrayListOf(RED_YESTERDAY)
 
@@ -74,7 +74,7 @@ class ExposureNotficationExtensionsKtTest {
     }
 
     @Test
-    fun detectTwoRed_detectLatest_orderIrrelevant() {
+    fun `detect the latest red day irrelevant of the order of the exposures in the list of exposures`() {
 
         val listUnderTest: List<ExposureInformation> = arrayListOf(RED_TWO_DAYS_AGO, RED_YESTERDAY)
         val listUnderTest2: List<ExposureInformation> = arrayListOf(RED_YESTERDAY, RED_YESTERDAY)

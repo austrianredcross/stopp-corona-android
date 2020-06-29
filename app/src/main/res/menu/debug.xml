@@ -28,6 +28,9 @@
                     <item
                         android:id="@+id/debugMenuNotificationEndQuarantine"
                         android:title="End of quarantine" />
+                    <item
+                        android:id="@+id/debugMenuNotificationUploadKeys"
+                        android:title="Upload Keys from yesterday" />
                 </menu>
             </item>
             <item
