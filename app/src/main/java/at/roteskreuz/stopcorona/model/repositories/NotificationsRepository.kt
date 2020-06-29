@@ -83,11 +83,6 @@ interface NotificationsRepository {
      * Context: For privacy reasons, the key from today is not accessible until tomorrow.
      */
     fun displayNotificationForUploadingKeysFromTheDayBefore()
-
-    /**
-     * observe
-     */
-    fun checkAndScheduleMissingKeysNotification()
 }
 
 class NotificationsRepositoryImpl(
@@ -252,13 +247,7 @@ class NotificationsRepositoryImpl(
         ).show()
     }
 
-    override fun checkAndScheduleMissingKeysNotification(){
-        quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
-            .observeOnMainThread()
-            .subscribe {
-                UploadKeysFromDayBeforeWorker.enqueueUploadKeysFromDayBeforeWorkerOnTheStartOfTheNextUtcDay(workManager)
-            }
-    }
+
 
     private fun buildNotification(
         title: String,

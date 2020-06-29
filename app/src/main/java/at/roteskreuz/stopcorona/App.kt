@@ -35,9 +35,6 @@ class App : BaseApp() {
 
         // Create notification channels
         createNotificationChannels()
-
-        val notificationsRepository: NotificationsRepository = get()
-        notificationsRepository.checkAndScheduleMissingKeysNotification()
     }
 
     private fun createNotificationChannels() {
