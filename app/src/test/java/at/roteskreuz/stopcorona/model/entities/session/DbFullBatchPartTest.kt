@@ -5,7 +5,7 @@ import org.junit.Test
 class DbFullBatchPartTest {
 
     @Test
-    fun getIntervalStart() {
+    fun `just a random test to make sure sortedBy sorts ascending`() {
         val part1 = DbFullBatchPart(
             sessionId = 1,
             batchNumber = 1,
