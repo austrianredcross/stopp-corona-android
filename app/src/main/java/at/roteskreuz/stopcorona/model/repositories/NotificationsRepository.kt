@@ -7,18 +7,15 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.NotificationChannels
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.model.workers.UploadKeysFromDayBeforeWorker
 import at.roteskreuz.stopcorona.screens.dashboard.getDashboardActivityIntent
 import at.roteskreuz.stopcorona.screens.infection_info.getInfectionInfoFragmentIntent
 import at.roteskreuz.stopcorona.screens.questionnaire.getQuestionnaireIntent
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.string
 import kotlinx.coroutines.CoroutineScope
 import java.util.UUID
@@ -77,12 +74,6 @@ interface NotificationsRepository {
      * the Exposure Notifications Framework was too low to qualify for a quarantine.
      */
     fun displayNotificationForLowRisc()
-
-    /**
-     * Display a notification, reminding the user to upload the keys from the day before.
-     * Context: For privacy reasons, the key from today is not accessible until tomorrow.
-     */
-    fun displayNotificationForUploadingKeysFromTheDayBefore()
 }
 
 class NotificationsRepositoryImpl(
@@ -229,23 +220,6 @@ class NotificationsRepositoryImpl(
             ongoing = false
         ).show()
     }
-
-    override fun displayNotificationForUploadingKeysFromTheDayBefore() {
-        val title = context.string(R.string.upload_missing_keys_notification_title)
-        val message = context.string(R.string.upload_missing_keys_notification_message)
-
-        buildNotification(
-            title = title,
-            message = message,
-            pendingIntent = buildPendingIntentWithActivityStack {
-                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
-            },
-            channelId = NotificationChannels.CHANNEL_UPLOAD_KEYS,
-            ongoing = false
-        ).show()
-    }
-
-
 
     private fun buildNotification(
         title: String,

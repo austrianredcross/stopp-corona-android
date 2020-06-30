@@ -57,10 +57,6 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 debugViewModel.displayEndQuarantineNotification()
                 true
             }
-            R.id.debugMenuNotificationUploadKeys -> {
-                debugViewModel.displayNotificationForUploadingKeysFromTheDayBefore()
-                true
-            }
             R.id.debugMenuQuarantineStatus -> {
                 val quarantineStatus = debugViewModel.getQuarantineStatus()
                 Toast.makeText(this, quarantineStatus.toString(), Toast.LENGTH_LONG).show()
