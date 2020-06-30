@@ -10,6 +10,7 @@ import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.VERSION_NAME
+import at.roteskreuz.stopcorona.utils.view.safeRun
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_dashboard.*
@@ -49,15 +50,15 @@ class ChangelogFragment : BottomSheetDialogFragment() {
             setController(controller)
         }
 
-        viewModel.getChangelogForVersion(VERSION_NAME)?.let {
+        viewModel.changelog.safeRun(message = "No changelog for version $VERSION_NAME") {
             controller.setData(it)
         }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-
         viewModel.markChangelogAsSeen()
+
+        super.onDismiss(dialog)
     }
 }
 
