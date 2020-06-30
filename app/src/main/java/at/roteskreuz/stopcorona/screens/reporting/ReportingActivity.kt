@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.reporting
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
@@ -14,6 +15,7 @@ import at.roteskreuz.stopcorona.screens.reporting.tanCheck.ReportingTanCheckFrag
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.argument
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
+import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -115,7 +117,10 @@ fun Fragment.startReportingActivity(
     dateWithMissingExposureKeys: ZonedDateTime? = null
 ) {
     startFragmentActivity<ReportingActivity>(
-        fragmentName = ReportingPhoneNumberFragment::class.java.name,
+        // using this empty fragment to make sure the fragment setting is done properly in code.
+        fragmentName = EmptyFragment::class.java.name,
         activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys)
     )
 }
+
+class EmptyFragment : BaseFragment(R.layout.fragment_reporting_phone_number)

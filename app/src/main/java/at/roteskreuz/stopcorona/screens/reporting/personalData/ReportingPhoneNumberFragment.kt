@@ -17,6 +17,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
+import at.roteskreuz.stopcorona.screens.reporting.ReportingActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -69,6 +70,9 @@ class ReportingPhoneNumberFragment : BaseFragment(R.layout.fragment_reporting_ph
 
         txtProgress.text = getString(R.string.certificate_personal_progress_label, CURRENT_SCREEN, TOTAL_NUMBER_OF_SCREENS)
 
+        if (viewModel.uploadingKeysFromTheDayBefore()){
+            MissingKeysExplanationDialog().show()
+        }
 
         disposables += viewModel.observeMessageType()
             .observeOnMainThread()
@@ -195,6 +199,15 @@ class ReportingPhoneNumberFragment : BaseFragment(R.layout.fragment_reporting_ph
     }
 }
 
+class MissingKeysExplanationDialog : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireContext())
+            .setTitle(R.string.upload_keys_from_yesterday_title)
+            .setMessage(R.string.upload_keys_from_yesterday_message)
+            .setPositiveButton(R.string.upload_keys_from_yesterday_button_title, null)
+            .show()
+    }
+}
 fun listenForTextChanges(
     textInputLayout: TextInputLayout,
     textInputEditText: TextInputEditText,

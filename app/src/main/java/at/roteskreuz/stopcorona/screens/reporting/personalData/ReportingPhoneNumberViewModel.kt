@@ -92,6 +92,10 @@ class ReportingPhoneNumberViewModel(
     fun observeMessageType(): Observable<MessageType> {
         return reportingRepository.observeMessageType()
     }
+
+    fun uploadingKeysFromTheDayBefore(): Boolean {
+        return reportingRepository.hasDateWithMissingExposureKeys()
+    }
 }
 
 fun validateNotEmpty(text: String?): ValidationError? {

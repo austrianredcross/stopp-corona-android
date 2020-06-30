@@ -111,6 +111,11 @@ interface ReportingRepository {
      * @throws [InvalidConfigurationException]
      */
     fun observeMessageType(): Observable<MessageType>
+
+    /**
+     * indicated the upload will only upload a day worth of keys
+     */
+    fun hasDateWithMissingExposureKeys(): Boolean
 }
 
 class ReportingRepositoryImpl(
@@ -394,6 +399,10 @@ class ReportingRepositoryImpl(
 
     override fun observeMessageType(): Observable<MessageType> {
         return messageTypeSubject
+    }
+
+    override fun hasDateWithMissingExposureKeys(): Boolean {
+        return dateWithMissingExposureKeys != null
     }
 }
 
