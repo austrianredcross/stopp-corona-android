@@ -24,11 +24,22 @@ class DashboardViewModel(
     private val exposureNotificationManager: ExposureNotificationManager
 ) : ScopedViewModel(appDispatchers) {
 
-    private var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
+    var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
         get() = dashboardRepository.exposureFrameworkEnabledOnFirstStart
         set(value) {
             dashboardRepository.exposureFrameworkEnabledOnFirstStart = value
         }
+
+    /**
+     * This holds the initial state to check once changelog has been seen at the current viewModel lifecycle.
+     */
+    private val initialValueShouldDisplayWhatsNew = changelogManager.shouldDisplayChangelog
+
+    /**
+     * If true, changelog should be displayed.
+     */
+    val shouldDisplayWhatsNew
+        get() = changelogManager.shouldDisplayChangelog
 
     var userWantsToRegisterAppForExposureNotifications: Boolean
         get() = exposureNotificationManager.userWantsToRegisterAppForExposureNotifications
@@ -46,7 +57,7 @@ class DashboardViewModel(
         /**
          * If the user starts the app for the first time the exposure notification framework will be started automatically.
          */
-        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
+        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not() && initialValueShouldDisplayWhatsNew.not()) {
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
@@ -139,13 +150,34 @@ class DashboardViewModel(
         exposureNotificationManager.refreshPrerequisitesErrorStatement(ignoreErrors)
     }
 
-    fun unseenChangelogForVersionAvailable(version: String): Boolean {
-        return changelogManager.unseenChangelogForVersionAvailable(version)
+    fun observeCurrentChangelogState(): Observable<ChangelogState> {
+        return changelogManager.observeIsCurrentChangelogSeen()
+            .map { seen ->
+                val currentChangelog = changelogManager.currentChangelog
+                when {
+                    currentChangelog == null -> ChangelogState.NoChangelog
+                    seen && initialValueShouldDisplayWhatsNew -> ChangelogState.CurrentChangelogSeen
+                    else -> ChangelogState.Pending
+                }
+            }
     }
+}
 
-    fun observeExposureSDKReadyToStart(): Observable<Boolean> {
-        return changelogManager.observeExposureSDKReadyToStart().distinctUntilChanged()
-    }
+sealed class ChangelogState {
+    /**
+     * There is a changelog which should be displayed to the user.
+     */
+    object Pending : ChangelogState()
+
+    /**
+     * There is no changelog to be displayed.
+     */
+    object NoChangelog : ChangelogState()
+
+    /**
+     * The current changelog has been seen by user.
+     */
+    object CurrentChangelogSeen : ChangelogState()
 }
 
 /**

@@ -10,11 +10,9 @@ class ChangelogViewModel(
     private val changelogManager: ChangelogManager
 ) : ScopedViewModel(appDispatchers) {
 
-    fun getChangelogForVersion(version: String): Changelog? {
-        return changelogManager.getChangelogForVersion(version)
-    }
+    val changelog: Changelog? = changelogManager.currentChangelog
 
     fun markChangelogAsSeen() {
-        changelogManager.markChangelogAsSeen()
+        changelogManager.markCurrentChangelogAsSeen()
     }
 }
