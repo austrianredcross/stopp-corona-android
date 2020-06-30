@@ -240,10 +240,10 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.uploadMissingExposureKeys = it
             }
 
-        disposables += viewModel.observeCurrentChangelogSeen()
+        disposables += viewModel.observeCurrentChangelogState()
             .observeOnMainThread()
-            .subscribe { seen ->
-                if (seen) {
+            .subscribe { changelogState ->
+                if (changelogState is ChangelogState.CurrentChangelogSeen) {
                     /**
                      * If the user starts the app for the first time the exposure notification framework will be started automatically.
                      */

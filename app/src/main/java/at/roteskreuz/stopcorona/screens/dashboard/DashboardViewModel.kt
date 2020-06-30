@@ -150,12 +150,34 @@ class DashboardViewModel(
         exposureNotificationManager.refreshPrerequisitesErrorStatement(ignoreErrors)
     }
 
-    fun observeCurrentChangelogSeen(): Observable<Boolean> {
-        return changelogManager.observeIsChangelogSeen()
+    fun observeCurrentChangelogState(): Observable<ChangelogState> {
+        return changelogManager.observeIsCurrentChangelogSeen()
             .map { seen ->
-                seen && initialValueShouldDisplayWhatsNew
+                val currentChangelog = changelogManager.currentChangelog
+                when {
+                    currentChangelog == null -> ChangelogState.NoChangelog
+                    seen && initialValueShouldDisplayWhatsNew -> ChangelogState.CurrentChangelogSeen
+                    else -> ChangelogState.Pending
+                }
             }
     }
+}
+
+sealed class ChangelogState {
+    /**
+     * There is a changelog which should be displayed to the user.
+     */
+    object Pending : ChangelogState()
+
+    /**
+     * There is no changelog to be displayed.
+     */
+    object NoChangelog : ChangelogState()
+
+    /**
+     * The current changelog has been seen by user.
+     */
+    object CurrentChangelogSeen : ChangelogState()
 }
 
 /**

@@ -13,6 +13,6 @@ class ChangelogViewModel(
     val changelog: Changelog? = changelogManager.currentChangelog
 
     fun markChangelogAsSeen() {
-        changelogManager.markChangelogAsSeen()
+        changelogManager.markCurrentChangelogAsSeen()
     }
 }

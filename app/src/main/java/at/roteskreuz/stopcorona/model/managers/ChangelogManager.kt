@@ -29,12 +29,12 @@ interface ChangelogManager {
     /**
      * Observe true if the current changelog has been seen, otherwise false.
      */
-    fun observeIsChangelogSeen(): Observable<Boolean>
+    fun observeIsCurrentChangelogSeen(): Observable<Boolean>
 
     /**
-     * Marks the valid changelog as seen.
+     * Marks the valid (current) changelog as seen.
      */
-    fun markChangelogAsSeen()
+    fun markCurrentChangelogAsSeen()
 }
 
 class ChangelogManagerImpl(
@@ -82,14 +82,14 @@ class ChangelogManagerImpl(
         }
     }
 
-    override fun observeIsChangelogSeen(): Observable<Boolean> {
+    override fun observeIsCurrentChangelogSeen(): Observable<Boolean> {
         return preferences.observeNullableInt(PREF_LAST_SEEN_CHANGELOG_ID)
             .map {
                 it.isPresent && currentChangelog?.id == it.get()
             }
     }
 
-    override fun markChangelogAsSeen() {
+    override fun markCurrentChangelogAsSeen() {
         lastSeenChangelogId = currentChangelog?.id
     }
 
