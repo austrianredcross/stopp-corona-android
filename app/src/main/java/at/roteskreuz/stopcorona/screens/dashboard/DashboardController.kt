@@ -20,7 +20,6 @@ import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
-import com.github.dmstocking.optional.java.util.Optional
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -50,7 +49,7 @@ class DashboardController(
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
     var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
-    var uploadMissingExposureKeys: Optional<UploadMissingExposureKeys> by adapterProperty(Optional.empty())
+    var uploadMissingExposureKeys: UploadMissingExposureKeys? by adapterProperty(null as UploadMissingExposureKeys?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -453,9 +452,10 @@ class DashboardController(
 
         val healthStatusDataMatches =
             ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-            ownHealthStatus is HealthStatusData.SicknessCertificate
+                ownHealthStatus is HealthStatusData.SicknessCertificate
 
-        if (healthStatusDataMatches && uploadMissingExposureKeys.isPresent) {
+        val uploadMissingExposureKeys = uploadMissingExposureKeys
+        if (healthStatusDataMatches && uploadMissingExposureKeys != null) {
             EmptySpaceModel_()
                 .id(modelCountBuiltSoFar)
                 .height(16)
@@ -464,16 +464,16 @@ class DashboardController(
             ButtonType2Model_ {
                 onUploadMissingExposureKeysClick(
                     false,
-                    uploadMissingExposureKeys.get()
+                    uploadMissingExposureKeys
                 )
             }
                 .id("own_health_status_upload_missing_exposure_keys")
-                .text(context.string(R.string.upload_missing_keys))
+                .text(context.string(R.string.upload_missing_keys_notification_title))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
                 .onDisabledClick {
                     onUploadMissingExposureKeysClick(
                         true,
-                        uploadMissingExposureKeys.get()
+                        uploadMissingExposureKeys
                     )
                 }
                 .addTo(modelList)

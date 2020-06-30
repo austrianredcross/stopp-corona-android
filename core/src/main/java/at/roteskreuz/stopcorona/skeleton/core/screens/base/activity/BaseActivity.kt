@@ -9,7 +9,9 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import at.roteskreuz.stopcorona.skeleton.core.R
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -141,6 +143,10 @@ open class BaseActivity(@LayoutRes private val layout: Int = R.layout.framelayou
                 navigateUp()
             } else super.onBackPressed()
         }
+    }
+
+    inline fun <reified T : DialogFragment> T.show(fragmentManager: FragmentManager = supportFragmentManager) {
+        show(fragmentManager, T::class.java.name)
     }
 
     override fun onDestroy() {

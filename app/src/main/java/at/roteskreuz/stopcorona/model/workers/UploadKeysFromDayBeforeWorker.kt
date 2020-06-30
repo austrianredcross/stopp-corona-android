@@ -2,16 +2,15 @@ package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
 import androidx.work.*
-import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
-import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
+import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
+import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
 import at.roteskreuz.stopcorona.utils.millisUntilTheStartOfTheNextUtcDay
-import at.roteskreuz.stopcorona.utils.minus
-import at.roteskreuz.stopcorona.utils.startOfTheDay
-import at.roteskreuz.stopcorona.utils.startOfTheUtcDay
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -24,7 +23,6 @@ class UploadKeysFromDayBeforeWorker(
 
     companion object {
         private const val TAG = "UploadKeysFromDayBeforeWorker"
-
 
         fun enqueueUploadKeysFromDayBeforeWorkerOnTheStartOfTheNextUtcDay(workManager: WorkManager) {
             val request = OneTimeWorkRequestBuilder<UploadKeysFromDayBeforeWorker>()
@@ -40,9 +38,20 @@ class UploadKeysFromDayBeforeWorker(
     }
 
     private val notificationsRepository: NotificationsRepository by inject()
+    private val quarantineRepository: QuarantineRepository by inject()
 
     override suspend fun doWork(): Result {
-        notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore()
-        return Result.success()
+        val uploadMissingExposureKeys: UploadMissingExposureKeys? = quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
+            .blockingFirst().orElse(null)
+        if (uploadMissingExposureKeys != null) {
+            notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore(
+                messageType = uploadMissingExposureKeys.messageType,
+                dateWithMissingExposureKeys = uploadMissingExposureKeys.date,
+                displayUploadYesterdaysKeysExplanation = true
+            )
+            return Result.success()
+        }
+        Timber.e(SilentError("uploadMissingExposureKeys is null"))
+        return Result.failure()
     }
 }

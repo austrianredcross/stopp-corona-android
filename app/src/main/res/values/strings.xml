@@ -128,7 +128,7 @@
 	<string name="infection_info_handshake_took_place_format">%s, between %s and %s o`clock</string>
 	<string name="infection_info_go_to_quarantine">Self-quarantine immediately</string>
 	<string name="infection_info_quarantine_end">Please stay quarantined until %s</string>
-	<string name="contact_sickness_guidelines_quarantine_rule">"If you have an official quarantine notification, please take into account the quarantine period specified in the official quarantine notification is."</string>
+	<string name="contact_sickness_guidelines_quarantine_rule">If you have an official quarantine notification, please take into account the quarantine period specified in the official quarantine notification.</string>
 	<string name="infection_info_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
@@ -146,7 +146,7 @@
 	<string name="contact_sickness__warning_guidelines_quarantine_rule">If you have an official quarantine certificate, take into account the quarantine period specified in it.</string>
 	<string name="infection_info_warning_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
 	<string name="infection_info_confirmed_and_suspicion_title">Attention</string>
-	<string name="infection_info_confirmed_and_suspicion_headline">Coronavirus Disease and suspicion</string>
+	<string name="infection_info_confirmed_and_suspicion_headline">Coronavirus disease and suspicion</string>
 
 	<!-- Handshake -->
 	<string name="handshake_title">Digital handshake</string>
@@ -435,9 +435,8 @@
 	<string name="local_notification_automatic_handshake_message">Thank you for helping us contain the Corona virus.</string>
 	<string name="local_notification_activate_automatic_handshake_again_title">Please activate the automatic handshake again</string>
 	<string name="local_notification_activate_automatic_handshake_again_message">and continue to help contain the corona virus.</string>
-	<string name="upload_missing_keys">Notify new contacts</string>
-	<string name="upload_missing_keys_notification_title">Notify new contacts</string>
-	<string name="upload_missing_keys_notification_message">Notify people with whom you have exchanged a digital handshake since your last message.</string>
+	<string name="upload_missing_keys_notification_title">Notify other contacts</string>
+	<string name="upload_missing_keys_notification_message">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Caution</string>
@@ -501,6 +500,9 @@
 	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
 	<string name="changelog_description_2_v2.0.0">Apple and Google COVID-19 interface</string>
 	<string name="changelog_description_3_v2.0.0">. The notifications will continue to be exchanged anonymously and therefore in some places the information will be presented differently.\n\nEncounters that you saved as a handshake before updating to this version are no longer saved for technical reasons and can unfortunately no longer be notified.\n</string>
+	<string name="upload_keys_from_yesterday_title">Notify contacts that occured yesterday</string>
+	<string name="upload_keys_from_yesterday_message">Please upload your ID from yesterday. Sharing this ID is still voluntarely.</string>
+	<string name="upload_keys_from_yesterday_button_title">Share IDs now</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>
