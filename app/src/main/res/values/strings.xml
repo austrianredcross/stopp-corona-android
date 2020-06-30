@@ -10,7 +10,6 @@
 	<string name="general_self_recovered_channel_name">Some has recovered notices</string>
 	<string name="general_self_quarantine_channel_name">Quarantine notices</string>
 	<string name="general_automatic_bt_detection_channel_name">Automatic Bluetooth device detection notices</string>
-	<string name="general_uploading_keys_channel_name">Notices regarding the uploading of your own keys</string>
 	<string name="general_continue">Continue</string>
 	<string name="general_additional_information">Further information</string>
 
@@ -436,8 +435,6 @@
 	<string name="local_notification_activate_automatic_handshake_again_title">Please activate the automatic handshake again</string>
 	<string name="local_notification_activate_automatic_handshake_again_message">and continue to help contain the corona virus.</string>
 	<string name="upload_missing_keys">Notify new contacts</string>
-	<string name="upload_missing_keys_notification_title">Notify new contacts</string>
-	<string name="upload_missing_keys_notification_message">Notify people with whom you have exchanged a digital handshake since your last message.</string>
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Caution</string>

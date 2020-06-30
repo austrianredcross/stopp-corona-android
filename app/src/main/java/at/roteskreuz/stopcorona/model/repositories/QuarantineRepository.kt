@@ -464,7 +464,8 @@ class QuarantineRepositoryImpl(
         ).debounce(50, TimeUnit.MILLISECONDS) // some of the shared prefs can be changed together
             .map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
                 if (dateOfFirstMedicalConfirmation.isPresent &&
-                    ZonedDateTime.now().isAfter(dateOfFirstMedicalConfirmation.get().endOfTheUtcDay()) &&
+                    ZonedDateTime.now()
+                        .isAfter(dateOfFirstMedicalConfirmation.get().endOfTheUtcDay()) &&
                     areMissingKeysUploaded.not()
                 ) {
                     Optional.of(UploadMissingExposureKeys(
@@ -472,7 +473,8 @@ class QuarantineRepositoryImpl(
                         MessageType.InfectionLevel.Red
                     ))
                 } else if (dateOfLastSelfDiagnose.isPresent &&
-                    ZonedDateTime.now().isAfter(dateOfLastSelfDiagnose.get().endOfTheUtcDay()) &&
+                    ZonedDateTime.now()
+                        .isAfter(dateOfLastSelfDiagnose.get().endOfTheUtcDay()) &&
                     areMissingKeysUploaded.not()
                 ) {
                     Optional.of(UploadMissingExposureKeys(
