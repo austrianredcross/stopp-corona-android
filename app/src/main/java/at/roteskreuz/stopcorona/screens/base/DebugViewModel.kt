@@ -82,4 +82,8 @@ class DebugViewModel(
             quarantineRepository.receivedWarning(WarningType.YELLOW, quarantineDay)
         }
     }
+
+    fun displayNotificationForUploadingKeysFromTheDayBefore() {
+        notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore()
+    }
 }
