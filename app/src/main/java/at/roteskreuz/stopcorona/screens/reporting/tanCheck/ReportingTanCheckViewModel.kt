@@ -2,7 +2,7 @@ package at.roteskreuz.stopcorona.screens.reporting.tanCheck
 
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.PersonalData
+import at.roteskreuz.stopcorona.model.repositories.PhoneNumberData
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.model.repositories.TanData
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ValidationError
@@ -60,7 +60,7 @@ class ReportingTanCheckViewModel(
         return reportingRepository.observeTanData()
     }
 
-    fun observePersonalData(): Observable<PersonalData> {
+    fun observePersonalData(): Observable<PhoneNumberData> {
         return reportingRepository.observePersonalData()
     }
 

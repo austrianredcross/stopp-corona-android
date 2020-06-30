@@ -8,7 +8,7 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.model.repositories.ReportingState
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
+import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPhoneNumberFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ReportingStatusFragment
 import at.roteskreuz.stopcorona.screens.reporting.tanCheck.ReportingTanCheckFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
@@ -85,8 +85,8 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
             .subscribe { reportSendingState ->
                 when (reportSendingState) {
                     is ReportingState.PersonalDataEntry -> {
-                        if (currentFragment !is ReportingPersonalDataFragment) {
-                            replaceFragment(ReportingPersonalDataFragment(), addToBackStack = false)
+                        if (currentFragment !is ReportingPhoneNumberFragment) {
+                            replaceFragment(ReportingPhoneNumberFragment(), addToBackStack = false)
                         }
                     }
                     is ReportingState.TanEntry -> {
@@ -115,7 +115,7 @@ fun Fragment.startReportingActivity(
     dateWithMissingExposureKeys: ZonedDateTime? = null
 ) {
     startFragmentActivity<ReportingActivity>(
-        fragmentName = ReportingPersonalDataFragment::class.java.name,
+        fragmentName = ReportingPhoneNumberFragment::class.java.name,
         activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys)
     )
 }

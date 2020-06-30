@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.PersonalData
+import at.roteskreuz.stopcorona.model.repositories.PhoneNumberData
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
@@ -16,9 +16,9 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
 
 /**
- * Handles the user interaction and provides data for [ReportingPersonalDataFragment].
+ * Handles the user interaction and provides data for [ReportingPhoneNumberFragment].
  */
-class ReportingPersonalDataViewModel(
+class ReportingPhoneNumberViewModel(
     appDispatchers: AppDispatchers,
     private val reportingRepository: ReportingRepository
 ) : ScopedViewModel(appDispatchers) {
@@ -85,7 +85,7 @@ class ReportingPersonalDataViewModel(
         return validationResultSubject
     }
 
-    fun observePersonalData(): Observable<PersonalData> {
+    fun observePhoneNumber(): Observable<PhoneNumberData> {
         return reportingRepository.observePersonalData()
     }
 

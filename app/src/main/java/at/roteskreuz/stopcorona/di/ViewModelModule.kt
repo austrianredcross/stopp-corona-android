@@ -14,7 +14,7 @@ import at.roteskreuz.stopcorona.screens.questionnaire.guideline.QuestionnaireGui
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.QuestionnaireHintViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.QuestionnaireSelfMonitoringViewModel
 import at.roteskreuz.stopcorona.screens.reporting.ReportingViewModel
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataViewModel
+import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPhoneNumberViewModel
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ReportingStatusViewModel
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.CertificateReportGuidelinesViewModel
 import at.roteskreuz.stopcorona.screens.reporting.tanCheck.ReportingTanCheckViewModel
@@ -121,7 +121,7 @@ val viewModelModule = module {
      * ```
      */
     viewModel {
-        ReportingPersonalDataViewModel(
+        ReportingPhoneNumberViewModel(
             appDispatchers = get(),
             reportingRepository = get()
         )

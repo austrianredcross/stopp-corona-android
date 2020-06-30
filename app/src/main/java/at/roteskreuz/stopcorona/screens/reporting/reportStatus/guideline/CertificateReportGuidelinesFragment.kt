@@ -10,7 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
+import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPhoneNumberFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dip
@@ -42,7 +42,7 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
         super.onViewCreated(view, savedInstanceState)
 
         scrollViewContainer.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            transparentAppBar.elevation = if (scrollY > requireContext().dip(ReportingPersonalDataFragment.SCROLLED_DISTANCE_THRESHOLD)) {
+            transparentAppBar.elevation = if (scrollY > requireContext().dip(ReportingPhoneNumberFragment.SCROLLED_DISTANCE_THRESHOLD)) {
                 requireContext().dipif(4)
             } else {
                 0f
