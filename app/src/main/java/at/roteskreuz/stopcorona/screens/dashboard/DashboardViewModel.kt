@@ -30,7 +30,16 @@ class DashboardViewModel(
             dashboardRepository.exposureFrameworkEnabledOnFirstStart = value
         }
 
-    val shouldDisplayWhatsNew = changelogManager.shouldDisplayChangelog
+    /**
+     * This holds the initial state to check once changelog has been seen at the current viewModel lifecycle.
+     */
+    private val initialValueShouldDisplayWhatsNew = changelogManager.shouldDisplayChangelog
+
+    /**
+     * If true, changelog should be displayed.
+     */
+    val shouldDisplayWhatsNew
+        get() = changelogManager.shouldDisplayChangelog
 
     var userWantsToRegisterAppForExposureNotifications: Boolean
         get() = exposureNotificationManager.userWantsToRegisterAppForExposureNotifications
@@ -48,7 +57,7 @@ class DashboardViewModel(
         /**
          * If the user starts the app for the first time the exposure notification framework will be started automatically.
          */
-        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not() && shouldDisplayWhatsNew.not()) {
+        if (wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not() && initialValueShouldDisplayWhatsNew.not()) {
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
@@ -144,7 +153,7 @@ class DashboardViewModel(
     fun observeCurrentChangelogSeen(): Observable<Boolean> {
         return changelogManager.observeIsChangelogSeen()
             .map { seen ->
-                seen && shouldDisplayWhatsNew
+                seen && initialValueShouldDisplayWhatsNew
             }
     }
 }
