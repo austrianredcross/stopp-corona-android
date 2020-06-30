@@ -8,6 +8,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import at.roteskreuz.stopcorona.utils.minusDays
 import kotlinx.coroutines.launch
 import org.threeten.bp.Instant
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Special viewModel for managing debug tasks.
@@ -85,5 +86,10 @@ class DebugViewModel(
 
     fun displayNotificationForUploadingKeysFromTheDayBefore() {
         notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore()
+    }
+
+    fun fakeReportWithMissingKeysYesterday() {
+        quarantineRepository.markMissingExposureKeysAsNotUploaded()
+        quarantineRepository.reportMedicalConfirmation(ZonedDateTime.now().minusDays(1))
     }
 }
