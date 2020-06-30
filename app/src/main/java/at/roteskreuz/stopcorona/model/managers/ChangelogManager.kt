@@ -85,11 +85,7 @@ class ChangelogManagerImpl(
     override fun observeIsChangelogSeen(): Observable<Boolean> {
         return preferences.observeNullableInt(PREF_LAST_SEEN_CHANGELOG_ID)
             .map {
-                if (it.isPresent) {
-                    currentChangelog?.id == it.get()
-                } else {
-                    false
-                }
+                it.isPresent && currentChangelog?.id == it.get()
             }
     }
 
