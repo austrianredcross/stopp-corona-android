@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.content.Context
+import android.text.SpannableString
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
@@ -20,7 +21,6 @@ import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
-import com.github.dmstocking.optional.java.util.Optional
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -50,7 +50,7 @@ class DashboardController(
     var someoneHasRecoveredHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
     var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
     var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
-    var uploadMissingExposureKeys: Optional<UploadMissingExposureKeys> by adapterProperty(Optional.empty())
+    var uploadMissingExposureKeys: UploadMissingExposureKeys? by adapterProperty(null as UploadMissingExposureKeys?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -451,10 +451,22 @@ class DashboardController(
                 .addTo(modelList)
         }
 
-        if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-                ownHealthStatus is HealthStatusData.SicknessCertificate) &&
-            uploadMissingExposureKeys.isPresent
-        ) {
+        val healthStatusDataMatches =
+            ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
+                ownHealthStatus is HealthStatusData.SicknessCertificate
+
+        val uploadMissingExposureKeys = uploadMissingExposureKeys
+        if (healthStatusDataMatches && uploadMissingExposureKeys != null) {
+            EmptySpaceModel_()
+                .id(modelCountBuiltSoFar)
+                .height(16)
+                .addTo(modelList)
+
+            CopyTextModel_()
+                .id("own_health_status_upload_missing_exposure_keys_explanation")
+                .text(SpannableString(context.string(R.string.self_testing_symptoms_warning_info_update)))
+                .addTo(modelList)
+
             EmptySpaceModel_()
                 .id(modelCountBuiltSoFar)
                 .height(16)
@@ -463,16 +475,16 @@ class DashboardController(
             ButtonType2Model_ {
                 onUploadMissingExposureKeysClick(
                     false,
-                    uploadMissingExposureKeys.get()
+                    uploadMissingExposureKeys
                 )
             }
-                .id("own_health_status_upload_missing_exposure_keys")
-                .text(context.string(R.string.upload_missing_keys))
+                .id("own_health_status_upload_missing_exposure_keys_button")
+                .text(context.string(R.string.self_testing_symptoms_warning_button_update))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
                 .onDisabledClick {
                     onUploadMissingExposureKeysClick(
                         true,
-                        uploadMissingExposureKeys.get()
+                        uploadMissingExposureKeys
                     )
                 }
                 .addTo(modelList)

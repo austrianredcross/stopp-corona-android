@@ -57,6 +57,10 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 debugViewModel.displayEndQuarantineNotification()
                 true
             }
+            R.id.debugMenuNotificationUploadKeys -> {
+                debugViewModel.displayNotificationForUploadingKeysFromTheDayBefore()
+                true
+            }
             R.id.debugMenuQuarantineStatus -> {
                 val quarantineStatus = debugViewModel.getQuarantineStatus()
                 Toast.makeText(this, quarantineStatus.toString(), Toast.LENGTH_LONG).show()
@@ -68,6 +72,10 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
             }
             R.id.debugMenuReportPositiveSelfDiagnose -> {
                 debugViewModel.reportPositiveSelfDiagnose()
+                true
+            }
+            R.id.debugMenuReportYesterdayKey -> {
+                debugViewModel.fakeReportWithMissingKeysYesterday()
                 true
             }
             R.id.debugExposureNotifications -> {

@@ -1,8 +1,14 @@
 package at.roteskreuz.stopcorona.screens.reporting
 
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
@@ -13,6 +19,7 @@ import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ReportingStatusFr
 import at.roteskreuz.stopcorona.screens.reporting.tanCheck.ReportingTanCheckFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.argument
+import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.getFragmentActivityIntent
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
@@ -29,23 +36,31 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
 
     companion object {
         private const val ARGUMENT_MESSAGE_TYPE = "argument_message_type"
-        private const val ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING =
-            "argument_upload_missing_exposure_keys"
+        private const val ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING = "argument_upload_missing_exposure_keys"
+        private const val ARGUMENT_DISPLAY_UPLOAD_YESTERDAYS_KEYS_EXPLANATION = "display_upload_yesterdays_keys_explanation"
 
-        fun args(messageType: MessageType, dateWithMissingExposureKeys: ZonedDateTime?): Bundle {
+        fun args(
+            messageType: MessageType,
+            dateWithMissingExposureKeys: ZonedDateTime?,
+            displayUploadYesterdaysKeysExplanation: Boolean
+        ): Bundle {
             return bundleOf(
                 ARGUMENT_MESSAGE_TYPE to messageType,
                 ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING to dateWithMissingExposureKeys?.let {
                     DateTimeFormatter.ISO_ZONED_DATE_TIME.format(it)
-                }
+                },
+                ARGUMENT_DISPLAY_UPLOAD_YESTERDAYS_KEYS_EXPLANATION to displayUploadYesterdaysKeysExplanation
             )
         }
     }
 
     private val messageType: MessageType by argument(ARGUMENT_MESSAGE_TYPE)
-
     private val dateWithMissingExposureKeysAsString: String? by argument(
         ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING
+    )
+    private val displayUploadYesterdaysKeysExplanation: Boolean by argument(
+        ARGUMENT_DISPLAY_UPLOAD_YESTERDAYS_KEYS_EXPLANATION,
+        false
     )
 
     private val viewModel: ReportingViewModel by viewModel {
@@ -77,6 +92,10 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
 
         connectToScope(ReportingRepository.SCOPE_NAME)
         super.onCreate(savedInstanceState)
+
+        if (displayUploadYesterdaysKeysExplanation) {
+            UploadYesterdaysKeysExplanationDialog().show()
+        }
     }
 
     override fun onStart() {
@@ -110,12 +129,35 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     }
 }
 
+class UploadYesterdaysKeysExplanationDialog : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireContext())
+            .setTitle(R.string.upload_keys_from_yesterday_title)
+            .setMessage(R.string.upload_keys_from_yesterday_message)
+            .setPositiveButton(R.string.upload_keys_from_yesterday_button_title, null)
+            .show()
+    }
+}
+
 fun Fragment.startReportingActivity(
     messageType: MessageType,
-    dateWithMissingExposureKeys: ZonedDateTime? = null
+    dateWithMissingExposureKeys: ZonedDateTime? = null,
+    displayUploadYesterdaysKeysExplanation: Boolean = false
 ) {
     startFragmentActivity<ReportingActivity>(
         fragmentName = ReportingPersonalDataFragment::class.java.name,
-        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys)
+        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys, displayUploadYesterdaysKeysExplanation)
+    )
+}
+
+fun Context.getReportingActivityIntent(
+    messageType: MessageType,
+    dateWithMissingExposureKeys: ZonedDateTime? = null,
+    displayUploadYesterdaysKeysExplanation: Boolean = false
+): Intent {
+    return getFragmentActivityIntent<ReportingActivity>(
+        ctx = this,
+        fragmentName = ReportingPersonalDataFragment::class.java.name,
+        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys, displayUploadYesterdaysKeysExplanation)
     )
 }
