@@ -7,20 +7,19 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.NotificationChannels
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.model.workers.UploadKeysFromDayBeforeWorker
 import at.roteskreuz.stopcorona.screens.dashboard.getDashboardActivityIntent
 import at.roteskreuz.stopcorona.screens.infection_info.getInfectionInfoFragmentIntent
 import at.roteskreuz.stopcorona.screens.questionnaire.getQuestionnaireIntent
+import at.roteskreuz.stopcorona.screens.reporting.getReportingActivityIntent
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.string
 import kotlinx.coroutines.CoroutineScope
+import org.threeten.bp.ZonedDateTime
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
@@ -82,7 +81,11 @@ interface NotificationsRepository {
      * Display a notification, reminding the user to upload the keys from the day before.
      * Context: For privacy reasons, the key from today is not accessible until tomorrow.
      */
-    fun displayNotificationForUploadingKeysFromTheDayBefore()
+    fun displayNotificationForUploadingKeysFromTheDayBefore(
+        messageType: MessageType,
+        dateWithMissingExposureKeys: ZonedDateTime?,
+        displayUploadYesterdaysKeysExplanation: Boolean
+    )
 }
 
 class NotificationsRepositoryImpl(
@@ -230,7 +233,11 @@ class NotificationsRepositoryImpl(
         ).show()
     }
 
-    override fun displayNotificationForUploadingKeysFromTheDayBefore() {
+    override fun displayNotificationForUploadingKeysFromTheDayBefore(
+        messageType: MessageType,
+        dateWithMissingExposureKeys: ZonedDateTime?,
+        displayUploadYesterdaysKeysExplanation: Boolean
+    ) {
         val title = context.string(R.string.upload_missing_keys_notification_title)
         val message = context.string(R.string.upload_missing_keys_notification_message)
 
@@ -239,6 +246,11 @@ class NotificationsRepositoryImpl(
             message = message,
             pendingIntent = buildPendingIntentWithActivityStack {
                 addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
+                addNextIntent(context.getReportingActivityIntent(
+                    messageType,
+                    dateWithMissingExposureKeys,
+                    displayUploadYesterdaysKeysExplanation
+                ))
             },
             channelId = NotificationChannels.CHANNEL_UPLOAD_KEYS,
             ongoing = false
