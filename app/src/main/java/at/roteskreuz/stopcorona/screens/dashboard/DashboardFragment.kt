@@ -9,7 +9,6 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
-import at.roteskreuz.stopcorona.constants.VERSION_NAME
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
@@ -156,8 +155,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     ).show()
                 } else {
                     startReportingActivity(
-                        uploadMissingExposureKeys.messageType,
-                        uploadMissingExposureKeys.date
+                        messageType = uploadMissingExposureKeys.messageType,
+                        dateWithMissingExposureKeys = uploadMissingExposureKeys.date,
+                        displayUploadYesterdaysKeysExplanation = true
                     )
                 }
             }
@@ -220,21 +220,42 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 controller.someoneHasRecoveredHealthStatus = it
             }
 
-        disposables += viewModel.observeExposureSDKReadyToStart()
+        disposables += viewModel.observeExposureNotificationPhase()
             .observeOnMainThread()
-            .subscribe { readyToStart ->
-                if (readyToStart) {
-                    startExposureSDK()
+            .subscribe { phase ->
+                controller.exposureNotificationPhase = phase
+                when (phase) {
+                    is FrameworkError.Critical.ResolutionRequired -> {
+                        phase.exception.status.startResolutionForResult(
+                            requireActivity(),
+                            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
+                        )
+                    }
+                    is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
                 }
             }
 
         disposables += viewModel.observeIfUploadOfMissingExposureKeysIsNeeded()
             .observeOnMainThread()
             .subscribe {
-                controller.uploadMissingExposureKeys = it
+                controller.uploadMissingExposureKeys = it.orElse(null)
             }
 
-        if (viewModel.unseenChangelogForVersionAvailable(VERSION_NAME)) {
+        disposables += viewModel.observeCurrentChangelogState()
+            .observeOnMainThread()
+            .subscribe { changelogState ->
+                if (changelogState is ChangelogState.CurrentChangelogSeen) {
+                    /**
+                     * If the user starts the app for the first time the exposure notification framework will be started automatically.
+                     */
+                    if (viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart.not()) {
+                        viewModel.wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
+                        viewModel.userWantsToRegisterAppForExposureNotifications = true
+                    }
+                }
+            }
+
+        if (viewModel.shouldDisplayWhatsNew) {
             showChangelogBottomSheetFragment()
         }
 
@@ -277,22 +298,5 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 }
             }
         }
-    }
-
-    private fun startExposureSDK() {
-        disposables += viewModel.observeExposureNotificationPhase()
-            .observeOnMainThread()
-            .subscribe { phase ->
-                controller.exposureNotificationPhase = phase
-                when (phase) {
-                    is FrameworkError.Critical.ResolutionRequired -> {
-                        phase.exception.status.startResolutionForResult(
-                            requireActivity(),
-                            REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
-                        )
-                    }
-                    is FrameworkError.Critical.Unknown -> handleBaseCoronaErrors(phase.exception)
-                }
-            }
     }
 }

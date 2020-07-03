@@ -92,14 +92,16 @@ val repositoryModule = module {
         )
     }
 
-    single<ExposureNotificationManager> {
+    single<ExposureNotificationManager> (createOnStart = true) {
         ExposureNotificationManagerImpl(
             appDispatchers = get(),
             preferences = get(),
             exposureNotificationRepository = get(),
             bluetoothRepository = get(),
             googlePlayAvailability = get(),
-            contextInteractor = get()
+            contextInteractor = get(),
+            quarantineRepository = get(),
+            workManager = get()
         )
     }
 }

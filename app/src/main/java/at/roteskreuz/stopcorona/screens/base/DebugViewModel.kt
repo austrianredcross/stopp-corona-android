@@ -2,12 +2,15 @@ package at.roteskreuz.stopcorona.screens.base
 
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.minusDays
 import kotlinx.coroutines.launch
 import org.threeten.bp.Instant
+import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 
 /**
  * Special viewModel for managing debug tasks.
@@ -81,5 +84,26 @@ class DebugViewModel(
             val quarantineDay = Instant.now().minusDays((yellowQuaratineHours / 24).toLong())
             quarantineRepository.receivedWarning(WarningType.YELLOW, quarantineDay)
         }
+    }
+
+    fun displayNotificationForUploadingKeysFromTheDayBefore() {
+        launch(appDispatchers.Default) {
+            val uploadMissingExposureKeys: UploadMissingExposureKeys? = quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
+                .blockingFirst().orElse(null)
+            if (uploadMissingExposureKeys != null) {
+                notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore(
+                    messageType = uploadMissingExposureKeys.messageType,
+                    dateWithMissingExposureKeys = uploadMissingExposureKeys.date,
+                    displayUploadYesterdaysKeysExplanation = true
+                )
+            } else {
+                Timber.e(SilentError("uploadMissingExposureKeys is null"))
+            }
+        }
+    }
+
+    fun fakeReportWithMissingKeysYesterday() {
+        quarantineRepository.markMissingExposureKeysAsNotUploaded()
+        quarantineRepository.reportMedicalConfirmation(ZonedDateTime.now().minusDays(1))
     }
 }
