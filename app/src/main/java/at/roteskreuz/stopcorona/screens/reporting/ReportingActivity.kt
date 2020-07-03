@@ -37,19 +37,19 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     companion object {
         private const val ARGUMENT_MESSAGE_TYPE = "argument_message_type"
         private const val ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING = "argument_upload_missing_exposure_keys"
-        private const val ARGUMENT_DISPLAY_UPLOAD_YESTERDAYS_KEYS_EXPLANATION = "display_upload_yesterdays_keys_explanation"
+        private const val ARGUMENT_DISPLAY_UPLOAD_MISSING_EXPOSURE_KEYS_EXPLANATION = "display_upload_missing_exposure_keys_explanation"
 
         fun args(
             messageType: MessageType,
             dateWithMissingExposureKeys: ZonedDateTime?,
-            displayUploadYesterdaysKeysExplanation: Boolean
+            displayUploadMissingExposureKeysExplanation: Boolean
         ): Bundle {
             return bundleOf(
                 ARGUMENT_MESSAGE_TYPE to messageType,
                 ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING to dateWithMissingExposureKeys?.let {
                     DateTimeFormatter.ISO_ZONED_DATE_TIME.format(it)
                 },
-                ARGUMENT_DISPLAY_UPLOAD_YESTERDAYS_KEYS_EXPLANATION to displayUploadYesterdaysKeysExplanation
+                ARGUMENT_DISPLAY_UPLOAD_MISSING_EXPOSURE_KEYS_EXPLANATION to displayUploadMissingExposureKeysExplanation
             )
         }
     }
@@ -58,8 +58,8 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     private val dateWithMissingExposureKeysAsString: String? by argument(
         ARGUMENT_DATE_WITH_MISSING_EXPOSURE_KEYS_AS_STRING
     )
-    private val displayUploadYesterdaysKeysExplanation: Boolean by argument(
-        ARGUMENT_DISPLAY_UPLOAD_YESTERDAYS_KEYS_EXPLANATION,
+    private val displayUploadMissingExposureKeysExplanation: Boolean by argument(
+        ARGUMENT_DISPLAY_UPLOAD_MISSING_EXPOSURE_KEYS_EXPLANATION,
         false
     )
 
@@ -93,8 +93,8 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
         connectToScope(ReportingRepository.SCOPE_NAME)
         super.onCreate(savedInstanceState)
 
-        if (displayUploadYesterdaysKeysExplanation) {
-            UploadYesterdaysKeysExplanationDialog().show()
+        if (displayUploadMissingExposureKeysExplanation) {
+            UploadMissingExposureKeysExplanationDialog().show()
         }
     }
 
@@ -129,7 +129,7 @@ class ReportingActivity : CoronaPortraitBaseActivity() {
     }
 }
 
-class UploadYesterdaysKeysExplanationDialog : DialogFragment() {
+class UploadMissingExposureKeysExplanationDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext())
             .setTitle(R.string.upload_keys_from_yesterday_title)
@@ -142,22 +142,22 @@ class UploadYesterdaysKeysExplanationDialog : DialogFragment() {
 fun Fragment.startReportingActivity(
     messageType: MessageType,
     dateWithMissingExposureKeys: ZonedDateTime? = null,
-    displayUploadYesterdaysKeysExplanation: Boolean = false
+    displayUploadMissingExposureKeysExplanation: Boolean = false
 ) {
     startFragmentActivity<ReportingActivity>(
         fragmentName = ReportingPersonalDataFragment::class.java.name,
-        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys, displayUploadYesterdaysKeysExplanation)
+        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys, displayUploadMissingExposureKeysExplanation)
     )
 }
 
 fun Context.getReportingActivityIntent(
     messageType: MessageType,
     dateWithMissingExposureKeys: ZonedDateTime? = null,
-    displayUploadYesterdaysKeysExplanation: Boolean = false
+    displayUploadMissingExposureKeysExplanation: Boolean = false
 ): Intent {
     return getFragmentActivityIntent<ReportingActivity>(
         ctx = this,
         fragmentName = ReportingPersonalDataFragment::class.java.name,
-        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys, displayUploadYesterdaysKeysExplanation)
+        activityBundle = ReportingActivity.args(messageType, dateWithMissingExposureKeys, displayUploadMissingExposureKeysExplanation)
     )
 }

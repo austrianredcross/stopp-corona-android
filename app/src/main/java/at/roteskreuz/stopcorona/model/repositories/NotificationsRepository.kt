@@ -81,10 +81,9 @@ interface NotificationsRepository {
      * Display a notification, reminding the user to upload the keys from the day before.
      * Context: For privacy reasons, the key from today is not accessible until tomorrow.
      */
-    fun displayNotificationForUploadingKeysFromTheDayBefore(
+    fun displayNotificationForUploadingMissingExposureKeyse(
         messageType: MessageType,
-        dateWithMissingExposureKeys: ZonedDateTime?,
-        displayUploadYesterdaysKeysExplanation: Boolean
+        dateWithMissingExposureKeys: ZonedDateTime?
     )
 }
 
@@ -233,10 +232,9 @@ class NotificationsRepositoryImpl(
         ).show()
     }
 
-    override fun displayNotificationForUploadingKeysFromTheDayBefore(
+    override fun displayNotificationForUploadingMissingExposureKeyse(
         messageType: MessageType,
-        dateWithMissingExposureKeys: ZonedDateTime?,
-        displayUploadYesterdaysKeysExplanation: Boolean
+        dateWithMissingExposureKeys: ZonedDateTime?
     ) {
         val title = context.string(R.string.upload_missing_keys_notification_title)
         val message = context.string(R.string.upload_missing_keys_notification_message)
@@ -247,17 +245,15 @@ class NotificationsRepositoryImpl(
             pendingIntent = buildPendingIntentWithActivityStack {
                 addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
                 addNextIntent(context.getReportingActivityIntent(
-                    messageType,
-                    dateWithMissingExposureKeys,
-                    displayUploadYesterdaysKeysExplanation
+                    messageType = messageType,
+                    dateWithMissingExposureKeys = dateWithMissingExposureKeys,
+                    displayUploadMissingExposureKeysExplanation = true
                 ))
             },
             channelId = NotificationChannels.CHANNEL_UPLOAD_KEYS,
             ongoing = false
         ).show()
     }
-
-
 
     private fun buildNotification(
         title: String,
