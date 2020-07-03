@@ -58,7 +58,7 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
                 true
             }
             R.id.debugMenuNotificationUploadKeys -> {
-                debugViewModel.displayNotificationForUploadingKeysFromTheDayBefore()
+                debugViewModel.displayNotificationForUploadingMissingExposureKeys()
                 true
             }
             R.id.debugMenuQuarantineStatus -> {

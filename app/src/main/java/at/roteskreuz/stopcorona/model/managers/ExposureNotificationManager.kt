@@ -11,7 +11,7 @@ import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
-import at.roteskreuz.stopcorona.model.workers.UploadKeysFromDayBeforeWorker
+import at.roteskreuz.stopcorona.model.workers.UploadMissingExposureKeysReminderWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
@@ -137,8 +137,11 @@ class ExposureNotificationManagerImpl(
         @Suppress("CheckResult")
         quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
             .subscribe {
-                if (it.isPresent) {
-                    UploadKeysFromDayBeforeWorker.enqueueUploadKeysFromDayBeforeWorkerOnTheStartOfTheNextUtcDay(workManager)
+                val uploadMissingExposureKeys = it.orElse(null)
+                if (uploadMissingExposureKeys != null) {
+                    UploadMissingExposureKeysReminderWorker.enqueueUploadMissingExposureKeysWorker(workManager, uploadMissingExposureKeys.uploadAfter)
+                } else {
+                    UploadMissingExposureKeysReminderWorker.cancelUploadMissingExposureKeysWorker(workManager)
                 }
             }
     }

@@ -6,7 +6,7 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
-import at.roteskreuz.stopcorona.utils.millisUntilTheStartOfTheNextUtcDay
+import at.roteskreuz.stopcorona.utils.minus
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import org.threeten.bp.ZonedDateTime
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Worker to remind the user to upload his/hers keys from the day before.
  */
-class UploadKeysFromDayBeforeWorker(
+class UploadMissingExposureKeysReminderWorker(
     appContext: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams), KoinComponent {
@@ -24,9 +24,15 @@ class UploadKeysFromDayBeforeWorker(
     companion object {
         private const val TAG = "UploadKeysFromDayBeforeWorker"
 
-        fun enqueueUploadKeysFromDayBeforeWorkerOnTheStartOfTheNextUtcDay(workManager: WorkManager) {
-            val request = OneTimeWorkRequestBuilder<UploadKeysFromDayBeforeWorker>()
-                .setInitialDelay(ZonedDateTime.now().millisUntilTheStartOfTheNextUtcDay(), TimeUnit.MILLISECONDS)
+        fun enqueueUploadMissingExposureKeysWorker(workManager: WorkManager, reminderTime: ZonedDateTime) {
+            val now = ZonedDateTime.now()
+            val millisBeforeReminder = if (reminderTime.isAfter(now)) {
+                reminderTime.minus(now).toMillis()
+            } else {
+                0L
+            }
+            val request = OneTimeWorkRequestBuilder<UploadMissingExposureKeysReminderWorker>()
+                .setInitialDelay(millisBeforeReminder, TimeUnit.MILLISECONDS)
                 .build()
 
             workManager.enqueueUniqueWork(
@@ -34,6 +40,10 @@ class UploadKeysFromDayBeforeWorker(
                 ExistingWorkPolicy.REPLACE,
                 request
             )
+        }
+
+        fun cancelUploadMissingExposureKeysWorker(workManager: WorkManager) {
+            workManager.cancelUniqueWork(TAG)
         }
     }
 
@@ -44,10 +54,9 @@ class UploadKeysFromDayBeforeWorker(
         val uploadMissingExposureKeys: UploadMissingExposureKeys? = quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
             .blockingFirst().orElse(null)
         if (uploadMissingExposureKeys != null) {
-            notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore(
+            notificationsRepository.displayNotificationForUploadingMissingExposureKeyse(
                 messageType = uploadMissingExposureKeys.messageType,
-                dateWithMissingExposureKeys = uploadMissingExposureKeys.date,
-                displayUploadYesterdaysKeysExplanation = true
+                dateWithMissingExposureKeys = uploadMissingExposureKeys.missingExposureKeyDate
             )
             return Result.success()
         }

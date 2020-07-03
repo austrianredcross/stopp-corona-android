@@ -86,15 +86,14 @@ class DebugViewModel(
         }
     }
 
-    fun displayNotificationForUploadingKeysFromTheDayBefore() {
+    fun displayNotificationForUploadingMissingExposureKeys() {
         launch(appDispatchers.Default) {
             val uploadMissingExposureKeys: UploadMissingExposureKeys? = quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
                 .blockingFirst().orElse(null)
             if (uploadMissingExposureKeys != null) {
-                notificationsRepository.displayNotificationForUploadingKeysFromTheDayBefore(
+                notificationsRepository.displayNotificationForUploadingMissingExposureKeyse(
                     messageType = uploadMissingExposureKeys.messageType,
-                    dateWithMissingExposureKeys = uploadMissingExposureKeys.date,
-                    displayUploadYesterdaysKeysExplanation = true
+                    dateWithMissingExposureKeys = uploadMissingExposureKeys.missingExposureKeyDate
                 )
             } else {
                 Timber.e(SilentError("uploadMissingExposureKeys is null"))

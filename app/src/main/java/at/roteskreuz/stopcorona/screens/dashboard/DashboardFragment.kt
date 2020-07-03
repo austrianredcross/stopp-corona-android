@@ -156,8 +156,8 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 } else {
                     startReportingActivity(
                         messageType = uploadMissingExposureKeys.messageType,
-                        dateWithMissingExposureKeys = uploadMissingExposureKeys.date,
-                        displayUploadYesterdaysKeysExplanation = true
+                        dateWithMissingExposureKeys = uploadMissingExposureKeys.missingExposureKeyDate,
+                        displayUploadMissingExposureKeysExplanation = true
                     )
                 }
             }
@@ -238,7 +238,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         disposables += viewModel.observeIfUploadOfMissingExposureKeysIsNeeded()
             .observeOnMainThread()
             .subscribe {
-                controller.uploadMissingExposureKeys = it.orElse(null)
+                val uploadMissingExposureKeys = it.orElse(null)
+                if (uploadMissingExposureKeys?.shouldUploadNow == true) {
+                    controller.uploadMissingExposureKeys = uploadMissingExposureKeys
+                } else {
+                    controller.uploadMissingExposureKeys = null
+                }
             }
 
         disposables += viewModel.observeCurrentChangelogState()
