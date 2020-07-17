@@ -6,7 +6,7 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
-import at.roteskreuz.stopcorona.utils.minus
+import at.roteskreuz.stopcorona.utils.millisTo
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import org.threeten.bp.ZonedDateTime
@@ -26,11 +26,7 @@ class UploadMissingExposureKeysReminderWorker(
 
         fun enqueueUploadMissingExposureKeysWorker(workManager: WorkManager, reminderTime: ZonedDateTime) {
             val now = ZonedDateTime.now()
-            val millisBeforeReminder = if (reminderTime.isAfter(now)) {
-                reminderTime.minus(now).toMillis()
-            } else {
-                0L
-            }
+            val millisBeforeReminder = now.millisTo(reminderTime)
             val request = OneTimeWorkRequestBuilder<UploadMissingExposureKeysReminderWorker>()
                 .setInitialDelay(millisBeforeReminder, TimeUnit.MILLISECONDS)
                 .build()

@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.work.*
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
-import at.roteskreuz.stopcorona.utils.minus
+import at.roteskreuz.stopcorona.utils.millisTo
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
-import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.lang.Exception
@@ -32,10 +31,10 @@ class ExposureMatchingWorker(
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()
-
+            val millisUntilNextRun = computeMillisUntilNextRun()
             val request = OneTimeWorkRequestBuilder<ExposureMatchingWorker>()
                 .setConstraints(constraints)
-                .setInitialDelay(computeDelayUntilNextRun().seconds, TimeUnit.SECONDS)
+                .setInitialDelay(millisUntilNextRun, TimeUnit.MILLISECONDS)
                 .addTag(TAG)
                 .build()
 
@@ -61,7 +60,7 @@ class ExposureMatchingWorker(
                     nextPossibleRun
                 }
             }
-            return plannedRun.minus(ZonedDateTime.now())
+            return now.millisTo(plannedRun)
         }
     }
 

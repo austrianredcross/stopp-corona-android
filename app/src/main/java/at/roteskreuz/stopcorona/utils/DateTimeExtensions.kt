@@ -9,8 +9,6 @@ import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
-import kotlin.math.abs
-
 
 /**
  * Get minutes difference between two times.
@@ -20,17 +18,28 @@ fun ZonedDateTime.minutesTo(other: ZonedDateTime): Long {
 }
 
 /**
- * Get duration between two times.
+ * Get milliseconds to other time.
+ *
+ * If other time is in the past return 0L
  */
-operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {
-    return Duration.between(this, other).abs()
+fun ZonedDateTime.millisTo(other: ZonedDateTime): Long {
+    return (other - this).toMillis().coerceAtLeast(0)
+}
+
+/**
+ * Get [Duration] to other time.
+ */
+infix operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {
+    return Duration.between(other, this)
 }
 
 /**
  * Get days difference between two dates.
+ *
+ * If other day is in the past return 0L
  */
 fun LocalDate.daysTo(other: LocalDate): Long {
-    return abs(this.toEpochDay() - other.toEpochDay())
+    return (other.toEpochDay() - this.toEpochDay()).coerceAtLeast(0)
 }
 
 /**
@@ -157,7 +166,7 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
 }
 
 /**
- * Converts a interval number from exposure notification framework to the [ZonedDateTime].
+ * Converts an interval number from exposure notification framework to an [Instant].
  */
 fun Long.asExposureInterval(): ZonedDateTime {
     return ZonedDateTime.ofInstant(
@@ -239,6 +248,8 @@ fun Instant.plusDays(days: Long): Instant = plus(days, ChronoUnit.DAYS)
  */
 fun Instant.minusDays(days: Long): Instant = minus(days, ChronoUnit.DAYS)
 
-fun ZonedDateTime.millisUntilTheStartOfTheNextUtcDay(): Long {
-    return (this.plusDays(1).startOfTheUtcDay() - this).toMillis()
+fun ZonedDateTime.millisToNextUtcDay(): Long {
+    val nextDay = this.plusDays(1)
+    val startOfTheNextUtcDay = nextDay.startOfTheUtcDay()
+    return this.millisTo(startOfTheNextUtcDay)
 }
