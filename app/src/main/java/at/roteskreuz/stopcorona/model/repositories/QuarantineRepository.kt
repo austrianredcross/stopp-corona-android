@@ -307,7 +307,7 @@ class QuarantineRepositoryImpl(
                 val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfDiagnoseQuarantineUntil)
                     .max()
 
-                if (quarantinedUntil != null) {
+                if (quarantinedUntil != null && quarantinedUntil.isAfter(ZonedDateTime.now())) {
                     QuarantineStatus.Jailed.Limited(quarantinedUntil,
                         (redContactLastDateTime != null || yellowContactLastDateTime != null) && selfDiagnoseLastDateTime == null)
                 } else {
