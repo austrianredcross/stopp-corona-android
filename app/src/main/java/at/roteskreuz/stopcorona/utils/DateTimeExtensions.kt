@@ -11,12 +11,6 @@ import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
 import kotlin.math.abs
 
-/**
- * Extension related to date and time.
- */
-
-private val UTC_TIMEZONE: ZoneId
-    get() = ZoneId.of("UTC")
 
 /**
  * Get minutes difference between two times.
@@ -168,7 +162,7 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
 fun Long.asExposureInterval(): ZonedDateTime {
     return ZonedDateTime.ofInstant(
         Instant.ofEpochSecond(this * Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds),
-        UTC_TIMEZONE
+        ZoneOffset.UTC
     )
 }
 

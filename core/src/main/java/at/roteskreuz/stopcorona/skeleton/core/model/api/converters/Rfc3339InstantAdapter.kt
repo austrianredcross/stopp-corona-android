@@ -3,7 +3,7 @@ package at.roteskreuz.stopcorona.skeleton.core.model.api.converters
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
+import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
@@ -23,7 +23,7 @@ object Rfc3339InstantAdapter {
     @ToJson
     fun toJson(value: Instant?): String? {
         return value?.let {
-            DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.ofInstant(it, ZoneId.of("UTC")))
+            DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.ofInstant(it, ZoneOffset.UTC))
         }
     }
 }
