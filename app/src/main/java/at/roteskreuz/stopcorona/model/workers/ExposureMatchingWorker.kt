@@ -9,7 +9,6 @@ import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 /**
@@ -44,20 +43,24 @@ class ExposureMatchingWorker(
         /**
          * Compute delay until the next possible hourly run in the 7:30 - 21:30 interval.
          */
-        private fun computeDelayUntilNextRun(): Duration {
-            val nextPossibleRun = ZonedDateTime.now().plusHours(1).withMinute(30)
+        private fun computeMillisUntilNextRun(): Long {
+            val now = ZonedDateTime.now()
+            // Forward to next hour if past the half hour
+            val hourOfNextHalfHour = now.plusMinutes(30)
+            // Go to half hour
+            val nextHalfHour = hourOfNextHalfHour.withMinute(30).withSecond(0).withNano(0)
             val plannedRun = when {
-                // If is after 21:30, schedule for next day at 7:30.
-                nextPossibleRun.isAfter(ZonedDateTime.now().withHour(21).withMinute(30)) -> {
-                    ZonedDateTime.now().plusDays(1).withHour(7).withMinute(30)
+                // If nextHalfHour is after 21:30, schedule for next day at 7:30.
+                nextHalfHour.isAfter(nextHalfHour.withHour(21).withMinute(30)) -> {
+                    nextHalfHour.plusDays(1).withHour(7).withMinute(30)
                 }
-                // If is before 7:30, schedule for current day at 7:30.
-                nextPossibleRun.isBefore(ZonedDateTime.now().withHour(7).withMinute(30)) -> {
-                    ZonedDateTime.now().withHour(7).withMinute(30)
+                // If nextHalfHour is before 7:30, schedule for same day at 7:30.
+                nextHalfHour.isBefore(nextHalfHour.withHour(7).withMinute(30)) -> {
+                    nextHalfHour.withHour(7).withMinute(30)
                 }
-                // Otherwise the possible run is in 7:30 - 9:30 and can be scheduled as it is.
+                // Otherwise the possible run is in 7:30 - 21:30 and can be scheduled as it is.
                 else -> {
-                    nextPossibleRun
+                    nextHalfHour
                 }
             }
             return now.millisTo(plannedRun)
@@ -70,7 +73,7 @@ class ExposureMatchingWorker(
     override suspend fun doWork(): Result {
         try {
             diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
-        } catch (ex: Exception){
+        } catch (ex: Exception) {
             //we agreed to silently fail in case of errors here
             Timber.e(SilentError(ex))
         }
