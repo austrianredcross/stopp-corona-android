@@ -9,12 +9,20 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
+import java.util.Collections
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
  * Extensions to [SharedPreferences]
  */
+
+/**
+ * Keep a strong referenfce to shared preference change listeners. Otherwise they'l be garbage collected sooner or later.
+ *
+ * See [SharedPreferences.registerOnSharedPreferenceChangeListener]
+ */
+private val sharedPreferenceListeners = Collections.synchronizedList(mutableListOf<SharedPreferences.OnSharedPreferenceChangeListener>())
 
 /**
  * Extension function to [SharedPreferences] that will put string and immediately apply changes
@@ -352,8 +360,15 @@ fun <T> SharedPreferences.observe(
                 emitter.onNext(Optional.ofNullable(sharedPreferences.retrieve(key, defaultValue)))
             }
         }
+
+        // Save from garbage collection
+        sharedPreferenceListeners.add(prefsListener)
         registerOnSharedPreferenceChangeListener(prefsListener)
-        emitter.setDisposable(Disposables.fromRunnable { unregisterOnSharedPreferenceChangeListener(prefsListener) })
+
+        emitter.setDisposable(Disposables.fromRunnable {
+            unregisterOnSharedPreferenceChangeListener(prefsListener)
+            sharedPreferenceListeners.remove(prefsListener)
+        })
     }.observeOn(Schedulers.io()) // because of shared preferences listener is on main thread
         .distinctUntilChanged()
 }
