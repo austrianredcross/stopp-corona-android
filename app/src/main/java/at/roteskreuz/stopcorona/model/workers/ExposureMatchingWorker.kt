@@ -71,14 +71,15 @@ class ExposureMatchingWorker(
     private val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
 
     override suspend fun doWork(): Result {
+        // Reschedule first thing in case we get killed later on
+        enqueueNextExposureMatching(workManager)
+
         try {
             diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
         } catch (ex: Exception) {
             //we agreed to silently fail in case of errors here
             Timber.e(SilentError(ex))
         }
-        // Schedule the next exposure matching work.
-        enqueueNextExposureMatching(workManager)
         return Result.success()
     }
 }
