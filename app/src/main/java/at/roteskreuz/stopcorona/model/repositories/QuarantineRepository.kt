@@ -12,10 +12,7 @@ import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
-import at.roteskreuz.stopcorona.utils.afterOrNull
-import at.roteskreuz.stopcorona.utils.areOnTheSameUtcDay
-import at.roteskreuz.stopcorona.utils.daysTo
-import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
+import at.roteskreuz.stopcorona.utils.*
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
@@ -257,6 +254,7 @@ class QuarantineRepositoryImpl(
         }
         // don't notify again if nothing has changed
         .distinctUntilChanged()
+        .shareReplayLast()
 
     init {
         var oldState: QuarantineStatus? = null
@@ -271,13 +269,6 @@ class QuarantineRepositoryImpl(
             updateNotifications(newState)
         }
     }
-
-    private val QuarantinePrerequisitesHolder.l: Long
-        get() {
-            val redWarningQuarantinedHours = configuration.redWarningQuarantine?.toLong()
-                .safeMap("redWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(14L))
-            return redWarningQuarantinedHours
-        }
 
     /**
      * Logic of making quarantine status by prerequisites.
