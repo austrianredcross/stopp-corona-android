@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
 import at.roteskreuz.stopcorona.utils.millisTo
+import kotlinx.coroutines.rx2.awaitFirst
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import org.threeten.bp.ZonedDateTime
@@ -48,7 +49,7 @@ class UploadMissingExposureKeysReminderWorker(
 
     override suspend fun doWork(): Result {
         val uploadMissingExposureKeys: UploadMissingExposureKeys? = quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
-            .blockingFirst().orElse(null)
+            .awaitFirst().orElse(null)
         if (uploadMissingExposureKeys != null) {
             notificationsRepository.displayNotificationForUploadingMissingExposureKeyse(
                 messageType = uploadMissingExposureKeys.messageType,
