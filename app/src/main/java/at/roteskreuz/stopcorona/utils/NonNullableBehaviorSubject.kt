@@ -8,7 +8,7 @@ import io.reactivex.subjects.Subject
 /**
  * Helper class with functionality same as [BehaviorSubject] with default non nullable value.
  */
-class NonNullableBehaviorSubject<T : Any>(defaultValue: T) : Subject<T>() {
+open class NonNullableBehaviorSubject<T : Any>(defaultValue: T) : Subject<T>() {
 
     private val behaviourSubject = BehaviorSubject.createDefault<T>(defaultValue)
 

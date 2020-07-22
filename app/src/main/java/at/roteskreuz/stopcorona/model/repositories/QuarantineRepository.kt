@@ -226,14 +226,21 @@ class QuarantineRepositoryImpl(
     override val hasSelfDiagnoseBackup: Boolean
         get() = dateOfFirstSelfDiagnoseBackup != null && dateOfLastSelfDiagnoseBackup != null
 
+    /**
+     * Emit at the next time the quarantineState needs updating.
+     */
+    private val quarantineStateNeedsTimeBasedUpdateEventSubject = TimerEventSubject()
+
     private val quarantineStateObservable = Observables.combineLatest(
         configurationRepository.observeConfiguration(),
+        quarantineStateNeedsTimeBasedUpdateEventSubject,
         dateOfFirstMedicalConfirmationObservable,
         dateOfLastSelfDiagnoseObservable,
         dateOfLastRedContactObservable,
         dateOfLastYellowContactObservable,
         dateOfLastSelfMonitoringInstructionObservable
     ) { configuration,
+        _,
         medicalConfirmationFirstDateTime,
         selfDiagnoseLastDateTime,
         redContactLastDateTime,
@@ -260,13 +267,25 @@ class QuarantineRepositoryImpl(
         var oldState: QuarantineStatus? = null
 
         // Ignore dispoasable. We are a singleton.
-        val disposable = quarantineStateObservable.subscribe { newState ->
+        @Suppress("UNUSED_VARIABLE")
+        val ignoredDisposable = quarantineStateObservable.subscribe { newState ->
             if (oldState is QuarantineStatus.Jailed.Limited && newState is QuarantineStatus.Free) {
                 setShowQuarantineEnd()
             }
+            if (newState is QuarantineStatus.Jailed.Limited) {
+                val nextUpdateNeeded = listOfNotNull(
+                    newState.byRedWarning,
+                    newState.byYellowWarning,
+                    newState.bySelfDiagnosis
+                ).min()
+                // Schedule recalculation of quarantine state
+                quarantineStateNeedsTimeBasedUpdateEventSubject.setNextEvent(nextUpdateNeeded)
+            }
+
             oldState = newState
 
             updateNotifications(newState)
+
         }
     }
 

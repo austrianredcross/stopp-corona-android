@@ -3,7 +3,6 @@ package at.roteskreuz.stopcorona.model.workers
 import android.content.Context
 import androidx.work.*
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
-import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.utils.millisTo
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import org.koin.standalone.KoinComponent
@@ -53,11 +52,8 @@ class EndQuarantineNotifierWorker(
     }
 
     private val notificationsRepository: NotificationsRepository by inject()
-    private val quarantineRepository: QuarantineRepository by inject()
 
     override suspend fun doWork(): Result {
-
-        quarantineRepository.setShowQuarantineEnd()
         notificationsRepository.displayEndQuarantineNotification()
 
         return Result.success()
