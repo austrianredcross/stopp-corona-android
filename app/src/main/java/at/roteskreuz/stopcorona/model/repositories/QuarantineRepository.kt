@@ -10,7 +10,6 @@ import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Compan
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.enqueueEndQuarantineReminder
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.cancelSelfRetestingReminder
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
-import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
 import at.roteskreuz.stopcorona.utils.*
 import at.roteskreuz.stopcorona.utils.view.safeMap
@@ -152,7 +151,6 @@ interface QuarantineRepository {
 }
 
 class QuarantineRepositoryImpl(
-    private val appDispatchers: AppDispatchers,
     preferences: SharedPreferences,
     configurationRepository: ConfigurationRepository,
     private val workManager: WorkManager

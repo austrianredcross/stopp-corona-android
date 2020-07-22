@@ -71,7 +71,6 @@ val repositoryModule = module {
 
     single<QuarantineRepository> {
         QuarantineRepositoryImpl(
-            appDispatchers = get(),
             preferences = get(),
             configurationRepository = get(),
             workManager = get()
