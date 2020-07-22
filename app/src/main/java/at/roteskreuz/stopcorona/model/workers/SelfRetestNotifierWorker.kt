@@ -31,7 +31,7 @@ class SelfRetestNotifierWorker(
 
             workManager.enqueueUniquePeriodicWork(
                 TAG,
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 request
             )
         }

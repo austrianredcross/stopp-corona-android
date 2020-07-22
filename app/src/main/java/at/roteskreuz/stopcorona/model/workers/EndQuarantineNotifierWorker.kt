@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.*
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
-import at.roteskreuz.stopcorona.utils.minus
+import at.roteskreuz.stopcorona.utils.millisTo
 import at.roteskreuz.stopcorona.utils.startOfTheDay
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -28,10 +28,12 @@ class EndQuarantineNotifierWorker(
         fun enqueueEndQuarantineReminder(workManager: WorkManager, endDateTime: ZonedDateTime) {
             // computing end of the quarantine
             // we set the end time as a midnight of the end date
-            val delay = endDateTime.startOfTheDay() - ZonedDateTime.now()
+            val now = ZonedDateTime.now()
+            val endDay = endDateTime.startOfTheDay()
+            val millisBeforeQuarantineEnd = now.millisTo(endDay)
 
             val request = OneTimeWorkRequestBuilder<EndQuarantineNotifierWorker>()
-                .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
+                .setInitialDelay(millisBeforeQuarantineEnd, TimeUnit.MILLISECONDS)
                 .addTag(TAG)
                 .build()
 

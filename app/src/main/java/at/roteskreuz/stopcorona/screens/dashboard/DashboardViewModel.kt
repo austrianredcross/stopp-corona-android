@@ -87,8 +87,8 @@ class DashboardViewModel(
                     is QuarantineStatus.Jailed.Forever -> HealthStatusData.SicknessCertificate
                     is QuarantineStatus.Jailed.Limited -> {
                         when {
-                            quarantineStatus.byContact -> HealthStatusData.NoHealthStatus
-                            else -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
+                            quarantineStatus.bySelfDiagnosis != null -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
+                            else -> HealthStatusData.NoHealthStatus
                         }
                     }
                     is QuarantineStatus.Free -> {

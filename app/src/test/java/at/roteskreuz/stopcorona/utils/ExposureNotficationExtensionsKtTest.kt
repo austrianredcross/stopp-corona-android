@@ -57,7 +57,7 @@ class ExposureNotficationExtensionsKtTest {
         val dates = listUnderTest.extractLatestRedAndYellowContactDate(THRESHOLD)
 
         assertNotNull(dates.firstYellowDay)
-        assertTrue(dates.firstYellowDay!!.areOnTheSameUtcDay(YESTERDAY))
+        assertTrue(dates.firstYellowDay.areOnTheSameUtcDay(YESTERDAY))
         assertNull(dates.firstRedDay)
     }
 
@@ -70,7 +70,7 @@ class ExposureNotficationExtensionsKtTest {
 
         assert(dates.firstYellowDay == null)
         assertNotNull(dates.firstRedDay)
-        assert(dates.firstRedDay!!.areOnTheSameUtcDay(YESTERDAY))
+        assert(dates.firstRedDay.areOnTheSameUtcDay(YESTERDAY))
     }
 
     @Test
@@ -84,7 +84,7 @@ class ExposureNotficationExtensionsKtTest {
 
             assert(dates.firstYellowDay == null)
             assertNotNull(dates.firstRedDay)
-            assert(dates.firstRedDay!!.areOnTheSameUtcDay(YESTERDAY))
+            assert(dates.firstRedDay.areOnTheSameUtcDay(YESTERDAY))
         }
     }
 }

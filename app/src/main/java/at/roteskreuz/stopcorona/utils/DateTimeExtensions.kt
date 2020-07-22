@@ -9,14 +9,6 @@ import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
-import kotlin.math.abs
-
-/**
- * Extension related to date and time.
- */
-
-private val UTC_TIMEZONE: ZoneId
-    get() = ZoneId.of("UTC")
 
 /**
  * Get minutes difference between two times.
@@ -26,17 +18,28 @@ fun ZonedDateTime.minutesTo(other: ZonedDateTime): Long {
 }
 
 /**
- * Get duration between two times.
+ * Get milliseconds to other time.
+ *
+ * If other time is in the past return 0L
  */
-operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {
-    return Duration.between(this, other).abs()
+fun ZonedDateTime.millisTo(other: ZonedDateTime): Long {
+    return (other - this).toMillis().coerceAtLeast(0)
+}
+
+/**
+ * Get [Duration] to other time.
+ */
+infix operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {
+    return Duration.between(other, this)
 }
 
 /**
  * Get days difference between two dates.
+ *
+ * If other day is in the past return 0L
  */
 fun LocalDate.daysTo(other: LocalDate): Long {
-    return abs(this.toEpochDay() - other.toEpochDay())
+    return (other.toEpochDay() - this.toEpochDay()).coerceAtLeast(0)
 }
 
 /**
@@ -163,13 +166,27 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
 }
 
 /**
- * Converts a interval number from exposure notification framework to the [ZonedDateTime].
+ * Converts an interval number from exposure notification framework to an [Instant].
  */
 fun Long.asExposureInterval(): ZonedDateTime {
     return ZonedDateTime.ofInstant(
         Instant.ofEpochSecond(this * Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds),
-        UTC_TIMEZONE
+        ZoneOffset.UTC
     )
+}
+
+/**
+ * Checks the receiver if it is after [other]
+ *
+ * @param other
+ * @return [this] if the [this] is after [other], else [null]
+ */
+fun ZonedDateTime.afterOrNull(other: ZonedDateTime): ZonedDateTime? {
+    return if (isAfter(other)) {
+        this
+    } else {
+        null
+    }
 }
 
 /**
@@ -225,10 +242,12 @@ fun ZonedDateTime.areOnTheSameDay(otherDateTime: ZonedDateTime): Boolean {
 }
 
 /**
- * Evaluates if two dates are on the same calendar day in UTC
+ * Evaluates if two dates are on the same calendar day in UTC.
+ *
+ * Two null-Instances are considered to be on the same day.
  */
-fun Instant.areOnTheSameUtcDay(otherDateTime: Instant): Boolean {
-    return startOfTheUtcDay() == otherDateTime.startOfTheUtcDay()
+fun Instant?.areOnTheSameUtcDay(otherDateTime: Instant?): Boolean {
+    return this?.startOfTheUtcDay() == otherDateTime?.startOfTheUtcDay()
 }
 
 /**
@@ -245,6 +264,8 @@ fun Instant.plusDays(days: Long): Instant = plus(days, ChronoUnit.DAYS)
  */
 fun Instant.minusDays(days: Long): Instant = minus(days, ChronoUnit.DAYS)
 
-fun ZonedDateTime.millisUntilTheStartOfTheNextUtcDay(): Long {
-    return (this.plusDays(1).startOfTheUtcDay() - this).toMillis()
+fun ZonedDateTime.millisToNextUtcDay(): Long {
+    val nextDay = this.plusDays(1)
+    val startOfTheNextUtcDay = nextDay.startOfTheUtcDay()
+    return this.millisTo(startOfTheNextUtcDay)
 }

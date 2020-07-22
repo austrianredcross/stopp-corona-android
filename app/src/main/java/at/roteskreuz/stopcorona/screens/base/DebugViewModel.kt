@@ -8,6 +8,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.minusDays
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.awaitFirst
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
@@ -89,7 +90,7 @@ class DebugViewModel(
     fun displayNotificationForUploadingMissingExposureKeys() {
         launch(appDispatchers.Default) {
             val uploadMissingExposureKeys: UploadMissingExposureKeys? = quarantineRepository.observeIfUploadOfMissingExposureKeysIsNeeded()
-                .blockingFirst().orElse(null)
+                .awaitFirst().orElse(null)
             if (uploadMissingExposureKeys != null) {
                 notificationsRepository.displayNotificationForUploadingMissingExposureKeyse(
                     messageType = uploadMissingExposureKeys.messageType,

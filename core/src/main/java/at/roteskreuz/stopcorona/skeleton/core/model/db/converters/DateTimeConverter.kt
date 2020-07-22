@@ -1,10 +1,7 @@
 package at.roteskreuz.stopcorona.skeleton.core.model.db.converters
 
 import androidx.room.TypeConverter
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDate
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.*
 
 /**
  * Converter for dateTime using [Instant], [ZonedDateTime] or [LocalDate].
@@ -16,7 +13,7 @@ class DateTimeConverter {
         timestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) }
 
     @TypeConverter
-    fun dateTimeToTimestamp(date: ZonedDateTime?): Long? = date?.withZoneSameInstant(ZoneId.of("UTC"))?.toEpochSecond()
+    fun dateTimeToTimestamp(date: ZonedDateTime?): Long? = date?.withZoneSameInstant(ZoneOffset.UTC)?.toEpochSecond()
 
     @TypeConverter
     fun timestampToInstant(timestamp: Long?): Instant? = timestamp?.let { Instant.ofEpochSecond(it) }
