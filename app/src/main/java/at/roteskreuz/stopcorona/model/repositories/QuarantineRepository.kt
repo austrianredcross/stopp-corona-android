@@ -6,29 +6,27 @@ import at.roteskreuz.stopcorona.constants.Constants.Prefs
 import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.cancelEndQuarantineReminder
 import at.roteskreuz.stopcorona.model.workers.EndQuarantineNotifierWorker.Companion.enqueueEndQuarantineReminder
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.cancelSelfRetestingReminder
 import at.roteskreuz.stopcorona.model.workers.SelfRetestNotifierWorker.Companion.enqueueSelfRetestingReminder
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.*
+import at.roteskreuz.stopcorona.utils.afterOrNull
 import at.roteskreuz.stopcorona.utils.areOnTheSameUtcDay
 import at.roteskreuz.stopcorona.utils.daysTo
 import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
-import at.roteskreuz.stopcorona.utils.startOfTheDay
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.rx2.awaitFirst
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Repository for controlling quarantine status of the user.
@@ -128,14 +126,9 @@ interface QuarantineRepository {
     fun revokeLastYellowContactDate()
 
     /**
-     * Get the current quarantine status.
-     */
-    suspend fun getQuarantineStatus(): QuarantineStatus
-
-    /**
      * Return the current Warning type based on the last Yellow and Red contact date times.
      */
-    fun getCurrentWarningType(): WarningType
+    suspend fun getCurrentWarningType(): WarningType
 
     /**
      * Observe if the user needs to upload the exposure keys from the day of the submission.
@@ -163,11 +156,10 @@ interface QuarantineRepository {
 
 class QuarantineRepositoryImpl(
     private val appDispatchers: AppDispatchers,
-    private val preferences: SharedPreferences,
+    preferences: SharedPreferences,
     configurationRepository: ConfigurationRepository,
     private val workManager: WorkManager
-) : QuarantineRepository,
-    CoroutineScope {
+) : QuarantineRepository {
 
     companion object {
         private const val PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION = Prefs.QUARANTINE_REPOSITORY_PREFIX + "date_of_first_medical_confirmation"
@@ -185,22 +177,20 @@ class QuarantineRepositoryImpl(
     override var dateOfFirstMedicalConfirmation: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
         PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
 
-    override fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
-        return preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
-    }
+    private val dateOfFirstMedicalConfirmationObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
 
     private var dateOfFirstSelfDiagnose: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
         PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
 
-    override fun observeDateOfFirstSelfDiagnose(): Observable<Optional<ZonedDateTime>> {
-        return preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
-    }
+    private var dateOfFirstSelfDiagnoseObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
 
     private var dateOfFirstSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP)
 
     private var dateOfLastSelfDiagnose: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE)
+
+    private val dateOfLastSelfDiagnoseObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE)
 
     private var dateOfLastSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
@@ -210,35 +200,42 @@ class QuarantineRepositoryImpl(
             PREF_DATE_OF_LAST_RED_CONTACT
         )
 
+    private val dateOfLastRedContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT)
+
     private var dateOfLastYellowContact: Instant?
         by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_YELLOW_CONTACT
         )
+
+    private val dateOfLastYellowContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT)
 
     private var dateOfLastSelfMonitoringInstruction: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(
             PREF_DATE_OF_LAST_SELF_MONITORING
         )
 
+    private val dateOfLastSelfMonitoringInstructionObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_MONITORING)
+
     private var showQuarantineEnd: Boolean
         by preferences.booleanSharedPreferencesProperty(PREF_SHOW_QUARANTINE_END, false)
+
+    private val showQuarantineEndObservable = preferences.observeBoolean(PREF_SHOW_QUARANTINE_END, false)
 
     private var missingKeysUploaded: Boolean
         by preferences.booleanSharedPreferencesProperty(PREF_MISSING_KEYS_UPLOADED, false)
 
-    override val coroutineContext: CoroutineContext
-        get() = appDispatchers.Default
+    private val missingKeysUploadedObservable = preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
 
     override val hasSelfDiagnoseBackup: Boolean
         get() = dateOfFirstSelfDiagnoseBackup != null && dateOfLastSelfDiagnoseBackup != null
 
     private val quarantineStateObservable = Observables.combineLatest(
         configurationRepository.observeConfiguration(),
-        preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION),
-        preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE),
-        preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT),
-        preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT),
-        preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_MONITORING)
+        dateOfFirstMedicalConfirmationObservable,
+        dateOfLastSelfDiagnoseObservable,
+        dateOfLastRedContactObservable,
+        dateOfLastYellowContactObservable,
+        dateOfLastSelfMonitoringInstructionObservable
     ) { configuration,
         medicalConfirmationFirstDateTime,
         selfDiagnoseLastDateTime,
@@ -255,70 +252,80 @@ class QuarantineRepositoryImpl(
         )
     }.subscribeOnComputation()
         .debounce(50, TimeUnit.MILLISECONDS) // some of the shared prefs can be changed together
-        .map {
-            it.mapToQuarantineStatus()
+        .map { prerequisites ->
+            prerequisites.toQuarantineStatus()
         }
         // don't notify again if nothing has changed
-        .distinctUntilChanged { oldState, newState ->
-            // display end quarantine info if quarantine has ended
+        .distinctUntilChanged()
+
+    init {
+        var oldState: QuarantineStatus? = null
+
+        // Ignore dispoasable. We are a singleton.
+        val disposable = quarantineStateObservable.subscribe { newState ->
             if (oldState is QuarantineStatus.Jailed.Limited && newState is QuarantineStatus.Free) {
                 setShowQuarantineEnd()
             }
-            oldState == newState
+            oldState = newState
+
+            updateNotifications(newState)
         }
-        .doOnNext {
-            updateNotifications(it)
+    }
+
+    private val QuarantinePrerequisitesHolder.l: Long
+        get() {
+            val redWarningQuarantinedHours = configuration.redWarningQuarantine?.toLong()
+                .safeMap("redWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(14L))
+            return redWarningQuarantinedHours
         }
 
     /**
      * Logic of making quarantine status by prerequisites.
      */
-    private fun QuarantinePrerequisitesHolder.mapToQuarantineStatus(): QuarantineStatus {
-        return when {
-            /**
-             * Own health state is Red.
-             * Quarantine never ends.
-             */
-            medicalConfirmationFirstDateTime != null -> {
-                QuarantineStatus.Jailed.Forever
-            }
-            /**
-             * Quarantine end date computation as maximum of possible ends.
-             */
-            redContactLastDateTime != null || yellowContactLastDateTime != null || selfDiagnoseLastDateTime != null -> {
-                val redWarningQuarantinedHours = configuration.redWarningQuarantine?.toLong()
-                    .safeMap("redWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(14L))
-                val yellowWarningQuarantinedHours = configuration.yellowWarningQuarantine?.toLong()
-                    .safeMap("yellowWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(7L))
-                val selfDiagnoseQuarantinedHours = configuration.selfDiagnosedQuarantine?.toLong()
-                    .safeMap("selfDiagnosedQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(7L))
+    private fun QuarantinePrerequisitesHolder.toQuarantineStatus(): QuarantineStatus {
+        /**
+         * Own health state is Red.
+         * Quarantine never ends.
+         */
+        if (medicalConfirmationFirstDateTime != null) {
+            return QuarantineStatus.Jailed.Forever
+        }
 
-                // Quarantine end in contact time + 14 days
-                val redWarningQuarantineUntil = redContactLastDateTime?.let {
-                    ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(redWarningQuarantinedHours)
-                }
-                // Quarantine end in contact time + 7 days
-                val yellowWarningQuarantineUntil = yellowContactLastDateTime?.let {
-                    ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(yellowWarningQuarantinedHours)
-                }
-                // Quarantine end in diagnose time + 7 days
-                val selfDiagnoseQuarantineUntil = selfDiagnoseLastDateTime?.plusHours(selfDiagnoseQuarantinedHours)
+        val redWarningQuarantinedHours = configuration.redWarningQuarantine?.toLong()
+            .safeMap("redWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(14L))
+        val yellowWarningQuarantinedHours = configuration.yellowWarningQuarantine?.toLong()
+            .safeMap("yellowWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(7L))
+        val selfDiagnoseQuarantinedHours = configuration.selfDiagnosedQuarantine?.toLong()
+            .safeMap("selfDiagnosedQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(7L))
 
-                val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfDiagnoseQuarantineUntil)
-                    .max()
+        val now = ZonedDateTime.now()
 
-                if (quarantinedUntil != null && quarantinedUntil.isAfter(ZonedDateTime.now())) {
-                    QuarantineStatus.Jailed.Limited(quarantinedUntil,
-                        (redContactLastDateTime != null || yellowContactLastDateTime != null) && selfDiagnoseLastDateTime == null)
-                } else {
-                    Timber.e(SilentError("quarantinedUntil is null"))
-                    QuarantineStatus.Free()
-                }
-            }
-            selfMonitoringLastDateTime != null -> {
-                QuarantineStatus.Free(true)
-            }
-            else -> QuarantineStatus.Free()
+        // Quarantine end in contact time + 14 days
+        val redWarningQuarantineUntil = redContactLastDateTime?.let {
+            ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(redWarningQuarantinedHours).afterOrNull(now)
+        }
+        // Quarantine end in contact time + 7 days
+        val yellowWarningQuarantineUntil = yellowContactLastDateTime?.let {
+            ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(yellowWarningQuarantinedHours).afterOrNull(now)
+        }
+        // Quarantine end in diagnose time + 7 days
+        val selfDiagnoseQuarantineUntil = selfDiagnoseLastDateTime?.plusHours(selfDiagnoseQuarantinedHours)?.afterOrNull(now)
+
+        val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfDiagnoseQuarantineUntil)
+            .max()
+
+        /**
+         * Quarantine end date computed as maximum of possible ends.
+         */
+        return if (quarantinedUntil != null) {
+            QuarantineStatus.Jailed.Limited(
+                end = quarantinedUntil,
+                bySelfDiagnosis = selfDiagnoseQuarantineUntil,
+                byRedWarning = redWarningQuarantineUntil,
+                byYellowWarning = yellowWarningQuarantineUntil
+            )
+        } else {
+            QuarantineStatus.Free(selfMonitoringLastDateTime != null)
         }
     }
 
@@ -339,12 +346,22 @@ class QuarantineRepositoryImpl(
                 cancelEndQuarantineReminder(workManager)
             }
             is QuarantineStatus.Free -> {
-                if (quarantineStatus.selfMonitoring.not()) {
+                if (quarantineStatus.selfMonitoring) {
+                    enqueueSelfRetestingReminder(workManager)
+                } else {
                     cancelSelfRetestingReminder(workManager)
                 }
                 cancelEndQuarantineReminder(workManager)
             }
         }
+    }
+
+    override fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
+        return dateOfFirstMedicalConfirmationObservable
+    }
+
+    override fun observeDateOfFirstSelfDiagnose(): Observable<Optional<ZonedDateTime>> {
+        return dateOfFirstSelfDiagnoseObservable
     }
 
     override fun observeQuarantineState(): Observable<QuarantineStatus> {
@@ -356,8 +373,7 @@ class QuarantineRepositoryImpl(
     }
 
     override fun reportPositiveSelfDiagnose(timeOfReport: ZonedDateTime) {
-        val diagnosedTime = dateOfFirstSelfDiagnose
-        if (diagnosedTime == null) {
+        if (dateOfFirstSelfDiagnose == null) {
             dateOfFirstSelfDiagnose = timeOfReport
         }
         dateOfLastSelfDiagnose = timeOfReport
@@ -396,7 +412,7 @@ class QuarantineRepositoryImpl(
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (warningType) {
             WarningType.YELLOW -> {
-                if (dateOfLastYellowContact == null || dateOfLastYellowContact!!.areOnTheSameUtcDay(timeOfContact).not()) {
+                if (dateOfLastYellowContact.areOnTheSameUtcDay(timeOfContact).not()) {
                     dateOfLastYellowContact = timeOfContact
                 } else {
                     Timber.d("no update of the yellow quarantine neccesary, we stay at " +
@@ -404,7 +420,7 @@ class QuarantineRepositoryImpl(
                 }
             }
             WarningType.RED -> {
-                if (dateOfLastRedContact == null || dateOfLastRedContact!!.areOnTheSameUtcDay(timeOfContact).not()) {
+                if (dateOfLastRedContact.areOnTheSameUtcDay(timeOfContact).not()) {
                     dateOfLastRedContact = timeOfContact
                 } else {
                     Timber.d("no update of the red quarantine neccesary, we stay at " +
@@ -414,9 +430,15 @@ class QuarantineRepositoryImpl(
         }
     }
 
-    override fun getCurrentWarningType(): WarningType {
-        if (dateOfLastRedContact != null) return WarningType.RED
-        if (dateOfLastYellowContact != null) return WarningType.YELLOW
+    override suspend fun getCurrentWarningType(): WarningType {
+        val quarantineStatus = quarantineStateObservable.awaitFirst()
+        if (quarantineStatus is QuarantineStatus.Jailed.Limited) {
+            if (quarantineStatus.byRedWarning != null && (quarantineStatus.byYellowWarning == null || quarantineStatus.byRedWarning > quarantineStatus.byYellowWarning)) {
+                return WarningType.RED
+            } else if (quarantineStatus.byYellowWarning != null) {
+                return WarningType.YELLOW
+            }
+        }
         return WarningType.GREEN
     }
 
@@ -425,12 +447,19 @@ class QuarantineRepositoryImpl(
     }
 
     override fun observeCombinedWarningType(): Observable<CombinedWarningType> {
-        return Observables.combineLatest(
-            preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT),
-            preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT)
-        ).debounce(50, TimeUnit.MILLISECONDS)
-            .map { (lastDateOfRedContact, lastDateOfYellowContact) ->
-                CombinedWarningType(lastDateOfYellowContact.isPresent, lastDateOfRedContact.isPresent)
+        return quarantineStateObservable
+            .map {
+                if (it is QuarantineStatus.Jailed.Limited) {
+                    CombinedWarningType(
+                        yellowContactsDetected = it.byYellowWarning != null,
+                        redContactsDetected = it.byRedWarning != null
+                    )
+                } else {
+                    CombinedWarningType(
+                        yellowContactsDetected = false,
+                        redContactsDetected = false
+                    )
+                }
             }
     }
 
@@ -439,7 +468,7 @@ class QuarantineRepositoryImpl(
     }
 
     override fun observeShowQuarantineEnd(): Observable<Boolean> {
-        return preferences.observeBoolean(PREF_SHOW_QUARANTINE_END, false)
+        return showQuarantineEndObservable
     }
 
     override fun revokeLastRedContactDate() {
@@ -450,17 +479,11 @@ class QuarantineRepositoryImpl(
         dateOfLastYellowContact = null
     }
 
-    override suspend fun getQuarantineStatus(): QuarantineStatus {
-        return withContext(coroutineContext) {
-            quarantineStateObservable.blockingFirst()
-        }
-    }
-
     override fun observeIfUploadOfMissingExposureKeysIsNeeded(): Observable<Optional<UploadMissingExposureKeys>> {
         return Observables.combineLatest(
-            observeDateOfFirstMedicalConfirmation(),
-            preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE),
-            preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
+            dateOfFirstMedicalConfirmationObservable,
+            dateOfLastSelfDiagnoseObservable,
+            missingKeysUploadedObservable
         ).debounce(50, TimeUnit.MILLISECONDS) // some of the shared prefs can be changed together
             .map { (dateOfFirstMedicalConfirmation, dateOfLastSelfDiagnose, areMissingKeysUploaded) ->
                 if (dateOfFirstMedicalConfirmation.isPresent &&
@@ -515,15 +538,15 @@ sealed class QuarantineStatus {
          * Quarantine ends at [end] time.
          * After this time user's state is [Free].
          */
-        data class Limited(val end: ZonedDateTime, val byContact: Boolean) : Jailed() {
+        data class Limited(val end: ZonedDateTime, val bySelfDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
+            val byYellowWarning: ZonedDateTime?) :
+            Jailed() {
 
             /**
              * Number of days displayed to the user until he is off quarantine (we add one to account for the offset on the last day)
              */
             fun daysUntilEnd(): Long {
-                val today = ZonedDateTime.now().startOfTheDay().toLocalDate()
-                val endDate = this.end.toLocalDate()
-                return today.daysTo(endDate) + 1
+                return LocalDate.now().daysTo(end.toLocalDate()) + 1
             }
         }
 

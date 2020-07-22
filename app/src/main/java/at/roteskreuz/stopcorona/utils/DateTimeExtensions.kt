@@ -176,6 +176,20 @@ fun Long.asExposureInterval(): ZonedDateTime {
 }
 
 /**
+ * Checks the receiver if it is after [other]
+ *
+ * @param other
+ * @return [this] if the [this] is after [other], else [null]
+ */
+fun ZonedDateTime.afterOrNull(other: ZonedDateTime): ZonedDateTime? {
+    return if (isAfter(other)) {
+        this
+    } else {
+        null
+    }
+}
+
+/**
  * Returns start of the day of the provided [ZonedDateTime].
  */
 fun ZonedDateTime.startOfTheDay(): ZonedDateTime = truncatedTo(ChronoUnit.DAYS)
@@ -228,10 +242,12 @@ fun ZonedDateTime.areOnTheSameDay(otherDateTime: ZonedDateTime): Boolean {
 }
 
 /**
- * Evaluates if two dates are on the same calendar day in UTC
+ * Evaluates if two dates are on the same calendar day in UTC.
+ *
+ * Two null-Instances are considered to be on the same day.
  */
-fun Instant.areOnTheSameUtcDay(otherDateTime: Instant): Boolean {
-    return startOfTheUtcDay() == otherDateTime.startOfTheUtcDay()
+fun Instant?.areOnTheSameUtcDay(otherDateTime: Instant?): Boolean {
+    return this?.startOfTheUtcDay() == otherDateTime?.startOfTheUtcDay()
 }
 
 /**
