@@ -172,12 +172,13 @@ class QuarantineRepositoryImpl(
     override var dateOfFirstMedicalConfirmation: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
         PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
 
-    private val dateOfFirstMedicalConfirmationObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION)
+    private val dateOfFirstMedicalConfirmationObservable =
+        preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_MEDICAL_CONFIRMATION).shareReplayLast()
 
     private var dateOfFirstSelfDiagnose: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
         PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
 
-    private var dateOfFirstSelfDiagnoseObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_SELF_DIAGNOSE)
+    private var dateOfFirstSelfDiagnoseObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_FIRST_SELF_DIAGNOSE).shareReplayLast()
 
     private var dateOfFirstSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_FIRST_SELF_DIAGNOSE_BACKUP)
@@ -185,7 +186,7 @@ class QuarantineRepositoryImpl(
     private var dateOfLastSelfDiagnose: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE)
 
-    private val dateOfLastSelfDiagnoseObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE)
+    private val dateOfLastSelfDiagnoseObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_DIAGNOSE).shareReplayLast()
 
     private var dateOfLastSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
@@ -195,43 +196,51 @@ class QuarantineRepositoryImpl(
             PREF_DATE_OF_LAST_RED_CONTACT
         )
 
-    private val dateOfLastRedContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT)
+    private val dateOfLastRedContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT).shareReplayLast()
 
     private var dateOfLastYellowContact: Instant?
         by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_YELLOW_CONTACT
         )
 
-    private val dateOfLastYellowContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT)
+    private val dateOfLastYellowContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_YELLOW_CONTACT).shareReplayLast()
 
     private var dateOfLastSelfMonitoringInstruction: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(
             PREF_DATE_OF_LAST_SELF_MONITORING
         )
 
-    private val dateOfLastSelfMonitoringInstructionObservable = preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_MONITORING)
+    private val dateOfLastSelfMonitoringInstructionObservable =
+        preferences.observeNullableZonedDateTime(PREF_DATE_OF_LAST_SELF_MONITORING).shareReplayLast()
 
     private var showQuarantineEnd: Boolean
         by preferences.booleanSharedPreferencesProperty(PREF_SHOW_QUARANTINE_END, false)
 
-    private val showQuarantineEndObservable = preferences.observeBoolean(PREF_SHOW_QUARANTINE_END, false)
+    private val showQuarantineEndObservable = preferences.observeBoolean(PREF_SHOW_QUARANTINE_END, false).shareReplayLast()
 
     private var missingKeysUploaded: Boolean
         by preferences.booleanSharedPreferencesProperty(PREF_MISSING_KEYS_UPLOADED, false)
 
-    private val missingKeysUploadedObservable = preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false)
+    private val missingKeysUploadedObservable = preferences.observeBoolean(PREF_MISSING_KEYS_UPLOADED, false).shareReplayLast()
 
     override val hasSelfDiagnoseBackup: Boolean
         get() = dateOfFirstSelfDiagnoseBackup != null && dateOfLastSelfDiagnoseBackup != null
 
+    /**
+     * Emit at the next time the quarantineState needs updating.
+     */
+    private val quarantineStateNeedsTimeBasedUpdateEventSubject = TimerEventSubject().apply { startTicker() }
+
     private val quarantineStateObservable = Observables.combineLatest(
         configurationRepository.observeConfiguration(),
+        quarantineStateNeedsTimeBasedUpdateEventSubject,
         dateOfFirstMedicalConfirmationObservable,
         dateOfLastSelfDiagnoseObservable,
         dateOfLastRedContactObservable,
         dateOfLastYellowContactObservable,
         dateOfLastSelfMonitoringInstructionObservable
     ) { configuration,
+        _,
         medicalConfirmationFirstDateTime,
         selfDiagnoseLastDateTime,
         redContactLastDateTime,
@@ -258,13 +267,25 @@ class QuarantineRepositoryImpl(
         var oldState: QuarantineStatus? = null
 
         // Ignore dispoasable. We are a singleton.
-        val disposable = quarantineStateObservable.subscribe { newState ->
+        @Suppress("UNUSED_VARIABLE")
+        val ignoredDisposable = quarantineStateObservable.subscribe { newState ->
             if (oldState is QuarantineStatus.Jailed.Limited && newState is QuarantineStatus.Free) {
                 setShowQuarantineEnd()
             }
+            if (newState is QuarantineStatus.Jailed.Limited) {
+                val nextUpdateNeeded = listOfNotNull(
+                    newState.byRedWarning,
+                    newState.byYellowWarning,
+                    newState.bySelfDiagnosis
+                ).min()
+                // Schedule recalculation of quarantine state
+                quarantineStateNeedsTimeBasedUpdateEventSubject.setNextEvent(nextUpdateNeeded)
+            }
+
             oldState = newState
 
             updateNotifications(newState)
+
         }
     }
 
