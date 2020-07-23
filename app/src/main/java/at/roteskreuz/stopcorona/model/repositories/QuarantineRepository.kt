@@ -229,7 +229,7 @@ class QuarantineRepositoryImpl(
     /**
      * Emit at the next time the quarantineState needs updating.
      */
-    private val quarantineStateNeedsTimeBasedUpdateEventSubject = TimerEventSubject()
+    private val quarantineStateNeedsTimeBasedUpdateEventSubject = TimerEventSubject().apply { startTicker() }
 
     private val quarantineStateObservable = Observables.combineLatest(
         configurationRepository.observeConfiguration(),
