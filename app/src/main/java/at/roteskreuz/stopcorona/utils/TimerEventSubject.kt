@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  * An Observable that will emit a [Unit] at a previousely set time.
  *
  * TO make the observable start emitting, you first need to call [startTicker]:
- *  e.g. val timerEventSubject = TimerEventSubject().apply { disposables += start() }
+ *  e.g. val timerEventSubject = TimerEventSubject().apply { disposables += startTicker() }
  *
  * The next emission can be set at any time by calling [setNextEvent].
  * A previousely scheduled event will be canceled if not already emitted.
