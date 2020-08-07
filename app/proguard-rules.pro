@@ -40,7 +40,8 @@
 
 #-printmapping ..\outputs\mapping.txt
 
--optimizationpasses 5
+-dontobfuscate
+
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** e(...);
@@ -61,7 +62,6 @@
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
 -keepattributes SourceFile,LineNumberTable
--keepnames class * extends java.lang.Throwable
 
 # Enums
 -keepclassmembers class **$WhenMappings {
