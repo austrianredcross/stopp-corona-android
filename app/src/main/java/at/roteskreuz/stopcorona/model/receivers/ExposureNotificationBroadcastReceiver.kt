@@ -23,6 +23,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.model.workers.ProcessDiagnosisKeysWorker
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
@@ -56,13 +57,12 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
     }
 
     private fun showDebugNotificationProcessingFinished(context: Context, token: String) {
-        val notification = NotificationCompat.Builder(context, "channel_automatic_detection")
+        val notification = NotificationCompat.Builder(context, Constants.NotificationChannels.CHANNEL_AUTOMATIC_DETECTION)
             .setContentTitle("processing done")
-            .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setSmallIcon(R.drawable.ic_red_cross)
             .setContentText("processing of $token finished")
             .setStyle(NotificationCompat.BigTextStyle().bigText("processing of $token finished"))
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(hashCode(), notification)

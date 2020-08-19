@@ -47,12 +47,12 @@ object Constants {
         /**
          * Exposure matching is able to be run after this time.
          */
-        val EXPOSURE_MATCHING_START_TIME = LocalTime.of(7, 30)
+        val EXPOSURE_MATCHING_START_TIME: LocalTime = LocalTime.of(7, 30)
 
         /**
          * Exposure matching is able to be run before this time.
          */
-        val EXPOSURE_MATCHING_INTERVAL_END_TIME = LocalTime.of(21, 30)
+        val EXPOSURE_MATCHING_INTERVAL_END_TIME: LocalTime = LocalTime.of(21, 30)
 
         /**
          * The minute of each [EXPOSURE_MATCHING_INTERVAL] when the exposure matching should be run around.
@@ -61,10 +61,10 @@ object Constants {
 
         /**
          * Time range around [EXPOSURE_MATCHING_TARGET_MINUTE] of each [EXPOSURE_MATCHING_INTERVAL] to be run.
-         * As example target minute is 30 and flex duration is 30. It means the exposure matching is able to be run
-         * between xx:15 and xx:45 of each hour.
+         * As example target minute is 30 and flex duration is 10. It means the exposure matching is able to be run
+         * between xx:25 and xx:35 of each hour.
          */
-        val EXPOSURE_MATCHING_FLEX_DURATION = Duration.ofMinutes(30)
+        val EXPOSURE_MATCHING_FLEX_DURATION: Duration = Duration.ofMinutes(10)
 
         /**
          * Time for how long the revoking is possible. After this time revoke button must be hidden.
@@ -124,6 +124,7 @@ object Constants {
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
+        const val SCHEDULED_WORKERS_MIGRATION_MANAGER_PREFIX = PREFIX + "scheduled_workers_migration_manager_"
         const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
         const val EXPOSURE_NOTIFICATION_MANAGER_PREFIX = PREFIX + "exposure_notification_manager_"
     }
