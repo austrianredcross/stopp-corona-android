@@ -25,6 +25,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
+import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
 import at.roteskreuz.stopcorona.utils.startDialogToEnableBluetooth
 import at.roteskreuz.stopcorona.utils.startGooglePlayStore
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
@@ -40,8 +41,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
     companion object {
+
         private const val REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED = Constants.Request.REQUEST_DASHBOARD + 1
         private const val REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION = Constants.Request.REQUEST_DASHBOARD + 2
+        private const val REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 3
     }
 
     override val isToolbarVisible: Boolean = true
@@ -123,6 +126,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     }
                     is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                         startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
+                    }
+                    is PrerequisitesError.BatteryOptimizationsNotIgnored -> {
+                        startBatteryOptimisationSettingsForResult(REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG)
                     }
                     is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                         startDialogToEnableBluetooth()
@@ -301,6 +307,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.refreshPrerequisitesErrorStatement()
                 }
+            }
+            REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG -> {
+                viewModel.refreshPrerequisitesErrorStatement()
             }
         }
     }
