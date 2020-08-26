@@ -88,7 +88,7 @@ interface ContextInteractor {
     fun unregisterReceiver(receiver: BroadcastReceiver)
 
     /**
-     * Check if battery optimisations are ignored = doze mode won't kill services started in app context.y
+     * Check if battery optimisations are ignored = doze mode won't kill services started in app context.
      */
     fun isBatteryOptimizationIgnored(): Boolean
 }
