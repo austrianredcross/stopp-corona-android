@@ -61,10 +61,10 @@ object Constants {
 
         /**
          * Time range around [EXPOSURE_MATCHING_TARGET_MINUTE] of each [EXPOSURE_MATCHING_INTERVAL] to be run.
-         * As example target minute is 30 and flex duration is 10. It means the exposure matching is able to be run
-         * between xx:25 and xx:35 of each hour.
+         * As example target minute is 30 and flex duration is 30. It means the exposure matching is able to be run
+         * between xx:15 and xx:45 of each hour.
          */
-        val EXPOSURE_MATCHING_FLEX_DURATION: Duration = Duration.ofMinutes(10)
+        val EXPOSURE_MATCHING_FLEX_DURATION: Duration = Duration.ofMinutes(30)
 
         /**
          * Time for how long the revoking is possible. After this time revoke button must be hidden.

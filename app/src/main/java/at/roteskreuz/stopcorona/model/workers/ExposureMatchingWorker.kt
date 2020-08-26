@@ -34,24 +34,24 @@ class ExposureMatchingWorker(
         private const val TAG = "ExposureMatchingWorker"
 
         /**
-         * 25
+         * 15
          */
         private val firstAvailableMinute = (EXPOSURE_MATCHING_TARGET_MINUTE - EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2).toInt()
 
         /**
-         * 35
+         * 45
          */
         private val lastAvailableMinute = (EXPOSURE_MATCHING_TARGET_MINUTE + EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2).toInt()
 
         /**
-         * 7:25
+         * 7:15
          */
         private val firstAvailableTime = EXPOSURE_MATCHING_START_TIME
             .withMinute(EXPOSURE_MATCHING_TARGET_MINUTE)
             .minusMinutes(EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2)
 
         /**
-         * 21:35
+         * 21:45
          */
         private val lastAvailableTime = EXPOSURE_MATCHING_INTERVAL_END_TIME
             .withMinute(EXPOSURE_MATCHING_TARGET_MINUTE)
@@ -99,15 +99,15 @@ class ExposureMatchingWorker(
 
             // set correct minute
             var nextRunTime = when {
-                // if between xx:00 - xx:24, then xx:35 with flex time 10 minutes
+                // if between xx:00 - xx:14, then xx:45 with flex time 30 minutes
                 now.minute < firstAvailableMinute -> {
                     now.withMinute(lastAvailableMinute)
                 }
-                // if between xx:36 - xx:59, then (xx+1):35 with flex time 10 minutes
+                // if between xx:46 - xx:59, then (xx+1):45 with flex time 30 minutes
                 now.minute > lastAvailableMinute -> {
                     now.plusHours(1).withMinute(lastAvailableMinute)
                 }
-                // if between xx:25 - xx:35, then no change
+                // if between xx:15 - xx:45, then no change
                 else -> {
                     now
                 }
@@ -115,11 +115,11 @@ class ExposureMatchingWorker(
 
             // set correct day
             nextRunTime = when {
-                // if before 7:25, then at 7:35 with flex time 10 minutes
+                // if before 7:15, then at 7:45 with flex time 30 minutes
                 nextRunTime.toLocalTime().isBefore(firstAvailableTime) -> {
                     nextRunTime.with(firstAvailableTime.plus(EXPOSURE_MATCHING_FLEX_DURATION))
                 }
-                // if after 21:45, then next day at 7:35 with flex time 10 minutes
+                // if after 21:45, then next day at 7:45 with flex time 30 minutes
                 nextRunTime.toLocalTime().isAfter(lastAvailableTime) -> {
                     nextRunTime.plusDays(1).with(firstAvailableTime)
                 }
