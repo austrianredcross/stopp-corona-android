@@ -29,6 +29,7 @@ class ProcessDiagnosisKeysWorker(
                 .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()
 
+            Timber.d("Scheduling Processing Of Diagnosis Keys")
             val request = OneTimeWorkRequestBuilder<ProcessDiagnosisKeysWorker>()
                 .setConstraints(constraints)
                 .setInputData(
@@ -50,6 +51,8 @@ class ProcessDiagnosisKeysWorker(
     private val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
 
     override suspend fun doWork(): Result {
+        Timber.d("Running Processing Of Diagnosis Keys Work")
+
         val token = inputData.getString(ARGUMENT_TOKEN)
         try {
             token?.let {
@@ -57,7 +60,7 @@ class ProcessDiagnosisKeysWorker(
                 return@doWork Result.success()
             }
             Timber.e(SilentError(IllegalArgumentException("No Token was provided, no work can be done")))
-        } catch (ex: Exception){
+        } catch (ex: Exception) {
             Timber.e(SilentError(ex))
         }
         return Result.failure()

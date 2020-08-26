@@ -50,11 +50,6 @@ object Constants {
         val EXPOSURE_MATCHING_START_TIME: LocalTime = LocalTime.of(7, 30)
 
         /**
-         * Exposure matching is able to be run before this time.
-         */
-        val EXPOSURE_MATCHING_INTERVAL_END_TIME: LocalTime = LocalTime.of(21, 30)
-
-        /**
          * The minute of each [EXPOSURE_MATCHING_INTERVAL] when the exposure matching should be run around.
          */
         const val EXPOSURE_MATCHING_TARGET_MINUTE = 30

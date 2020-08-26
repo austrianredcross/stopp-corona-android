@@ -5,15 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.work.*
 import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_FLEX_DURATION
 import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_INTERVAL
-import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_INTERVAL_END_TIME
 import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_START_TIME
-import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_TARGET_MINUTE
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
-import at.roteskreuz.stopcorona.utils.isInBetween
 import at.roteskreuz.stopcorona.utils.millisTo
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
+import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.temporal.ChronoUnit
@@ -34,38 +32,23 @@ class ExposureMatchingWorker(
         private const val TAG = "ExposureMatchingWorker"
 
         /**
-         * 15
-         */
-        private val firstAvailableMinute = (EXPOSURE_MATCHING_TARGET_MINUTE - EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2).toInt()
-
-        /**
-         * 45
-         */
-        private val lastAvailableMinute = (EXPOSURE_MATCHING_TARGET_MINUTE + EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2).toInt()
-
-        /**
          * 7:15
          */
-        private val firstAvailableTime = EXPOSURE_MATCHING_START_TIME
-            .withMinute(EXPOSURE_MATCHING_TARGET_MINUTE)
-            .minusMinutes(EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2)
+        private val firstAvailableTime =
+            EXPOSURE_MATCHING_START_TIME.minusMinutes(EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2)
 
         /**
-         * 21:45
+         * Enqueue periodic work to run the exposure matching algorithm if no worker is enqueued yet.
          */
-        private val lastAvailableTime = EXPOSURE_MATCHING_INTERVAL_END_TIME
-            .withMinute(EXPOSURE_MATCHING_TARGET_MINUTE)
-            .plusMinutes(EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2)
-
-        /**
-         * Enqueue periodic work to run the exposure matching algorithm.
-         * @param cancelCurrentAndScheduleNew True for Replace strategy with initial time in valid range.
-         */
-        fun enqueueExposurePeriodicMatching(workManager: WorkManager, cancelCurrentAndScheduleNew: Boolean = false) {
+        fun enqueueExposurePeriodicMatching(
+            workManager: WorkManager
+        ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()
             val millisUntilNextRun = computeMillisUntilNextRun()
+            val date = LocalDateTime.now() + Duration.ofMillis(millisUntilNextRun)
+            Timber.d("Scheduling hourly exeposure matchings every hour from ${date}")
             val request = PeriodicWorkRequestBuilder<ExposureMatchingWorker>(
                 repeatInterval = EXPOSURE_MATCHING_INTERVAL.toMillis(),
                 repeatIntervalTimeUnit = TimeUnit.MILLISECONDS,
@@ -79,64 +62,44 @@ class ExposureMatchingWorker(
 
             workManager.enqueueUniquePeriodicWork(
                 TAG,
-                if (cancelCurrentAndScheduleNew) {
-                    ExistingPeriodicWorkPolicy.REPLACE
-                } else {
-                    ExistingPeriodicWorkPolicy.KEEP
-                },
+                ExistingPeriodicWorkPolicy.KEEP,
                 request
             )
         }
 
-        fun observeState(workManager: WorkManager): LiveData<MutableList<WorkInfo>> = workManager.getWorkInfosByTagLiveData(TAG)
+        fun observeState(workManager: WorkManager): LiveData<MutableList<WorkInfo>> =
+            workManager.getWorkInfosByTagLiveData(TAG)
 
         /**
-         * Compute delay until the next possible hourly run in the 7:30 - 21:30 interval.
-         * Actually the time to run is not precise because of flex time [EXPOSURE_MATCHING_FLEX_DURATION].
+         * Compute delay until the next half xx:30
          */
         private fun computeMillisUntilNextRun(now: LocalDateTime = LocalDateTime.now()): Long {
 
             // set correct minute
-            var nextRunTime = when {
-                // if between xx:00 - xx:14, then xx:45 with flex time 30 minutes
-                now.minute < firstAvailableMinute -> {
-                    now.withMinute(lastAvailableMinute)
-                }
-                // if between xx:46 - xx:59, then (xx+1):45 with flex time 30 minutes
-                now.minute > lastAvailableMinute -> {
-                    now.plusHours(1).withMinute(lastAvailableMinute)
-                }
-                // if between xx:15 - xx:45, then no change
-                else -> {
-                    now
-                }
-            }.truncatedTo(ChronoUnit.MINUTES) // ignore seconds, milliseconds, nanoseconds
+            var firstRunTime = now.withMinute(30)
+                .truncatedTo(ChronoUnit.MINUTES) // ignore seconds, milliseconds, nanoseconds
 
-            // set correct day
-            nextRunTime = when {
-                // if before 7:15, then at 7:45 with flex time 30 minutes
-                nextRunTime.toLocalTime().isBefore(firstAvailableTime) -> {
-                    nextRunTime.with(firstAvailableTime.plus(EXPOSURE_MATCHING_FLEX_DURATION))
-                }
-                // if after 21:45, then next day at 7:45 with flex time 30 minutes
-                nextRunTime.toLocalTime().isAfter(lastAvailableTime) -> {
-                    nextRunTime.plusDays(1).with(firstAvailableTime)
-                }
-                // otherwise keep the time
-                else -> {
-                    nextRunTime
-                }
-            }
-            Timber.d("Next Exposure matching run time is possible at $nextRunTime")
-            return now.millisTo(nextRunTime)
+            // set correct hour if nextRunTime is in the past
+            firstRunTime = if (firstRunTime > now) firstRunTime else firstRunTime.plusHours(1)
+
+            val millisTillFirstRun = now.millisTo(firstRunTime).coerceAtLeast(0)
+            Timber.d(
+                "Time to first exposure matching: ${
+                    TimeUnit.MILLISECONDS.toMinutes(
+                        millisTillFirstRun
+                    )
+                }m"
+            )
+            return millisTillFirstRun
         }
     }
 
-    private val workManager: WorkManager by inject()
-    private val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
-
     override suspend fun doWork(): Result {
-        return if (LocalTime.now().isInBetween(firstAvailableTime, lastAvailableTime)) {
+        Timber.d("Running exposure matching work")
+
+        val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
+
+        if (LocalTime.now().isBefore(firstAvailableTime).not()) {
             try {
                 diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
             } catch (ex: Exception) {
@@ -144,13 +107,9 @@ class ExposureMatchingWorker(
                 Timber.e(SilentError(ex))
             }
 
-            Result.success()
         } else {
-            // cancel and reschedule it for the next day morning
-            // this will ensure to not run it during the night
-            enqueueExposurePeriodicMatching(workManager, true)
-
-            Result.failure()
+            Timber.d("Skipping exposure matchings before $firstAvailableTime")
         }
+        return Result.success()
     }
 }
