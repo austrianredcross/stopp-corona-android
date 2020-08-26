@@ -96,3 +96,14 @@ fun Fragment.shareApp() {
     sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_content))
     startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_app_chooser)))
 }
+
+/**
+ * Open system settings on battery optimisation screen.
+ */
+fun Fragment.startBatteryOptimisationSettingsForResult(requestCode: Int) {
+    startActivityForResult(
+        Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            .setData(Uri.parse("package:${requireContext().packageName}")),
+        requestCode
+    )
+}

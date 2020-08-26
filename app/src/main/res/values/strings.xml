@@ -93,6 +93,9 @@
 	<string name="main_exposure_error_google_play_wrong_version_action_btn">Go to the Play Store</string>
 	<string name="main_exposure_error_bluetooth_not_supported_title">Bluetooth is not supported</string>
 	<string name="main_exposure_error_bluetooth_not_supported_message">The Bluetooth adapter in this device is not supported by the COVID-19 contact notification framework.</string>
+	<string name="main_exposure_error_battery_optimizations_not_ignored_title">Battery optimizations limit the app</string>
+	<string name="main_exposure_error_battery_optimizations_not_ignored_message">To ensure the exposure framework won\'t be killed by the system, the application must be on the not battery optimized list.</string>
+	<string name="main_exposure_error_battery_optimizations_not_ignored_action_btn">Resolve</string>
 	<string name="main_exposure_error_title">Error with COVID-19 Exposure Notifications framework</string>
 	<string name="main_exposure_error_sign_in_message">Registration required.</string>
 	<string name="main_exposure_error_invalid_account_message">Invalid account.</string>
