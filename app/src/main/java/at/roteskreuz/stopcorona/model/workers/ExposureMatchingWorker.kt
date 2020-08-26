@@ -94,8 +94,7 @@ class ExposureMatchingWorker(
          * Compute delay until the next possible hourly run in the 7:30 - 21:30 interval.
          * Actually the time to run is not precise because of flex time [EXPOSURE_MATCHING_FLEX_DURATION].
          */
-        private fun computeMillisUntilNextRun(): Long {
-            val now = LocalDateTime.now()
+        private fun computeMillisUntilNextRun(now: LocalDateTime = LocalDateTime.now()): Long {
 
             // set correct minute
             var nextRunTime = when {
