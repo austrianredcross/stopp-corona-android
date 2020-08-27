@@ -86,6 +86,11 @@ interface ContextInteractor {
      * Unregister broadcast receiver.
      */
     fun unregisterReceiver(receiver: BroadcastReceiver)
+
+    /**
+     * Check if battery optimisations are ignored = doze mode won't kill services started in app context.
+     */
+    fun isBatteryOptimizationIgnored(): Boolean
 }
 
 class ContextInteractorImpl(
@@ -143,6 +148,11 @@ class ContextInteractorImpl(
 
     override fun unregisterReceiver(receiver: BroadcastReceiver) {
         context.unregisterReceiver(receiver)
+    }
+
+    override fun isBatteryOptimizationIgnored(): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        return powerManager.isIgnoringBatteryOptimizations(packageName)
     }
 
     /**
