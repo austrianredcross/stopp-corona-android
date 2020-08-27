@@ -29,7 +29,7 @@ class ExposureMatchingWorker(
 
     companion object {
 
-        private const val TAG = "ExposureMatchingWorker"
+        private const val TAG = "PeriodicExposureMatchingWorker"
 
         /**
          * 7:15
