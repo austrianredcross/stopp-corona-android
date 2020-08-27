@@ -49,6 +49,7 @@ class OfflineSyncerImpl(
 ) : OfflineSyncer {
 
     companion object {
+
         private const val PREF_LAST_CONFIG_SYNC = OFFLINE_SYNC_PREFIX + "last_config_sync_time"
         private const val PREF_LAST_FETCH_INFECTION_MESSAGES = OFFLINE_SYNC_PREFIX + "last_infection_messages_sync_time"
     }
@@ -120,8 +121,7 @@ class OfflineSyncerImpl(
      */
     private fun CoroutineScope.populateDatabasesAsync(): List<Deferred<Unit>> {
         return listOf(
-            async { runPopulationAndLogExceptions { configurationRepository.populateConfigurationIfEmpty() } },
-            async { runPopulationAndLogExceptions { diagnosisKeysRepository.enqueueNextExposureMatching() } }
+            async { runPopulationAndLogExceptions { configurationRepository.populateConfigurationIfEmpty() } }
         )
     }
 

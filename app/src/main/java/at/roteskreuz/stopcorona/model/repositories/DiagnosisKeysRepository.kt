@@ -17,7 +17,6 @@ import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.DailyBatc
 import at.roteskreuz.stopcorona.model.entities.session.ProcessingPhase.FullBatch
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.workers.DelayedExposureBroadcastReceiverCallWorker
-import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
@@ -76,11 +75,6 @@ interface DiagnosisKeysRepository {
      * Hide the message someone has recovered.
      */
     fun someoneHasRecoveredMessageSeen()
-
-    /**
-     * Enqueue the next work request to run the exposure matching algorithm.
-     */
-    fun enqueueNextExposureMatching()
 
     /**
      * Fetch [com.google.android.gms.nearby.exposurenotification.ExposureSummary]  and
@@ -434,10 +428,6 @@ class DiagnosisKeysRepositoryImpl(
 
     override fun someoneHasRecoveredMessageSeen() {
         someoneHasRecovered = false
-    }
-
-    override fun enqueueNextExposureMatching() {
-        ExposureMatchingWorker.enqueueNextExposureMatching(workManager)
     }
 }
 

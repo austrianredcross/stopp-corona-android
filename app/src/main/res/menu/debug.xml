@@ -63,6 +63,9 @@
             <item
                 android:id="@+id/debugZeroDaysOfYellowQuarantine"
                 android:title="Yellow quarantine for 'zero' days" />
+            <item
+                android:id="@+id/debugSchedulingObserver"
+                android:title="Scheduling observer" />
         </menu>
     </item>
 </menu>

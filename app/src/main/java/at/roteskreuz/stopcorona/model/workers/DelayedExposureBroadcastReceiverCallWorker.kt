@@ -6,6 +6,8 @@ import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ACTION_
 import at.roteskreuz.stopcorona.model.receivers.ExposureNotificationBroadcastReceiver
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -31,9 +33,17 @@ class DelayedExposureBroadcastReceiverCallWorker(
             val constraints = Constraints.Builder()
                 .build()
 
+            val date = LocalDateTime.now() + Duration.ofSeconds(
+                ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT.seconds
+            )
+            Timber.d("Scheduling Broadcast Emulation to ${date}")
+
             val request = OneTimeWorkRequestBuilder<DelayedExposureBroadcastReceiverCallWorker>()
                 .setConstraints(constraints)
-                .setInitialDelay(ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS)
+                .setInitialDelay(
+                    ACTION_EXPOSURE_STATE_UPDATED_BROADCAST_TIMEOUT.toMillis(),
+                    TimeUnit.MILLISECONDS
+                )
                 .setInputData(
                     Data.Builder()
                         .putString(ARGUMENT_TOKEN, token)

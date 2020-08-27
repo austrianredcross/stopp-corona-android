@@ -1,13 +1,20 @@
 package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.work.*
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_FLEX_DURATION
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_INTERVAL
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.EXPOSURE_MATCHING_START_TIME
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import at.roteskreuz.stopcorona.utils.millisTo
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
-import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
+import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -21,64 +28,87 @@ class ExposureMatchingWorker(
 ) : CoroutineWorker(appContext, workerParams), KoinComponent {
 
     companion object {
-        private const val TAG = "ExposureMatchingWorker"
+
+        private const val TAG = "PeriodicExposureMatchingWorker"
 
         /**
-         * Enqueue periodic work to run the exposure matching algorithm.
+         * 7:15
          */
-        fun enqueueNextExposureMatching(workManager: WorkManager) {
+        private val firstAvailableTime =
+            EXPOSURE_MATCHING_START_TIME.minusMinutes(EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2)
+
+        /**
+         * Enqueue periodic work to run the exposure matching algorithm if no worker is enqueued yet.
+         */
+        fun enqueueExposurePeriodicMatching(
+            workManager: WorkManager
+        ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()
             val millisUntilNextRun = computeMillisUntilNextRun()
-            val request = OneTimeWorkRequestBuilder<ExposureMatchingWorker>()
+            val date = LocalDateTime.now() + Duration.ofMillis(millisUntilNextRun)
+            Timber.d("Scheduling hourly exeposure matchings every hour from ${date}")
+            val request = PeriodicWorkRequestBuilder<ExposureMatchingWorker>(
+                repeatInterval = EXPOSURE_MATCHING_INTERVAL.toMillis(),
+                repeatIntervalTimeUnit = TimeUnit.MILLISECONDS,
+                flexTimeInterval = EXPOSURE_MATCHING_FLEX_DURATION.toMillis(),
+                flexTimeIntervalUnit = TimeUnit.MILLISECONDS
+            )
                 .setConstraints(constraints)
                 .setInitialDelay(millisUntilNextRun, TimeUnit.MILLISECONDS)
                 .addTag(TAG)
                 .build()
 
-            workManager.enqueueUniqueWork(TAG, ExistingWorkPolicy.REPLACE, request)
+            workManager.enqueueUniquePeriodicWork(
+                TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                request
+            )
         }
 
+        fun observeState(workManager: WorkManager): LiveData<MutableList<WorkInfo>> =
+            workManager.getWorkInfosByTagLiveData(TAG)
+
         /**
-         * Compute delay until the next possible hourly run in the 7:30 - 21:30 interval.
+         * Compute delay until the next half xx:30
          */
-        private fun computeMillisUntilNextRun(): Long {
-            val now = ZonedDateTime.now()
-            // Forward to next hour if past the half hour
-            val hourOfNextHalfHour = now.plusMinutes(30)
-            // Go to half hour
-            val nextHalfHour = hourOfNextHalfHour.withMinute(30).withSecond(0).withNano(0)
-            val plannedRun = when {
-                // If nextHalfHour is after 21:30, schedule for next day at 7:30.
-                nextHalfHour.isAfter(nextHalfHour.withHour(21).withMinute(30)) -> {
-                    nextHalfHour.plusDays(1).withHour(7).withMinute(30)
-                }
-                // If nextHalfHour is before 7:30, schedule for same day at 7:30.
-                nextHalfHour.isBefore(nextHalfHour.withHour(7).withMinute(30)) -> {
-                    nextHalfHour.withHour(7).withMinute(30)
-                }
-                // Otherwise the possible run is in 7:30 - 21:30 and can be scheduled as it is.
-                else -> {
-                    nextHalfHour
-                }
-            }
-            return now.millisTo(plannedRun)
+        private fun computeMillisUntilNextRun(now: LocalDateTime = LocalDateTime.now()): Long {
+
+            // set correct minute
+            var firstRunTime = now.withMinute(30)
+                .truncatedTo(ChronoUnit.MINUTES) // ignore seconds, milliseconds, nanoseconds
+
+            // set correct hour if nextRunTime is in the past
+            firstRunTime = if (firstRunTime > now) firstRunTime else firstRunTime.plusHours(1)
+
+            val millisTillFirstRun = now.millisTo(firstRunTime).coerceAtLeast(0)
+            Timber.d(
+                "Time to first exposure matching: ${
+                    TimeUnit.MILLISECONDS.toMinutes(
+                        millisTillFirstRun
+                    )
+                }m"
+            )
+            return millisTillFirstRun
         }
     }
 
-    private val workManager: WorkManager by inject()
-    private val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
-
     override suspend fun doWork(): Result {
-        // Reschedule first thing in case we get killed later on
-        enqueueNextExposureMatching(workManager)
+        Timber.d("Running exposure matching work")
 
-        try {
-            diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
-        } catch (ex: Exception) {
-            //we agreed to silently fail in case of errors here
-            Timber.e(SilentError(ex))
+        val diagnosisKeysRepository: DiagnosisKeysRepository by inject()
+
+        if (LocalTime.now().isBefore(firstAvailableTime).not()) {
+            try {
+                diagnosisKeysRepository.fetchAndForwardNewDiagnosisKeysToTheExposureNotificationFramework()
+            } catch (ex: Exception) {
+                // we agreed to silently fail in case of errors here
+                Timber.e(SilentError(ex))
+            }
+
+        } else {
+            Timber.d("Skipping exposure matchings before $firstAvailableTime")
         }
         return Result.success()
     }

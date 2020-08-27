@@ -27,9 +27,25 @@ fun ZonedDateTime.millisTo(other: ZonedDateTime): Long {
 }
 
 /**
+ * Get milliseconds to other time.
+ *
+ * If other time is in the past return 0L
+ */
+fun LocalDateTime.millisTo(other: LocalDateTime): Long {
+    return (other - this).toMillis().coerceAtLeast(0)
+}
+
+/**
  * Get [Duration] to other time.
  */
 infix operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {
+    return Duration.between(other, this)
+}
+
+/**
+ * Get [Duration] to other time.
+ */
+infix operator fun LocalDateTime.minus(other: LocalDateTime): Duration {
     return Duration.between(other, this)
 }
 
@@ -40,6 +56,13 @@ infix operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {
  */
 fun LocalDate.daysTo(other: LocalDate): Long {
     return (other.toEpochDay() - this.toEpochDay()).coerceAtLeast(0)
+}
+
+/**
+ * Check if the time is between [startTime] and [endTime]
+ */
+fun LocalTime.isInBetween(startTime: LocalTime, endTime: LocalTime): Boolean {
+    return this.isAfter(startTime) && this.isBefore(endTime)
 }
 
 /**

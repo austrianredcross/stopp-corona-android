@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogViewModel
 import at.roteskreuz.stopcorona.screens.debug.diagnosis_keys.DebugDiagnosisKeysViewModel
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
+import at.roteskreuz.stopcorona.screens.debug.scheduling.SchedulingObserverViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
@@ -60,6 +61,13 @@ val viewModelModule = module {
             diagnosisKeysRepository = get(),
             filesRepository = get(),
             configurationRepository = get()
+        )
+    }
+
+    viewModel {
+        SchedulingObserverViewModel(
+            appDispatchers = get(),
+            workManager = get()
         )
     }
 

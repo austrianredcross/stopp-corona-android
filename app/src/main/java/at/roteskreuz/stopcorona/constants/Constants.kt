@@ -5,6 +5,7 @@ import at.roteskreuz.stopcorona.BuildConfig.APPLICATION_ID
 import at.roteskreuz.stopcorona.skeleton.core.constants.BaseAppRequest
 import com.google.android.gms.common.GoogleApiAvailability
 import org.threeten.bp.Duration
+import org.threeten.bp.LocalTime
 
 /**
  * Constants for whole app scope.
@@ -37,6 +38,28 @@ object Constants {
          * Minimum delay between self retest notifications.
          */
         val SELF_RETEST_NOTIFICATION_INTERVAL: Duration = Duration.ofHours(6)
+
+        /**
+         * Frequency of how often device can check infection possibility.
+         */
+        val EXPOSURE_MATCHING_INTERVAL: Duration = Duration.ofHours(1)
+
+        /**
+         * Exposure matching is able to be run after this time.
+         */
+        val EXPOSURE_MATCHING_START_TIME: LocalTime = LocalTime.of(7, 30)
+
+        /**
+         * The minute of each [EXPOSURE_MATCHING_INTERVAL] when the exposure matching should be run around.
+         */
+        const val EXPOSURE_MATCHING_TARGET_MINUTE = 30
+
+        /**
+         * Time range around [EXPOSURE_MATCHING_TARGET_MINUTE] of each [EXPOSURE_MATCHING_INTERVAL] to be run.
+         * As example target minute is 30 and flex duration is 30. It means the exposure matching is able to be run
+         * between xx:15 and xx:45 of each hour.
+         */
+        val EXPOSURE_MATCHING_FLEX_DURATION: Duration = Duration.ofMinutes(30)
 
         /**
          * Time for how long the revoking is possible. After this time revoke button must be hidden.
@@ -96,6 +119,7 @@ object Constants {
         const val QUARANTINE_REPOSITORY_PREFIX = PREFIX + "quarantine_repository_"
         const val OFFLINE_SYNC_PREFIX = PREFIX + "offline_sync_"
         const val PREFERENCES_MIGRATION_MANAGER_PREFIX = PREFIX + "preferences_migration_manager_"
+        const val SCHEDULED_WORKERS_MIGRATION_MANAGER_PREFIX = PREFIX + "scheduled_workers_migration_manager_"
         const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
         const val EXPOSURE_NOTIFICATION_MANAGER_PREFIX = PREFIX + "exposure_notification_manager_"
     }
@@ -119,6 +143,7 @@ object Constants {
         val CERTIFICATE_CHAIN_CDN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_CDN
 
         object Header {
+
             const val AUTHORIZATION_KEY = "AuthorizationKey"
             const val AUTHORIZATION_VALUE = BuildConfig.AUTHORIZATION_VALUE
             const val APP_ID_KEY = "X-AppId"
