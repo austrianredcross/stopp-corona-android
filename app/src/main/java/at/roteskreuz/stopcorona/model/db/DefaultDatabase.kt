@@ -31,7 +31,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbSentTemporaryExposureKeys::class,
         DbScheduledSession::class
     ],
-    version = 23,
+    version = 24,
     exportSchema = true
 )
 @TypeConverters(
@@ -344,10 +344,13 @@ abstract class DefaultDatabase : RoomDatabase() {
                     )
                     """
                 )
-                execSQL("""
+                execSQL(
+                    """
                     CREATE UNIQUE INDEX IF NOT EXISTS `index_session_currentToken` ON `session` (`currentToken`)
-                """)
-                execSQL("""
+                """
+                )
+                execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `full_batch` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                         `sessionId` INTEGER NOT NULL, 
@@ -358,11 +361,13 @@ abstract class DefaultDatabase : RoomDatabase() {
                     )
                     """
                 )
-                execSQL("""
+                execSQL(
+                    """
                     CREATE INDEX IF NOT EXISTS `index_full_batch_sessionId` ON `full_batch` (`sessionId`)
                     """
                 )
-                execSQL("""
+                execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `daily_batch` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                         `sessionId` INTEGER NOT NULL, 
@@ -374,7 +379,8 @@ abstract class DefaultDatabase : RoomDatabase() {
                     )
                     """
                 )
-                execSQL("""
+                execSQL(
+                    """
                     CREATE INDEX IF NOT EXISTS `index_daily_batch_sessionId` ON `daily_batch` (`sessionId`)
                     """
                 )
@@ -394,6 +400,33 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(22, 23) {
                 // delete old table
                 execSQL("DROP TABLE `received_infection_message`")
+            },
+            /**
+             * Add _rollingPeriod and update primary keys in sent_temporary_exposure_keys
+             */
+            migration(23, 24) {
+                // create new temp table with added _rollingPeriod and updated primary keys
+                execSQL(
+                    """CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys_temp` (
+                      | `rollingStartIntervalNumber` INTEGER NOT NULL, 
+                      | `_rollingPeriod` INTEGER NOT NULL, 
+                      | `password` TEXT NOT NULL, 
+                      | `messageType` TEXT NOT NULL, 
+                      | PRIMARY KEY(`rollingStartIntervalNumber`, `_rollingPeriod`)
+                      |)
+                    """.trimMargin()
+                )
+                // copy data from old table to temp
+                execSQL(
+                    """INSERT INTO `sent_temporary_exposure_keys_temp` (`rollingStartIntervalNumber`, `_rollingPeriod`, `password`, `messageType`) 
+                      |SELECT `rollingStartIntervalNumber`, -1, `password`, `messageType` 
+                      |FROM `sent_temporary_exposure_keys`
+                    """.trimMargin()
+                )
+                // delete old table
+                execSQL("DROP TABLE `sent_temporary_exposure_keys`")
+                // rename temp to original
+                execSQL("ALTER TABLE `sent_temporary_exposure_keys_temp` RENAME TO `sent_temporary_exposure_keys`")
             }
         )
     }
