@@ -22,7 +22,7 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
-import java.util.UUID
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -164,13 +164,14 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadInfectionInfo(teks: List<TemporaryExposureKey>): MessageType.InfectionLevel {
         return withContext(coroutineContext) {
+            val now = ZonedDateTime.now()
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel
                 ?: throw InvalidConfigurationException.InfectionLevelNotSet
             val configuration = configurationRepository.getConfiguration()
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            val thresholdTimeFromConfiguration = ZonedDateTime.now()
+            val thresholdTimeFromConfiguration = now
                 .minusDays(uploadKeysDays.toLong())
                 .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
@@ -181,7 +182,7 @@ class ReportingRepositoryImpl(
                 // Report only the exposure keys that have not been uploaded in the day of the previous submission.
                 val keysToUpload = teks.filter {
                     it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.startOfTheUtcDay().toRollingStartIntervalNumber() &&
-                        it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay().toRollingStartIntervalNumber()
+                            it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay().toRollingStartIntervalNumber()
                 }
 
                 uploadTeksWithMessageType(keysToUpload, infectionLevel)
@@ -203,6 +204,11 @@ class ReportingRepositoryImpl(
                     it.rollingStartIntervalNumber >= thresholdTime
                 }
                 uploadTeksWithMessageType(teksToUpload, infectionLevel)
+
+                val includedTodaysTek =
+                    teksToUpload.any { it.rollingStartIntervalNumber == now.toRollingStartIntervalNumber() }
+                if (includedTodaysTek)
+                    quarantineRepository.markMissingExposureKeysAsUploaded()
 
                 when (infectionLevel) {
                     MessageType.InfectionLevel.Red -> {
