@@ -39,8 +39,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
     private val workManager: WorkManager by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
-        val action = intent.action
-        when (action) {
+        when (val action = intent.action) {
             ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED,
             ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND -> {
                 val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN)

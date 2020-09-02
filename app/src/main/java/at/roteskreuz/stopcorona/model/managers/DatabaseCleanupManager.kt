@@ -52,7 +52,7 @@ class DatabaseCleanupManagerImpl(
             val thresholdRevokedMessagesAsRollingStart = ZonedDateTime.now()
                 .minusDays(NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT)
                 .toRollingStartIntervalNumber()
-            temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
+            temporaryExposureKeysDao.removeSentTemporaryExposureKeysOlderThan(
                 MessageType.Revoke.Suspicion,
                 thresholdRevokedMessagesAsRollingStart
             )
@@ -66,7 +66,7 @@ class DatabaseCleanupManagerImpl(
                     .minusHours(yellowWarningQuarantine + 1)
                     .toRollingIntervalNumber()
 
-                temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
+                temporaryExposureKeysDao.removeSentTemporaryExposureKeysOlderThan(
                     MessageType.InfectionLevel.Yellow,
                     thresholdYellowMessageAsRollingStart
                 )
@@ -81,7 +81,7 @@ class DatabaseCleanupManagerImpl(
                     .minusHours(redWarningQuarantine + 1)
                     .toRollingIntervalNumber()
 
-                temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
+                temporaryExposureKeysDao.removeSentTemporaryExposureKeysOlderThan(
                     MessageType.InfectionLevel.Red,
                     thresholdRedMessagesAsRollingStart
                 )

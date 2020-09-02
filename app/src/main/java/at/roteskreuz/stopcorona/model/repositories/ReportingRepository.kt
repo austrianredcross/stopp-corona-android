@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ROLLING_PERIODS_PER_DAY
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
@@ -280,7 +281,7 @@ class ReportingRepositoryImpl(
 
             uploadRevocationTeks(
                 teks = teks,
-                revoceWarningType = MessageType.InfectionLevel.Yellow,
+                revokeWarningType = MessageType.InfectionLevel.Yellow,
                 targetWarningType = MessageType.GeneralRevoke
             )
 
@@ -300,7 +301,7 @@ class ReportingRepositoryImpl(
 
             uploadRevocationTeks(
                 teks = teks,
-                revoceWarningType = MessageType.InfectionLevel.Red,
+                revokeWarningType = MessageType.InfectionLevel.Red,
                 targetWarningType = targetWarningType
             )
 
@@ -322,11 +323,11 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadRevocationTeks(
         teks: List<TemporaryExposureKey>,
-        revoceWarningType: MessageType.InfectionLevel,
+        revokeWarningType: MessageType.InfectionLevel,
         targetWarningType: MessageType
     ) {
         val validityIntervallsToRevoke = diagnosisKeysRepository
-            .getSentTeksByMessageType(revoceWarningType)
+            .getSentTeksByMessageType(revokeWarningType)
             .map {
                 it.validity
             }.distinct()
@@ -422,6 +423,12 @@ data class PersonalData(
     val tanSuccessfullyRequested: Boolean = false
 )
 
+/**
+ * Validity of a TEK.
+ *
+ * The TEK is valid from period [rollingStartIntervalNumber]
+ * to period [rollingStartIntervalNumber]+[rollingPeriod]
+ */
 data class Validity(
     val rollingStartIntervalNumber: Int,
     val rollingPeriod: Int?
@@ -434,9 +441,12 @@ data class Validity(
      * This is not formally correct but good enough for all use cases
      */
     override fun compareTo(other: Validity): Int {
-        val rollingEndIntervalNumber = rollingStartIntervalNumber + (rollingPeriod ?: 144)
+        val rollingEndIntervalNumber =
+            rollingStartIntervalNumber + (rollingPeriod ?: ROLLING_PERIODS_PER_DAY)
         val otherRollingEndIntervalNumber =
-            with(other) { rollingStartIntervalNumber + (rollingPeriod ?: 144) }
+            with(other) {
+                rollingStartIntervalNumber + (rollingPeriod ?: ROLLING_PERIODS_PER_DAY)
+            }
 
         return rollingEndIntervalNumber.compareTo(otherRollingEndIntervalNumber)
     }

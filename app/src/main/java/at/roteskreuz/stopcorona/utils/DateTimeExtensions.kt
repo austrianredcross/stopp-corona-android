@@ -185,7 +185,7 @@ fun ZonedDateTime.isInTheFuture(): Boolean {
  * Converts a unix timestamp to a rolling interval number.
  */
 fun ZonedDateTime.toRollingIntervalNumber(): Int {
-    return (toInstant().epochSecond / Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds).toInt()
+    return (toInstant().epochSecond / Constants.ExposureNotification.ROLLING_PERIOD_DURATION.seconds).toInt()
 }
 
 /**
@@ -201,7 +201,7 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
  */
 fun Long.asExposureInterval(): ZonedDateTime {
     return ZonedDateTime.ofInstant(
-        Instant.ofEpochSecond(this * Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds),
+        Instant.ofEpochSecond(this * Constants.ExposureNotification.ROLLING_PERIOD_DURATION.seconds),
         ZoneOffset.UTC
     )
 }

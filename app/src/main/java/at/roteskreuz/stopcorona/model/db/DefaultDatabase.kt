@@ -407,21 +407,23 @@ abstract class DefaultDatabase : RoomDatabase() {
             migration(23, 24) {
                 // create new temp table with added _rollingPeriod and updated primary keys
                 execSQL(
-                    """CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys_temp` (
-                      | `rollingStartIntervalNumber` INTEGER NOT NULL, 
-                      | `_rollingPeriod` INTEGER NOT NULL, 
-                      | `password` TEXT NOT NULL, 
-                      | `messageType` TEXT NOT NULL, 
-                      | PRIMARY KEY(`rollingStartIntervalNumber`, `_rollingPeriod`)
-                      |)
-                    """.trimMargin()
+                    """
+                    CREATE TABLE IF NOT EXISTS `sent_temporary_exposure_keys_temp` (
+                        `rollingStartIntervalNumber` INTEGER NOT NULL, 
+                        `_rollingPeriod` INTEGER NOT NULL, 
+                        `password` TEXT NOT NULL, 
+                        `messageType` TEXT NOT NULL, 
+                        PRIMARY KEY(`rollingStartIntervalNumber`, `_rollingPeriod`)
+                    )
+                    """
                 )
                 // copy data from old table to temp
                 execSQL(
-                    """INSERT INTO `sent_temporary_exposure_keys_temp` (`rollingStartIntervalNumber`, `_rollingPeriod`, `password`, `messageType`) 
-                      |SELECT `rollingStartIntervalNumber`, -1, `password`, `messageType` 
-                      |FROM `sent_temporary_exposure_keys`
-                    """.trimMargin()
+                    """
+                    INSERT INTO `sent_temporary_exposure_keys_temp` (`rollingStartIntervalNumber`, `_rollingPeriod`, `password`, `messageType`) 
+                        SELECT `rollingStartIntervalNumber`, -1, `password`, `messageType` 
+                        FROM `sent_temporary_exposure_keys`
+                    """
                 )
                 // delete old table
                 execSQL("DROP TABLE `sent_temporary_exposure_keys`")
