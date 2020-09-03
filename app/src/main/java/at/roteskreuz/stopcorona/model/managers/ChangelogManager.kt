@@ -54,11 +54,15 @@ class ChangelogManagerImpl(
     private val changelogs = listOf(
         Changelog(
             id = 1,
-            versions = listOf("2.0.0", "2.0.3", "2.0.4"),
+            versions = listOf("2.0.0", "2.0.3", "2.0.4", "2.0.5"),
             title = R.string.changelog_title_v2_0_0,
             description = listOf(
                 SpanTextWrapper.NoStyle(R.string.changelog_description_1_v2_0_0),
-                SpanTextWrapper.Styled(textRes = R.string.changelog_description_2_v2_0_0, colored = true, insertTrailingSpace = false),
+                SpanTextWrapper.Styled(
+                    textRes = R.string.changelog_description_2_v2_0_0,
+                    colored = true,
+                    insertTrailingSpace = false
+                ),
                 SpanTextWrapper.NoStyle(R.string.changelog_description_3_v2_0_0)
             ),
             callToAction = R.string.changelog_cta_v2_0_0,
