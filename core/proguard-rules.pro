@@ -40,7 +40,6 @@
 
 #-printmapping ..\outputs\mapping.txt
 
--optimizationpasses 5
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** e(...);
@@ -87,15 +86,6 @@
     public static final *** NULL;
 }
 
--keepnames @com.google.android.gms.common.annotation.KeepName class *
--keepclassmembernames class * {
-    @com.google.android.gms.common.annotation.KeepName *;
-}
-
--keepnames class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
-
 #retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
@@ -108,15 +98,6 @@
 
 #picasso
 -dontwarn com.squareup.picasso.OkHttpDownloader
-
-# ServiceLoader support
--keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
--keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
-
-# Most of volatile fields are updated with AFU and should not be mangled
--keepclassmembernames class kotlinx.** {
-    volatile <fields>;
-}
 
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
