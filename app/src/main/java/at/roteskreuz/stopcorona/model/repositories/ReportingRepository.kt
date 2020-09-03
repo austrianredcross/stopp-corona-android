@@ -166,13 +166,14 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadInfectionInfo(teks: List<TemporaryExposureKey>): MessageType.InfectionLevel {
         return withContext(coroutineContext) {
+            val now = ZonedDateTime.now()
             val infectionLevel = messageTypeSubject.value as? MessageType.InfectionLevel
                 ?: throw InvalidConfigurationException.InfectionLevelNotSet
             val configuration = configurationRepository.getConfiguration()
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            val uploadStartIntervalNumberFromConfig = ZonedDateTime.now()
+            val uploadStartIntervalNumberFromConfig = now
                 .minusDays(uploadKeysDays.toLong())
                 .toRollingStartIntervalNumber()
 
@@ -208,6 +209,11 @@ class ReportingRepositoryImpl(
                     it.rollingStartIntervalNumber >= uploadStartIntervalNumber
                 }
                 uploadTeksWithMessageType(teksToUpload, infectionLevel)
+
+                val includedTodaysTek =
+                    teksToUpload.any { it.rollingStartIntervalNumber == now.toRollingStartIntervalNumber() }
+                if (includedTodaysTek)
+                    quarantineRepository.markMissingExposureKeysAsUploaded()
 
                 when (infectionLevel) {
                     MessageType.InfectionLevel.Red -> {
