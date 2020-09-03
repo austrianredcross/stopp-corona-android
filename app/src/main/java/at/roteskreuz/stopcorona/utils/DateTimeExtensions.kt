@@ -182,10 +182,18 @@ fun ZonedDateTime.isInTheFuture(): Boolean {
 }
 
 /**
- * Converts a unix timestamp to a rolling start interval number.
+ * Converts a unix timestamp to a rolling interval number.
+ */
+fun ZonedDateTime.toRollingIntervalNumber(): Int {
+    return (toInstant().epochSecond / Constants.ExposureNotification.ROLLING_PERIOD_DURATION.seconds).toInt()
+}
+
+/**
+ * Converts a unix timestamp to a rolling start interval number. I.e. the rolling interval number at
+ * the start of the day.
  */
 fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
-    return (toInstant().epochSecond / Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds).toInt()
+    return startOfTheUtcDay().toRollingIntervalNumber()
 }
 
 /**
@@ -193,7 +201,7 @@ fun ZonedDateTime.toRollingStartIntervalNumber(): Int {
  */
 fun Long.asExposureInterval(): ZonedDateTime {
     return ZonedDateTime.ofInstant(
-        Instant.ofEpochSecond(this * Constants.ExposureNotification.INTERVAL_NUMBER_OFFSET.seconds),
+        Instant.ofEpochSecond(this * Constants.ExposureNotification.ROLLING_PERIOD_DURATION.seconds),
         ZoneOffset.UTC
     )
 }
@@ -202,7 +210,7 @@ fun Long.asExposureInterval(): ZonedDateTime {
  * Checks the receiver if it is after [other]
  *
  * @param other
- * @return [this] if the [this] is after [other], else [null]
+ * @return [this] if the [this] is after [other], else null
  */
 fun ZonedDateTime.afterOrNull(other: ZonedDateTime): ZonedDateTime? {
     return if (isAfter(other)) {

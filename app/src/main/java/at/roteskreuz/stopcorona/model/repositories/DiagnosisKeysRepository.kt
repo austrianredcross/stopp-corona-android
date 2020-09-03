@@ -32,7 +32,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Instant
 import timber.log.Timber
-import java.util.UUID
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -435,7 +435,7 @@ class DiagnosisKeysRepositoryImpl(
  * Describes a temporary exposure key, it's associated random password and messageType.
  */
 data class TekMetadata(
-    val rollingStartIntervalNumber: Int,
+    val validity: Validity,
     val password: UUID,
     val messageType: MessageType
 )

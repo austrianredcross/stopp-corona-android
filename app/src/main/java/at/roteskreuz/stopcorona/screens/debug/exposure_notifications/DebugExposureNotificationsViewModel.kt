@@ -156,7 +156,10 @@ class DebugExposureNotificationsViewModel(
     fun getTemporaryExposureKeyHistory() {
         exposureNotificationClient.temporaryExposureKeyHistory
             .addOnSuccessListener {
-                Timber.d("got the list of Temporary Exposure Keys $it")
+                Timber.d("got the list of Temporary Exposure Keys")
+                it.forEach {
+                    Timber.d("Key: ${it.rollingStartIntervalNumber}-${it.rollingPeriod}: $it")
+                }
                 exposureNotificationsTextSubject.onNext(
                     "got the list of TemporaryExposureKeys $it"
                 )

@@ -1,7 +1,9 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.ROLLING_PERIODS_PER_DAY
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
+import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.info.asApiEntity
@@ -12,7 +14,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.Scope
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
-import at.roteskreuz.stopcorona.utils.startOfTheUtcDay
+import at.roteskreuz.stopcorona.utils.toRollingIntervalNumber
 import at.roteskreuz.stopcorona.utils.toRollingStartIntervalNumber
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
@@ -59,7 +61,7 @@ interface ReportingRepository {
      *
      * @return Returns the messageType the user sent to his contacts
      */
-    suspend fun uploadReportInformation(temporaryTracingKeys: List<TemporaryExposureKey>): MessageType
+    suspend fun uploadReportInformation(teks: List<TemporaryExposureKey>): MessageType
 
     /**
      * Set the validated personal data when a TAN was successfully requested.
@@ -171,9 +173,8 @@ class ReportingRepositoryImpl(
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            val thresholdTimeFromConfiguration = now
+            val uploadStartIntervalNumberFromConfig = now
                 .minusDays(uploadKeysDays.toLong())
-                .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
 
             val dateWithMissingExposureKeys = dateWithMissingExposureKeys
@@ -181,8 +182,9 @@ class ReportingRepositoryImpl(
             if (dateWithMissingExposureKeys != null) {
                 // Report only the exposure keys that have not been uploaded in the day of the previous submission.
                 val keysToUpload = teks.filter {
-                    it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.startOfTheUtcDay().toRollingStartIntervalNumber() &&
-                            it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay().toRollingStartIntervalNumber()
+                    it.rollingStartIntervalNumber >= dateWithMissingExposureKeys.toRollingStartIntervalNumber() &&
+                            it.rollingStartIntervalNumber <= dateWithMissingExposureKeys.endOfTheUtcDay()
+                        .toRollingIntervalNumber()
                 }
 
                 uploadTeksWithMessageType(keysToUpload, infectionLevel)
@@ -190,18 +192,21 @@ class ReportingRepositoryImpl(
                 quarantineRepository.markMissingExposureKeysAsUploaded()
             } else {
                 // The regular flow of reporting the exposure keys.
-                val thresholdTime = if (infectionLevel == MessageType.InfectionLevel.Red) {
-                    diagnosisKeysRepository.getSentTeksByMessageType(
-                        MessageType.InfectionLevel.Yellow
-                    ).minBy { tekMetadata ->
-                        tekMetadata.rollingStartIntervalNumber
-                    }?.rollingStartIntervalNumber ?: thresholdTimeFromConfiguration
-                } else {
-                    thresholdTimeFromConfiguration
-                }
+                val uploadStartIntervalNumber =
+                    if (infectionLevel == MessageType.InfectionLevel.Red) {
+                        // If we sent a yellow warning before, send red warnings from the day of the
+                        // earliest yellow warning
+                        diagnosisKeysRepository.getSentTeksByMessageType(
+                            MessageType.InfectionLevel.Yellow
+                        ).map { tek ->
+                            tek.rollingStartIntervalNumber
+                        }.min() ?: uploadStartIntervalNumberFromConfig
+                    } else {
+                        uploadStartIntervalNumberFromConfig
+                    }
 
                 val teksToUpload = teks.filter {
-                    it.rollingStartIntervalNumber >= thresholdTime
+                    it.rollingStartIntervalNumber >= uploadStartIntervalNumber
                 }
                 uploadTeksWithMessageType(teksToUpload, infectionLevel)
 
@@ -236,18 +241,19 @@ class ReportingRepositoryImpl(
         teks: List<TemporaryExposureKey>,
         messageType: MessageType
     ) {
-        val passwordsByRollingStartInterval = diagnosisKeysRepository
+        val passwordsByValidity = diagnosisKeysRepository
             .getSentTemporaryExposureKeys()
             .associateBy(
-                keySelector = { it.rollingStartIntervalNumber },
+                keySelector = { it.validity },
                 valueTransform = { it.password }
             )
 
         val tekMetadata = teks.map { tek ->
-            val passwordForKey = passwordsByRollingStartInterval[tek.rollingStartIntervalNumber] ?: UUID.randomUUID()
+            val passwordForKey =
+                passwordsByValidity[tek.validity] ?: UUID.randomUUID()
 
             TekMetadata(
-                tek.rollingStartIntervalNumber,
+                tek.validity,
                 passwordForKey,
                 messageType
             )
@@ -278,14 +284,12 @@ class ReportingRepositoryImpl(
 
     private suspend fun uploadRevokeSuspicionInfo(teks: List<TemporaryExposureKey>): MessageType.Revoke.Suspicion {
         return withContext(coroutineContext) {
-            val rollingStartIntervalsToRevoke = diagnosisKeysRepository
-                .getSentTeksByMessageType(MessageType.InfectionLevel.Yellow)
-                .map {
-                    it.rollingStartIntervalNumber
-                }.toSet()
 
-            val teksToRevoke = teks.filter { it.rollingStartIntervalNumber in rollingStartIntervalsToRevoke }
-            uploadTeksWithMessageType(teksToRevoke, MessageType.GeneralRevoke)
+            uploadRevocationTeks(
+                teks = teks,
+                revokeWarningType = MessageType.InfectionLevel.Yellow,
+                targetWarningType = MessageType.GeneralRevoke
+            )
 
             quarantineRepository.revokePositiveSelfDiagnose(backup = false)
             quarantineRepository.markMissingExposureKeysAsNotUploaded()
@@ -296,23 +300,20 @@ class ReportingRepositoryImpl(
     private suspend fun uploadRevokeSicknessInfo(teks: List<TemporaryExposureKey>): MessageType.Revoke.Sickness {
         return withContext(coroutineContext) {
 
-            val updateStatus = when {
+            val targetWarningType = when {
                 quarantineRepository.hasSelfDiagnoseBackup -> MessageType.InfectionLevel.Yellow
                 else -> MessageType.GeneralRevoke
             }
 
-            val rollingStartIntervalsToRevoke = diagnosisKeysRepository
-                .getSentTeksByMessageType(MessageType.InfectionLevel.Red)
-                .map {
-                    it.rollingStartIntervalNumber
-                }.toSet()
-
-            val teksToRevoke = teks.filter { it.rollingStartIntervalNumber in rollingStartIntervalsToRevoke }
-            uploadTeksWithMessageType(teksToRevoke, updateStatus)
+            uploadRevocationTeks(
+                teks = teks,
+                revokeWarningType = MessageType.InfectionLevel.Red,
+                targetWarningType = targetWarningType
+            )
 
             quarantineRepository.revokeMedicalConfirmation()
 
-            when (updateStatus) {
+            when (targetWarningType) {
                 is MessageType.InfectionLevel.Yellow -> {
                     quarantineRepository.reportPositiveSelfDiagnoseFromBackup()
                 }
@@ -326,13 +327,29 @@ class ReportingRepositoryImpl(
         }
     }
 
+    private suspend fun uploadRevocationTeks(
+        teks: List<TemporaryExposureKey>,
+        revokeWarningType: MessageType.InfectionLevel,
+        targetWarningType: MessageType
+    ) {
+        val validityIntervallsToRevoke = diagnosisKeysRepository
+            .getSentTeksByMessageType(revokeWarningType)
+            .map {
+                it.validity
+            }.distinct()
+
+        val teksToRevoke =
+            teks.filter { it.validity in validityIntervallsToRevoke }
+        uploadTeksWithMessageType(teksToRevoke, targetWarningType)
+    }
+
     private fun List<TemporaryExposureKey>.pairWithPassword(
         tekMetadata: List<TekMetadata>
     ): List<Pair<TemporaryExposureKey, UUID>> {
-        val tekMetaDataByRollingStartIntervalNumber = tekMetadata.associateBy { it.rollingStartIntervalNumber }
+        val tekMetaDataByValidity = tekMetadata.associateBy { it.validity }
 
         return mapNotNull { tek ->
-            val matchingMetadata = tekMetaDataByRollingStartIntervalNumber[tek.rollingStartIntervalNumber]
+            val matchingMetadata = tekMetaDataByValidity[tek.validity]
             matchingMetadata?.let { tekMetadata ->
                 tek to tekMetadata.password
             }
@@ -413,6 +430,69 @@ data class PersonalData(
 )
 
 /**
+ * Validity of a TEK.
+ *
+ * The TEK is valid from period [rollingStartIntervalNumber]
+ * to period [rollingStartIntervalNumber]+[rollingPeriod]
+ */
+data class Validity(
+    val rollingStartIntervalNumber: Int,
+    val rollingPeriod: Int?
+) : Comparable<Validity> {
+
+    /**
+     * Order validity by end of the interval. If [rollingPeriod] is not set assume validity for the
+     * whole day.
+     *
+     * This is not formally correct but good enough for all use cases
+     */
+    override fun compareTo(other: Validity): Int {
+        val rollingEndIntervalNumber =
+            rollingStartIntervalNumber + (rollingPeriod ?: ROLLING_PERIODS_PER_DAY)
+        val otherRollingEndIntervalNumber =
+            with(other) {
+                rollingStartIntervalNumber + (rollingPeriod ?: ROLLING_PERIODS_PER_DAY)
+            }
+
+        return rollingEndIntervalNumber.compareTo(otherRollingEndIntervalNumber)
+    }
+
+    /**
+     * Special equals operator which ignores the [rollingPeriod] if it is not available on either
+     * object.
+     *
+     * This is required for old keys in the database where the rolling period was not stored
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Validity) return false
+
+        if (rollingStartIntervalNumber != other.rollingStartIntervalNumber) return false
+        if (rollingPeriod == other.rollingPeriod) return true
+        // For old keys without a rolling period, ignore the rollingPeriod
+        if (rollingPeriod == null || other.rollingPeriod == null) return true
+
+        return false
+    }
+
+    /**
+     * Special hashCode which ignores the [rollingPeriod]. This leads to more collisions but is
+     * required due to the special [equals] operator.
+     *
+     * This is required for old keys in the database where the rolling period was not stored
+     */
+    override fun hashCode(): Int {
+        return rollingStartIntervalNumber
+    }
+}
+
+val TemporaryExposureKey.validity
+    get() = Validity(rollingStartIntervalNumber, rollingPeriod)
+
+val DbSentTemporaryExposureKeys.validity
+    get() = Validity(rollingStartIntervalNumber, rollingPeriod)
+
+/**
  * Automaton definition of the report sending process.
  */
 sealed class ReportingState {
@@ -452,5 +532,6 @@ sealed class InvalidConfigurationException(override val message: String) : Excep
     /**
      * No configuration present, not even the bundled config.
      */
-    object ConfigurationNotPresent : InvalidConfigurationException("No configuration present, not even the bundled config")
+    object ConfigurationNotPresent :
+        InvalidConfigurationException("No configuration present, not even the bundled config")
 }

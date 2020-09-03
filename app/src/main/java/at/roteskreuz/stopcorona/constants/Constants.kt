@@ -80,9 +80,15 @@ object Constants {
         const val GOOGLE_PLAY_SERVICES_PACKAGE_NAME = GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE
 
         /**
-         * Framework expose new event each 10 minutes.
+         * Framework counts time in rolling periods of 10 minutes each.
          */
-        val INTERVAL_NUMBER_OFFSET: Duration = Duration.ofMinutes(10)
+        val ROLLING_PERIOD_DURATION: Duration = Duration.ofMinutes(10)
+
+        /**
+         * Number of rolling periods per day
+         */
+        val ROLLING_PERIODS_PER_DAY =
+            (Duration.ofDays(1).seconds / ROLLING_PERIOD_DURATION.seconds).toInt()
 
         /**
          * Local folder name for copy of exposure archives to be processed.

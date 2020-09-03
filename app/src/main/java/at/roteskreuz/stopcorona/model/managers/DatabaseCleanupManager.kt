@@ -6,6 +6,7 @@ import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.utils.startOfTheUtcDay
+import at.roteskreuz.stopcorona.utils.toRollingIntervalNumber
 import at.roteskreuz.stopcorona.utils.toRollingStartIntervalNumber
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -50,9 +51,8 @@ class DatabaseCleanupManagerImpl(
 
             val thresholdRevokedMessagesAsRollingStart = ZonedDateTime.now()
                 .minusDays(NUMBER_OF_DAYS_THE_GREEN_KEYS_ARE_KEPT)
-                .startOfTheUtcDay()
                 .toRollingStartIntervalNumber()
-            temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
+            temporaryExposureKeysDao.removeSentTemporaryExposureKeysOlderThan(
                 MessageType.Revoke.Suspicion,
                 thresholdRevokedMessagesAsRollingStart
             )
@@ -64,9 +64,9 @@ class DatabaseCleanupManagerImpl(
                     // +1 hour buffer time to avoid removing from midnight, since at this moment (12-Jun-2020)
                     // the rolling start interval is set by the framework at midnight (start of the day)
                     .minusHours(yellowWarningQuarantine + 1)
-                    .toRollingStartIntervalNumber()
+                    .toRollingIntervalNumber()
 
-                temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
+                temporaryExposureKeysDao.removeSentTemporaryExposureKeysOlderThan(
                     MessageType.InfectionLevel.Yellow,
                     thresholdYellowMessageAsRollingStart
                 )
@@ -79,9 +79,9 @@ class DatabaseCleanupManagerImpl(
                     // +1 hour buffer time to avoid removing from midnight, since at this moment (12-Jun-2020)
                     // the rolling start interval is set by the framework at midnight (start of the day)
                     .minusHours(redWarningQuarantine + 1)
-                    .toRollingStartIntervalNumber()
+                    .toRollingIntervalNumber()
 
-                temporaryExposureKeysDao.removeSentTemporarelyExposureKeysOlderThan(
+                temporaryExposureKeysDao.removeSentTemporaryExposureKeysOlderThan(
                     MessageType.InfectionLevel.Red,
                     thresholdRedMessagesAsRollingStart
                 )
