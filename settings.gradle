@@ -1,1 +1,3 @@
+include ':gms'
+include ':hms'
 include ':app', ':core'
