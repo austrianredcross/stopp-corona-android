@@ -10,7 +10,7 @@
 *.class
 
 # generated files
-/build
+*/build
 .idea/*
 !.idea/localizerSettings.xml
 !.idea/mvpAddSettings.xml

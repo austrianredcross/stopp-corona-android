@@ -1,5 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="at.roteskreuz.stopcorona.hms">
 
-    /
+    <application>
+
+        <service
+            android:name="at.roteskreuz.stopcorona.hms.ContactShieldIntentService"
+            android:enabled="true"
+            android:exported="true" />
+
+    </application>
+
 </manifest>

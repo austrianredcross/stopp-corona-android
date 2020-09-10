@@ -1,3 +1,5 @@
+include ':play-services-nearby-18.0.2-eap'
+include ':common_exposure'
 include ':gms'
 include ':hms'
 include ':app', ':core'
