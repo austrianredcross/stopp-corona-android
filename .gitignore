@@ -10,7 +10,7 @@
 *.class
 
 # generated files
-*/build
+*/build/*
 .idea/*
 !.idea/localizerSettings.xml
 !.idea/mvpAddSettings.xml
@@ -44,3 +44,4 @@ thumbs.db
 /.babelish.token
 /app/src/prodApi/google-services.json
 /app/src/stageApi/google-services.json
+

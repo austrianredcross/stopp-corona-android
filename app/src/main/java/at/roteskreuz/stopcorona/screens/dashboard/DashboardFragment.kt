@@ -127,9 +127,6 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
                         startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
                     }
-                    is PrerequisitesError.BatteryOptimizationsNotIgnored -> {
-                        startBatteryOptimisationSettingsForResult(REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG)
-                    }
                     is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                         startDialogToEnableBluetooth()
                     }

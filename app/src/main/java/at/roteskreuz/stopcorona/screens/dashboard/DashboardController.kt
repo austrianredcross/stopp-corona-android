@@ -315,16 +315,6 @@ class DashboardController(
 
                 emptySpace(modelCountBuiltSoFar, 16)
             }
-            is BatteryOptimizationsNotIgnored -> {
-                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                    id("battery_optimizations_not_ignored")
-                    title(context.string(R.string.main_exposure_error_battery_optimizations_not_ignored_title))
-                    description(context.string(R.string.main_exposure_error_battery_optimizations_not_ignored_message))
-                    action(context.string(R.string.main_exposure_error_battery_optimizations_not_ignored_action_btn))
-                }
-
-                emptySpace(modelCountBuiltSoFar, 16)
-            }
         }
     }
 
