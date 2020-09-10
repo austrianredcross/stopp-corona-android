@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.EXPOSURE_ARCHIVES_FOLDER
 import at.roteskreuz.stopcorona.model.entities.configuration.DbConfiguration
 import at.roteskreuz.stopcorona.model.entities.session.DbBatchPart
@@ -15,10 +16,9 @@ import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import com.google.android.gms.nearby.exposurenotification.*
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -121,7 +121,7 @@ class ExposureNotificationRepositoryImpl(
     private val appDispatchers: AppDispatchers,
     private val bluetoothManager: BluetoothManager,
     private val configurationRepository: ConfigurationRepository,
-    private val exposureNotificationClient: ExposureNotificationClient,
+    private val exposureNotificationClient: CommonExposureClient,
     private val filesRepository: FilesRepository
 ) : ExposureNotificationRepository,
     CoroutineScope {
@@ -155,32 +155,38 @@ class ExposureNotificationRepositoryImpl(
             return
         }
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.start()
-            .addOnSuccessListener {
+
+        launch(coroutineContext) {
+
+            try {
+                exposureNotificationClient.start()
+                refreshExposureNotificationAppRegisteredState()
+
                 registeringWithFrameworkState.idle()
-            }
-            .addOnFailureListener { exception: Exception ->
+            } catch (error: Exception) {
                 frameworkEnabledStateSubject.onNext(false)
-                registeringWithFrameworkState.error(exception)
+                registeringWithFrameworkState.error(error)
             }
-            .addOnCanceledListener {
-                registeringWithFrameworkState.error(CancellationException())
-            }
+
+        }
+
     }
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.start()
-            .addOnSuccessListener {
+
+        launch(coroutineContext) {
+            try {
+                exposureNotificationClient.start()
+
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
+
+            } catch (error: Exception) {
+                registeringWithFrameworkState.error(error)
             }
-            .addOnFailureListener { exception: Exception ->
-                registeringWithFrameworkState.error(exception)
-            }
-            .addOnCanceledListener {
-                registeringWithFrameworkState.error(CancellationException())
-            }
+        }
+
     }
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
@@ -194,25 +200,34 @@ class ExposureNotificationRepositoryImpl(
             return
         }
         registeringWithFrameworkState.loading()
-        exposureNotificationClient.stop()
-            .addOnSuccessListener {
+
+        launch(coroutineContext) {
+            try {
+                exposureNotificationClient.stop()
+
                 refreshExposureNotificationAppRegisteredState()
                 registeringWithFrameworkState.idle()
+
+            } catch (error: Exception) {
+                registeringWithFrameworkState.error(error)
             }
-            .addOnFailureListener { exception: Exception ->
-                registeringWithFrameworkState.error(exception)
-            }
+
+        }
+
     }
 
     override fun refreshExposureNotificationAppRegisteredState() {
-        exposureNotificationClient.isEnabled
-            .addOnSuccessListener { enabled: Boolean ->
-                updateAppRegisteredState(enabled)
-            }
-            .addOnFailureListener {
+
+        launch(coroutineContext) {
+            try {
+                val isServiceRunning = exposureNotificationClient.isRunning()
+                updateAppRegisteredState(isServiceRunning)
+            } catch (error: Exception) {
                 updateAppRegisteredState(false)
-                Timber.e(SilentError(it))
+                Timber.e(SilentError(error))
             }
+        }
+
     }
 
     override fun getExposureSettingsIntent(): Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
@@ -232,13 +247,13 @@ class ExposureNotificationRepositoryImpl(
     }
 
     override suspend fun refreshAndGetAppRegisteredForExposureNotificationsCurrentState(): Boolean {
-        val enabled = exposureNotificationClient.isEnabled.await()
+        val enabled = exposureNotificationClient.isRunning()
         updateAppRegisteredState(enabled) // update the state while reading
         return enabled
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
-        return exposureNotificationClient.temporaryExposureKeyHistory.await()
+        return exposureNotificationClient.getTemporaryExposureKeys()
     }
 
     override suspend fun provideDiagnosisKeyBatch(batches: List<DbBatchPart>, token: String): Boolean {
@@ -268,7 +283,7 @@ class ExposureNotificationRepositoryImpl(
         exposureConfiguration: ExposureConfiguration,
         token: String
     ) {
-        exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
+        exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
     }
 
     private fun DbConfiguration.getExposureConfiguration(): ExposureConfiguration {
@@ -283,10 +298,10 @@ class ExposureNotificationRepositoryImpl(
     }
 
     override suspend fun determineRiskWithoutInformingUser(token: String): ExposureSummary {
-        return exposureNotificationClient.getExposureSummary(token).await()
+        return exposureNotificationClient.getExposureSummary(token)
     }
 
     override suspend fun getExposureInformationWithPotentiallyInformingTheUser(token: String): List<ExposureInformation> {
-        return exposureNotificationClient.getExposureInformation(token).await()
+        return exposureNotificationClient.getExposureInformation(token)
     }
 }
