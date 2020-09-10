@@ -153,6 +153,10 @@ dependencies {
 
     implementation project(":core")
 
+    implementation project(":common_exposure")
+    googleImplementation project(":gms")
+    huaweiImplementation project(":hms")
+
 
     kapt "androidx.room:room-compiler:2.2.4"
 
