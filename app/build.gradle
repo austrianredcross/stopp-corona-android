@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: 'com.huawei.agconnect'
 apply from: "$rootDir/gradle/base.gradle"
 
 def apiVersion = "2.0"
