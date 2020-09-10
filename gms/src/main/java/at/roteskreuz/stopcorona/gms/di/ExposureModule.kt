@@ -5,7 +5,7 @@ import at.roteskreuz.stoppcorona.google.GoogleExposureClient
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.Nearby
 import org.koin.android.ext.koin.androidApplication
-import org.koin.dsl.module
+import org.koin.dsl.module.module
 
 
 val exposureModule = module {
