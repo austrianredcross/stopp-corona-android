@@ -1,8 +1,9 @@
-package at.roteskreuz.stoppcorona.google
+package at.roteskreuz.stopcorona.gms
 
 import android.app.Application
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
+import at.roteskreuz.stoppcorona.google.GoogleServiceStatus
 import com.google.android.gms.common.ConnectionResult
 
 import com.google.android.gms.common.GoogleApiAvailability

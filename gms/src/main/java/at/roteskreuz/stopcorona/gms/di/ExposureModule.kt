@@ -1,7 +1,7 @@
 package at.roteskreuz.stopcorona.gms.di
 
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
-import at.roteskreuz.stoppcorona.google.GoogleExposureClient
+import at.roteskreuz.stopcorona.gms.GoogleExposureClient
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.Nearby
 import org.koin.android.ext.koin.androidApplication
