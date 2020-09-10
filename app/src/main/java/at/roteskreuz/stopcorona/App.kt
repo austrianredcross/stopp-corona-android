@@ -7,9 +7,7 @@ import android.os.Build
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.di.*
-import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.skeleton.core.BaseApp
-import org.koin.android.ext.android.get
 import org.koin.dsl.module.Module
 
 /**

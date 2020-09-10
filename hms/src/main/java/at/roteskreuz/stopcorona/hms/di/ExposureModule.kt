@@ -5,16 +5,23 @@ import at.roteskreuz.stopcorona.hms.HuaweiExposureClient
 import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.contactshield.ContactShield
 import org.koin.android.ext.koin.androidApplication
+import org.koin.dsl.module.Module
 import org.koin.dsl.module.module
 
 
-val exposureModule = module {
+fun getExposureModule(intentServiceClass: Class<*>): Module {
 
-    single { HuaweiApiAvailability.getInstance() }
-    single { ContactShield.getContactShieldEngine(androidApplication()) }
+    return module {
 
-    single<CommonExposureClient> {
-        HuaweiExposureClient(androidApplication(), get(), get())
+        single { HuaweiApiAvailability.getInstance() }
+        single { ContactShield.getContactShieldEngine(androidApplication()) }
+
+        single<CommonExposureClient> {
+            HuaweiExposureClient(androidApplication(), get(), get(), intentServiceClass)
+        }
+
     }
 
+
 }
+

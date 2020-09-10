@@ -18,7 +18,8 @@ import java.io.File
 class HuaweiExposureClient(
     private val application: Application,
     private val huaweiApiAvailability: HuaweiApiAvailability,
-    private val contactShieldEngine: ContactShieldEngine
+    private val contactShieldEngine: ContactShieldEngine,
+    private val intentServiceClass: Class<*>
 ) : CommonExposureClient {
 
     override suspend fun start() {
@@ -28,7 +29,7 @@ class HuaweiExposureClient(
         val pendingIntent: PendingIntent = PendingIntent.getService(
             application,
             REQUEST_CODE,
-            Intent(application, ContactShieldIntentService::class.java),
+            Intent(application, intentServiceClass),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         contactShieldEngine.startContactShield(pendingIntent, ContactShieldSetting.DEFAULT).await()
