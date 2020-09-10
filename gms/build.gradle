@@ -28,7 +28,14 @@ dependencies {
 
     implementation project(":common_exposure")
 
+    // see https://tasks.pxp-x.com/browse/CTAA-1499 and https://github.com/google/exposure-notifications-android/issues/23
+    // we keep the unreliable file dependency with manual play-services-base
+    implementation 'com.google.android.gms:play-services-base:17.3.0'
+    implementation project(":play-services-nearby-18.0.2-eap")
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.7"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
