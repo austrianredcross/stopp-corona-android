@@ -153,6 +153,7 @@ dependencies {
 
     implementation project(":core")
 
+    // TODO: Get rid of this dependency in app-gradle by moving the dependent logic into 'gms' module
     // see https://tasks.pxp-x.com/browse/CTAA-1499 and https://github.com/google/exposure-notifications-android/issues/23
     // we keep the unreliable file dependency with manual play-services-base
     implementation 'com.google.android.gms:play-services-base:17.3.0'
