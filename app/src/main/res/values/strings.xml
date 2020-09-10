@@ -79,6 +79,13 @@
 	<string name="main_microphone_explanation_dialog_do_not_show_again">Don\'t show again</string>
 	<string name="main_status_update_headline">Status update</string>
 	<string name="main_status_update_contact_sickness_not_confirmed_message">The suspicion of one or more of your contacts has not been confirmed.</string>
+	<string name="main_exposure_error_hms_unavailable_title">Huawei Mobile Services is not available</string>
+	<string name="main_exposure_error_hms_device_too_old_message">This device is too old and therefore not supported.</string>
+	<string name="main_exposure_error_hms_core_not_found_message">HMS Core not found.</string>
+	<string name="main_exposure_error_hms_out_of_date_message">HMS Core out of date.</string>
+	<string name="main_exposure_error_hms_unavailable_message">HMS Core unavailable.</string>
+	<string name="main_exposure_error_hms_unofficial_message">This device uses an unofficial version of HMS Core.</string>
+	<string name="main_exposure_error_hms_unknown_error_message">An unknown HMS Core error occurred.</string>
 	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services is not available</string>
 	<string name="main_exposure_error_google_play_unavailable_missing_message">The service is missing.</string>
 	<string name="main_exposure_error_google_play_unavailable_updating_message">The service is currently being updated.</string>

@@ -91,7 +91,7 @@ class DashboardController(
              * Add single space if own OR contact health state are available AND someone has recovered
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                    contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
+                        contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
                 someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -108,8 +108,8 @@ class DashboardController(
              * Add single space if own or contact health state are available or someone has recovered AND the quarantine should end
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                    contactsHealthStatus != HealthStatusData.NoHealthStatus ||
-                    someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
+                        contactsHealthStatus != HealthStatusData.NoHealthStatus ||
+                        someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
                 showQuarantineEnd
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -256,11 +256,15 @@ class DashboardController(
         }
     }
 
+
     /**
      * Display an error card if some of exposure prerequisites checks failed.
      */
     private fun buildPrerequisitesErrorCard(phase: ExposureNotificationPhase) {
         when (phase) {
+
+            is HuaweiErrorPhase -> buildHuaweiErrorCard(phase)
+
             is UnavailableGooglePlayServices -> {
                 exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
                     id("unavailable_google_play_services")
@@ -316,6 +320,29 @@ class DashboardController(
                 emptySpace(modelCountBuiltSoFar, 16)
             }
         }
+    }
+
+    private fun buildHuaweiErrorCard(error: HuaweiErrorPhase) {
+        exposureNotificationError(onClick = { onExposureNotificationErrorActionClick(error) },
+            modelInitializer = {
+
+                id("huawei_mobile_services_error")
+                title(context.string(R.string.main_exposure_error_hms_unavailable_title))
+
+                val message = when (error) {
+                    is HuaweiErrorPhase.DeviceTooOld -> context.string(R.string.main_exposure_error_hms_device_too_old_message)
+                    is HuaweiErrorPhase.HmsCoreNotFound -> context.string(R.string.main_exposure_error_hms_core_not_found_message)
+                    is HuaweiErrorPhase.OutOfDate -> context.string(R.string.main_exposure_error_hms_out_of_date_message)
+                    is HuaweiErrorPhase.Unavailable -> context.string(R.string.main_exposure_error_hms_unavailable_title)
+                    is HuaweiErrorPhase.UnofficialVersion -> context.string(R.string.main_exposure_error_hms_unofficial_message)
+                    is HuaweiErrorPhase.UnknownStatus -> context.string(R.string.main_exposure_error_hms_unknown_error_message)
+                }
+
+                description(message)
+            })
+
+        emptySpace(modelCountBuiltSoFar, 16)
+
     }
 
     /**
@@ -453,7 +480,7 @@ class DashboardController(
 
         val healthStatusDataMatches =
             ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-                ownHealthStatus is HealthStatusData.SicknessCertificate
+                    ownHealthStatus is HealthStatusData.SicknessCertificate
 
         val uploadMissingExposureKeys = uploadMissingExposureKeys
         if (healthStatusDataMatches && uploadMissingExposureKeys != null) {
