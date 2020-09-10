@@ -11,6 +11,7 @@ import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
+import at.roteskreuz.stopcorona.model.workers.ExposureMatchingWorker
 import at.roteskreuz.stopcorona.model.workers.UploadMissingExposureKeysReminderWorker
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
@@ -120,6 +121,16 @@ class ExposureNotificationManagerImpl(
         phaseObservable
             .subscribe { state ->
                 Timber.d("Current exposure notification state is ${state.javaClass.simpleName}")
+
+                when (state) {
+                    is ExposureNotificationPhase.FrameworkRunning -> {
+                        // enqueue the periodic work request to run the exposure matching algorithm when framework is running
+                        // if the periodic work is already scheduled, nothing will happen
+                        // this ensures to check exposure matching only if user started the framework at least once
+                        ExposureMatchingWorker.enqueueExposurePeriodicMatching(workManager)
+                    }
+                }
+
                 state.onCreate { newState ->
                     state.onCleared()
                     exposureNotificationPhaseSubject.onNext(newState)
