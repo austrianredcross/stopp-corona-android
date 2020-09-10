@@ -50,10 +50,22 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    flavorDimensions "api", "platform"
 
     productFlavors {
+
+        google {
+            dimension "platform"
+        }
+
+        huawei {
+            dimension "platform"
+        }
+
         dummyApi {
+
+            dimension "api"
+
             /*
              * Default values provided for CI during merge requests only.
              *
@@ -72,6 +84,9 @@ android {
         }
 
         stageApi {
+
+            dimension "api"
+
             applicationIdSuffix ".stage"
             versionName versionString + "." + buildCode.toString() + "-" + getGitDescribe() + "-stageApi"
 
@@ -88,6 +103,9 @@ android {
         }
 
         prodApi {
+
+            dimension "api"
+
             buildConfigField "String", "HOSTNAME", resolveProperty("PROD_HOSTNAME", '"dummy"')
             buildConfigField "String", "BASE_URL", resolveProperty("PROD_BASE_URL", '"dummy"')
             buildConfigField "String", "HOSTNAME_TAN", resolveProperty("PROD_HOSTNAME_TAN", '"dummy"')
