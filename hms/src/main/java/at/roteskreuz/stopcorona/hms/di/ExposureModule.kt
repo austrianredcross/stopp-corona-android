@@ -1,4 +1,4 @@
-package at.roteskreuz.stoppcorona.huawei.di
+package at.roteskreuz.stopcorona.hms.di
 
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.hms.HuaweiExposureClient
