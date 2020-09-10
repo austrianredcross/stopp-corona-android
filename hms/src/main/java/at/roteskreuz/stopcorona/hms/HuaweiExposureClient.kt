@@ -46,7 +46,13 @@ class HuaweiExposureClient(
     }
 
     override suspend fun isRunning(): Boolean {
-        return contactShieldEngine.isContactShieldRunning.await()
+
+        Timber.tag(LOG_TAG).d("Checking if HMS ContactShield is running...")
+        val isRunning: Boolean = contactShieldEngine.isContactShieldRunning.await()
+
+        Timber.tag(LOG_TAG).d("HMS ContactShield running: $isRunning")
+        return isRunning
+
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
