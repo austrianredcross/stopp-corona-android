@@ -6,12 +6,12 @@ import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.hms.BuildConfig
-import at.roteskreuz.stopcorona.hms.AbstractContactShieldIntentService
+import at.roteskreuz.stopcorona.hms.ContactShieldServiceProcessor
 import at.roteskreuz.stopcorona.model.workers.ProcessDiagnosisKeysWorker
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
-class ContactShieldService : AbstractContactShieldIntentService(), KoinComponent {
+class ContactShieldServiceProcessorImpl : ContactShieldServiceProcessor, KoinComponent {
 
     private val workManager: WorkManager by inject()
 

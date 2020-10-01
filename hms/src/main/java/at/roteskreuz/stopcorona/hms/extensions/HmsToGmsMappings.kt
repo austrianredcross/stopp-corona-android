@@ -9,6 +9,8 @@ import com.huawei.hms.contactshield.ContactDetail
 import com.huawei.hms.contactshield.ContactSketch
 import com.huawei.hms.contactshield.DiagnosisConfiguration
 import com.huawei.hms.contactshield.PeriodicKey
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 fun PeriodicKey.toTemporaryExposureKey(): TemporaryExposureKey {
 
@@ -17,12 +19,10 @@ fun PeriodicKey.toTemporaryExposureKey(): TemporaryExposureKey {
         .setRollingStartIntervalNumber(getPeriodicKeyValidTime().toInt())
         .setRollingPeriod(getPeriodicKeyLifeTime().toInt())
         .setTransmissionRiskLevel(getInitialRiskLevel())
-        .build();
-
+        .build()
 }
 
 fun ContactSketch.toExposureSummary(): ExposureSummary {
-
     return ExposureSummary.ExposureSummaryBuilder()
         .setDaysSinceLastExposure(getDaysSinceLastHit())
         .setMatchedKeyCount(getNumberOfHits())
@@ -34,9 +34,8 @@ fun ContactSketch.toExposureSummary(): ExposureSummary {
 }
 
 fun ContactDetail.toExposureInformation(): ExposureInformation {
-
     return ExposureInformationBuilder()
-        .setDateMillisSinceEpoch(getDayNumber())
+        .setDateMillisSinceEpoch(Instant.EPOCH.plus(getDayNumber(), ChronoUnit.DAYS).toEpochMilli())
         .setAttenuationValue(getAttenuationRiskValue())
         .setTransmissionRiskLevel(getInitialRiskLevel())
         .setDurationMinutes(getDurationMinutes())
@@ -46,13 +45,6 @@ fun ContactDetail.toExposureInformation(): ExposureInformation {
 }
 
 fun ExposureConfiguration.toDiagnosisConfiguration(): DiagnosisConfiguration {
-
-    val test: ExposureConfiguration = ExposureConfiguration.ExposureConfigurationBuilder()
-        .build()
-
-
-    val something = test.minimumRiskScore
-
     return DiagnosisConfiguration.Builder()
         .setMinimumRiskValueThreshold(minimumRiskScore)
         .setAttenuationRiskValues(*attenuationScores)

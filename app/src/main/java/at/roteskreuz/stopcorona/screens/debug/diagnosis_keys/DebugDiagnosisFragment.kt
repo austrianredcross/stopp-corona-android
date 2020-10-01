@@ -91,7 +91,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
                 return@setOnCheckedChangeListener
             }
             if (isChecked) {
-                activity?.let { viewModel.startExposureNotifications(it) }
+                activity?.let { viewModel.startExposureNotifications() }
             } else {
                 viewModel.stopExposureNotifications()
             }

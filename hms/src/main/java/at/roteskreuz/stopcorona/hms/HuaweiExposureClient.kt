@@ -18,21 +18,13 @@ import java.io.File
 class HuaweiExposureClient(
     private val application: Application,
     private val huaweiApiAvailability: HuaweiApiAvailability,
-    private val contactShieldEngine: ContactShieldEngine,
-    private val intentServiceClass: Class<*>
+    private val contactShieldEngine: ContactShieldEngine
 ) : CommonExposureClient {
 
     override suspend fun start() {
 
         Timber.tag(LOG_TAG).d("Trying to start HMS ContactShield...")
-
-        val pendingIntent: PendingIntent = PendingIntent.getService(
-            application,
-            REQUEST_CODE,
-            Intent(application, intentServiceClass),
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        contactShieldEngine.startContactShield(pendingIntent, ContactShieldSetting.DEFAULT).await()
+        contactShieldEngine.startContactShield(ContactShieldSetting.DEFAULT).await()
 
         Timber.tag(LOG_TAG).d("HMS ContactShield successfully started.")
     }
@@ -68,7 +60,10 @@ class HuaweiExposureClient(
     ) {
         val huaweiConfiguration: DiagnosisConfiguration =
             exposureConfiguration.toDiagnosisConfiguration()
-        contactShieldEngine.putSharedKeyFiles(archives, huaweiConfiguration, token)
+
+        val pendingIntent = PendingIntent.getService(application, 0, Intent(application, ContactShieldIntentService::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
+
+        contactShieldEngine.putSharedKeyFiles(pendingIntent, archives, huaweiConfiguration, token)
     }
 
     override suspend fun getExposureSummary(token: String): ExposureSummary {

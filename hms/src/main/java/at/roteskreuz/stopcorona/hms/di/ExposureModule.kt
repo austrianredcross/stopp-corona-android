@@ -8,8 +8,7 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module.Module
 import org.koin.dsl.module.module
 
-
-fun getExposureModule(intentServiceClass: Class<*>): Module {
+fun getExposureModule(): Module {
 
     return module {
 
@@ -17,11 +16,9 @@ fun getExposureModule(intentServiceClass: Class<*>): Module {
         single { ContactShield.getContactShieldEngine(androidApplication()) }
 
         single<CommonExposureClient> {
-            HuaweiExposureClient(androidApplication(), get(), get(), intentServiceClass)
+            HuaweiExposureClient(androidApplication(), get(), get())
         }
-
     }
-
 
 }
 

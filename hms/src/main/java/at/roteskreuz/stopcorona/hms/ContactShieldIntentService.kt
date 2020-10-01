@@ -1,28 +1,25 @@
 package at.roteskreuz.stopcorona.hms
 
 import android.app.IntentService
-import android.content.Context
 import android.content.Intent
 import com.huawei.hms.contactshield.ContactShieldEngine
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
 
-abstract class AbstractContactShieldIntentService : IntentService("StoppCorona_ContactShieldIntentService"), KoinComponent {
+class ContactShieldIntentService : IntentService("StoppCorona_ContactShieldIntentService"), KoinComponent {
 
-    abstract fun onExposureStateUpdated(context: Context, token: String)
+    private val processor by inject<ContactShieldServiceProcessor>()
 
     private val contactShieldEngine: ContactShieldEngine by inject()
     private val callback: com.huawei.hms.contactshield.ContactShieldCallback = object : com.huawei.hms.contactshield.ContactShieldCallback {
 
         override fun onHasContact(token: String?) {
-
             Timber.tag(LOG_TAG).d("Has contact with '$token'.")
 
             if (token != null) {
-                onExposureStateUpdated(this@AbstractContactShieldIntentService, token)
+                processor.onExposureStateUpdated(this@ContactShieldIntentService, token)
             }
-
         }
 
         override fun onNoContact(token: String?) {
@@ -30,7 +27,7 @@ abstract class AbstractContactShieldIntentService : IntentService("StoppCorona_C
             Timber.tag(LOG_TAG).d("Has no contact with '$token'.")
 
             if (token != null) {
-                onExposureStateUpdated(this@AbstractContactShieldIntentService, token)
+                processor.onExposureStateUpdated(this@ContactShieldIntentService, token)
             }
         }
 
@@ -44,9 +41,7 @@ abstract class AbstractContactShieldIntentService : IntentService("StoppCorona_C
         }
 
         contactShieldEngine.handleIntent(intent, callback)
-
     }
-
 
     companion object {
         private const val LOG_TAG = "ContactShieldService"
