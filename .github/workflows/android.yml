@@ -1,4 +1,4 @@
-name: Android CI
+  name: Android CI
 
 on:
   pull_request:
@@ -17,5 +17,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Gradle
-      run: ./gradlew testDummyApiRelease
+    - name: Build GMS with Gradle
+      run: ./gradlew clean testDummyApiGoogleRelease
+    - name: Build HMS with Gradle
+      run: ./gradlew clean testDummyApiHuaweiRelease
