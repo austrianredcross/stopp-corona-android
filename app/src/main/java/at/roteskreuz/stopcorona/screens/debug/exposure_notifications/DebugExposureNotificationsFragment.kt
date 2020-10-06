@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
@@ -18,6 +19,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
+import at.roteskreuz.stopcorona.utils.isGmsAvailable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,6 +42,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
         super.onViewCreated(view, savedInstanceState)
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
+        exposureNotificationsSettingsButton.isVisible = requireContext().isGmsAvailable()
 
         val uploadKeylistener = View.OnClickListener {button ->
             val tan = exposureNotificationsTanEditText.text.toString()

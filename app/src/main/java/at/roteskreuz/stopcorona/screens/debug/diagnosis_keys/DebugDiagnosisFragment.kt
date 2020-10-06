@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
@@ -15,6 +16,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
+import at.roteskreuz.stopcorona.utils.isGmsAvailable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsErrorMessage
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsMasterSwitch
@@ -40,6 +42,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
         super.onViewCreated(view, savedInstanceState)
 
         exposureNotificationsSettingsButton.setOnClickListener { viewModel.jumpToSystemSettings() }
+        exposureNotificationsSettingsButton.isVisible = requireContext().isGmsAvailable()
 
         exposureNotificationsTracingKeysDownloadIndexButton.setOnClickListener { viewModel.downloadDiagnosisKeysArchiveIndex() }
 
