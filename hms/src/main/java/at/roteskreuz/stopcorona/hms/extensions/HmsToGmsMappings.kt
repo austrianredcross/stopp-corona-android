@@ -19,6 +19,7 @@ fun PeriodicKey.toTemporaryExposureKey(): TemporaryExposureKey {
         .setRollingStartIntervalNumber(getPeriodicKeyValidTime().toInt())
         .setRollingPeriod(getPeriodicKeyLifeTime().toInt())
         .setTransmissionRiskLevel(getInitialRiskLevel())
+        .setReportType(getReportType())
         .build()
 }
 
