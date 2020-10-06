@@ -14,6 +14,8 @@ import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.contactshield.*
 import timber.log.Timber
 import java.io.File
+import java.time.LocalDate
+import java.time.ZoneOffset.UTC
 
 class HuaweiExposureClient(
     private val application: Application,
@@ -49,8 +51,15 @@ class HuaweiExposureClient(
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
-        val periodKeys: List<PeriodicKey> = contactShieldEngine.periodicKey.await()
+        val periodKeys = removeTEKsOfToday(contactShieldEngine.periodicKey.await())
         return periodKeys.map { it.toTemporaryExposureKey() }
+    }
+
+    private fun removeTEKsOfToday(periodKeys: List<PeriodicKey>) : List<PeriodicKey>{
+        val todayMinutesTenFractions = LocalDate.now().atStartOfDay().toEpochSecond(UTC) / (10 * 60)
+        return periodKeys.filter { k ->
+            k.periodicKeyValidTime < todayMinutesTenFractions
+        }
     }
 
     override suspend fun provideDiagnosisKeys(
