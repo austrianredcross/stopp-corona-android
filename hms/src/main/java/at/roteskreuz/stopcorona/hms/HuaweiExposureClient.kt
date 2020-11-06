@@ -51,15 +51,8 @@ class HuaweiExposureClient(
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
-        val periodKeys = removeTEKsOfToday(contactShieldEngine.periodicKey.await())
+        val periodKeys = contactShieldEngine.periodicKey.await()
         return periodKeys.map { it.toTemporaryExposureKey() }
-    }
-
-    private fun removeTEKsOfToday(periodKeys: List<PeriodicKey>) : List<PeriodicKey>{
-        val todayMinutesTenFractions = LocalDate.now().atStartOfDay().toEpochSecond(UTC) / (10 * 60)
-        return periodKeys.filter { k ->
-            k.periodicKeyValidTime < todayMinutesTenFractions
-        }
     }
 
     override suspend fun provideDiagnosisKeys(
