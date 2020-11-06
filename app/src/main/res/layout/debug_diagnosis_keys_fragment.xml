@@ -26,7 +26,7 @@
 
     </ScrollView>
     <TextView
-        android:id="@+id/googlePlayServicesVersionTextView"
+        android:id="@+id/servicesVersionTextView"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:textAppearance="?attr/textAppearanceBody2" />

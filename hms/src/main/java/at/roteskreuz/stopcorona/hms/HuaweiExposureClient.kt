@@ -2,10 +2,13 @@ package at.roteskreuz.stopcorona.hms
 
 import android.app.Application
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stopcorona.hms.extensions.*
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
@@ -92,6 +95,19 @@ class HuaweiExposureClient(
             21 -> HuaweiServiceStatus.DeviceTooOld(result)
             else -> HuaweiServiceStatus.UnknownStatus(result)
 
+        }
+    }
+
+    override fun getServiceVersion(context : Context): String {
+        return "Huawei Mobile Services: ${huaweiMobileServicesVersion(context)}";
+    }
+
+    private fun huaweiMobileServicesVersion(context: Context): String {
+        return try {
+            context.packageManager.getPackageInfo(HuaweiApiAvailability.SERVICES_PACKAGE, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            Timber.e(e, "Couldn't get the app version")
+            "Not Available"
         }
     }
 

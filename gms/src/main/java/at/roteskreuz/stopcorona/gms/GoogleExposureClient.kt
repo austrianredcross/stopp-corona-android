@@ -1,6 +1,9 @@
 package at.roteskreuz.stopcorona.gms
 
 import android.app.Application
+import android.content.Context
+import android.content.pm.PackageManager
+import android.util.Log
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stoppcorona.google.GoogleServiceStatus
@@ -64,6 +67,19 @@ class GoogleExposureClient(
             else -> GoogleServiceStatus.UnknownStatus(statusCode)
         }
 
+    }
+
+    override fun getServiceVersion(context : Context): String {
+        return "Google Mobile Services: ${googleMobileServicesVersion(context)}";
+    }
+
+    private fun googleMobileServicesVersion(context: Context): String {
+        return try {
+            context.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.e(GoogleExposureClient::class.java.simpleName, "Couldn't get the app version", e)
+            "Not Available"
+        }
     }
 
     private companion object {

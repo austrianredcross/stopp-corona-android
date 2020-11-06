@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.R
@@ -131,24 +132,8 @@ class DebugDiagnosisKeysViewModel(
         contextInteractor.applicationContext.startActivity(intent)
     }
 
-    fun googlePlayServicesVersion(): String {
-        return contextInteractor.applicationContext.getString(
-            R.string.debug_version_gms,
-            getVersionNameForPackage(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE)
-        )
-    }
-
-    /**
-     * Gets the version name for a specified package. Returns a debug string if not found.
-     */
-    private fun getVersionNameForPackage(packageName: String): String? {
-        try {
-            return contextInteractor.applicationContext.packageManager
-                .getPackageInfo(packageName, 0).versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            Timber.e(e, "Couldn't get the app version")
-        }
-        return contextInteractor.applicationContext.getString(R.string.debug_version_not_available)
+    fun getServicesVersion(context: Context): String {
+        return commonExposureClient.getServiceVersion(context)
     }
 
     fun resolutionForRegistrationSucceeded(activity: Activity) {

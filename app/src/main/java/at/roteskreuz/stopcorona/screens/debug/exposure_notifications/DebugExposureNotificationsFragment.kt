@@ -68,7 +68,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
 
         exposureNotificationsTanButton.setOnClickListener { viewModel.requestTan(exposureNotificationsPhoneNumberEditText.text.toString()) }
 
-        googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
+        servicesVersionTextView.text = viewModel.getServicesVersion(requireContext())
 
         disposables += viewModel.observeEnabledState()
             .observeOnMainThread()
