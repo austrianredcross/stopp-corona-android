@@ -17,7 +17,8 @@ import java.io.File
 class GoogleExposureClient(
     private val application: Application,
     private val googleApiAvailability: GoogleApiAvailability,
-    private val exposureNotificationClient: ExposureNotificationClient
+    private val exposureNotificationClient: ExposureNotificationClient,
+    private val minSupportedGooglePlayApkVersion : Int
 ) : CommonExposureClient {
 
     override suspend fun start() {
@@ -53,7 +54,7 @@ class GoogleExposureClient(
         val statusCode = googleApiAvailability.isGooglePlayServicesAvailable(application)
         val version = googleApiAvailability.getApkVersion(application)
 
-        if (version < MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION) {
+        if (version < minSupportedGooglePlayApkVersion) {
             return GoogleServiceStatus.InvalidVersionOfGooglePlayServices
         }
 
@@ -80,9 +81,5 @@ class GoogleExposureClient(
             Log.e(GoogleExposureClient::class.java.simpleName, "Couldn't get the app version", e)
             "Not Available"
         }
-    }
-
-    private companion object {
-        const val MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION = 201813000
     }
 }
