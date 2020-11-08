@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply plugin: 'com.huawei.agconnect'
 apply from: "$rootDir/gradle/base.gradle"
 
 def apiVersion = "2.0"
@@ -60,6 +59,7 @@ android {
         }
 
         huawei {
+            apply plugin: 'com.huawei.agconnect'
             dimension "platform"
         }
 
@@ -154,12 +154,8 @@ dependencies {
 
     implementation project(":core")
 
-    // TODO: Get rid of this dependency in app-gradle by moving the dependent logic into 'gms' module
-    // see https://tasks.pxp-x.com/browse/CTAA-1499 and https://github.com/google/exposure-notifications-android/issues/23
-    // we keep the unreliable file dependency with manual play-services-base
     implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation project(":play-services-nearby-exposurenotification-1.6.1-eap")
-//    implementation project(":play-services-nearby-18.0.2-eap")
 
     implementation project(":common_exposure")
     googleImplementation project(":gms")
@@ -169,7 +165,6 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.4"
 
     def coroutinesVersion = "1.3.7"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion"
 
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"

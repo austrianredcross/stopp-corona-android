@@ -1,5 +1,4 @@
 include ':play-services-nearby-exposurenotification-1.6.1-eap'
-include ':play-services-nearby-18.0.2-eap'
 include ':common_exposure'
 include ':gms'
 include ':hms'

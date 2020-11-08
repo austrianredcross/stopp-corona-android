@@ -37,7 +37,7 @@ class GoogleExposureClient(
     }
 
     override suspend fun provideDiagnosisKeys(archives: List<File>, exposureConfiguration: ExposureConfiguration, token: String) {
-        exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
+        exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token).await()
     }
 
     override suspend fun getExposureSummary(token: String): ExposureSummary {
@@ -50,7 +50,7 @@ class GoogleExposureClient(
 
     override fun getServiceStatus(): ExposureServiceStatus {
 
-        val statusCode: Int = googleApiAvailability.isGooglePlayServicesAvailable(application)
+        val statusCode = googleApiAvailability.isGooglePlayServicesAvailable(application)
         val version = googleApiAvailability.getApkVersion(application)
 
         if (version < MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION) {

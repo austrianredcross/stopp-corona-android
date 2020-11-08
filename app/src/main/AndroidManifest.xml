@@ -83,10 +83,5 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="at.roteskreuz.stopcorona.hms.ContactShieldIntentService"
-            android:enabled="true"
-            android:exported="true" />
-
     </application>
 </manifest>
