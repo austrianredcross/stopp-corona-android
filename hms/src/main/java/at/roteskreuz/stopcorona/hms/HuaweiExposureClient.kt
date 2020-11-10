@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stopcorona.hms.extensions.*
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
@@ -17,7 +16,7 @@ import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.contactshield.*
 import timber.log.Timber
 import java.io.File
-import java.time.LocalDate
+import java.time.Instant
 import java.time.ZoneOffset.UTC
 
 class HuaweiExposureClient(
@@ -54,8 +53,26 @@ class HuaweiExposureClient(
     }
 
     override suspend fun getTemporaryExposureKeys(): List<TemporaryExposureKey> {
-        val periodKeys = contactShieldEngine.periodicKey.await()
+        val periodKeys = correctParametersToSameLikeGoogle(contactShieldEngine.periodicKey.await())
         return periodKeys.map { it.toTemporaryExposureKey() }
+    }
+
+    private fun correctParametersToSameLikeGoogle(periodicKey: List<PeriodicKey>) : List<PeriodicKey>{
+        return periodicKey.map { k ->
+            PeriodicKey.Builder()
+                .setContent(k.content)
+                .setInitialRiskLevel(k.initialRiskLevel)
+                .setReportType(k.reportType)
+                .setPeriodicKeyLifeTime(FULL_DAY_ROLLING_PERIOD)
+                .setPeriodicKeyValidTime(mapToDayStartEpochMinutesTenFractions(k.periodicKeyValidTime))
+                .build()
+        }
+    }
+
+    private fun mapToDayStartEpochMinutesTenFractions(epochMinutesTenFractions : Long) : Long{
+        val epochMilliSeconds = epochMinutesTenFractions * 10 * 60 * 1000
+        val utcDate = Instant.ofEpochMilli(epochMilliSeconds).atZone(UTC).toLocalDate()
+        return utcDate.atStartOfDay().toEpochSecond(UTC) / (10 * 60)
     }
 
     override suspend fun provideDiagnosisKeys(
@@ -112,10 +129,9 @@ class HuaweiExposureClient(
     }
 
     companion object {
-
         private const val LOG_TAG = "HuaweiExposureClient"
 
-        private const val REQUEST_CODE = 1337
+        private const val FULL_DAY_ROLLING_PERIOD = 144L
     }
 
 }

@@ -15,33 +15,33 @@ import java.time.temporal.ChronoUnit
 fun PeriodicKey.toTemporaryExposureKey(): TemporaryExposureKey {
 
     return TemporaryExposureKey.TemporaryExposureKeyBuilder()
-        .setKeyData(getContent())
-        .setRollingStartIntervalNumber(getPeriodicKeyValidTime().toInt())
-        .setRollingPeriod(getPeriodicKeyLifeTime().toInt())
-        .setTransmissionRiskLevel(getInitialRiskLevel())
-        .setReportType(getReportType())
+        .setKeyData(content)
+        .setRollingStartIntervalNumber(periodicKeyValidTime.toInt())
+        .setRollingPeriod(periodicKeyLifeTime.toInt())
+        .setTransmissionRiskLevel(initialRiskLevel)
+        .setReportType(reportType)
         .build()
 }
 
 fun ContactSketch.toExposureSummary(): ExposureSummary {
     return ExposureSummary.ExposureSummaryBuilder()
-        .setDaysSinceLastExposure(getDaysSinceLastHit())
-        .setMatchedKeyCount(getNumberOfHits())
-        .setMaximumRiskScore(getMaxRiskValue())
-        .setSummationRiskScore(getSummationRiskValue())
-        .setAttenuationDurations(getAttenuationDurations())
+        .setDaysSinceLastExposure(daysSinceLastHit)
+        .setMatchedKeyCount(numberOfHits)
+        .setMaximumRiskScore(maxRiskValue)
+        .setSummationRiskScore(summationRiskValue)
+        .setAttenuationDurations(attenuationDurations)
         .build();
 
 }
 
 fun ContactDetail.toExposureInformation(): ExposureInformation {
     return ExposureInformationBuilder()
-        .setDateMillisSinceEpoch(Instant.EPOCH.plus(getDayNumber(), ChronoUnit.DAYS).toEpochMilli())
-        .setAttenuationValue(getAttenuationRiskValue())
-        .setTransmissionRiskLevel(getInitialRiskLevel())
-        .setDurationMinutes(getDurationMinutes())
-        .setAttenuationDurations(getAttenuationDurations())
-        .setTotalRiskScore(getTotalRiskValue())
+        .setDateMillisSinceEpoch(Instant.EPOCH.plus(dayNumber, ChronoUnit.DAYS).toEpochMilli())
+        .setAttenuationValue(attenuationRiskValue)
+        .setTransmissionRiskLevel(initialRiskLevel)
+        .setDurationMinutes(durationMinutes)
+        .setAttenuationDurations(attenuationDurations)
+        .setTotalRiskScore(totalRiskValue)
         .build()
 }
 
