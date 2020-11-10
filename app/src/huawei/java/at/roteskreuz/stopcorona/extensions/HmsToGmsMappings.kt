@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.hms.extensions
+package at.roteskreuz.stopcorona.extensions
 
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
@@ -9,8 +9,8 @@ import com.huawei.hms.contactshield.ContactDetail
 import com.huawei.hms.contactshield.ContactSketch
 import com.huawei.hms.contactshield.DiagnosisConfiguration
 import com.huawei.hms.contactshield.PeriodicKey
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+import org.threeten.bp.Instant
+import org.threeten.bp.temporal.ChronoUnit
 
 fun PeriodicKey.toTemporaryExposureKey(): TemporaryExposureKey {
 

@@ -1,5 +1,2 @@
 include ':play-services-nearby-exposurenotification-1.6.1-eap'
-include ':common_exposure'
-include ':gms'
-include ':hms'
 include ':app', ':core'

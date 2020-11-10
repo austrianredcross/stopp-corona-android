@@ -1,22 +1,50 @@
 package at.roteskreuz.stopcorona
 
+import android.app.IntentService
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.work.WorkManager
 import at.roteskreuz.stopcorona.constants.Constants
-import at.roteskreuz.stopcorona.hms.BuildConfig
-import at.roteskreuz.stopcorona.hms.ContactShieldServiceProcessor
 import at.roteskreuz.stopcorona.model.workers.ProcessDiagnosisKeysWorker
+import com.huawei.hms.contactshield.ContactShieldCallback
+import com.huawei.hms.contactshield.ContactShieldEngine
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
+import timber.log.Timber
 
-class ContactShieldServiceProcessorImpl : ContactShieldServiceProcessor, KoinComponent {
+class ContactShieldIntentService : IntentService("StoppCorona_ContactShieldIntentService"), KoinComponent {
 
     private val workManager: WorkManager by inject()
+    private val contactShieldEngine: ContactShieldEngine by inject()
+    private val callback: ContactShieldCallback = object : ContactShieldCallback {
 
-    override fun onExposureStateUpdated(context: Context, token: String) {
+        override fun onHasContact(token: String?) {
+            Timber.tag(LOG_TAG).d("Has contact with '$token'.")
+            token?.let {
+                onExposureStateUpdated(this@ContactShieldIntentService, token)
+            }
+        }
 
+        override fun onNoContact(token: String?) {
+            Timber.tag(LOG_TAG).d("Has no contact with '$token'.")
+            token?.let {
+                onExposureStateUpdated(this@ContactShieldIntentService, token)
+            }
+        }
+    }
+
+    override fun onHandleIntent(intent: Intent?) {
+        if (intent == null) {
+            Timber.tag(LOG_TAG).w("Received intent 'null'.")
+            return
+        }
+
+        contactShieldEngine.handleIntent(intent, callback)
+    }
+
+    private fun onExposureStateUpdated(context: Context, token: String) {
         if (BuildConfig.DEBUG) {
             showDebugNotificationProcessingFinished(context, token)
         }
@@ -34,5 +62,9 @@ class ContactShieldServiceProcessorImpl : ContactShieldServiceProcessor, KoinCom
             .build()
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(hashCode(), notification)
+    }
+
+    companion object {
+        private const val LOG_TAG = "ContactShieldService"
     }
 }

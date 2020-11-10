@@ -24,8 +24,7 @@ class App : BaseApp() {
         scopeModule,
         contextDependentModule,
         flavourDependentModule,
-        platformDependentModule,
-        bridgeModule
+        platformDependentModule
     )
 
     override fun onPostCreate() {

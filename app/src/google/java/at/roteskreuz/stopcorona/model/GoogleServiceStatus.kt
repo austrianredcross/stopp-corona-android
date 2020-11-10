@@ -1,4 +1,4 @@
-package at.roteskreuz.stoppcorona.google
+package at.roteskreuz.stopcorona
 
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 

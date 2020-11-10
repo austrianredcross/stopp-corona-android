@@ -1,24 +1,23 @@
-package at.roteskreuz.stopcorona.gms
+package at.roteskreuz.stopcorona
 
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
-import at.roteskreuz.stoppcorona.google.GoogleServiceStatus
+import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION
 import com.google.android.gms.common.ConnectionResult
 
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.exposurenotification.*
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import java.io.File
 
 class GoogleExposureClient(
     private val application: Application,
     private val googleApiAvailability: GoogleApiAvailability,
-    private val exposureNotificationClient: ExposureNotificationClient,
-    private val minSupportedGooglePlayApkVersion : Int
+    private val exposureNotificationClient: ExposureNotificationClient
 ) : CommonExposureClient {
 
     override suspend fun start() {
@@ -54,7 +53,7 @@ class GoogleExposureClient(
         val statusCode = googleApiAvailability.isGooglePlayServicesAvailable(application)
         val version = googleApiAvailability.getApkVersion(application)
 
-        if (version < minSupportedGooglePlayApkVersion) {
+        if (version < MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION) {
             return GoogleServiceStatus.InvalidVersionOfGooglePlayServices
         }
 
@@ -78,7 +77,7 @@ class GoogleExposureClient(
         return try {
             context.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
-            Log.e(GoogleExposureClient::class.java.simpleName, "Couldn't get the app version", e)
+            Timber.e(e, "Couldn't get the app version")
             "Not Available"
         }
     }

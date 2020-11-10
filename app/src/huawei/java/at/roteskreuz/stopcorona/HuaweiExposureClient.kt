@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.hms
+package at.roteskreuz.stopcorona
 
 import android.app.Application
 import android.app.PendingIntent
@@ -7,17 +7,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
-import at.roteskreuz.stopcorona.hms.extensions.*
+import at.roteskreuz.stopcorona.extensions.*
+import at.roteskreuz.stopcorona.model.HuaweiServiceStatus
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.contactshield.*
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneOffset.UTC
 import timber.log.Timber
 import java.io.File
-import java.time.Instant
-import java.time.ZoneOffset.UTC
 
 class HuaweiExposureClient(
     private val application: Application,

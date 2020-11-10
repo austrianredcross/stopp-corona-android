@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.model
 
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
-import at.roteskreuz.stopcorona.hms.HuaweiServiceStatus
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 
 fun ExposureServiceStatus.toErrorPhaseOrNull(dependencyHolder: ExposureNotificationPhase.DependencyHolder): ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase? {

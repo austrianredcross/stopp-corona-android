@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.hms.extensions
+package at.roteskreuz.stopcorona.extensions
 
 import com.huawei.hmf.tasks.Task
 import java.util.concurrent.CancellationException
