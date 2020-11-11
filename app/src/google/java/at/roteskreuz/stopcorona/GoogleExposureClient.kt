@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stopcorona.constants.Constants.ExposureNotification.MIN_SUPPORTED_GOOGLE_PLAY_APK_VERSION
+import at.roteskreuz.stopcorona.model.GoogleServiceStatus
 import com.google.android.gms.common.ConnectionResult
 
 import com.google.android.gms.common.GoogleApiAvailability

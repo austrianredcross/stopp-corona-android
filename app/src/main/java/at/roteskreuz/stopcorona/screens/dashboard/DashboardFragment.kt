@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
-import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -25,9 +24,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
-import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
 import at.roteskreuz.stopcorona.utils.startDialogToEnableBluetooth
-import at.roteskreuz.stopcorona.utils.startGooglePlayStore
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import com.google.android.material.snackbar.Snackbar
@@ -43,7 +40,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
     companion object {
 
         private const val REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED = Constants.Request.REQUEST_DASHBOARD + 1
-        private const val REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION = Constants.Request.REQUEST_DASHBOARD + 2
+        const val REQUEST_CODE_FRAMEWORK_SERVICES_RESOLVE_ACTION = Constants.Request.REQUEST_DASHBOARD + 2
         private const val REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG = Constants.Request.REQUEST_DASHBOARD + 3
     }
 
@@ -116,17 +113,12 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onQuarantineEndCloseClick = viewModel::quarantineEndSeen,
             onAutomaticHandshakeEnabled = viewModel::userWantsToRegisterAppForExposureNotifications::set,
             onExposureNotificationErrorActionClick = { exposureNotificationPhase ->
+                val handled = exposureNotificationFrameSpecificErrorOnClick(exposureNotificationPhase)
+                if(handled) {
+                    return@DashboardController
+                }
+
                 when (exposureNotificationPhase) {
-                    is PrerequisitesError.UnavailableGooglePlayServices -> {
-                        exposureNotificationPhase.googlePlayAvailability.getErrorDialog(
-                            requireActivity(),
-                            exposureNotificationPhase.googlePlayServicesStatusCode,
-                            REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION
-                        ).show()
-                    }
-                    is PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
-                        startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
-                    }
                     is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                         startDialogToEnableBluetooth()
                     }
@@ -228,7 +220,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { phase ->
                 controller.exposureNotificationPhase = phase
                 when (phase) {
-                    is FrameworkError.Critical.ResolutionRequired -> {
+                    is FrameworkError.Critical.Gms.ResolutionRequired -> {
                         phase.exception.status.startResolutionForResult(
                             requireActivity(),
                             REQUEST_CODE_EXPOSURE_NOTIFICATION_RESOLUTION_REQUIRED
@@ -300,7 +292,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     viewModel.onExposureNotificationRegistrationResolutionResultNotOk()
                 }
             }
-            REQUEST_CODE_GOOGLE_PLAY_SERVICES_RESOLVE_ACTION -> {
+            REQUEST_CODE_FRAMEWORK_SERVICES_RESOLVE_ACTION -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.refreshPrerequisitesErrorStatement()
                 }

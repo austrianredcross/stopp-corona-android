@@ -79,13 +79,6 @@
 	<string name="main_microphone_explanation_dialog_do_not_show_again">Nicht wieder anzeigen</string>
 	<string name="main_status_update_headline">Status Update</string>
 	<string name="main_status_update_contact_sickness_not_confirmed_message">Bei Ihren Kontakten wurden eine oder mehrere Corona Infektionen gemeldet. \n\nBei Ihren Kontakten wurden ein oder mehrere Verdachte auf eine Corona-Infektion gemeldet.</string>
-	<string name="main_exposure_error_hms_unavailable_title">Huawei Mobile Services sind nicht verfügbar</string>
-	<string name="main_exposure_error_hms_device_too_old_message">Dieses Gerät ist zu alt und wird leider nicht unterstützt.</string>
-	<string name="main_exposure_error_hms_core_not_found_message">HMS Core konnte nicht gefunden werden.</string>
-	<string name="main_exposure_error_hms_out_of_date_message">HMS Core ist nicht aktuell.</string>
-	<string name="main_exposure_error_hms_unavailable_message">HMS Core ist nicht verfügbar.</string>
-	<string name="main_exposure_error_hms_unofficial_message">Dieses Gerät verwendet eine nicht offizielle Version von HMS Core.</string>
-	<string name="main_exposure_error_hms_unknown_error_message">An unknown HMS Core error occurred.</string>
 	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services ist nicht verfügbar</string>
 	<string name="main_exposure_error_google_play_unavailable_missing_message">Der Service fehlt.</string>
 	<string name="main_exposure_error_google_play_unavailable_updating_message">Der Service wird gerade aktualisiert.</string>

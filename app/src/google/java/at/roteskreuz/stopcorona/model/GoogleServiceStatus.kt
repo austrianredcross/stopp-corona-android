@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona
+package at.roteskreuz.stopcorona.model
 
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 

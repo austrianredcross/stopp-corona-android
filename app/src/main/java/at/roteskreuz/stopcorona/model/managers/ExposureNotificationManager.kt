@@ -158,7 +158,7 @@ class ExposureNotificationManagerImpl(
 
     override fun onExposureNotificationRegistrationResolutionResultOk() {
         currentPhase.let { phase ->
-            if (phase is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
+            if (phase is ExposureNotificationPhase.FrameworkError.Critical.Gms.ResolutionRequired) {
                 phase.onResolutionOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is ok"))
@@ -168,7 +168,7 @@ class ExposureNotificationManagerImpl(
 
     override fun onExposureNotificationRegistrationResolutionResultNotOk() {
         currentPhase.let { phase ->
-            if (phase is ExposureNotificationPhase.FrameworkError.Critical.ResolutionRequired) {
+            if (phase is ExposureNotificationPhase.FrameworkError.Critical.Gms.ResolutionRequired) {
                 phase.onResolutionNotOk()
             } else {
                 Timber.e(SilentError("state is not RegisterActionUserApprovalNeeded when resolution is not ok"))

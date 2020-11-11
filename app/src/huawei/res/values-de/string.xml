@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_exposure_error_hms_unavailable_title">Huawei Mobile Services sind nicht verfügbar</string>
+    <string name="main_exposure_error_hms_device_too_old_message">Dieses Gerät ist zu alt und wird leider nicht unterstützt.</string>
+    <string name="main_exposure_error_hms_core_not_found_message">HMS Core konnte nicht gefunden werden.</string>
+    <string name="main_exposure_error_hms_out_of_date_message">HMS Core ist nicht aktuell.</string>
+    <string name="main_exposure_error_hms_unavailable_message">HMS Core ist nicht verfügbar.</string>
+    <string name="main_exposure_error_hms_unofficial_message">Dieses Gerät verwendet eine nicht offizielle Version von HMS Core.</string>
+    <string name="main_exposure_error_hms_unknown_error_message">An unknown HMS Core error occurred.</string>
+    <string name="main_exposure_error_hms_unavailable_action">Try again</string>
+</resources>

@@ -2,53 +2,60 @@ package at.roteskreuz.stopcorona.model
 
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import com.huawei.hms.api.HuaweiApiAvailability
 
-fun ExposureServiceStatus.toErrorPhaseOrNull(dependencyHolder: ExposureNotificationPhase.DependencyHolder): ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase? {
-
+fun ExposureServiceStatus.toErrorPhaseOrNull(dependencyHolder: ExposureNotificationPhase.DependencyHolder): HuaweiErrorPhase? {
     if (this !is HuaweiServiceStatus) {
         throw IllegalArgumentException("Cannot convert status to phase: $this.")
     }
+
+    val huaweiApiAvailability = HuaweiApiAvailability.getInstance()
     return when (this) {
 
         is HuaweiServiceStatus.Success -> null
 
         is HuaweiServiceStatus.DeviceTooOld -> {
-            ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase.DeviceTooOld(
+            HuaweiErrorPhase.DeviceTooOld(
                 dependencyHolder = dependencyHolder,
-                huaweiServicesStatusCode = this.statusCode
+                huaweiServicesStatusCode = this.statusCode,
+                huaweiApiAvailability = huaweiApiAvailability
             )
         }
         is HuaweiServiceStatus.HmsCoreNotFound -> {
-            ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase.HmsCoreNotFound(
+            HuaweiErrorPhase.HmsCoreNotFound(
                 dependencyHolder = dependencyHolder,
-                huaweiServicesStatusCode = this.statusCode
+                huaweiServicesStatusCode = this.statusCode,
+                huaweiApiAvailability = huaweiApiAvailability
             )
         }
         is HuaweiServiceStatus.OutOfDate -> {
-            ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase.OutOfDate(
+            HuaweiErrorPhase.OutOfDate(
                 dependencyHolder = dependencyHolder,
-                huaweiServicesStatusCode = this.statusCode
+                huaweiServicesStatusCode = this.statusCode,
+                huaweiApiAvailability = huaweiApiAvailability
             )
         }
         is HuaweiServiceStatus.Unavailable -> {
-            ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase.Unavailable(
+            HuaweiErrorPhase.Unavailable(
                 dependencyHolder = dependencyHolder,
-                huaweiServicesStatusCode = this.statusCode
+                huaweiServicesStatusCode = this.statusCode,
+                huaweiApiAvailability = huaweiApiAvailability
             )
         }
         is HuaweiServiceStatus.UnofficialVersion -> {
-            ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase.UnofficialVersion(
+            HuaweiErrorPhase.UnofficialVersion(
                 dependencyHolder = dependencyHolder,
-                huaweiServicesStatusCode = this.statusCode
+                huaweiServicesStatusCode = this.statusCode,
+                huaweiApiAvailability = huaweiApiAvailability
             )
         }
         is HuaweiServiceStatus.UnknownStatus -> {
-            ExposureNotificationPhase.PrerequisitesError.HuaweiErrorPhase.UnknownStatus(
+            HuaweiErrorPhase.UnknownStatus(
                 dependencyHolder = dependencyHolder,
-                huaweiServicesStatusCode = this.statusCode
+                huaweiServicesStatusCode = this.statusCode,
+                huaweiApiAvailability = huaweiApiAvailability
             )
         }
-
     }
 
 }

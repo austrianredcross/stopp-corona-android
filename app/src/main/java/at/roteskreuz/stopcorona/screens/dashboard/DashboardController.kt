@@ -6,15 +6,13 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.*
-import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical
-import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.NotCritical
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.*
-import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
 import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
+import at.roteskreuz.stopcorona.screens.dashboard.epoxy.buildFrameWorkSpecificPrerequisitesErrorCard
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.startOfTheDay
@@ -261,136 +259,34 @@ class DashboardController(
      * Display an error card if some of exposure prerequisites checks failed.
      */
     private fun buildPrerequisitesErrorCard(phase: ExposureNotificationPhase) {
-        when (phase) {
-
-            is HuaweiErrorPhase -> buildHuaweiErrorCard(phase)
-
-            is UnavailableGooglePlayServices -> {
-                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                    id("unavailable_google_play_services")
-                    title(context.string(R.string.main_exposure_error_google_play_unavailable_title))
-                    fun addTryToResolveButtonIfPossible() {
-                        if (phase.googlePlayAvailability.isUserResolvableError(phase.googlePlayServicesStatusCode)) {
-                            action(context.string(R.string.main_exposure_error_google_play_unavailable_action))
-                        }
-                    }
-                    when (phase) {
-                        is ServiceMissing -> {
-                            description(context.string(R.string.main_exposure_error_google_play_unavailable_missing_message))
-                            addTryToResolveButtonIfPossible()
-                        }
-                        is ServiceUpdating -> {
-                            description(context.string(R.string.main_exposure_error_google_play_unavailable_updating_message))
-                            action(context.string(R.string.main_exposure_error_google_play_unavailable_updating_action))
-                        }
-                        is ServiceVersionUpdateRequired -> {
-                            description(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_message))
-                            action(context.string(R.string.main_exposure_error_google_play_unavailable_update_required_action))
-                        }
-                        is ServiceDisabled -> {
-                            description(context.string(R.string.main_exposure_error_google_play_unavailable_disabled_message))
-                            addTryToResolveButtonIfPossible()
-                        }
-                        is ServiceInvalid -> {
-                            description(context.string(R.string.main_exposure_error_google_play_unavailable_invalid_message))
-                            addTryToResolveButtonIfPossible()
-                        }
-                    }
-                }
-
-                emptySpace(modelCountBuiltSoFar, 16)
-            }
-            is InvalidVersionOfGooglePlayServices -> {
-                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                    id("invalid_google_play_services_version")
-                    title(context.string(R.string.main_exposure_error_google_play_wrong_version_title))
-                    description(context.string(R.string.main_exposure_error_google_play_wrong_version_message))
-                    action(context.string(R.string.main_exposure_error_google_play_wrong_version_action_btn))
-                }
-
-                emptySpace(modelCountBuiltSoFar, 16)
-            }
-            is BluetoothNotSupported -> {
-                exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                    id("bluetooth_not_supported")
-                    title(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
-                    description(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
-                }
-
-                emptySpace(modelCountBuiltSoFar, 16)
-            }
+        val handled = buildFrameWorkSpecificPrerequisitesErrorCard(context, phase, onExposureNotificationErrorActionClick)
+        if(handled) {
+            emptySpace(modelCountBuiltSoFar, 16)
+            return
         }
-    }
 
-    private fun buildHuaweiErrorCard(error: HuaweiErrorPhase) {
-        exposureNotificationError(onClick = { onExposureNotificationErrorActionClick(error) },
-            modelInitializer = {
+        if (phase is BluetoothNotSupported) {
+            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
+                id("bluetooth_not_supported")
+                title(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
+                description(context.string(R.string.main_exposure_error_bluetooth_not_supported_title))
+            }
 
-                id("huawei_mobile_services_error")
-                title(context.string(R.string.main_exposure_error_hms_unavailable_title))
-
-                val message = when (error) {
-                    is HuaweiErrorPhase.DeviceTooOld -> context.string(R.string.main_exposure_error_hms_device_too_old_message)
-                    is HuaweiErrorPhase.HmsCoreNotFound -> context.string(R.string.main_exposure_error_hms_core_not_found_message)
-                    is HuaweiErrorPhase.OutOfDate -> context.string(R.string.main_exposure_error_hms_out_of_date_message)
-                    is HuaweiErrorPhase.Unavailable -> context.string(R.string.main_exposure_error_hms_unavailable_title)
-                    is HuaweiErrorPhase.UnofficialVersion -> context.string(R.string.main_exposure_error_hms_unofficial_message)
-                    is HuaweiErrorPhase.UnknownStatus -> context.string(R.string.main_exposure_error_hms_unknown_error_message)
-                }
-
-                description(message)
-            })
-
-        emptySpace(modelCountBuiltSoFar, 16)
-
+            emptySpace(modelCountBuiltSoFar, 16)
+        }
     }
 
     /**
      * Display an error card if exposure framework has an error.
      */
     private fun buildExposureFrameworkErrorCard(phase: ExposureNotificationPhase) {
-        fun exposureNotificationError(description: String) {
-            exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
-                id("exposure_notification_framework_error")
-                title(context.string(R.string.main_exposure_error_title))
-                description(description)
-                action(context.string(R.string.main_exposure_error_action))
-            }
-
+        val handled = buildFrameWorkSpecificErrorCard(context, phase, onExposureNotificationErrorActionClick)
+        if(handled) {
             emptySpace(modelCountBuiltSoFar, 16)
+            return
         }
+
         when (phase) {
-            is Critical -> {
-                when (phase) {
-                    is SignInRequired -> {
-                        exposureNotificationError(context.string(R.string.main_exposure_error_sign_in_message))
-                    }
-                    is InvalidAccount -> {
-                        exposureNotificationError(context.string(R.string.main_exposure_error_invalid_account_message))
-                    }
-                    is ResolutionRequired -> {
-                        // ignored, there is displayed a dialog
-                    }
-                    is ResolutionDeclined -> {
-                        exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
-                    }
-                    is NetworkError,
-                    is Interrupted,
-                    is Timeout,
-                    is Canceled -> {
-                        exposureNotificationError(context.string(R.string.main_exposure_error_network_error_message))
-                    }
-                    is InternalError,
-                    is Error,
-                    is Unknown -> {
-                        exposureNotificationError(context.string(R.string.main_exposure_error_internal_message))
-                    }
-                    is DeveloperError,
-                    is ApiNotConnected -> {
-                        exposureNotificationError(context.string(R.string.main_exposure_error_developer_message))
-                    }
-                }
-            }
             is NotCritical.BluetoothNotEnabled -> {
                 exposureNotificationError({ onExposureNotificationErrorActionClick(phase) }) {
                     id("exposure_notification_framework_error")

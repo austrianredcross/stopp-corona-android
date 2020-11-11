@@ -2,7 +2,7 @@ package at.roteskreuz.stopcorona.model.managers
 
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
-import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.checkFrameWorkSpecificError
 import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
@@ -14,14 +14,12 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import java.util.concurrent.CancellationException
 
 /**
  * State machine to manage state of the exposure notification framework and checking all dependencies
  * needed for running.
  */
-// TODO: Break-up god-class and move GMS- and HMS-only logic into corresponding platform-specific module
 sealed class ExposureNotificationPhase : ExposureServiceStatus {
 
     data class DependencyHolder(
@@ -97,7 +95,7 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
     /**
      * If prerequisites not met, this is class for explaining the errors.
      */
-    sealed class PrerequisitesError : ExposureNotificationPhase() {
+    abstract class PrerequisitesError : ExposureNotificationPhase() {
 
         protected lateinit var moveToNextState: (ExposureNotificationPhase) -> Unit
 
@@ -122,7 +120,6 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
          * Google play services are not available on the phone or there is some error.
          * Some of errors user can resolve.
          */
-        // TODO: Break up sealed class and move Google-Error logic into 'GMS' module
         sealed class UnavailableGooglePlayServices : PrerequisitesError() {
 
             abstract val googlePlayAvailability: GoogleApiAvailability
@@ -157,42 +154,6 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
                 override val googlePlayAvailability: GoogleApiAvailability,
                 override val googlePlayServicesStatusCode: Int
             ) : UnavailableGooglePlayServices()
-        }
-
-        // TODO: Break up sealed class and move Huawei-Error logic into 'HMS' module
-        sealed class HuaweiErrorPhase : PrerequisitesError() {
-
-            abstract val huaweiServicesStatusCode: Int
-
-            data class DeviceTooOld(
-                override val dependencyHolder: DependencyHolder,
-                override val huaweiServicesStatusCode: Int
-            ) : HuaweiErrorPhase()
-
-            data class HmsCoreNotFound(
-                override val dependencyHolder: DependencyHolder,
-                override val huaweiServicesStatusCode: Int
-            ) : HuaweiErrorPhase()
-
-            data class OutOfDate(
-                override val dependencyHolder: DependencyHolder,
-                override val huaweiServicesStatusCode: Int
-            ) : HuaweiErrorPhase()
-
-            data class Unavailable(
-                override val dependencyHolder: DependencyHolder,
-                override val huaweiServicesStatusCode: Int
-            ) : HuaweiErrorPhase()
-
-            data class UnofficialVersion(
-                override val dependencyHolder: DependencyHolder,
-                override val huaweiServicesStatusCode: Int
-            ) : HuaweiErrorPhase()
-
-            data class UnknownStatus(
-                override val dependencyHolder: DependencyHolder,
-                override val huaweiServicesStatusCode: Int
-            ) : HuaweiErrorPhase()
         }
 
         /**
@@ -279,66 +240,14 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
                                 )
                             }
                             is State.Error -> {
-                                when (state.error) {
-                                    is ApiException -> {
-                                        val apiException = state.error as ApiException
-                                        moveToNextState(
-                                            when (apiException.statusCode) {
-                                                CommonStatusCodes.SIGN_IN_REQUIRED -> {
-                                                    Timber.e(SilentError("SIGN_IN_REQUIRED", apiException))
-                                                    FrameworkError.Critical.SignInRequired(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.INVALID_ACCOUNT -> {
-                                                    Timber.e(SilentError("INVALID_ACCOUNT", apiException))
-                                                    FrameworkError.Critical.InvalidAccount(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.RESOLUTION_REQUIRED -> {
-                                                    // no logging of error, this state is expect-able
-                                                    FrameworkError.Critical.ResolutionRequired(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.NETWORK_ERROR -> {
-                                                    Timber.e(SilentError("NETWORK_ERROR", apiException))
-                                                    FrameworkError.Critical.NetworkError(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.INTERNAL_ERROR -> {
-                                                    Timber.e(SilentError("INTERNAL_ERROR", apiException))
-                                                    FrameworkError.Critical.InternalError(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.DEVELOPER_ERROR -> {
-                                                    Timber.e(SilentError("DEVELOPER_ERROR", apiException))
-                                                    FrameworkError.Critical.DeveloperError(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.ERROR -> {
-                                                    Timber.e(SilentError("ERROR", apiException))
-                                                    FrameworkError.Critical.Error(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.INTERRUPTED -> {
-                                                    Timber.e(SilentError("INTERRUPTED", apiException))
-                                                    FrameworkError.Critical.Interrupted(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.TIMEOUT -> {
-                                                    Timber.e(SilentError("TIMEOUT", apiException))
-                                                    FrameworkError.Critical.Timeout(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.CANCELED -> {
-                                                    Timber.e(SilentError("CANCELED", apiException))
-                                                    FrameworkError.Critical.Canceled(dependencyHolder, apiException, register)
-                                                }
-                                                CommonStatusCodes.API_NOT_CONNECTED -> {
-                                                    Timber.e(SilentError("API_NOT_CONNECTED", apiException))
-                                                    FrameworkError.Critical.ApiNotConnected(dependencyHolder, apiException, register)
-                                                }
-                                                else -> {
-                                                    FrameworkError.Critical.Unknown(dependencyHolder, apiException, register)
-                                                }
-                                            }
-                                        )
-                                    }
-                                    is CancellationException -> {
-                                        moveToNextState(WaitingForWantedState(dependencyHolder))
-                                    }
-                                    else -> {
-                                        moveToNextState(FrameworkError.Critical.Unknown(dependencyHolder, state.error, register))
+                                if(!checkFrameWorkSpecificError(state.error, dependencyHolder, moveToNextState)) {
+                                    when (state.error) {
+                                        is CancellationException -> {
+                                            moveToNextState(WaitingForWantedState(dependencyHolder))
+                                        }
+                                        else -> {
+                                            moveToNextState(FrameworkError.Critical.Unknown(dependencyHolder, state.error, register))
+                                        }
                                     }
                                 }
                             }
@@ -386,126 +295,128 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
         /**
          * Framework cannot be started with this error.
          */
-        sealed class Critical : FrameworkError() {
+        abstract class Critical : FrameworkError() {
 
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.SIGN_IN_REQUIRED].
-             */
-            data class SignInRequired(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
+            sealed class Gms : Critical() {
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.SIGN_IN_REQUIRED].
+                 */
+                data class SignInRequired(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
 
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.INVALID_ACCOUNT].
-             */
-            data class InvalidAccount(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.INVALID_ACCOUNT].
+                 */
+                data class InvalidAccount(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
 
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.RESOLUTION_REQUIRED].
-             * User must confirm the registration app to the framework.
-             */
-            data class ResolutionRequired(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical() {
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.RESOLUTION_REQUIRED].
+                 * User must confirm the registration app to the framework.
+                 */
+                data class ResolutionRequired(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical() {
 
-                fun onResolutionOk() {
-                    dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
-                    moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+                    fun onResolutionOk() {
+                        dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultOk()
+                        moveToNextState(CheckingFrameworkError(dependencyHolder, register))
+                    }
+
+                    fun onResolutionNotOk() {
+                        dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
+                        moveToNextState(ResolutionDeclined(dependencyHolder, register))
+                    }
                 }
 
-                fun onResolutionNotOk() {
-                    dependencyHolder.exposureNotificationRepository.onExposureNotificationRegistrationResolutionResultNotOk()
-                    moveToNextState(ResolutionDeclined(dependencyHolder, register))
-                }
+                /**
+                 * Registration dialog to the framework was declined by user.
+                 */
+                data class ResolutionDeclined(
+                    override val dependencyHolder: DependencyHolder,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.NETWORK_ERROR].
+                 */
+                data class NetworkError(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.INTERNAL_ERROR].
+                 */
+                data class InternalError(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.DEVELOPER_ERROR].
+                 */
+                data class DeveloperError(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.ERROR].
+                 */
+                data class Error(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.INTERRUPTED].
+                 */
+                data class Interrupted(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.TIMEOUT].
+                 */
+                data class Timeout(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.CANCELED].
+                 */
+                data class Canceled(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
+
+                /**
+                 * Framework [ApiException] of [CommonStatusCodes.API_NOT_CONNECTED].
+                 */
+                data class ApiNotConnected(
+                    override val dependencyHolder: DependencyHolder,
+                    val exception: ApiException,
+                    override val register: Boolean
+                ) : Critical()
             }
-
-            /**
-             * Registration dialog to the framework was declined by user.
-             */
-            data class ResolutionDeclined(
-                override val dependencyHolder: DependencyHolder,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.NETWORK_ERROR].
-             */
-            data class NetworkError(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.INTERNAL_ERROR].
-             */
-            data class InternalError(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.DEVELOPER_ERROR].
-             */
-            data class DeveloperError(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.ERROR].
-             */
-            data class Error(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.INTERRUPTED].
-             */
-            data class Interrupted(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.TIMEOUT].
-             */
-            data class Timeout(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.CANCELED].
-             */
-            data class Canceled(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
-
-            /**
-             * Framework [ApiException] of [CommonStatusCodes.API_NOT_CONNECTED].
-             */
-            data class ApiNotConnected(
-                override val dependencyHolder: DependencyHolder,
-                val exception: ApiException,
-                override val register: Boolean
-            ) : Critical()
 
             /**
              * Framework caused some unknown error.

@@ -1,6 +1,5 @@
 package at.roteskreuz.stopcorona.model
 
-import at.roteskreuz.stopcorona.GoogleServiceStatus
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import com.google.android.gms.common.GoogleApiAvailability
