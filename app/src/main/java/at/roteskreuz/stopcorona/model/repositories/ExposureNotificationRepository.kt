@@ -159,6 +159,7 @@ class ExposureNotificationRepositoryImpl(
         launch(coroutineContext) {
 
             try {
+                handleFrameworkSpecificSituationOnAutoStart()
                 exposureNotificationClient.start()
                 refreshExposureNotificationAppRegisteredState()
 

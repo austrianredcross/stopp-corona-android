@@ -34,6 +34,8 @@ class App : BaseApp() {
 
         // Create notification channels
         createNotificationChannels()
+
+        ActivityLifeCycleHelper.initWithApplication(this)
     }
 
     private fun createNotificationChannels() {
