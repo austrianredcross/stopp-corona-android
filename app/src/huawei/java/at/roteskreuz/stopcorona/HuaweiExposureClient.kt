@@ -86,7 +86,7 @@ class HuaweiExposureClient(
 
         val pendingIntent = PendingIntent.getService(application, 0, Intent(application, ContactShieldIntentService::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
 
-        contactShieldEngine.putSharedKeyFiles(pendingIntent, archives, huaweiConfiguration, token)
+        contactShieldEngine.putSharedKeyFiles(pendingIntent, archives, huaweiConfiguration, token).await()
     }
 
     override suspend fun getExposureSummary(token: String): ExposureSummary {
