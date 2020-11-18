@@ -48,6 +48,7 @@ open class QuestionnaireSelfMonitoringFragment : BaseFragment(R.layout.fragment_
         super.onInitActionBar(actionBar, toolbar)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun getTitle(): String? {

@@ -59,6 +59,7 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
         super.onInitActionBar(actionBar, toolbar)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
