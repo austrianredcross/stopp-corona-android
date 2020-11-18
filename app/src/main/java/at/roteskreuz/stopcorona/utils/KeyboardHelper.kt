@@ -18,15 +18,17 @@ class KeyboardHelper(
             fragment.activity?.window?.decorView?.let { decorView ->
                 val visibleDisplayFrame = Rect()
                 decorView.getWindowVisibleDisplayFrame(visibleDisplayFrame)
-                val height = decorView.context.resources.displayMetrics.heightPixels
+                val screenHeight = decorView.context.resources.displayMetrics.heightPixels
 
-                // check if visible area has changed
-                val diff = height - visibleDisplayFrame.bottom
+                //https://stackoverflow.com/a/26964010/13782111
+                val keypadHeight = screenHeight - visibleDisplayFrame.bottom
 
-                // check if keyboard is shown
-                if (diff != 0) {
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                    // keyboard is opened
                     onKeyboardShown()
-                } else {
+                }
+                else {
+                    // keyboard is closed
                     onKeyboardHidden()
                 }
             }
