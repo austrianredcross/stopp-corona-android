@@ -54,6 +54,7 @@ class InfectionInfoFragment : BaseFragment(R.layout.infection_info_fragment) {
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
         super.onInitActionBar(actionBar, toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

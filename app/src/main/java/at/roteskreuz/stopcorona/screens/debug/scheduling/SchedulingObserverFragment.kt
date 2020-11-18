@@ -29,6 +29,7 @@ class SchedulingObserverFragment : BaseFragment(R.layout.debug_scheduling_observ
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
         super.onInitActionBar(actionBar, toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

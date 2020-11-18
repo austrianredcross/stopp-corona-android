@@ -111,6 +111,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
         super.onInitActionBar(actionBar, toolbar)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
