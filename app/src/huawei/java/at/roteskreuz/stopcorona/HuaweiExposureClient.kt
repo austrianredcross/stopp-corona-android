@@ -120,6 +120,10 @@ class HuaweiExposureClient(
         return "Huawei Mobile Services: ${huaweiMobileServicesVersion(context)}";
     }
 
+    override fun isGmsService(): Boolean {
+        return false
+    }
+
     private fun huaweiMobileServicesVersion(context: Context): String {
         return try {
             context.packageManager.getPackageInfo(HuaweiApiAvailability.SERVICES_PACKAGE, 0).versionName

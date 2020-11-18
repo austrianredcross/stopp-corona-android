@@ -43,4 +43,6 @@ interface CommonExposureClient {
     fun getServiceStatus(): ExposureServiceStatus
 
     fun getServiceVersion(context: Context) : String
+
+    fun isGmsService() : Boolean
 }

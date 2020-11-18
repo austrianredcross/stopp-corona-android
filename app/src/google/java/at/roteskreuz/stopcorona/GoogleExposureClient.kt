@@ -74,6 +74,10 @@ class GoogleExposureClient(
         return "Google Mobile Services: ${googleMobileServicesVersion(context)}";
     }
 
+    override fun isGmsService(): Boolean {
+        return true
+    }
+
     private fun googleMobileServicesVersion(context: Context): String {
         return try {
             context.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0).versionName

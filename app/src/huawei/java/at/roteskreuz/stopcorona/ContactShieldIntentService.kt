@@ -21,16 +21,18 @@ class ContactShieldIntentService : IntentService("StoppCorona_ContactShieldInten
     private val callback: ContactShieldCallback = object : ContactShieldCallback {
 
         override fun onHasContact(token: String?) {
-            Timber.tag(LOG_TAG).d("Has contact with '$token'.")
+            val logText = "Has contact with '$token'."
+            Timber.tag(LOG_TAG).d(logText)
             token?.let {
-                onExposureStateUpdated(this@ContactShieldIntentService, token)
+                onExposureStateUpdated(this@ContactShieldIntentService, logText)
             }
         }
 
         override fun onNoContact(token: String?) {
-            Timber.tag(LOG_TAG).d("Has no contact with '$token'.")
+            val logText = "Has no contact with '$token'."
+            Timber.tag(LOG_TAG).d(logText)
             token?.let {
-                onExposureStateUpdated(this@ContactShieldIntentService, token)
+                onExposureStateUpdated(this@ContactShieldIntentService, logText)
             }
         }
     }
@@ -52,12 +54,12 @@ class ContactShieldIntentService : IntentService("StoppCorona_ContactShieldInten
         ProcessDiagnosisKeysWorker.enqueueProcessingOfDiagnosisKeys(workManager, token)
     }
 
-    private fun showDebugNotificationProcessingFinished(context: Context, token: String) {
+    private fun showDebugNotificationProcessingFinished(context: Context, text: String) {
         val notification = NotificationCompat.Builder(context, Constants.NotificationChannels.CHANNEL_AUTOMATIC_DETECTION)
-            .setContentTitle("processing done")
+            .setContentTitle("Contact Shield processing done")
             .setSmallIcon(R.drawable.ic_red_cross)
-            .setContentText("processing of $token finished")
-            .setStyle(NotificationCompat.BigTextStyle().bigText("processing of $token finished"))
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

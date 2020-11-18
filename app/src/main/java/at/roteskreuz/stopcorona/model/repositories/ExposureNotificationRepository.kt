@@ -270,7 +270,7 @@ class ExposureNotificationRepositoryImpl(
         val exposureConfiguration = configuration.getExposureConfiguration()
 
         provideDiagnosisKeys(archives, exposureConfiguration, token)
-        return false // More batches to process
+        return !exposureNotificationClient.isGmsService() // More batches to process
     }
 
     override suspend fun removeDiagnosisKeyBatchParts(batchParts: List<DbBatchPart>) {
