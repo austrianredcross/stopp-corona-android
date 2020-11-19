@@ -284,9 +284,9 @@ class ExposureNotificationRepositoryImpl(
         exposureConfiguration: ExposureConfiguration,
         token: String
     ) {
-        Timber.d("Provide diagnosis keys...")
+        Timber.d("Provide diagnosis keys with token: $token")
         exposureNotificationClient.provideDiagnosisKeys(archives, exposureConfiguration, token)
-        Timber.d("Finished providing diagnosis keys...")
+        Timber.d("Finished providing diagnosis keys with token: $token")
     }
 
     private fun DbConfiguration.getExposureConfiguration(): ExposureConfiguration {

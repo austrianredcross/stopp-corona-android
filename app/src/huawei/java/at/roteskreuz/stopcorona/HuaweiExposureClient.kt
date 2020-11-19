@@ -4,7 +4,9 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import androidx.core.content.edit
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
 import at.roteskreuz.stopcorona.extensions.*
@@ -23,7 +25,8 @@ import java.io.File
 class HuaweiExposureClient(
     private val application: Application,
     private val huaweiApiAvailability: HuaweiApiAvailability,
-    private val contactShieldEngine: ContactShieldEngine
+    private val contactShieldEngine: ContactShieldEngine,
+    private val sharedPreferences: SharedPreferences
 ) : CommonExposureClient {
 
     override suspend fun start() {
@@ -86,6 +89,11 @@ class HuaweiExposureClient(
 
         val pendingIntent = PendingIntent.getService(application, 0, Intent(application, ContactShieldIntentService::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
 
+        if(BuildConfig.DEBUG) {
+            sharedPreferences.edit(commit = true) {
+                putLong(token, System.currentTimeMillis())
+            }
+        }
         contactShieldEngine.putSharedKeyFiles(pendingIntent, archives, huaweiConfiguration, token).await()
     }
 
