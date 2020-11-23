@@ -48,6 +48,14 @@ android {
                 keyPassword "android_debug"
             }
         }
+
+        hms_release {
+            def keyStoreFile = file("../keystore/android_hms_release.keystore")
+            keyAlias "hms"
+            storeFile keyStoreFile
+            storePassword STOP_CORONA_HMS_PASSWORD
+            keyPassword STOP_CORONA_HMS_PASSWORD
+        }
     }
 
     flavorDimensions "api", "platform"
