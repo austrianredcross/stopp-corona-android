@@ -9,6 +9,7 @@ import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.di.*
 import at.roteskreuz.stopcorona.skeleton.core.BaseApp
 import org.koin.dsl.module.Module
+import timber.log.Timber
 
 /**
  * Application class.
@@ -29,6 +30,10 @@ class App : BaseApp() {
 
     override fun onPostCreate() {
         super.onPostCreate()
+
+        if(BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
 
         onPostCreateFlavourDependent()
 

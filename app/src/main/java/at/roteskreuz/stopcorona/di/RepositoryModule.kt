@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManagerImpl
 import at.roteskreuz.stopcorona.model.repositories.*
+import at.roteskreuz.stopcorona.utils.isGmsAvailable
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 
 /**
@@ -51,7 +53,8 @@ val repositoryModule = module {
             workManager = get(),
             exposureNotificationRepository = get(),
             configurationRepository = get(),
-            notificationsRepository = get()
+            notificationsRepository = get(),
+            isGMS = androidContext().isGmsAvailable()
         )
     }
 
