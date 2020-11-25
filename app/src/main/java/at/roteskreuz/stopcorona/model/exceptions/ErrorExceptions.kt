@@ -18,22 +18,22 @@ fun Fragment.handleBaseCoronaErrors(error: Throwable) {
     when (error) {
         is NoInternetConnectionException -> {
             Timber.i(error, "No internet connection or server timeout")
-            GeneralErrorDialog(R.string.error_no_internet_title, R.string.error_no_internet_message)
+            GeneralErrorDialog(R.string.error_no_internet_title, R.string.error_no_internet_message, error)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is GeneralServerException -> {
             Timber.e(error, "Unhandled server exception")
-            GeneralErrorDialog(R.string.error_server_title, R.string.error_server_message)
+            GeneralErrorDialog(R.string.error_server_title, R.string.error_server_message, error)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is UnexpectedError -> {
             Timber.e(error, "Unhandled unknown exception")
-            GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message)
+            GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message, error)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is DataFetchFailedException -> {
             Timber.e(error, "Fetch failed exception")
-            GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message)
+            GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message, error)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
         is ApiError.Critical.ForceUpdate -> {
@@ -42,7 +42,7 @@ fun Fragment.handleBaseCoronaErrors(error: Throwable) {
         }
         else -> {
             Timber.e(error, "Unhandled else exception")
-            GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message)
+            GeneralErrorDialog(R.string.error_unknown_title, R.string.error_unknown_message, error)
                 .show(childFragmentManager, GeneralErrorDialog::class.java.name)
         }
     }
