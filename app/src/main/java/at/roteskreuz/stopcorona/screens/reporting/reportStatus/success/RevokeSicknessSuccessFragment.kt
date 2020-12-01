@@ -42,6 +42,7 @@ class RevokeSicknessSuccessFragment : BaseFragment(R.layout.fragment_revoke_sick
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
         super.onInitActionBar(actionBar, toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 }
 

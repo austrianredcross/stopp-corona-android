@@ -174,6 +174,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
         super.onInitActionBar(actionBar, toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_drawer)
+        toolbar?.setNavigationContentDescription(R.string.start_menu)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

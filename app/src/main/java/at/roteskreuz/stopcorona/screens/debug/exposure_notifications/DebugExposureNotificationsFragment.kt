@@ -140,6 +140,7 @@ class DebugExposureNotificationsFragment : BaseFragment(R.layout.debug_contact_t
         super.onInitActionBar(actionBar, toolbar)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

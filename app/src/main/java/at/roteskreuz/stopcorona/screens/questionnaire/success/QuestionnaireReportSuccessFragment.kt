@@ -68,6 +68,7 @@ class QuestionnaireReportSuccessFragment : BaseFragment(R.layout.questionnaire_r
         super.onInitActionBar(actionBar, toolbar)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationContentDescription(R.string.general_back)
     }
 
     override fun overrideOnBackPressed(): Boolean {
