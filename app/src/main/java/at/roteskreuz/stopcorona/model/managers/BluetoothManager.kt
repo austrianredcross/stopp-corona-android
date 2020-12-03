@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.model.managers
 
 import at.roteskreuz.stopcorona.model.receivers.Registrable
+import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 
 /**
@@ -21,10 +22,12 @@ interface BluetoothManager {
 
 class BluetoothManagerImpl(
     private val contextInteractor: ContextInteractor,
-    private val bluetoothStateReceiver: Registrable
+    private val bluetoothStateReceiver: Registrable,
+    private val bluetoothRepository : BluetoothRepository
 ) : BluetoothManager {
 
     override fun startListeningForChanges() {
+        bluetoothRepository.updateEnabledState(bluetoothRepository.bluetoothEnabled)
         bluetoothStateReceiver.register(contextInteractor.applicationContext)
     }
 
