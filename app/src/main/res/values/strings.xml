@@ -172,7 +172,7 @@
 	<string name="handshake_dialog_description3">Select the number of your counterpart below and save.</string>
 	<string name="handshake_dialog_disclaimer">If you have further questions about the manual handshake, you can find more information in the FAQs.</string>
 	<string name="handshake_dialog_faq">Go to the FAQs</string>
-	<string name="handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
+	<string name="handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
 	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 1 meter distance.</string>
 	<string name="automatic_handshake_dialog_title">Here’s how it works</string>
 	<string name="automatic_handshake_dialog_description_1">Activate the automatic handshake in the app and enable Bluetooth.</string>
@@ -181,7 +181,7 @@
 	<string name="automatic_handshake_dialog_description_4"><b>Contacts are sick</b> \nThe contact log can be used to notify you if you have had any contact with the coronavirus. A recommendation is calculated in an algorithm, how long you should stay in quarantine as a precautionary measure.\n<b> You are ill</b> \nThe random IDs can also be used to notify other users should you report a possible infection.</string>
 	<string name="automatic_handshake_dialog_disclaimer">Please make sure that Bluetooth is activated.</string>
 	<string name="automatic_handshake_dialog_faq">To the FAQs</string>
-	<string name="automatic_handshake_dialog_faq_link">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
+	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
 	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 1 meter.</string>
 	<string name="main_automatic_handshake_information_hint">How does it work?</string>
 	<string name="main_automatic_handshake_switch_title">Automatic handshake:</string>
@@ -280,8 +280,8 @@
 	<string name="start_menu_item_1_1_what_does_the_app_do">What can this app do?</string>
 	<string name="start_menu_item_1_2_red_cross_link">FAQ at roteskreuz.at</string>
 
-	<!-- https://www.roteskreuz.at/site/faq-app-stopp-corona/ -->
-	<string name="start_menu_item_1_2_red_cross_link_link_target">https://www.roteskreuz.at/site/faq-app-stopp-corona/</string>
+	<!-- https://www.stopp-corona.at/faq_stopp_corona_app/ -->
+	<string name="start_menu_item_1_2_red_cross_link_link_target">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
 	<string name="start_menu_item_1_3_red_cross_link">More about coronavirus at roteskreuz.at</string>
 
 	<!-- https://www.roteskreuz.at/site/coronavirus-sind-wir-bereit/ -->
