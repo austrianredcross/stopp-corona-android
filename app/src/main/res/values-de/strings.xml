@@ -278,14 +278,14 @@
 	<string name="start_menu_close">Menü schließen</string>
 	<string name="start_menu_headline_1">Info</string>
 	<string name="start_menu_item_1_1_what_does_the_app_do">Was kann diese App?</string>
-	<string name="start_menu_item_1_2_red_cross_link">FAQ auf roteskreuz.at</string>
+	<string name="start_menu_item_1_2_red_cross_link">FAQ auf www.stopp-corona.at</string>
 
 	<!-- https://www.stopp-corona.at/faq_stopp_corona_app/ -->
 	<string name="start_menu_item_1_2_red_cross_link_link_target">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
 	<string name="start_menu_item_1_3_red_cross_link">Infos zum Coronavirus auf roteskreuz.at</string>
 
-	<!-- https://www.roteskreuz.at/site/coronavirus-sind-wir-bereit/ -->
-	<string name="start_menu_item_1_3_red_cross_link_link_target">https://www.roteskreuz.at/site/coronavirus-sind-wir-bereit/</string>
+	<!-- https://www.roteskreuz.at/ich-will-mehr-wissen/coronavirus -->
+	<string name="start_menu_item_1_3_red_cross_link_link_target">https://www.roteskreuz.at/ich-will-mehr-wissen/coronavirus</string>
 	<string name="start_menu_headline_2">Rechtliches</string>
 	<string name="start_menu_item_2_1_open_source_licenses">Open Source Lizenzen</string>
 	<string name="start_menu_item_2_2_data_privacy">Datenschutz</string>
