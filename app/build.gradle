@@ -68,6 +68,9 @@ android {
 
         huawei {
             apply plugin: 'com.huawei.agconnect'
+            agcp{
+                mappingUpload = true
+            }
             proguardFiles 'proguard-rules.pro', 'proguard-rules-huawei.pro'
             dimension "platform"
         }
@@ -167,6 +170,8 @@ dependencies {
     implementation project(":play-services-nearby-exposurenotification-1.6.1-eap")
 
     huaweiImplementation 'com.huawei.hms:contactshield:5.0.4.300'
+    huaweiImplementation 'com.huawei.hms:hianalytics:5.0.3.300'
+    huaweiImplementation 'com.huawei.agconnect:agconnect-crash:1.4.1.300'
 
     kapt "androidx.room:room-compiler:2.2.4"
 
