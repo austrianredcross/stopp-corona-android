@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.screens.base.FullScreenPortraitBaseActivity
@@ -29,6 +30,17 @@ open class WebViewWithAssetsResourcesFragment : BaseFragment(R.layout.webview_fr
     companion object {
         private const val ARGUMENT_TITLE_RES = "title_res"
         private const val ASSETS_RESOURCE_NAME = "assets_resource_name"
+
+        const val DEEP_LINK_NAME_SCHEME = BuildConfig.DEEPLINK_SCHEME
+        const val DEEP_LINK_NAME_HOST = BuildConfig.DEEPLINK_HOST
+        const val DEEP_LINK_NAME_PRIVACY = "privacy"
+        const val DEEP_LINK_NAME_TERMS_OF_USE = "terms-of-use"
+
+        const val DEEP_LINK_TERMS_OF_USE =
+            "$DEEP_LINK_NAME_SCHEME://$DEEP_LINK_NAME_HOST/$DEEP_LINK_NAME_TERMS_OF_USE"
+        const val DEEP_LINK_PRIVACY =
+            "$DEEP_LINK_NAME_SCHEME://$DEEP_LINK_NAME_HOST/$DEEP_LINK_NAME_PRIVACY"
+
 
         fun args(
             @StringRes titleRes: Int?,
