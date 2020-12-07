@@ -25,20 +25,24 @@
 
 	<!-- Onboarding -->
 	<string name="onboarding_headline_1">Welcome!</string>
+	<string name="onboarding_copy_1_img">Image: Falling numbers of Corona cases</string>
 	<string name="onboarding_copy_1_1">By installing the Stopp Corona App you help slow down</string>
 	<string name="onboarding_copy_1_2">the spread</string>
 	<string name="onboarding_copy_1_3">of the coronavirus and to reduce the number</string>
 	<string name="onboarding_copy_1_4">of new infections.</string>
 	<string name="onboarding_copy_1_5"></string>
 	<string name="onboarding_headline_2">Digital handshake</string>
+	<string name="onboarding_copy_2_img">Image: Contacts are identified via Bluetooth</string>
 	<string name="onboarding_copy_2_1">Use the digital handshake to</string>
 	<string name="onboarding_copy_2_2">anonymously</string>
 	<string name="onboarding_copy_2_3">save your encounters. You will be notified anonymously in the app if one of your encounters falls ill.</string>
 	<string name="onboarding_headline_3">Check symptoms</string>
+	<string name="onboarding_copy_3_img">Image: Notification of a contact\'s illness</string>
 	<string name="onboarding_copy_3_1">Use our clinically tested questionnaire. Get a</string>
 	<string name="onboarding_copy_3_2">daily</string>
 	<string name="onboarding_copy_3_3">assessment of your health status.</string>
 	<string name="onboarding_headline_4">Notification in the event of illness</string>
+	<string name="onboarding_copy_4_img">Image: Warning for your contacts</string>
 	<string name="onboarding_copy_4_1">Help to help others! If you should contract the corona virus yourself, your contacts will be notified</string>
 	<string name="onboarding_copy_4_2">anonymously</string>
 	<string name="onboarding_copy_4_3">so that they can take measures.</string>
@@ -191,6 +195,8 @@
 	<string name="main_automatic_handshake_description_on">You can send and receive signals from other Corona apps via Bluetooth. Signals over 5 minutes are recorded in the COVID-19 contact log in your device. This happens anonymously by means of randomly generated IDs.</string>
 	<string name="main_automatic_handshake_description_off">None of your encounters are currently saved automatically. Please activate the automatic handshake.</string>
 	<string name="main_start_manual_handshake">Start manual handshake</string>
+	<string name="main_automatic_handshake_img_active">Image: automatic handshake active</string>
+	<string name="main_automatic_handshake_img_inactive">Image: automatic handshake inactive</string>
 
 	<!-- Sickness Certificate -->
 	<string name="certificate_personal_data_headline">Please enter your data</string>
@@ -277,6 +283,7 @@
 	<string name="start_menu">Menu</string>
 	<string name="start_menu_close">Close menu</string>
 	<string name="start_menu_headline_1">Info</string>
+	<string name="start_menu_item_external_link">Link to a website</string>
 	<string name="start_menu_item_1_1_what_does_the_app_do">What can this app do?</string>
 	<string name="start_menu_item_1_2_red_cross_link">FAQ at www.stopp-corona.at</string>
 
@@ -475,6 +482,7 @@
 	<string name="revoke_suspicion_success_description">Thank you for sharing your information and contributing to the common good.\n\nYour contacts have been notified anonymously.</string>
 	<string name="revoke_suspicion_success_finish">Done</string>
 	<string name="share_app_title">Share the app!</string>
+	<string name="share_app_img">Image: Share App</string>
 	<string name="share_app_description">Share the app and protect yourself and your environment.</string>
 	<string name="share_app_action_1">Share App</string>
 	<string name="share_app_action_2">Share the app</string>
@@ -502,6 +510,7 @@
 	<string name="info_delete_exposure_keys_delete_button">Open app settings</string>
 	<string name="info_delete_exposure_keys_settings_cannot_be_opened">The notification settings cannot be opened.</string>
 	<string name="changelog_title_v2.0.0">What\'s new?</string>
+	<string name="changelog_img_v2.0.0">Image: Common API between providers</string>
 	<string name="changelog_cta_v2.0.0">All right!</string>
 	<string name="changelog_description_1_v2.0.0">In this version we use the</string>
 	<string name="changelog_description_2_v2.0.0">Apple and Google COVID-19 interface</string>

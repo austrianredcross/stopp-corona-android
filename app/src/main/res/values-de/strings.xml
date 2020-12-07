@@ -30,6 +30,7 @@
 	<string name="onboarding_copy_1_3">des Coronavirus zu bekämpfen und die Zahl der</string>
 	<string name="onboarding_copy_1_4">Neuinfektionen niedrig zu halten.</string>
 	<string name="onboarding_copy_1_5"></string>
+	<string name="onboarding_copy_1_img">Bild: Sinkende Corona-Fallzahlen</string>
 	<string name="onboarding_headline_2">Digitaler Handshake</string>
 	<string name="onboarding_copy_2_1">Nutzen Sie den digitalen Handshake um</string>
 	<string name="onboarding_copy_2_2">anonym</string>
@@ -42,6 +43,9 @@
 	<string name="onboarding_copy_4_1">Helfen Sie, anderen zu helfen! Falls Sie selbst am Coronavirus erkranken sollten, werden Ihre Kontakte</string>
 	<string name="onboarding_copy_4_2">anonymisiert</string>
 	<string name="onboarding_copy_4_3">benachrichtigt, so dass diese Maßnahmen treffen können.</string>
+	<string name="onboarding_copy_2_img">Bild: Kontakte werden über Bluetooth ermittelt</string>
+	<string name="onboarding_copy_3_img">Bild: Benachrichtigung über Erkrankung eines Kontakts</string>
+	<string name="onboarding_copy_4_img">Bild: Warnung für Ihre Kontakte</string>
 	<string name="onboarding_headline_5">Danke, dass Sie die App nutzen!</string>
 	<string name="onboarding_copy_5_1">Sie tragen aktiv dazu bei, Ihre Gesundheit und die Gesundheit anderer zu schützen.\nSie können ab jetzt Begegnungen mit anderen App-Nutzern aufzeichnen.\n\nMit der Installation der App stimmen Sie den </string>
 	<string name="onboarding_copy_5_2">Nutzungsbedingungen</string>
@@ -191,6 +195,8 @@
 	<string name="main_automatic_handshake_description_on">Via Bluetooth versenden und empfangen Sie Signale anderer Corona-Apps. Signale über 5 Minuten werden im COVID-19 Kontaktprotokoll in Ihrem Gerät aufgezeichnet. Dies geschieht anonym mittels zufällig erzeugter IDs.</string>
 	<string name="main_automatic_handshake_description_off">Aktuell werden keine Ihrer Begegnungen automatisch gespeichert. Bitte aktivieren Sie hierzu den automatischen Handshake.</string>
 	<string name="main_start_manual_handshake">Manuellen Handshake starten</string>
+	<string name="main_automatic_handshake_img_active">Bild: Automatischer Handshake aktiv</string>
+	<string name="main_automatic_handshake_img_inactive">Bild: Automatischer Handshake inaktiv</string>
 
 	<!-- Sickness Certificate -->
 	<string name="certificate_personal_data_headline">Bitte geben Sie Ihre Daten ein</string>
@@ -277,6 +283,7 @@
 	<string name="start_menu">Menü</string>
 	<string name="start_menu_close">Menü schließen</string>
 	<string name="start_menu_headline_1">Info</string>
+	<string name="start_menu_item_external_link">Link auf eine Website</string>
 	<string name="start_menu_item_1_1_what_does_the_app_do">Was kann diese App?</string>
 	<string name="start_menu_item_1_2_red_cross_link">FAQ auf www.stopp-corona.at</string>
 
@@ -475,6 +482,7 @@
 	<string name="revoke_suspicion_success_description">Danke, dass Sie Ihre Information weitergegeben haben und damit zum Gemeinwohl beitragen.\n\nIhre Kontakte wurden anonym benachrichtigt.</string>
 	<string name="revoke_suspicion_success_finish">Fertig</string>
 	<string name="share_app_title">Teilen Sie die App!</string>
+	<string name="share_app_img">Bild: App teilen</string>
 	<string name="share_app_description">Empfehlen Sie die App und schützen Sie so sich und Ihr Umfeld.</string>
 	<string name="share_app_action_1">App teilen</string>
 	<string name="share_app_action_2">Teilen Sie die App</string>
@@ -502,6 +510,7 @@
 	<string name="info_delete_exposure_keys_delete_button">App-Einstellungen öffnen</string>
 	<string name="info_delete_exposure_keys_settings_cannot_be_opened">Die Benachrichtigungseinstellungen können nicht geöffnet werden.</string>
 	<string name="changelog_title_v2.0.0">Was ist neu?</string>
+	<string name="changelog_img_v2.0.0">Bild: Gemeinsame Schnittstelle der Anbieter</string>
 	<string name="changelog_cta_v2.0.0">Alles klar!</string>
 	<string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
 	<string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 Schnittstelle</string>

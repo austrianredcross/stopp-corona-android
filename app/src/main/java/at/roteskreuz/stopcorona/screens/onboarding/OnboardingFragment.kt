@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.FullScreenPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.routing.startRouterActivity
-import at.roteskreuz.stopcorona.screens.webView.startWebView
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.argument
@@ -51,9 +50,7 @@ class OnboardingFragment : BaseFragment(R.layout.fragment_onboarding) {
             onEnterLastPage = { pageNumber ->
                 viewModel.currentPage = pageNumber
             },
-            onDataPrivacyCheckBoxChanged = viewModel::setDataPrivacyChecked,
-            onTermsAndConditionsClick = { startWebView(R.string.onboarding_headline_terms_of_use, "terms-of-use") },
-            onDataPrivacyClick = { startWebView(R.string.onboarding_headline_data_privacy, "privacy") }
+            onDataPrivacyCheckBoxChanged = viewModel::setDataPrivacyChecked
         )
     }
 
