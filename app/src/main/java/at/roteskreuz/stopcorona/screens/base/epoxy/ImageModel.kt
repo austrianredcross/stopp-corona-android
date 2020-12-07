@@ -15,9 +15,13 @@ abstract class ImageModel : BaseEpoxyModel<ImageModel.Holder>() {
     @EpoxyAttribute
     @DrawableRes var imageRes: Int? = null
 
+    @EpoxyAttribute
+    var imageDesc: String? = null
+
     override fun Holder.onBind() {
         view.visible = imageRes?.let {
             imgContent.setImageResource(it)
+            imgContent.contentDescription = imageDesc
             true
         } ?: false
     }

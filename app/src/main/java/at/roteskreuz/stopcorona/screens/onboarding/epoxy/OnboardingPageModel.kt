@@ -35,12 +35,16 @@ abstract class OnboardingPageModel(
     var heroImageRes: Int = R.drawable.onboarding_hero_1
 
     @EpoxyAttribute
+    var heroImageDesc: String? = null
+
+    @EpoxyAttribute
     var heroImageVisible: Boolean = true
 
     override fun Holder.onBind() {
         txtTitle.text = title
         txtDescription.text = description
         imgHero.setImageResource(heroImageRes)
+        imgHero.contentDescription = heroImageDesc
         imgHero.visible = heroImageVisible
 
         txtDescription.movementMethod = LinkMovementMethod()
