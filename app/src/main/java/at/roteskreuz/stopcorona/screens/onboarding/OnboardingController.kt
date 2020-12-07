@@ -28,6 +28,7 @@ class OnboardingController(
             pageNumber(0)
             title(context.getString(R.string.onboarding_headline_1))
             heroImageRes(R.drawable.onboarding_hero_1)
+            heroImageDesc(context.getString(R.string.onboarding_copy_1_img))
 
             val builder = SpannableStringBuilder()
             builder.append(context.getString(R.string.onboarding_copy_1_1))
@@ -43,6 +44,7 @@ class OnboardingController(
             pageNumber(1)
             title(context.getString(R.string.onboarding_headline_2))
             heroImageRes(R.drawable.onboarding_hero_2)
+            heroImageDesc(context.getString(R.string.onboarding_copy_2_img))
 
             val builder = SpannableStringBuilder()
             builder.append(context.getString(R.string.onboarding_copy_2_1))
@@ -56,6 +58,7 @@ class OnboardingController(
             pageNumber(2)
             title(context.getString(R.string.onboarding_headline_3))
             heroImageRes(R.drawable.onboarding_hero_3)
+            heroImageDesc(context.getString(R.string.onboarding_copy_3_img))
 
             val builder = SpannableStringBuilder()
             builder.append(context.getString(R.string.onboarding_copy_3_1))
@@ -69,6 +72,7 @@ class OnboardingController(
             pageNumber(3)
             title(context.getString(R.string.onboarding_headline_4))
             heroImageRes(R.drawable.onboarding_hero_4)
+            heroImageDesc(context.getString(R.string.onboarding_copy_4_img))
 
             val builder = SpannableStringBuilder()
             builder.append(context.getString(R.string.onboarding_copy_4_1))

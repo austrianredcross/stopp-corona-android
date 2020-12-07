@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.dashboard.changelog
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.managers.Changelog
 import at.roteskreuz.stopcorona.model.managers.SpanTextWrapper
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.buttonType1
@@ -31,6 +32,7 @@ class ChangelogController(
         image {
             id("changelog_image")
             imageRes(changelog.image)
+            imageDesc(context.getString(R.string.changelog_img_v2_0_0))
         }
 
         emptySpace(modelCountBuiltSoFar, 24)
