@@ -26,6 +26,7 @@ abstract class MenuItemModel(
         txtTitle.text = title
         if (externalLink) {
             imgIcon.setImageResource(R.drawable.ic_external_link)
+            imgIcon.contentDescription = context.getString(R.string.start_menu_item_external_link)
             imgIcon.rotation = 0f
         } else {
             imgIcon.setImageResource(R.drawable.ic_back)

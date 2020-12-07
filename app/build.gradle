@@ -29,6 +29,13 @@ android {
                                       "$projectDir/schemas".toString()]
             }
         }
+
+        def addConstant = {constantName, constantValue ->
+            manifestPlaceholders += [ (constantName):constantValue]
+            buildConfigField "String", "${constantName}", "\"${constantValue}\""
+        }
+        addConstant("DEEPLINK_HOST", "webview")
+        addConstant("DEEPLINK_SCHEME", "stoppcorona")
     }
 
     signingConfigs {

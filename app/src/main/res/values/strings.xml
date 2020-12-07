@@ -277,6 +277,7 @@
 	<string name="start_menu">Menu</string>
 	<string name="start_menu_close">Close menu</string>
 	<string name="start_menu_headline_1">Info</string>
+	<string name="start_menu_item_external_link">Link to a website</string>
 	<string name="start_menu_item_1_1_what_does_the_app_do">What can this app do?</string>
 	<string name="start_menu_item_1_2_red_cross_link">FAQ at www.stopp-corona.at</string>
 

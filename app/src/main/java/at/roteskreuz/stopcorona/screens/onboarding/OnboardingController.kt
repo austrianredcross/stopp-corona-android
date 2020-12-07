@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.onboarding.epoxy.onboardingDataPrivacy
 import at.roteskreuz.stopcorona.screens.onboarding.epoxy.onboardingPage
+import at.roteskreuz.stopcorona.screens.webView.WebViewWithAssetsResourcesFragment
 import at.roteskreuz.stopcorona.utils.getBoldSpan
 import at.roteskreuz.stopcorona.utils.getClickableSpan
 import com.airbnb.epoxy.EpoxyController
@@ -17,9 +18,7 @@ class OnboardingController(
     private val context: Context,
     private val dataPrivacyAccepted: Boolean,
     private val onEnterLastPage: (pageNumber: Int) -> Unit,
-    private val onDataPrivacyCheckBoxChanged: (checked: Boolean) -> Unit,
-    private val onTermsAndConditionsClick: () -> Unit,
-    private val onDataPrivacyClick: () -> Unit
+    private val onDataPrivacyCheckBoxChanged: (checked: Boolean) -> Unit
 ) : EpoxyController() {
 
     override fun buildModels() {
@@ -86,7 +85,12 @@ class OnboardingController(
 
             val builder = SpannableStringBuilder()
             builder.append(context.getString(R.string.onboarding_copy_5_1))
-            builder.append(context.getClickableSpan(R.string.onboarding_copy_5_2) { onTermsAndConditionsClick() })
+            builder.append(
+                context.getClickableSpan(
+                    R.string.onboarding_copy_5_2,
+                    url = WebViewWithAssetsResourcesFragment.DEEP_LINK_TERMS_OF_USE
+                )
+            )
             builder.append(context.getString(R.string.onboarding_copy_5_3))
             description(builder)
         }
@@ -101,7 +105,12 @@ class OnboardingController(
 
                 val builder = SpannableStringBuilder()
                 builder.append(context.getString(R.string.onboarding_dataprivacy_description_2_1))
-                builder.append(context.getClickableSpan(R.string.onboarding_dataprivacy_description_2_2) { onDataPrivacyClick() })
+                builder.append(
+                    context.getClickableSpan(
+                        R.string.onboarding_dataprivacy_description_2_2,
+                        url = WebViewWithAssetsResourcesFragment.DEEP_LINK_PRIVACY
+                    )
+                )
                 secondDescription(SpannableString.valueOf(builder))
             }
         }

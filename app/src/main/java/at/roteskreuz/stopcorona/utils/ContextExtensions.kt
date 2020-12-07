@@ -7,10 +7,12 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextPaint
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.*
@@ -180,7 +182,7 @@ fun Context.getClickableSpan(
     @StringRes textRes: Int,
     insertLeadingSpace: Boolean = true,
     insertTrailingSpace: Boolean = true,
-    onClick: () -> Unit
+    url: String
 ): SpannableString {
 
     val builder = SpannableStringBuilder()
@@ -188,14 +190,15 @@ fun Context.getClickableSpan(
 
     val spannable = SpannableString(getString(textRes))
 
-    val clickableSpan = object : ClickableSpan() {
-        override fun onClick(widget: View) {
-            onClick()
-        }
-    }
+    val clickableSpan = URLSpan(url)
 
-    spannable.setSpan(clickableSpan, 0, spannable.length, 0)
-    spannable.setSpan(ForegroundColorSpan(color(R.color.black)), 0, spannable.length, 0)
+    spannable.setSpan(clickableSpan, 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannable.setSpan(
+        ForegroundColorSpan(color(R.color.black)),
+        0,
+        spannable.length,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
 
     builder.append(spannable)
     builder.append(getSpace(insertTrailingSpace))

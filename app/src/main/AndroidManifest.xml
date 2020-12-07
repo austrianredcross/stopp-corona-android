@@ -48,7 +48,15 @@
         <activity
             android:name=".screens.base.FullScreenPortraitBaseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Transparent" />
+            android:theme="@style/AppTheme.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="${DEEPLINK_HOST}"
+                    android:scheme="${DEEPLINK_SCHEME}" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
