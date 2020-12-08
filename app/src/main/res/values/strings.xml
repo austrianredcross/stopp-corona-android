@@ -488,7 +488,7 @@
 	<string name="share_app_action_2">Share the app</string>
 	<string name="share_app_menu">Share App</string>
 	<string name="share_app_chooser">Share the Stopp Corona App with your environment. </string>
-	<string name="share_app_content">Install the STOPP Corona App now!\nIn this way you protect yourself and your environment.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224</string>
+	<string name="share_app_content">Install the STOPP Corona App now!\nIn this way you protect yourself and your environment.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224\n\nHuawei AppGallery\nhttps://appgallery.huawei.com/#/app/C102947193</string>
 	<string name="revoke_sickness_title">Change Status</string>
 	<string name="revoke_sickness_headline">Please enter your data</string>
 	<string name="revoke_sickness_personal_data_description">After the next step, we will anonymously inform your previously informed contacts that you are withdrawing the sick note. We will validate the mobile number so that we can prevent misuse of this function.</string>

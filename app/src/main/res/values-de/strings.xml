@@ -488,7 +488,7 @@
 	<string name="share_app_action_2">Teilen Sie die App</string>
 	<string name="share_app_menu">App teilen</string>
 	<string name="share_app_chooser">Teilen Sie die Stopp Corona App mit Ihrem Umfeld. </string>
-	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224</string>
+	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224\n\nHuawei AppGallery\nhttps://appgallery.huawei.com/#/app/C102947193</string>
 	<string name="revoke_sickness_title">Status ändern</string>
 	<string name="revoke_sickness_headline">Bitte geben Sie Ihre Daten ein</string>
 	<string name="revoke_sickness_personal_data_description">Wir werden nach dem nächsten Schritt Ihre vorher informierten Kontakte anonym informieren, dass Sie die Krankmeldung zurückziehen. Wir validieren die Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
