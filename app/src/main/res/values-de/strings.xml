@@ -513,7 +513,7 @@
 	<string name="changelog_img_v2.0.0">Bild: Gemeinsame Schnittstelle der Anbieter</string>
 	<string name="changelog_cta_v2.0.0">Alles klar!</string>
 	<string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
-	<string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 Schnittstelle</string>
+	<string name="changelog_description_2_v2.0.0">Apple, Google und Huawei COVID-19 Schnittstelle</string>
 	<string name="changelog_description_3_v2.0.0">. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Informationen anders dargestellt.\n\nBegegnungen, die Sie vor dem Update auf diese Version als Handshake gespeichert haben, sind aus technischen Gründen nicht mehr gespeichert und können leider nicht mehr benachrichtigt werden.</string>
 	<string name="upload_keys_from_yesterday_title">Kontakte von gestern über ihre Krankmeldung informieren</string>
 	<string name="upload_keys_from_yesterday_message">Benachrichtigen Sie jetzt Kontakte von gestern. Teilen Sie dafür jetzt die IDs aus dem Kontaktprotokoll Ihres Gerätes mit der Stopp Corona App\n\nDas Melden ist weiterhin freiwillig.</string>
