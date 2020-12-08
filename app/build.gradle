@@ -13,12 +13,12 @@ def buildName = versionString + "." + buildCode.toString() + "-" + getGitDescrib
 def packageName = "at.roteskreuz.stopcorona"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId packageName
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode buildCode
         versionName buildName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
