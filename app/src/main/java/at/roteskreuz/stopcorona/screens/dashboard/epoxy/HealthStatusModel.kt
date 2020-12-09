@@ -46,6 +46,7 @@ abstract class HealthStatusModel(
             when (healthStatusData) {
                 HealthStatusData.SicknessCertificate -> {
                     txtTitle.text = context.string(R.string.sickness_certificate_attest_headline)
+                    txtTitle.contentDescription = context.string(R.string.sickness_certificate_attest_headline) + context.getString(R.string.accessibility_heading_2)
                     txtDescription.text = context.string(R.string.sickness_certificate_attest_description)
                     txtActionButton.text = context.string(R.string.general_additional_information)
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_checkmark_white_red)
@@ -54,6 +55,7 @@ abstract class HealthStatusModel(
                 is HealthStatusData.SelfTestingSuspicionOfSickness -> {
                     val days = healthStatusData.quarantineStatus.daysUntilEnd()
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
+                    txtTitle.contentDescription = context.string(R.string.self_testing_suspicion_headline) + context.getString(R.string.accessibility_heading_2)
                     txtDescription.text = context.string(R.string.self_testing_suspicion_description)
                     txtActionButton.text = when (days) {
                         1L -> string(R.string.contacts_quarantine_day_single)
@@ -65,6 +67,7 @@ abstract class HealthStatusModel(
                 }
                 HealthStatusData.SelfTestingSymptomsMonitoring -> {
                     txtTitle.text = context.string(R.string.self_testing_symptoms_headline)
+                    txtTitle.contentDescription = context.string(R.string.self_testing_symptoms_headline) + context.getString(R.string.accessibility_heading_2)
                     txtDescription.text = context.string(R.string.self_testing_symptoms_description)
                     txtActionButton.text = context.string(R.string.self_testing_symptoms_button)
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
@@ -85,6 +88,7 @@ abstract class HealthStatusModel(
                     when {
                         healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected.not() -> {
                             txtTitle.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline)
+                            txtTitle.contentDescription = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline) + context.getString(R.string.accessibility_heading_2)
                             txtDescription.text = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_checkmark_white_red)
@@ -92,6 +96,7 @@ abstract class HealthStatusModel(
                         }
                         healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected -> {
                             txtTitle.text = context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_headline)
+                            txtTitle.contentDescription = context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_headline) + context.getString(R.string.accessibility_heading_2)
                             txtDescription.text =
                                 context.string(R.string.health_status_contacts_confirmed_and_suspicion_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
@@ -100,6 +105,7 @@ abstract class HealthStatusModel(
                         }
                         healthStatusData.warningType.redContactsDetected.not() && healthStatusData.warningType.yellowContactsDetected -> {
                             txtTitle.text = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_headline)
+                            txtTitle.contentDescription = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_headline) + context.getString(R.string.accessibility_heading_2)
                             txtDescription.text = context.string(R.string.health_status_contacts_suspicion_one_or_more_cases_description)
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)

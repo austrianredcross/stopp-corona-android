@@ -41,6 +41,11 @@ class QuestionnaireGuidelineFragment : BaseFragment(R.layout.questionnaire_guide
             activity?.finish()
         }
 
+        txtTitle.contentDescription = getString(R.string.questionnaire_guideline_headline) + getString(R.string.accessibility_heading_1)
+        txtUrgentHelpHeadline.contentDescription = getString(R.string.questionnaire_guideline_urgent_help_headline) + getString(R.string.accessibility_heading_2)
+        txtAdviceHeadline.contentDescription = getString(R.string.questionnaire_guideline_advice_headline) + getString(R.string.accessibility_heading_2)
+        txtReportSickHeadline.contentDescription = getString(R.string.questionnaire_guideline_report_sick_headline) + getString(R.string.accessibility_heading_2)
+
         txtDescription3.text = SpannableStringBuilder().apply {
             append(getString(R.string.questionnaire_guideline_contact_info1))
             append(requireContext().getClickableBoldSpan(R.string.questionnaire_guideline_contact_phone,

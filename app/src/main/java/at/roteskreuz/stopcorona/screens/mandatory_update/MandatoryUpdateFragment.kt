@@ -16,6 +16,8 @@ class MandatoryUpdateFragment : BaseFragment(R.layout.fragment_mandatory_update)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        txtTitle.contentDescription = getString(R.string.mandatory_update_title) + getString(R.string.accessibility_heading_2)
+
         btnGoToPlaystore.setOnClickListener {
             val appPackageName = requireContext().packageName
             startGooglePlayStore(appPackageName)

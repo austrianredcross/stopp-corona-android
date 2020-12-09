@@ -20,6 +20,8 @@ class RevokeSuspicionSuccessFragment : BaseFragment(R.layout.fragment_revoke_sus
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        txtHeadline.contentDescription = getString(R.string.revoke_suspicion_success_headline) + getString(R.string.accessibility_heading_1)
+
         btnFinish.setOnClickListener {
             activity?.finish()
         }

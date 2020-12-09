@@ -15,6 +15,7 @@ abstract class HandshakeHeadline : BaseEpoxyModel<HandshakeHeadline.Holder>() {
 
     override fun Holder.onBind() {
         txtTitle.text = title
+        txtTitle.contentDescription = title + context.getString(R.string.accessibility_heading_2)
     }
 
     class Holder : BaseEpoxyHolder() {

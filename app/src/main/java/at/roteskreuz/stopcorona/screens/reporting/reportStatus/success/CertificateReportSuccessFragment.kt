@@ -21,6 +21,8 @@ class CertificateReportSuccessFragment : BaseFragment(R.layout.certificate_repor
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        txtTitle.contentDescription = getString(R.string.sickness_certificate_confirmation_headline) + getString(R.string.accessibility_heading_1)
+
         btnQuarantineGuideline.setOnClickListener {
             startCertificateReportGuidelinesFragment()
         }
