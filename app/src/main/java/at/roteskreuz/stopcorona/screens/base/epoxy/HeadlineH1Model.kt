@@ -37,6 +37,7 @@ abstract class HeadlineH1Model : BaseEpoxyModel<HeadlineH1Model.Holder>() {
 
     override fun Holder.onBind() {
         txtText.text = text
+        txtText.contentDescription = text + context.getString(R.string.accessibility_heading_1)
         txtText.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.marginStart = context.dipfi(marginHorizontal)
             this.marginEnd = context.dipfi(marginHorizontal)

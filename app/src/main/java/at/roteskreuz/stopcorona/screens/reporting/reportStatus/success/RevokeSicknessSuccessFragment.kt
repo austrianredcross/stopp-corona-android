@@ -12,6 +12,8 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import kotlinx.android.synthetic.main.fragment_revoke_sickness_success.*
+import kotlinx.android.synthetic.main.fragment_revoke_sickness_success.transparentAppBar
+import kotlinx.android.synthetic.main.questionnaire_guideline_fragment.*
 
 class RevokeSicknessSuccessFragment : BaseFragment(R.layout.fragment_revoke_sickness_success) {
 
@@ -25,6 +27,8 @@ class RevokeSicknessSuccessFragment : BaseFragment(R.layout.fragment_revoke_sick
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        txtHeadline.contentDescription = getString(R.string.revoke_sickness_success_headline) + getString(R.string.accessibility_heading_1)
 
         btnFinish.setOnClickListener {
             activity?.finish()

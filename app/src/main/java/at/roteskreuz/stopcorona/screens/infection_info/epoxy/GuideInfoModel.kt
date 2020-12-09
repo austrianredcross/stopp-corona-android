@@ -24,6 +24,8 @@ abstract class GuideInfoModel(
         val teamStartingIndex = description4.indexOf(description4team)
         description4.setSpan(StyleSpan(Typeface.BOLD), teamStartingIndex, teamStartingIndex + description4team.length, 0)
         txtDescription4.text = description4
+        txtUrgentHeadline.contentDescription = context.getString(R.string.sickness_certificate_urgent_help_headline) + context.getString(R.string.accessibility_heading_2)
+        txtConsultingTitle.contentDescription = context.getString(R.string.sickness_certificate_guidelines_consulting_description_title) + context.getString(R.string.accessibility_heading_2)
 
         txtDescription4Phone.startPhoneCallOnClick()
         txtConsultingFirstPhone.startPhoneCallOnClick()
@@ -47,5 +49,7 @@ abstract class GuideInfoModel(
         val txtConsultingThirdPhone by bind<TextView>(R.id.txtConsultingThirdPhone)
         val txtUrgentNumber1 by bind<TextView>(R.id.txtUrgentNumber1)
         val txtUrgentNumber2 by bind<TextView>(R.id.txtUrgentNumber2)
+        val txtUrgentHeadline by bind<TextView>(R.id.txtUrgentHelpHeadline)
+        val txtConsultingTitle by bind<TextView>(R.id.txtConsultingTitle)
     }
 }

@@ -17,6 +17,11 @@ class QuestionnaireSuspicionFragment : BaseFragment(R.layout.fragment_questionna
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        txtHeadline1.contentDescription = getString(R.string.questionnaire_hint_headline_1) + getString(R.string.accessibility_heading_1)
+        txtHeadline2.contentDescription = getString(R.string.questionnaire_examine_headling_1) + getString(R.string.accessibility_heading_1)
+        txtDescription.contentDescription = getString(R.string.questionnaire_examine_headling_2) + getString(R.string.accessibility_heading_2)
+
         btnActionButton.setOnClickListener {
             startReportingActivity(MessageType.InfectionLevel.Yellow)
             activity?.finish()

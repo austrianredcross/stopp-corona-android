@@ -37,6 +37,7 @@ abstract class OnboardingDataPrivacyModel(
 
     override fun Holder.onBind() {
         txtTitle.text = title
+        txtTitle.contentDescription = title + context.getString(R.string.accessibility_heading_1)
         txtDescription1.text = firstDescription
         txtDescription2.text = secondDescription
         checkbox.text = checkBoxDescription
