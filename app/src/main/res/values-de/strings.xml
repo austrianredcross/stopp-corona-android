@@ -26,32 +26,37 @@
 	<string name="error_unknown_message">Es ist ein unbekannter Fehler aufgetreten. Bitte versuche es später erneut.</string>
 
 	<!-- Onboarding -->
-	<string name="onboarding_headline_1">Willkommen!</string>
-	<string name="onboarding_copy_1_1">Mit der Installation der Stopp Corona App helfen Sie dabei, die</string>
-	<string name="onboarding_copy_1_2">Ausbreitung</string>
-	<string name="onboarding_copy_1_3">des Coronavirus zu bekämpfen und die Zahl der</string>
-	<string name="onboarding_copy_1_4">Neuinfektionen niedrig zu halten.</string>
-	<string name="onboarding_copy_1_5"></string>
+	<string name="onboarding_headline_1">Willkommen</string>
 	<string name="onboarding_copy_1_img">Bild: Sinkende Corona-Fallzahlen</string>
+	<string name="onboarding_copy_1_1">Mit der Nutzung der Stopp Corona App helfen Sie dabei, die</string>
+	<string name="onboarding_copy_1_2">Ausbreitung des Virus</string>
+	<string name="onboarding_copy_1_3">zu</string>
+	<string name="onboarding_copy_1_4">verlangsamen</string>
+	<string name="onboarding_copy_1_5">und Leben zu retten.</string>
 	<string name="onboarding_headline_2">Digitaler Handshake</string>
-	<string name="onboarding_copy_2_1">Nutzen Sie den digitalen Handshake um</string>
-	<string name="onboarding_copy_2_2">anonym</string>
-	<string name="onboarding_copy_2_3">Ihre Begegnungen zu speichern. Sie werden anonym in der App benachrichtigt, wenn eine Ihrer Kontaktpersonen erkrankt ist.</string>
-	<string name="onboarding_headline_3">Symptome prüfen</string>
-	<string name="onboarding_copy_3_1">Nutzen Sie unseren klinisch geprüften Fragebogen. Erhalten Sie</string>
-	<string name="onboarding_copy_3_2">täglich</string>
-	<string name="onboarding_copy_3_3">eine Einschätzung zu Ihrem Gesundheitsstatus.</string>
-	<string name="onboarding_headline_4">Benachrichtigung im Krankheitsfall</string>
-	<string name="onboarding_copy_4_1">Helfen Sie, anderen zu helfen! Falls Sie selbst am Coronavirus erkranken sollten, werden Ihre Kontakte</string>
-	<string name="onboarding_copy_4_2">anonymisiert</string>
-	<string name="onboarding_copy_4_3">benachrichtigt, so dass diese Maßnahmen treffen können.</string>
 	<string name="onboarding_copy_2_img">Bild: Kontakte werden über Bluetooth ermittelt</string>
+	<string name="onboarding_copy_2_1">Aktivieren Sie den automatischen digitalen Handshake über Bluetooth, um Kontakte</string>
+	<string name="onboarding_copy_2_2">anonym und lokal</string>
+	<string name="onboarding_copy_2_3">zu speichern und Ihr</string>
+	<string name="onboarding_copy_2_4">aktuelles Infektions-Risiko</string>
+	<string name="onboarding_copy_2_5">zu ermitteln.</string>
+	<string name="onboarding_headline_3">Benachrichtigung bei Risiko-Kontakt</string>
 	<string name="onboarding_copy_3_img">Bild: Benachrichtigung über Erkrankung eines Kontakts</string>
+	<string name="onboarding_copy_3_1">Sollte einer Ihrer Kontakte erkranken, werden Sie über den</string>
+	<string name="onboarding_copy_3_2">Zeitpunkt Ihrer letzten Risiko-Begegnung</string>
+	<string name="onboarding_copy_3_3">benachrichtigt.</string>
+	<string name="onboarding_headline_4">Verdacht oder Infektion melden</string>
 	<string name="onboarding_copy_4_img">Bild: Warnung für Ihre Kontakte</string>
+	<string name="onboarding_copy_4_1">Sollten Sie selbst an COVID-19 erkranken oder den Verdacht auf eine Erkrankung haben, können Sie Ihre Kontakte</string>
+	<string name="onboarding_copy_4_2">anonym über die App warnen,</string>
+	<string name="onboarding_copy_4_3">um die weitere Ausbreitung zu stoppen.</string>
 	<string name="onboarding_headline_5">Danke, dass Sie die App nutzen!</string>
-	<string name="onboarding_copy_5_1">Sie tragen aktiv dazu bei, Ihre Gesundheit und die Gesundheit anderer zu schützen.\nSie können ab jetzt Begegnungen mit anderen App-Nutzern aufzeichnen.\n\nMit der Installation der App stimmen Sie den </string>
+	<string name="onboarding_copy_5_1">Sie schützen aktiv Ihre Gesundheit und die Gesundheit anderer.
+\n
+\nMit der Installation der App stimmen Sie den</string>
 	<string name="onboarding_copy_5_2">Nutzungsbedingungen</string>
-	<string name="onboarding_copy_5_3">zu.</string>
+	<string name="onboarding_copy_5_3">zu.\n \nSie haben noch Fragen? Lesen Sie mehr in den</string>
+	<string name="onboarding_copy_5_4">FAQs</string>
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>

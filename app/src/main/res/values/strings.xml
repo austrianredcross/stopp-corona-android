@@ -26,32 +26,37 @@
 	<string name="error_unknown_message">An unknown error has occurred. Please try again later. </string>
 
 	<!-- Onboarding -->
-	<string name="onboarding_headline_1">Welcome!</string>
+	<string name="onboarding_headline_1">Welcome</string>
 	<string name="onboarding_copy_1_img">Image: Falling numbers of Corona cases</string>
-	<string name="onboarding_copy_1_1">By installing the Stopp Corona App you help slow down</string>
-	<string name="onboarding_copy_1_2">the spread</string>
-	<string name="onboarding_copy_1_3">of the coronavirus and to reduce the number</string>
-	<string name="onboarding_copy_1_4">of new infections.</string>
+	<string name="onboarding_copy_1_1">By using the Stop Corona app, you are helping to </string>
+	<string name="onboarding_copy_1_2">slow down the spread of the virus</string>
+	<string name="onboarding_copy_1_3">and save lives.</string>
+	<string name="onboarding_copy_1_4"></string>
 	<string name="onboarding_copy_1_5"></string>
 	<string name="onboarding_headline_2">Digital handshake</string>
 	<string name="onboarding_copy_2_img">Image: Contacts are identified via Bluetooth</string>
-	<string name="onboarding_copy_2_1">Use the digital handshake to</string>
-	<string name="onboarding_copy_2_2">anonymously</string>
-	<string name="onboarding_copy_2_3">save your encounters. You will be notified anonymously in the app if one of your encounters falls ill.</string>
-	<string name="onboarding_headline_3">Check symptoms</string>
+	<string name="onboarding_copy_2_1">Activate the automatic digital handshake via Bluetooth to save contacts</string>
+	<string name="onboarding_copy_2_2">anonymously and locally</string>
+	<string name="onboarding_copy_2_3">and to determine your</string>
+	<string name="onboarding_copy_2_4">current risk of infection</string>
+	<string name="onboarding_copy_2_5">to determine.</string>
+	<string name="onboarding_headline_3">Notification of risk contact</string>
 	<string name="onboarding_copy_3_img">Image: Notification of a contact\'s illness</string>
-	<string name="onboarding_copy_3_1">Use our clinically tested questionnaire. Get a</string>
-	<string name="onboarding_copy_3_2">daily</string>
-	<string name="onboarding_copy_3_3">assessment of your health status.</string>
-	<string name="onboarding_headline_4">Notification in the event of illness</string>
+	<string name="onboarding_copy_3_1">If one of your contacts falls ill, you will be notified of the </string>
+	<string name="onboarding_copy_3_2">time of your last risk encounter</string>
+	<string name="onboarding_copy_3_3">.</string>
+	<string name="onboarding_headline_4">Report suspicion or infection</string>
 	<string name="onboarding_copy_4_img">Image: Warning for your contacts</string>
-	<string name="onboarding_copy_4_1">Help to help others! If you should contract the corona virus yourself, your contacts will be notified</string>
-	<string name="onboarding_copy_4_2">anonymously</string>
-	<string name="onboarding_copy_4_3">so that they can take measures.</string>
+	<string name="onboarding_copy_4_1">If you should contract COVID-19 yourself or suspect it, you can warn your contacts</string>
+	<string name="onboarding_copy_4_2">anonymously via the app</string>
+	<string name="onboarding_copy_4_3">to stop the spread.</string>
 	<string name="onboarding_headline_5">Thank you for using the app!</string>
-	<string name="onboarding_copy_5_1">You\'re actively helping to protect your health and the health of others. \nYou can now record encounters with other app users.\n\nBy installing the app you agree to the</string>
+	<string name="onboarding_copy_5_1">You are actively protecting your health and the health of others.
+\n
+\nBy installing the app, you agree to the</string>
 	<string name="onboarding_copy_5_2">terms of use</string>
-	<string name="onboarding_copy_5_3">.</string>
+	<string name="onboarding_copy_5_3">.\n \nDo you have any questions? Read more in the</string>
+	<string name="onboarding_copy_5_4">FAQs</string>
 	<string name="onboarding_next_button">Continue</string>
 	<string name="onboarding_finish_button">Finished</string>
 	<string name="onboarding_headline_6">Declaration of consent</string>
