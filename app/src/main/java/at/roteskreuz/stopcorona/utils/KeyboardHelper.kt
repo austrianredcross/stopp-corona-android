@@ -24,7 +24,7 @@ class KeyboardHelper(
                 val diff = height - visibleDisplayFrame.bottom
 
                 // check if keyboard is shown
-                if (diff != 0) {
+                if (diff > 0) {
                     onKeyboardShown()
                 } else {
                     onKeyboardHidden()
