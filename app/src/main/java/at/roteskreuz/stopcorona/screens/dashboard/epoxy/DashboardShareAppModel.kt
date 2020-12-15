@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
+import android.widget.TextView
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
@@ -15,11 +16,14 @@ abstract class DashboardShareAppModel(
 
     override fun Holder.onBind() {
         view.setOnClickListener { onShareClick() }
+        txtTitle.contentDescription = context.getString(R.string.share_app_title) + context.getString(R.string.accessibility_heading_2)
     }
 
     override fun Holder.onUnbind() {
         view.setOnClickListener(null)
     }
 
-    class Holder : BaseEpoxyHolder()
+    class Holder : BaseEpoxyHolder() {
+        val txtTitle by bind<TextView>(R.id.txtTitle)
+    }
 }
