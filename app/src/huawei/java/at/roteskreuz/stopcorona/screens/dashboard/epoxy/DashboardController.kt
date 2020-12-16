@@ -4,9 +4,12 @@ import android.content.Context
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.HMS
 import at.roteskreuz.stopcorona.model.HuaweiErrorPhase
+import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
+import com.huawei.hms.contactshield.ContactShield
+import timber.log.Timber
 
 fun EpoxyController.buildFrameWorkSpecificPrerequisitesErrorCard(context : Context,
                                                                  phase: ExposureNotificationPhase,
@@ -68,6 +71,13 @@ fun EpoxyController.buildFrameWorkSpecificErrorCard(
     return when(phase) {
         is HMS.ContactShieldDeclined -> {
             exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
+
+            try { //small hack, this function should trigger an update window if hms core has no nearby kit installed
+                ContactShield.getContactShieldEngine(context).isContactShieldRunning
+            } catch (e : Exception) {
+                Timber.e(SilentError(e))
+            }
+
             true
         }
         is HMS.LocationPermissionNotAllowedAllTheTime -> {
