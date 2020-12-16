@@ -52,6 +52,11 @@ sealed class HMS : ExposureNotificationPhase.FrameworkError.Critical() {
         override val dependencyHolder: DependencyHolder,
         override val register: Boolean
     ) : FrameworkError.Critical()
+
+    data class LocationPermissionNotAllowedAllTheTime(
+            override val dependencyHolder: DependencyHolder,
+            override val register: Boolean
+    ) : FrameworkError.Critical()
 }
 
 fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError(
@@ -66,6 +71,9 @@ fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError
         when (exception.statusCode) {
             StatusCode.STATUS_FAILURE -> {
                 HMS.ContactShieldDeclined(dependencyHolder, register)
+            }
+            StatusCode.STATUS_INTERNAL_ERROR -> {
+                HMS.LocationPermissionNotAllowedAllTheTime(dependencyHolder, register)
             }
             else -> ExposureNotificationPhase.FrameworkError.Critical.Unknown(
                 dependencyHolder,

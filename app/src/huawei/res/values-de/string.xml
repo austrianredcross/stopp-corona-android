@@ -8,4 +8,5 @@
     <string name="main_exposure_error_hms_unofficial_message">Dieses Gerät verwendet eine nicht offizielle Version von HMS Core.</string>
     <string name="main_exposure_error_hms_unknown_error_message">An unknown HMS Core error occurred.</string>
     <string name="main_exposure_error_hms_unavailable_action">Try again</string>
+    <string name="main_exposure_error_hms_location_permission_not_always_allowed">Standort Zugriff für HMS Core ist nicht immer erlaubt.</string>
 </resources>
