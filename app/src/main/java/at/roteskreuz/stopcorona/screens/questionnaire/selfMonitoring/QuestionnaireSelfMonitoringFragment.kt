@@ -28,11 +28,14 @@ open class QuestionnaireSelfMonitoringFragment : BaseFragment(R.layout.fragment_
         super.onViewCreated(view, savedInstanceState)
 
         txtHeadline1.text = getString(R.string.questionnaire_examine_observe_headline_1)
+        txtHeadline1.contentDescription = getString(R.string.questionnaire_examine_observe_headline_1) + getString(R.string.accessibility_heading_1)
         txtHeadline2.text = getString(R.string.questionnaire_examine_observe_sub_headline_1)
+        txtHeadline2.contentDescription = getString(R.string.questionnaire_examine_observe_sub_headline_1) + getString(R.string.accessibility_heading_1)
         txtDescription1.text = getString(R.string.questionnaire_examine_observe_recommendation_1)
         txtDescription2.text = getString(R.string.questionnaire_examine_observe_recommendation_2)
         txtDescription3.text = getString(R.string.questionnaire_examine_observe_recommendation_3)
         txtDescription.text = getString(R.string.questionnaire_examine_observe_headline_2)
+        txtDescription.contentDescription = getString(R.string.questionnaire_examine_observe_headline_2) + getString(R.string.accessibility_heading_2)
         txtSubDescription.text = getString(R.string.questionnaire_examine_observe_description)
         btnActionButton.text = getString(R.string.onboarding_finish_button)
         txtStepsHeadline.visible = false

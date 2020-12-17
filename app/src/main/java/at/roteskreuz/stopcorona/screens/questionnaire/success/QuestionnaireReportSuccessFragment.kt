@@ -39,6 +39,9 @@ class QuestionnaireReportSuccessFragment : BaseFragment(R.layout.questionnaire_r
             activity?.onBackPressed()
         }
 
+        txtTitle.contentDescription = getString(R.string.questionnaire_report_success_headline) + getString(R.string.accessibility_heading_1)
+        txtUrgentHelpHeadline.contentDescription = getString(R.string.questionnaire_report_success_urgent_help_headline) + getString(R.string.accessibility_heading_2)
+
         txtDescription3.text = SpannableStringBuilder().apply {
             append(getString(R.string.questionnaire_guideline_contact_info1))
             append(requireContext().getClickableBoldSpan(R.string.questionnaire_guideline_contact_phone,

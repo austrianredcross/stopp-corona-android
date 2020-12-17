@@ -42,6 +42,7 @@ abstract class OnboardingPageModel(
 
     override fun Holder.onBind() {
         txtTitle.text = title
+        txtTitle.contentDescription = title + context.getString(R.string.accessibility_heading_1)
         txtDescription.text = description
         imgHero.setImageResource(heroImageRes)
         imgHero.contentDescription = heroImageDesc

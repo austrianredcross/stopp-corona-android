@@ -41,6 +41,9 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        txtTitle.contentDescription = getString(R.string.sickness_certificate_guidelines_top_headline) + getString(R.string.accessibility_heading_1)
+        txtRecommendationHeadline.contentDescription = getString(R.string.sickness_certificate_guidelines_content_title) + getString(R.string.accessibility_heading_2)
+
         scrollViewContainer.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             transparentAppBar.elevation = if (scrollY > requireContext().dip(ReportingPersonalDataFragment.SCROLLED_DISTANCE_THRESHOLD)) {
                 requireContext().dipif(4)

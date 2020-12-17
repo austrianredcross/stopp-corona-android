@@ -32,6 +32,7 @@ abstract class StatusUpdateModel(
 
     override fun Holder.onBind() {
         txtTitle.text = title
+        txtTitle.contentDescription = title + context.getString(R.string.accessibility_heading_2)
         txtDescription.text = description
         btnClose.setOnClickListener {
             onCloseClick()

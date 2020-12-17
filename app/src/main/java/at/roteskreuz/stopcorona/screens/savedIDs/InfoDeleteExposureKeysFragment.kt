@@ -38,6 +38,8 @@ class InfoDeleteExposureKeysFragment : BaseFragment(R.layout.info_delete_exposur
             txtSavedIDsDeleteSubtitle.isVisible = false
             txtSavedIDsDeleteDescription.isVisible = false
         }
+        txtSavedIDsTitle.contentDescription = context?.getString(R.string.info_delete_exposure_keys_subtitle) + context?.getString(R.string.accessibility_heading_1)
+        txtSavedIDsDeleteSubtitle.contentDescription = context?.getString(R.string.info_delete_exposure_keys_delete_subtitle) + context?.getString(R.string.accessibility_heading_1)
     }
 
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {

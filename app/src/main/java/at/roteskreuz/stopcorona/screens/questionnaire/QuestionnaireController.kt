@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWith
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
 import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
 import at.roteskreuz.stopcorona.screens.base.epoxy.HeadlineH1Model_
+import at.roteskreuz.stopcorona.screens.base.epoxy.HeadlineH2Model_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.QuestionnaireAnswerModel_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.QuestionnaireRadioGroupModel_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.questionnairePage
@@ -38,12 +39,11 @@ class QuestionnaireController(
                 .marginHorizontal(0f)
                 .addTo(questionPageContent)
 
-            HeadlineH1Model_()
+            HeadlineH2Model_()
                 .id("question_${questionIndex}")
-                .text(questionWithAnswer.question.questionText)
-                .textSize(context.rawDimen(R.dimen.questionnaire_question_text_size))
+                .title(questionWithAnswer.question.questionText)
+                .textColor(R.color.rouge)
                 .gravity(Gravity.START)
-                .marginHorizontal(0f)
                 .addTo(questionPageContent)
 
             EmptySpaceModel_()

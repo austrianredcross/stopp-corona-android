@@ -19,6 +19,9 @@ class QuestionnaireHintFragment : BaseFragment(R.layout.fragment_questionnaire_h
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        txtHeadline1.contentDescription = getString(R.string.questionnaire_hint_headline_1) + getString(R.string.accessibility_heading_1)
+        txtHeadline2.contentDescription = getString(R.string.questionnaire_hint_headline_2) + getString(R.string.accessibility_heading_1)
+
         viewModel.revokeSelfMonitoring()
 
         btnActionButton.setOnClickListener {

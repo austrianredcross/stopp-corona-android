@@ -68,6 +68,7 @@ class ReportingTanCheckFragment : BaseFragment(R.layout.fragment_reporting_tan_c
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        txtTitle.contentDescription = getString(R.string.certificate_tan_check_headline) + getString(R.string.accessibility_heading_1)
         txtProgress.text = getString(
             R.string.certificate_personal_progress_label,
             CURRENT_SCREEN,
