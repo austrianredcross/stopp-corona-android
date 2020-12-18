@@ -173,22 +173,22 @@ class DiagnosisKeysRepositoryImpl(
 
         val dates = exposureInformation.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
-        val firstRedDay = dates.firstRedDay
-        val firstYellowDay = fullSession.session.firstYellowDay ?: dates.firstYellowDay.also { Timber.e("Yellow warning found") }
-        sessionDao.updateSession(fullSession.session.copy(firstYellowDay = dates.firstYellowDay))
+        val lastRedDay = dates.lastRedDay
+        val lastYellowDay = fullSession.session.firstYellowDay ?: dates.lastYellowDay.also { Timber.e("Yellow warning found") }
+        sessionDao.updateSession(fullSession.session.copy(firstYellowDay = dates.lastYellowDay))
 
         // Found red warning? Done processing.
-        firstRedDay?.let { _ ->
-            firstYellowDay?.let { _ ->
-                quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
+        lastRedDay?.let { _ ->
+            lastYellowDay?.let { _ ->
+                quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = lastYellowDay)
             }
 
-            quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = firstRedDay)
+            quarantineRepository.receivedWarning(WarningType.RED, timeOfContact = lastRedDay)
 
             // Only revoke quarantines after all new quarantines are known.
             // When switching from yellow to red, if we revoke yellow above imediately, the red quarantine is not yet known and the
             // quarantine end tile is triggered in the ui
-            if (dates.firstYellowDay == null) {
+            if (dates.lastYellowDay == null) {
                 quarantineRepository.revokeLastYellowContactDate()
             }
 
@@ -199,8 +199,8 @@ class DiagnosisKeysRepositoryImpl(
         val remainingDailyBatchesParts = fullSession.remainingDailyBatchesParts
         // End of batch without red warning? Done processing.
         if (remainingDailyBatchesParts.isEmpty()) {
-            firstYellowDay?.let { _ ->
-                quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = firstYellowDay)
+            lastYellowDay?.let { _ ->
+                quarantineRepository.receivedWarning(WarningType.YELLOW, timeOfContact = lastYellowDay)
                 Timber.e("Done processing. Only Yellow warning(s) found")
             } ?: run {
                 Timber.e("Done processing. No warnings found")
@@ -233,17 +233,17 @@ class DiagnosisKeysRepositoryImpl(
 
                     val dates = exposureInformations.extractLatestRedAndYellowContactDate(configuration.dailyRiskThreshold)
 
-                    dates.firstRedDay?.let {
-                        quarantineRepository.receivedWarning(WarningType.RED, dates.firstRedDay)
+                    dates.lastRedDay?.let {
+                        quarantineRepository.receivedWarning(WarningType.RED, dates.lastRedDay)
                     }
-                    dates.firstYellowDay?.let {
-                        quarantineRepository.receivedWarning(WarningType.YELLOW, dates.firstYellowDay)
+                    dates.lastYellowDay?.let {
+                        quarantineRepository.receivedWarning(WarningType.YELLOW, dates.lastYellowDay)
                     }
                     // Only revoce quarantines after all new quarantines are known.
                     // When switching from yellow to red, if we revoke yellow above imediately, the red quarantine is not yet known and the
                     // quarantine end tile is triggered in the ui
-                    if (dates.firstRedDay == null) quarantineRepository.revokeLastRedContactDate()
-                    if (dates.firstYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
+                    if (dates.lastRedDay == null) quarantineRepository.revokeLastRedContactDate()
+                    if (dates.lastYellowDay == null) quarantineRepository.revokeLastYellowContactDate()
 
                     if (currentWarningType == WarningType.GREEN && dates.noDates()) {
                         notificationsRepository.displayNotificationForLowRisc()
