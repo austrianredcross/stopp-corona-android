@@ -5,8 +5,10 @@ import at.roteskreuz.stopcorona.model.repositories.QuarantineRepository
 import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 
 /**
@@ -20,12 +22,14 @@ class InfectionInfoViewModel(
     fun observeInfectedContacts(): Observable<InfectedContactsViewState> {
         return Observables.combineLatest(
             quarantineRepository.observeCombinedWarningType(),
-            quarantineRepository.observeQuarantineState()
-        ).map { (combinedWarningType, quarantineStatus) ->
+            quarantineRepository.observeQuarantineState(),
+            quarantineRepository.observeLastRedContactDate()
+        ).map { (combinedWarningType, quarantineStatus, lastRedContactDate) ->
             InfectedContactsViewState(
                 combinedWarningType = combinedWarningType,
                 quarantinedUntil = if (quarantineStatus is QuarantineStatus.Jailed.Limited) quarantineStatus.end.toLocalDate()
-                else null
+                else null,
+                lastRedContactDate = lastRedContactDate
             )
         }
     }
@@ -33,9 +37,11 @@ class InfectionInfoViewModel(
 
 /**
  * Describes our state [combinedWarningType] based on the risk data received for our contacts.
- * And the date until which we are in quarantine.
+ * The date until which we are in quarantine.
+ * And the last infection contact date.
  */
 data class InfectedContactsViewState(
     val combinedWarningType: CombinedWarningType,
-    val quarantinedUntil: LocalDate? = null
+    val quarantinedUntil: LocalDate? = null,
+    val lastRedContactDate: Optional<Instant>? = null
 )

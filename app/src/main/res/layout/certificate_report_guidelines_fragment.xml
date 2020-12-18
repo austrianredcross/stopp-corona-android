@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pageContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,7 +46,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="24dp"
                     android:gravity="center"
-                    android:text="@string/sickness_certificate_guidelines_top_headline"
+                    android:text="@string/sickness_certificate_quarantine_guidelines_headline"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -56,72 +56,268 @@
                     style="@style/AppTheme.Copy"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="40dp"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="24dp"
                     android:layout_marginEnd="24dp"
-                    android:text="@string/sickness_certificate_guidelines_top_description"
+                    android:text="@string/sickness_certificate_quarantine_guideline_description"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtTitle" />
 
                 <View
-                    android:id="@+id/background"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_marginTop="40dp"
                     android:background="@color/background_gray"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/barrier4"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtTopDescription"  />
+
+                <ImageView
+                    android:id="@+id/imgCircle1"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="32dp"
+                    android:src="@drawable/circle"
+                    android:tint="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtTopDescription" />
 
                 <TextView
-                    android:id="@+id/txtRecommendationHeadline"
-                    style="@style/AppTheme.Heading2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginEnd="24dp"
-                    android:text="@string/sickness_certificate_guidelines_content_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/background" />
-
-                <TextView
-                    android:id="@+id/txtStayInQuarantine"
+                    android:id="@+id/txtCircle1"
                     style="@style/AppTheme.Copy.Accented"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="24dp"
-                    android:text="@string/sickness_certificate_guidelines_content_stay_by_doctor"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtRecommendationHeadline" />
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="1"
+                    app:layout_constraintBottom_toBottomOf="@id/imgCircle1"
+                    app:layout_constraintEnd_toEndOf="@id/imgCircle1"
+                    app:layout_constraintStart_toStartOf="@id/imgCircle1"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle1"
+                    tools:ignore="HardcodedText" />
 
                 <TextView
-                    android:id="@+id/txtRecommendationDescription"
+                    android:id="@+id/txtDescription1"
                     style="@style/AppTheme.Copy"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
                     android:layout_marginEnd="24dp"
-                    android:text="@string/sickness_certificate_guidelines_content_description"
+                    android:text="@string/sickness_certificate_quarantine_guidelines_steps_first"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtStayInQuarantine" />
+                    app:layout_constraintStart_toEndOf="@id/imgCircle1"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle1" />
 
-                <include
-                    layout="@layout/guide_info_epoxy_model"
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:orientation="horizontal"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="imgCircle1,txtDescription1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/brownGrey"
+                    app:layout_constraintBottom_toTopOf="@id/imgCircle2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imgCircle1" />
+
+                <ImageView
+                    android:id="@+id/imgCircle2"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/circle"
+                    android:tint="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/barrier1" />
+
+                <TextView
+                    android:id="@+id/txtCircle2"
+                    style="@style/AppTheme.Copy.Accented"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="2"
+                    app:layout_constraintBottom_toBottomOf="@id/imgCircle2"
+                    app:layout_constraintEnd_toEndOf="@id/imgCircle2"
+                    app:layout_constraintStart_toStartOf="@id/imgCircle2"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle2"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/txtDescription2"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:text="@string/sickness_certificate_quarantine_guidelines_steps_second"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imgCircle2"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle2" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="imgCircle2,txtDescription2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/brownGrey"
+                    app:layout_constraintBottom_toTopOf="@id/imgCircle3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imgCircle2" />
+
+                <ImageView
+                    android:id="@+id/imgCircle3"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/circle"
+                    android:tint="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/barrier2" />
+
+                <TextView
+                    android:id="@+id/txtCircle3"
+                    style="@style/AppTheme.Copy.Accented"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="3"
+                    app:layout_constraintBottom_toBottomOf="@id/imgCircle3"
+                    app:layout_constraintEnd_toEndOf="@id/imgCircle3"
+                    app:layout_constraintStart_toStartOf="@id/imgCircle3"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle3"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/txtDescription3"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:text="@string/sickness_certificate_quarantine_guidelines_steps_third"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imgCircle3"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle3" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="imgCircle3,txtDescription3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/brownGrey"
+                    app:layout_constraintBottom_toTopOf="@id/imgCircle4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imgCircle3" />
+
+                <ImageView
+                    android:id="@+id/imgCircle4"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/circle"
+                    android:tint="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription3" />
+
+                <TextView
+                    android:id="@+id/txtCircle4"
+                    style="@style/AppTheme.Copy.Accented"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="4"
+                    app:layout_constraintBottom_toBottomOf="@id/imgCircle4"
+                    app:layout_constraintEnd_toEndOf="@id/imgCircle4"
+                    app:layout_constraintStart_toStartOf="@id/imgCircle4"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle4"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/txtDescription4"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:text="@string/sickness_certificate_quarantine_guidelines_steps_fourth"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imgCircle4"
+                    app:layout_constraintTop_toTopOf="@id/imgCircle4" />
+
+                <TextView
+                    android:id="@+id/txtDescription4Phone"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:text="@string/sickness_certificate_quarantine_guidelines_steps_fourth_phone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imgCircle4"
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription4" />
+
+                <Space
+                    android:id="@+id/space4"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtRecommendationDescription" />
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription4Phone" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="imgCircle4,space4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <include
+                    layout="@layout/guide_info_help"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/barrier4" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

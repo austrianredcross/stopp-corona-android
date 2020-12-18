@@ -54,29 +54,6 @@
             app:layout_constraintTop_toBottomOf="@id/txtTitle"
             tools:text="Sie haben sich als offiziell am Coronavirus erkrankt gemeldet. " />
 
-        <View
-            android:id="@+id/backgroundQuarantineDays"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/quarantine_days_background"
-            app:layout_constraintBottom_toBottomOf="@id/txtActionButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/txtActionButton"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/txtQuarantineDays"
-            style="@style/AppTheme.Copy.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@id/backgroundQuarantineDays"
-            app:layout_constraintEnd_toEndOf="@id/backgroundQuarantineDays"
-            app:layout_constraintStart_toStartOf="@id/backgroundQuarantineDays"
-            app:layout_constraintTop_toTopOf="@id/backgroundQuarantineDays"
-            tools:text="8" />
-
         <TextView
             android:id="@+id/txtActionButton"
             style="@style/AppTheme.Copy"
@@ -87,9 +64,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="28dp"
             android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imgChevron"
-            app:layout_constraintStart_toEndOf="@+id/backgroundQuarantineDays"
             app:layout_constraintTop_toBottomOf="@id/txtDescription"
             tools:text="Begeben Sie sich in Quarantäne" />
 
