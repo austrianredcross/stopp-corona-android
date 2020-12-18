@@ -14,6 +14,7 @@
 	<string name="general_continue">Continue</string>
 	<string name="general_additional_information">Further information</string>
 	<string name="general_back">Back</string>
+	<string name="general_date_format">d. MMMM</string>
 	<string name="accessibility_heading_1">Heading 1</string>
 	<string name="accessibility_heading_2">Heading 2</string>
 
@@ -128,13 +129,13 @@
 	<string name="mandatory_update_playstore">Go to Play Store</string>
 
 	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
-	<string name="infection_info_title">Attention</string>
-	<string name="infection_info_confirmed_headline"></string>
+	<string name="infection_info_title">What should I do?</string>
+	<string name="infection_info_confirmed_headline">Behavior with risk contact</string>
 	<string name="infection_info_headline_single">1 infected contact detected</string>
 	<string name="infection_info_headline_many">%d infected contacts detected</string>
 	<string name="infection_info_confirmed_description_1">With one or more of your contacts a </string>
 	<string name="infection_info_confirmed_description_2">corona infection </string>
-	<string name="infection_info_confirmed_description_3">was detected.</string>
+	<string name="infection_info_confirmed_description_3">was detected. Therefore, you yourself are at high risk of being infected.</string>
 	<string name="infection_info_description1_single">One of your registered encounters is %s infected with the coronavirus.</string>
 	<string name="infection_info_description_acording_evidence">according to medical evidence</string>
 	<string name="infection_info_description1_many">%d of your registered encounters are %s infected with the coronavirus.</string>
@@ -145,14 +146,31 @@
 	<string name="infection_info_quarantine_end">Please stay quarantined until %s</string>
 	<string name="contact_sickness_guidelines_quarantine_rule">If you have an official quarantine notification, please take into account the quarantine period specified in the official quarantine notification.</string>
 	<string name="infection_info_no_public_transport">Do not use public transport on your way and avoid contact with other people if possible.</string>
+	<string name="contact_sickness_guidelines_first">Please go to quarantine immediately and until</string>
+	<string name="contact_sickness_guidelines_first_2"></string>
+	<string name="contact_sickness_guidelines_first_3">\n\nAvoid public transport and contact with other people on the way home.</string>
+	<string name="contact_sickness_guidelines_second">Call the </string>
+	<string name="contact_sickness_guidelines_second_2">Corona hotline</string>
+	<string name="contact_sickness_guidelines_second_3">1450</string>
+	<string name="contact_sickness_guidelines_second_4">and report that you have had contact with an infected person on</string>
+	<string name="contact_sickness_guidelines_second_5">. Mention the identification via the</string>
+	<string name="contact_sickness_guidelines_second_6">Stop Corona App</string>
+	<string name="contact_sickness_guidelines_second_7">and that you are a contact person via the app (</string>
+	<string name="contact_sickness_guidelines_second_8">Kontaktperson 4</string>
+	<string name="contact_sickness_guidelines_third">You will receive an <b>official COVID-19 test </b> after approx. 5 days. If that is negative, you can end the quarantine.</string>
+	<string name="contact_sickness_guidelines_fourth"><b>Keep a physical distance </b> from healthy roommates.</string>
+	<string name="contact_sickness_guidelines_fifth">Monitor your health and <b>check your body temperature twice a day</b>.</string>
+	<string name="contact_sickness_guidelines_sixth">Ask your neighbors or relatives to take care of you. If that is not possible, the <b>Team Austria</b> will be happy to help you on</string>
+	<string name="contact_sickness_guidelines_sixth_2">0800 600 600</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
-	<string name="infection_info_warning_title">Attention</string>
-	<string name="infection_info_suspicion_headline">Coronavirus suspicious</string>
+	<string name="infection_info_warning_title">What should I do?</string>
+	<string name="infection_info_suspicion_headline">Behavior in case of suspicion</string>
 	<string name="infection_info_warning_headline_single">1 contact with a suspected corona infection</string>
 	<string name="infection_info_warning_headline_many">%d contacts with suspected corona infection</string>
 	<string name="infection_info_suspicion_description_1">For one or more of your contacts the </string>
-	<string name="infection_info_suspicion_description_2">suspicion of a corona infection detected.</string>
+	<string name="infection_info_suspicion_description_2">suspicion of a corona infection</string>
+	<string name="infection_info_suspicion_description_3">has been detected. Therefore, there is an increased risk for you to be infected.</string>
 	<string name="infection_info_warning_description1_single">One of your registered encounters %s.</string>
 	<string name="infection_info_warning_explanation">is suspected to have contracted corona.</string>
 	<string name="infection_info_warning_description1_many">%d of your registered encounters %s.</string>
@@ -250,6 +268,16 @@
 	<string name="sickness_certificate_confirmation_description3">We wish you a speedy recovery!</string>
 	<string name="sickness_certificate_confirmation_secondary_button">Quarantine guidelines</string>
 	<string name="sickness_certificate_confirmation_primary_button">Back to home screen</string>
+	<string name="sickness_certificate_quarantine_guidelines_title">What should I do?</string>
+	<string name="sickness_certificate_quarantine_guidelines_headline">Behaviour in case of illness</string>
+	<string name="sickness_certificate_quarantine_guideline_description">You have reported your medically confirmed corona infection.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first">Please go to quarantine immediately and until</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first_2"></string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first_3">\n\nAvoid public transport and contact with other people on the way home.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_second"><b>Keep a physical distance</b> from healthy roommates.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_third">Monitor your health and <b>check your body temperature twice a day</b>.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_fourth">Ask your neighbors or relatives to take care of you. If that is not possible, the <b>Team Österreich</b> will be happy to help you on</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_fourth_phone">0800 600 600</string>
 	<string name="sickness_certificate_guidelines_title">Attention</string>
 	<string name="sickness_certificate_guidelines_top_headline">Officially sick</string>
 	<string name="sickness_certificate_guidelines_top_description">You officially reported coronavirus on %s.</string>
@@ -257,10 +285,17 @@
 	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Your doctor will decide when you can end the quarantine.</string>
 	<string name="sickness_certificate_guidelines_content_description">If possible, do not use public transport on the way and avoid contact with other people.</string>
 	<string name="sickness_certificate_guidelines_headline">Self-quarantine</string>
-	<string name="sickness_certificate_guidelines_first">Keep physical distance from healthy roommates.</string>
-	<string name="sickness_certificate_guidelines_second">Monitor your state of health: Measure fever twice a day and keep a diary of your symptoms.</string>
-	<string name="sickness_certificate_guidelines_third">Neighbours or relatives take over the care.</string>
-	<string name="sickness_certificate_guidelines_fourth">If this is not possible, the %s will be happy to help you:</string>
+	<string name="sickness_certificate_guidelines_first">Please monitor your health within the next days</string>
+	<string name="sickness_certificate_guidelines_first_2">until the</string>
+	<string name="sickness_certificate_guidelines_first_3">particularly thorough and</string>
+	<string name="sickness_certificate_guidelines_first_4">check your body temperature daily.</string>
+	<string name="sickness_certificate_guidelines_second"><b>Reduce personal contacts</b> in your private environment to a minimum and keep a contact diary.</string>
+	<string name="sickness_certificate_guidelines_third">Please keep a <b>sufficient distance from other people</b> and wear a face mask, especially indoors.</string>
+	<string name="sickness_certificate_guidelines_fourth">If you develop a fever, cough or have difficulty breathing, please call the</string>
+	<string name="sickness_certificate_guidelines_fourth_2">Corona hotline</string>
+	<string name="sickness_certificate_guidelines_fourth_3">at</string>
+	<string name="sickness_certificate_guidelines_fourth_4">1450</string>
+	<string name="sickness_certificate_guidelines_fourth_5">or your general practitioner immediately.</string>
 	<string name="sickness_certificate_guidelines_fourth_team">Team Austria</string>
 	<string name="sickness_certificate_guidelines_fourth_phone">0800 600 600</string>
 	<string name="sickness_certificate_urgent_help_headline">Do you need help urgently?</string>
@@ -279,10 +314,13 @@
 	<string name="sickness_certificate_guidelines_consulting_third_phone">142</string>
 
 	<!-- Start Screen Notification (user is infected) -->
-	<string name="sickness_certificate_attest_headline">Infection reported</string>
-	<string name="sickness_certificate_attest_description">Please remain in quarantine. You have officially declared yourself ill with the coronavirus.</string>
-	<string name="sickness_certificate_attest_button">Self-quarantine</string>
-	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>
+	<string name="sickness_certificate_attest_headline">Attention</string>
+	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection..</string>
+	<string name="sickness_certificate_attest_description_2">Please go into qurantine</string>
+	<string name="sickness_certificate_attest_description_3">until</string>
+	<string name="sickness_certificate_attest_description_4"></string>
+	<string name="sickness_certificate_attest_button">What should I do?</string>
+	<string name="sickness_certificate_attest_revoke">Report healthy</string>
 	<string name="sickness_certificate_attest_info_update">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 	<string name="sickness_certificate_attest_update">Notify other contacts</string>
 
@@ -383,9 +421,12 @@
 	<string name="questionnaire_report_success_back_to_home_page_button">Back to the home page</string>
 
 	<!-- Start Screen Notification (user did the self test) -->
-	<string name="self_testing_suspicion_headline">Suspected infection</string>
-	<string name="self_testing_suspicion_description">You have completed the questionnaire and there is a suspicion of corona infection.</string>
-	<string name="self_testing_suspicion_button">Self-quarantine</string>
+	<string name="self_testing_suspicion_headline">Attention</string>
+	<string name="self_testing_suspicion_description">Based on your information, you are suspected of having a corona infection.</string>
+	<string name="self_testing_suspicion_description_2">Please go into quarantine</string>
+	<string name="self_testing_suspicion_description_3">until clarification</string>
+	<string name="self_testing_suspicion_description_4"></string>
+	<string name="self_testing_suspicion_button">What should I do?</string>
 	<string name="self_testing_suspicion_button_revoke">Give the all clear</string>
 	<string name="self_testing_suspicion_secondary_button">Report medical confirmation</string>
 	<string name="self_testing_symptoms_headline">Monitored symptoms</string>
@@ -465,21 +506,25 @@
 	<string name="upload_missing_keys_notification_message">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 
 	<!-- Contacts Health Status Info -->
-	<string name="contacts_confirmed_one_case_headline">Caution</string>
-	<string name="contacts_confirmed_one_case_description">Your contacts have reported one or more corona infections. </string>
-	<string name="contacts_suspicion_one_case_headline">Note</string>
-	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a suspected corona infection.</string>
-	<string name="contacts_confirmed_multiple_case_headline">Caution</string>
+	<string name="contacts_confirmed_one_case_headline">Attention</string>
+	<string name="contacts_confirmed_one_case_description">A</string>
+	<string name="contacts_confirmed_one_case_description_2">corona infection</string>
+	<string name="contacts_confirmed_one_case_description_3">has been detected in one or more of your contacts.</string>
+	<string name="contacts_suspicion_one_case_headline">Attention</string>
+	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a</string>
+	<string name="contacts_suspicion_one_case_description_2">suspected corona infection</string>
+	<string name="contacts_suspicion_one_case_description_3">.</string>
+	<string name="contacts_confirmed_multiple_case_headline">Attention</string>
 	<string name="contacts_confirmed_multiple_case_description">In %d of your contacts a corona infection was confirmed.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">%d of your contacts are</string>
 	<string name="contacts_confirmed_multiple_case_description_2">infected</string>
 	<string name="contacts_confirmed_multiple_case_description_3">with the corona virus.</string>
-	<string name="contacts_suspicion_multiple_case_headline">Note</string>
+	<string name="contacts_suspicion_multiple_case_headline">Attention</string>
 	<string name="contacts_suspicion_multiple_case_description_1">%d of your contacts</string>
 	<string name="contacts_suspicion_multiple_case_description_2">suspect</string>
 	<string name="contacts_suspicion_multiple_case_description_3">a corona infection.</string>
-	<string name="contacts_quarantine_day_single">Self-quarantine day</string>
-	<string name="contacts_quarantine_day_many">Self-quarantine days</string>
+	<string name="contacts_quarantine_day_single">What should I do?</string>
+	<string name="contacts_quarantine_day_many">What should I do?</string>
 	<string name="health_status_contacts_confirmed_one_or_more_cases_headline">Caution</string>
 	<string name="health_status_contacts_confirmed_one_or_more_cases_description">One or more corona infections have been reported in your contacts.</string>
 	<string name="health_status_contacts_suspicion_one_or_more_cases_headline">Note</string>

@@ -84,10 +84,10 @@ class DashboardViewModel(
         return quarantineRepository.observeQuarantineState()
             .map { quarantineStatus ->
                 when (quarantineStatus) {
-                    is QuarantineStatus.Jailed.Forever -> HealthStatusData.SicknessCertificate
                     is QuarantineStatus.Jailed.Limited -> {
                         when {
-                            quarantineStatus.bySelfDiagnosis != null -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
+                            quarantineStatus.bySelfRedDiagnosis != null -> HealthStatusData.SicknessCertificate(quarantineStatus)
+                            quarantineStatus.bySelfYellowDiagnosis != null -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
                             else -> HealthStatusData.NoHealthStatus
                         }
                     }
@@ -97,6 +97,7 @@ class DashboardViewModel(
                             else -> HealthStatusData.NoHealthStatus
                         }
                     }
+                    else -> HealthStatusData.NoHealthStatus
                 }
             }
     }
@@ -188,7 +189,9 @@ sealed class HealthStatusData {
     /**
      * The user has successfully reported a sickness certificate to authorities.
      */
-    object SicknessCertificate : HealthStatusData()
+    data class SicknessCertificate(
+        val quarantineStatus: QuarantineStatus.Jailed.Limited
+    ) : HealthStatusData()
 
     /**
      * The user has successfully sent a self assessment to authorities with the result suspicion.
