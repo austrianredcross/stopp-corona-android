@@ -6,7 +6,7 @@ apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$rootDir/gradle/base.gradle"
 
 def apiVersion = "2.0"
-def minorVersion = "6"
+def minorVersion = "7"
 def versionString = apiVersion + "." + minorVersion
 def buildCode = getBuildCode()
 def buildName = versionString + "." + buildCode.toString() + "-" + getGitDescribe()
