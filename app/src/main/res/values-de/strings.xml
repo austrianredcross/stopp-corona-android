@@ -391,9 +391,9 @@
 	<string name="self_testing_symptoms_warning_button_update">Weitere Kontakte benachrichtigen</string>
 
 	<!-- Self Testing (Detail screens) -->
-	<string name="questionnaire_guideline_title">Verdacht</string>
-	<string name="questionnaire_guideline_headline">Verdacht auf eine Corona-Infektion</string>
-	<string name="questionnaire_guideline_description">Sie haben den Fragebogen ausgefüllt und <b>es besteht ein Verdacht auf eine Corona-Infektion.</b></string>
+	<string name="questionnaire_guideline_title">Was soll ich tun?</string>
+	<string name="questionnaire_guideline_headline">Verhalten im Verdachtsfall</string>
+	<string name="questionnaire_guideline_description">Aufgrund Ihrer Angaben besteht bei Ihnen der Verdacht einer Corona-Infektion.</string>
 	<string name="questionnaire_guideline_inform_doctor_headline">Sprechen Sie mit Ihrem Arzt, falls Sie das noch nicht getan haben</string>
 	<string name="questionnaire_guideline_inform_doctor_content">Bitte informieren Sie Ihren Arzt, oder das Krankenhaus telefonisch, damit Sie\n• Medizinisch behandelt werden \n• Auf das Coronavirus getestet werden können</string>
 	<string name="questionnaire_guideline_contact_info1">Wenn Sie älter als 65 Jahre sind und / oder an zumindest einer der folgenden Erkankungen leiden, dann rufen Sie bitte jedenfalls </string>
@@ -401,11 +401,17 @@
 	<string name="questionnaire_guideline_contact_info3">Wenn das nicht möglich ist, rufen Sie dazu  diese Nummer an: </string>
 	<string name="questionnaire_guideline_contact_phone">1450</string>
 	<string name="questionnaire_guideline_precaution_headline">Begeben Sie sich vorsichtshalber in Quarantäne</string>
-	<string name="questionnaire_guideline_precaution_number_1">Halten Sie räumlich Abstand von gesunden Mitbewohnern.</string>
-	<string name="questionnaire_guideline_precaution_number_2">Überwachen Sie Ihren Gesundheitszustand: Messen Sie 2x täglich Fieber und führen ein Tagebuch über Symptome.</string>
-	<string name="questionnaire_guideline_precaution_number_3">Nachbarn oder Angehörige übernehmen die Versorgung.</string>
-	<string name="questionnaire_guideline_precaution_number_4">Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter:</string>
-	<string name="questionnaire_guideline_precaution_number_4_phone">0800 600 600</string>
+	<string name="questionnaire_guideline_precaution_number_1"><b>Bitte begeben Sie sich bis zur Abklärung in Quarantäne.</b>\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.
+</string>
+	<string name="questionnaire_guideline_precaution_number_2_1">Rufen Sie die </string>
+	<string name="questionnaire_guideline_precaution_number_2_hotline">Corona-Hotline </string>
+	<string name="questionnaire_guideline_precaution_number_2_phone">1450</string>
+	<string name="questionnaire_guideline_precaution_number_2_2"> oder Ihre/n Hausarzt/Hausärztin an und melden Sie Ihren Verdacht.</string>
+	<string name="questionnaire_guideline_precaution_number_3">Folgen Sie den <b>ärztlichen Anweisungen</b>.</string>
+	<string name="questionnaire_guideline_precaution_number_4"><b>Halten Sie räumlich Abstand</b> von gesunden MitbewohnerInnen.</string>
+	<string name="questionnaire_guideline_precaution_number_5">Überwachen Sie Ihren Gesundheitszustand und <b>kontrollieren Sie täglich 2x Ihre Körpertemperatur</b>.</string>
+	<string name="questionnaire_guideline_precaution_number_6">Bitten Sie Nachbarn oder Angehörige Ihre Versorgung zu übernehmen. Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter:</string>
+	<string name="questionnaire_guideline_precaution_number_6_phone">0800 600 600</string>
 	<string name="questionnaire_guideline_urgent_help_headline">Benötigen Sie dringend Hilfe?</string>
 	<string name="questionnaire_guideline_urgent_help_content">Wenn Sie das Gefühl haben, dass Sie zuhause nicht zurecht kommen, Sie keine Luft mehr bekommen oder schwer krank sind, kontaktieren Sie bitte, mit dem Hinweis auf den Verdacht auf eine Corona-Infektion, folgende Nummern:</string>
 	<string name="questionnaire_guideline_urgent_help_emergency_label">Ärztenotdienst</string>

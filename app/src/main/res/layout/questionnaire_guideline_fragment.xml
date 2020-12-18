@@ -73,71 +73,6 @@
                     android:background="@color/whiteGray"
                     app:layout_constraintTop_toBottomOf="@+id/txtDescription1">
 
-                    <TextView
-                        android:id="@+id/txtDescription2"
-                        style="@style/AppTheme.Copy.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="28dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/questionnaire_guideline_inform_doctor_headline"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/txtDescription3"
-                        style="@style/AppTheme.Copy"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/questionnaire_guideline_contact_info1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtDescription2" />
-
-                    <TextView
-                        android:id="@+id/txtPhoneContact"
-                        style="@style/AppTheme.Copy"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/questionnaire_guideline_contact_info3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtDescription3" />
-
-                    <TextView
-                        android:id="@+id/txtStayInQuarantineUntil"
-                        style="@style/AppTheme.Copy.Accented"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/infection_info_quarantine_end"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtPhoneContact" />
-
-                    <TextView
-                        android:id="@+id/txtRecommendationHeadline"
-                        style="@style/AppTheme.Heading2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/questionnaire_guideline_precaution_headline"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtStayInQuarantineUntil" />
-
                     <ImageView
                         android:id="@+id/imgCircle1"
                         android:layout_width="56dp"
@@ -147,7 +82,7 @@
                         android:src="@drawable/circle"
                         android:tint="@color/white"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtRecommendationHeadline" />
+                        app:layout_constraintTop_toTopOf="parent"/>
 
                     <TextView
                         android:id="@+id/txtCircle1"
@@ -226,7 +161,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"
-                        android:text="@string/questionnaire_guideline_precaution_number_2"
+                        android:text="@string/questionnaire_guideline_precaution_number_2_1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/imgCircle2"
                         app:layout_constraintTop_toTopOf="@id/imgCircle2" />
@@ -319,7 +254,7 @@
                         android:src="@drawable/circle"
                         android:tint="@color/white"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtRecommendationDescription3" />
+                        app:layout_constraintTop_toBottomOf="@id/barrier3" />
 
                     <TextView
                         android:id="@+id/txtCircle4"
@@ -346,8 +281,122 @@
                         app:layout_constraintStart_toEndOf="@id/imgCircle4"
                         app:layout_constraintTop_toTopOf="@id/imgCircle4" />
 
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="imgCircle4,txtRecommendationDescription4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/brownGrey"
+                        app:layout_constraintBottom_toTopOf="@id/imgCircle5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imgCircle4" />
+
+                    <ImageView
+                        android:id="@+id/imgCircle5"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/circle"
+                        android:tint="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/barrier4" />
+
                     <TextView
-                        android:id="@+id/txtDescription4Phone"
+                        android:id="@+id/txtCircle5"
+                        style="@style/AppTheme.Copy.Accented"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="5"
+                        app:layout_constraintBottom_toBottomOf="@id/imgCircle5"
+                        app:layout_constraintEnd_toEndOf="@id/imgCircle5"
+                        app:layout_constraintStart_toStartOf="@id/imgCircle5"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle5"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txtRecommendationDescription5"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="@string/questionnaire_guideline_precaution_number_5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imgCircle5"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle5" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="imgCircle5,txtRecommendationDescription5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/brownGrey"
+                        app:layout_constraintBottom_toTopOf="@id/imgCircle6"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imgCircle5" />
+
+                    <ImageView
+                        android:id="@+id/imgCircle6"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/circle"
+                        android:tint="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txtRecommendationDescription5" />
+
+                    <TextView
+                        android:id="@+id/txtCircle6"
+                        style="@style/AppTheme.Copy.Accented"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="6"
+                        app:layout_constraintBottom_toBottomOf="@id/imgCircle6"
+                        app:layout_constraintEnd_toEndOf="@id/imgCircle6"
+                        app:layout_constraintStart_toStartOf="@id/imgCircle6"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle6"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txtRecommendationDescription6"
+                        style="@style/AppTheme.Copy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="@string/questionnaire_guideline_precaution_number_6"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imgCircle6"
+                        app:layout_constraintTop_toTopOf="@id/imgCircle6" />
+
+                    <TextView
+                        android:id="@+id/txtDescription6Phone"
                         style="@style/AppTheme.Copy.Accented"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -357,28 +406,28 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?attr/selectableItemBackgroundBorderless"
-                        android:text="@string/questionnaire_guideline_precaution_number_4_phone"
+                        android:text="@string/questionnaire_guideline_precaution_number_6_phone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0"
-                        app:layout_constraintStart_toEndOf="@id/imgCircle4"
-                        app:layout_constraintTop_toBottomOf="@id/txtRecommendationDescription4"
+                        app:layout_constraintStart_toEndOf="@id/imgCircle6"
+                        app:layout_constraintTop_toBottomOf="@id/txtRecommendationDescription6"
                         app:layout_constraintWidth_default="wrap" />
 
                     <Space
-                        android:id="@+id/space4"
+                        android:id="@+id/space6"
                         android:layout_width="0dp"
                         android:layout_height="32dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtDescription4Phone" />
+                        app:layout_constraintTop_toBottomOf="@id/txtDescription6Phone" />
 
                     <androidx.constraintlayout.widget.Barrier
-                        android:id="@+id/barrier4"
+                        android:id="@+id/barrier6"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:barrierDirection="bottom"
-                        app:constraint_referenced_ids="imgCircle4,space4"
+                        app:constraint_referenced_ids="imgCircle6,space6"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>

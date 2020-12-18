@@ -391,9 +391,9 @@
 	<string name="self_testing_symptoms_warning_button_update">Notify other contacts</string>
 
 	<!-- Self Testing (Detail screens) -->
-	<string name="questionnaire_guideline_title">Suspected infection </string>
-	<string name="questionnaire_guideline_headline">Suspected corona infection</string>
-	<string name="questionnaire_guideline_description">You have completed the questionnaire and <b>a corona infection is suspected.</b></string>
+	<string name="questionnaire_guideline_title">What should I do?</string>
+	<string name="questionnaire_guideline_headline">Behavior in case of suspicion</string>
+	<string name="questionnaire_guideline_description">Based on your information, you are suspected of having a corona infection.</string>
 	<string name="questionnaire_guideline_inform_doctor_headline">Talk to your doctor, if you have not done this yet</string>
 	<string name="questionnaire_guideline_inform_doctor_content">Please inform your doctor or the hospital by phone so that you\n• can be tested for coronavirus \n• can get Medical treatment</string>
 	<string name="questionnaire_guideline_contact_info1">If you are over 65 and / or suffer from at least one of the following conditions, please call </string>
@@ -401,13 +401,19 @@
 	<string name="questionnaire_guideline_contact_info3">If this is not possible, please call this number: </string>
 	<string name="questionnaire_guideline_contact_phone">1450</string>
 	<string name="questionnaire_guideline_precaution_headline">Self-quarantine as a precaution.</string>
-	<string name="questionnaire_guideline_precaution_number_1">Keep physical distance from healthy roommates.</string>
-	<string name="questionnaire_guideline_precaution_number_2">Monitor your state of health: Measure fever twice a day and keep a diary of your symptoms.</string>
-	<string name="questionnaire_guideline_precaution_number_3">Neighbours or relatives take over the care.</string>
-	<string name="questionnaire_guideline_precaution_number_4">If this is not possible, the <b>Team Austria</b> will be happy to help you at:</string>
-	<string name="questionnaire_guideline_precaution_number_4_phone">0800 600 600</string>
 	<string name="questionnaire_guideline_urgent_help_headline">Do you need help urgently?</string>
 	<string name="questionnaire_guideline_urgent_help_content">If you feel that you cannot manage at home, you cannot breathe or you are seriously ill, please contact the following numbers with the indication of a suspected corona infection:</string>
+	<string name="questionnaire_guideline_precaution_number_1"><b>Please go into quarantine until clarification.</b>\n\nAvoid public transport and contact with other people on the way home.
+</string>
+	<string name="questionnaire_guideline_precaution_number_2_1">Call the </string>
+	<string name="questionnaire_guideline_precaution_number_2_hotline">Corona hotline </string>
+	<string name="questionnaire_guideline_precaution_number_2_phone">1450</string>
+	<string name="questionnaire_guideline_precaution_number_2_2"> or your family doctor and report your suspicions.</string>
+	<string name="questionnaire_guideline_precaution_number_3">Follow the <b>doctor\'s instructions</b>.</string>
+	<string name="questionnaire_guideline_precaution_number_4"><b>Keep a physical distance</b> from healthy roommates.</string>
+	<string name="questionnaire_guideline_precaution_number_5">Monitor your health and <b>check your body temperature twice a day</b>.</string>
+	<string name="questionnaire_guideline_precaution_number_6">Ask neighbors or relatives to take care of you. If this is not possible, the <b>Team Austria</b> will be happy to help you at:</string>
+	<string name="questionnaire_guideline_precaution_number_6_phone">0800 600 600</string>
 	<string name="questionnaire_guideline_urgent_help_emergency_label">Medical emergency service</string>
 	<string name="questionnaire_guideline_urgent_help_emergency_number">141</string>
 	<string name="questionnaire_guideline_urgent_help_ambulance_label">Ambulance</string>
