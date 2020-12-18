@@ -16,10 +16,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmen
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
-import at.roteskreuz.stopcorona.utils.formatDayAndMonth
-import at.roteskreuz.stopcorona.utils.getClickableBoldSpan
-import at.roteskreuz.stopcorona.utils.startCallWithPhoneNumber
-import at.roteskreuz.stopcorona.utils.startPhoneCallOnClick
+import at.roteskreuz.stopcorona.utils.*
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.questionnaire_guideline_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -46,44 +43,24 @@ class QuestionnaireGuidelineFragment : BaseFragment(R.layout.questionnaire_guide
         txtAdviceHeadline.contentDescription = getString(R.string.questionnaire_guideline_advice_headline) + getString(R.string.accessibility_heading_2)
         txtReportSickHeadline.contentDescription = getString(R.string.questionnaire_guideline_report_sick_headline) + getString(R.string.accessibility_heading_2)
 
-        txtDescription3.text = SpannableStringBuilder().apply {
-            append(getString(R.string.questionnaire_guideline_contact_info1))
-            append(requireContext().getClickableBoldSpan(R.string.questionnaire_guideline_contact_phone,
-                colored = true,
-                underline = false,
-                onClick = {
-                    requireContext().startCallWithPhoneNumber(getString(R.string.questionnaire_guideline_contact_phone))
-                }))
-            append(getString(R.string.questionnaire_guideline_contact_info2))
+        txtRecommendationDescription2.text = SpannableStringBuilder().apply {
+            append(getString(R.string.questionnaire_guideline_precaution_number_2_1))
+            append(requireContext().getBoldSpan(R.string.questionnaire_guideline_precaution_number_2_hotline))
+            append(requireContext().getClickableBoldSpan(R.string.questionnaire_guideline_precaution_number_2_phone,
+                    colored = true,
+                    underline = false,
+                    onClick = {
+                        requireContext().startCallWithPhoneNumber(getString(R.string.questionnaire_guideline_contact_phone))
+                    }))
+            append(getString(R.string.questionnaire_guideline_precaution_number_2_2))
         }
-        txtDescription3.movementMethod = LinkMovementMethod()
-        txtPhoneContact.text = SpannableStringBuilder().apply {
-            append(getString(R.string.questionnaire_guideline_contact_info3))
-            append(requireContext().getClickableBoldSpan(R.string.questionnaire_guideline_contact_phone,
-                colored = true,
-                underline = false,
-                onClick = {
-                    requireContext().startCallWithPhoneNumber(getString(R.string.questionnaire_guideline_contact_phone))
-                }))
-        }
-        txtPhoneContact.movementMethod = LinkMovementMethod()
-        txtDescription4Phone.startPhoneCallOnClick()
+        txtRecommendationDescription2.movementMethod = LinkMovementMethod()
+        txtDescription6Phone.startPhoneCallOnClick()
         txtConsultingFirstPhone.startPhoneCallOnClick()
         txtConsultingSecondPhone.startPhoneCallOnClick()
         txtAdvicePhone1Number.startPhoneCallOnClick()
         txtAdvicePhone2Number.startPhoneCallOnClick()
         txtAdvicePhone3Number.startPhoneCallOnClick()
-
-        txtStayInQuarantineUntil.visible = false
-        disposables += viewModel.observeQuarantineStatus()
-            .observeOnMainThread()
-            .subscribe { quarantineStatus ->
-                if (quarantineStatus is QuarantineStatus.Jailed.Limited) {
-                    val date = quarantineStatus.end.toLocalDate().formatDayAndMonth(requireContext())
-                    txtStayInQuarantineUntil.visible = true
-                    txtStayInQuarantineUntil.text = getString(R.string.infection_info_quarantine_end, date)
-                }
-            }
     }
 
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {
