@@ -3,12 +3,14 @@ package at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
@@ -17,11 +19,16 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
-import at.roteskreuz.stopcorona.utils.formatDayAndMonth
-import at.roteskreuz.stopcorona.utils.startPhoneCallOnClick
+import at.roteskreuz.stopcorona.utils.*
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.certificate_report_guidelines_fragment.*
-import kotlinx.android.synthetic.main.guide_info_epoxy_model.*
+import kotlinx.android.synthetic.main.certificate_report_guidelines_fragment.transparentAppBar
+import kotlinx.android.synthetic.main.certificate_report_guidelines_fragment.txtDescription1
+import kotlinx.android.synthetic.main.certificate_report_guidelines_fragment.txtDescription4Phone
+import kotlinx.android.synthetic.main.certificate_report_guidelines_fragment.txtTitle
+import kotlinx.android.synthetic.main.guide_info_help.*
+import kotlinx.android.synthetic.main.guide_info_help.txtConsultingFirstPhone
+import kotlinx.android.synthetic.main.guide_info_help.txtConsultingSecondPhone
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -41,8 +48,7 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        txtTitle.contentDescription = getString(R.string.sickness_certificate_guidelines_top_headline) + getString(R.string.accessibility_heading_1)
-        txtRecommendationHeadline.contentDescription = getString(R.string.sickness_certificate_guidelines_content_title) + getString(R.string.accessibility_heading_2)
+        txtTitle.contentDescription = getString(R.string.sickness_certificate_quarantine_guidelines_headline) + getString(R.string.accessibility_heading_1)
 
         scrollViewContainer.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             transparentAppBar.elevation = if (scrollY > requireContext().dip(ReportingPersonalDataFragment.SCROLLED_DISTANCE_THRESHOLD)) {
@@ -52,24 +58,38 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
             }
         }
 
-        txtTopDescription.visible = false
-        disposables += viewModel.observeDateOfFirstMedicalConfirmation()
+        txtDescription1.visible = false
+        disposables += viewModel.observeQuarantineStatus()
             .observeOnMainThread()
-            .subscribe { dateOfFirstMedicalConfirmation ->
-                if (dateOfFirstMedicalConfirmation.isPresent) {
-                    val date = dateOfFirstMedicalConfirmation.get().toLocalDate().formatDayAndMonth(requireContext())
-                    txtTopDescription.visible = true
-                    txtTopDescription.text = getString(R.string.sickness_certificate_guidelines_top_description, date)
+            .subscribe { quarantineStatus ->
+                context?.let {context ->
+                    if (quarantineStatus is QuarantineStatus.Jailed.Limited) {
+                        val date = quarantineStatus.end.format(context.getString(R.string.general_date_format))
+                        txtDescription1.visible = true
+                        val quarantinedSpannable = SpannableString(date)
+                        quarantinedSpannable.setSpan(StyleSpan(Typeface.BOLD), 0, quarantinedSpannable.length, 0)
+                        txtDescription1.text = SpannableStringBuilder().apply {
+                            append(context.getBoldSpan(R.string.sickness_certificate_quarantine_guidelines_steps_first, false, false))
+                            append(quarantinedSpannable)
+                            append(context.getBoldSpan(R.string.sickness_certificate_quarantine_guidelines_steps_first_2))
+                            append(context.getString(R.string.sickness_certificate_quarantine_guidelines_steps_first_3))
+                        }
+                    }
                 }
             }
 
-        val description4team = getString(R.string.sickness_certificate_guidelines_fourth_team)
-        val description4 = SpannableString(getString(R.string.sickness_certificate_guidelines_fourth, description4team))
-        val teamStartingIndex = description4.indexOf(description4team)
-        description4.setSpan(StyleSpan(Typeface.BOLD), teamStartingIndex, teamStartingIndex + description4team.length, 0)
-        txtDescription4.text = description4
+        txtDescription4Phone.text  = SpannableStringBuilder().apply {
+            context?.let {context->
+                append(context.getClickableBoldSpan(R.string.sickness_certificate_quarantine_guidelines_steps_fourth_phone,
+                    colored = true,
+                    underline = false,
+                    insertLeadingSpace = false,
+                    onClick = {
+                        context.startCallWithPhoneNumber(context.getString(R.string.sickness_certificate_quarantine_guidelines_steps_fourth_phone))
+                    }))
+            }
+        }
 
-        txtDescription4Phone.startPhoneCallOnClick()
         txtConsultingFirstPhone.startPhoneCallOnClick()
         txtConsultingSecondPhone.startPhoneCallOnClick()
         txtConsultingThirdPhone.startPhoneCallOnClick()
@@ -78,7 +98,7 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
     }
 
     override fun getTitle(): String? {
-        return getString(R.string.sickness_certificate_guidelines_title)
+        return getString(R.string.sickness_certificate_quarantine_guidelines_title)
     }
 }
 

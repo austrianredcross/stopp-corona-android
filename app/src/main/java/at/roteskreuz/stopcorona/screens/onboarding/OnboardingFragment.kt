@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.FullScreenPortraitBaseActivity
+import at.roteskreuz.stopcorona.screens.dashboard.startHandshakeExplanationFragment
 import at.roteskreuz.stopcorona.screens.routing.startRouterActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -50,7 +51,10 @@ class OnboardingFragment : BaseFragment(R.layout.fragment_onboarding) {
             onEnterLastPage = { pageNumber ->
                 viewModel.currentPage = pageNumber
             },
-            onDataPrivacyCheckBoxChanged = viewModel::setDataPrivacyChecked
+            onDataPrivacyCheckBoxChanged = viewModel::setDataPrivacyChecked,
+            onAutomaticHandshakeInformationClick = {
+                startHandshakeExplanationFragment()
+            }
         )
     }
 

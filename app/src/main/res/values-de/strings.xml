@@ -14,6 +14,7 @@
 	<string name="general_continue">Weiter</string>
 	<string name="general_additional_information">Weitere Informationen</string>
 	<string name="general_back">Zurück</string>
+	<string name="general_date_format">d. MMMM</string>
 	<string name="accessibility_heading_1">Überschrift 1</string>
 	<string name="accessibility_heading_2">Überschrift 2</string>
 
@@ -26,32 +27,37 @@
 	<string name="error_unknown_message">Es ist ein unbekannter Fehler aufgetreten. Bitte versuche es später erneut.</string>
 
 	<!-- Onboarding -->
-	<string name="onboarding_headline_1">Willkommen!</string>
-	<string name="onboarding_copy_1_1">Mit der Installation der Stopp Corona App helfen Sie dabei, die</string>
-	<string name="onboarding_copy_1_2">Ausbreitung</string>
-	<string name="onboarding_copy_1_3">des Coronavirus zu bekämpfen und die Zahl der</string>
-	<string name="onboarding_copy_1_4">Neuinfektionen niedrig zu halten.</string>
-	<string name="onboarding_copy_1_5"></string>
+	<string name="onboarding_headline_1">Willkommen</string>
 	<string name="onboarding_copy_1_img">Bild: Sinkende Corona-Fallzahlen</string>
+	<string name="onboarding_copy_1_1">Mit der Nutzung der Stopp Corona App helfen Sie dabei, die</string>
+	<string name="onboarding_copy_1_2">Ausbreitung des Virus</string>
+	<string name="onboarding_copy_1_3">zu</string>
+	<string name="onboarding_copy_1_4">verlangsamen</string>
+	<string name="onboarding_copy_1_5">und Leben zu retten.</string>
 	<string name="onboarding_headline_2">Digitaler Handshake</string>
-	<string name="onboarding_copy_2_1">Nutzen Sie den digitalen Handshake um</string>
-	<string name="onboarding_copy_2_2">anonym</string>
-	<string name="onboarding_copy_2_3">Ihre Begegnungen zu speichern. Sie werden anonym in der App benachrichtigt, wenn eine Ihrer Kontaktpersonen erkrankt ist.</string>
-	<string name="onboarding_headline_3">Symptome prüfen</string>
-	<string name="onboarding_copy_3_1">Nutzen Sie unseren klinisch geprüften Fragebogen. Erhalten Sie</string>
-	<string name="onboarding_copy_3_2">täglich</string>
-	<string name="onboarding_copy_3_3">eine Einschätzung zu Ihrem Gesundheitsstatus.</string>
-	<string name="onboarding_headline_4">Benachrichtigung im Krankheitsfall</string>
-	<string name="onboarding_copy_4_1">Helfen Sie, anderen zu helfen! Falls Sie selbst am Coronavirus erkranken sollten, werden Ihre Kontakte</string>
-	<string name="onboarding_copy_4_2">anonymisiert</string>
-	<string name="onboarding_copy_4_3">benachrichtigt, so dass diese Maßnahmen treffen können.</string>
 	<string name="onboarding_copy_2_img">Bild: Kontakte werden über Bluetooth ermittelt</string>
+	<string name="onboarding_copy_2_1">Aktivieren Sie den automatischen digitalen Handshake über Bluetooth, um Kontakte</string>
+	<string name="onboarding_copy_2_2">anonym und lokal</string>
+	<string name="onboarding_copy_2_3">zu speichern und Ihr</string>
+	<string name="onboarding_copy_2_4">aktuelles Infektions-Risiko</string>
+	<string name="onboarding_copy_2_5">zu ermitteln.</string>
+	<string name="onboarding_headline_3">Benachrichtigung bei Risiko-Kontakt</string>
 	<string name="onboarding_copy_3_img">Bild: Benachrichtigung über Erkrankung eines Kontakts</string>
+	<string name="onboarding_copy_3_1">Sollte einer Ihrer Kontakte erkranken, werden Sie über den</string>
+	<string name="onboarding_copy_3_2">Zeitpunkt Ihrer letzten Risiko-Begegnung</string>
+	<string name="onboarding_copy_3_3">benachrichtigt.</string>
+	<string name="onboarding_headline_4">Verdacht oder Infektion melden</string>
 	<string name="onboarding_copy_4_img">Bild: Warnung für Ihre Kontakte</string>
+	<string name="onboarding_copy_4_1">Sollten Sie selbst an COVID-19 erkranken oder den Verdacht auf eine Erkrankung haben, können Sie Ihre Kontakte</string>
+	<string name="onboarding_copy_4_2">anonym über die App warnen,</string>
+	<string name="onboarding_copy_4_3">um die weitere Ausbreitung zu stoppen.</string>
 	<string name="onboarding_headline_5">Danke, dass Sie die App nutzen!</string>
-	<string name="onboarding_copy_5_1">Sie tragen aktiv dazu bei, Ihre Gesundheit und die Gesundheit anderer zu schützen.\nSie können ab jetzt Begegnungen mit anderen App-Nutzern aufzeichnen.\n\nMit der Installation der App stimmen Sie den </string>
+	<string name="onboarding_copy_5_1">Sie schützen aktiv Ihre Gesundheit und die Gesundheit anderer.
+\n
+\nMit der Installation der App stimmen Sie den</string>
 	<string name="onboarding_copy_5_2">Nutzungsbedingungen</string>
-	<string name="onboarding_copy_5_3">zu.</string>
+	<string name="onboarding_copy_5_3">zu.\n \nSie haben noch Fragen? Lesen Sie mehr in den</string>
+	<string name="onboarding_copy_5_4">FAQs</string>
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
@@ -123,13 +129,13 @@
 	<string name="mandatory_update_playstore">Zum Play Store</string>
 
 	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
-	<string name="infection_info_title">Achtung</string>
-	<string name="infection_info_confirmed_headline"></string>
+	<string name="infection_info_title">Was soll ich tun?</string>
+	<string name="infection_info_confirmed_headline">Verhalten bei Risiko-Kontakt</string>
 	<string name="infection_info_headline_single">1 infizierter Kontakt erkannt</string>
 	<string name="infection_info_headline_many">%d infizierte Kontakte erkannt</string>
 	<string name="infection_info_confirmed_description_1">Bei einem oder mehrerer Ihrer Kontakte wurde eine </string>
 	<string name="infection_info_confirmed_description_2">Corona-Infektion </string>
-	<string name="infection_info_confirmed_description_3">festgestellt.</string>
+	<string name="infection_info_confirmed_description_3">festgestellt. Daher besteht auch für Sie selbst ein hohes Risiko infiziert zu sein.</string>
 	<string name="infection_info_description1_single">Einer Ihrer registrierten Begegnungen ist %s mit dem Coronavirus infiziert.</string>
 	<string name="infection_info_description_acording_evidence">laut ärztlichem Nachweis</string>
 	<string name="infection_info_description1_many">%d Ihrer registrierten Begegnungen sind %s mit dem Coronavirus infiziert.</string>
@@ -140,14 +146,31 @@
 	<string name="infection_info_quarantine_end">Bleiben Sie dort bitte bis %s</string>
 	<string name="contact_sickness_guidelines_quarantine_rule">Bei Vorliegen eines offiziellen Quarantänebescheides berücksichtigen Sie den Quarantänezeitraum, der dort angegeben ist.</string>
 	<string name="infection_info_no_public_transport">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
+	<string name="contact_sickness_guidelines_first">Bitte begeben Sie sich umgehend und bis</string>
+	<string name="contact_sickness_guidelines_first_2">in Quarantäne.</string>
+	<string name="contact_sickness_guidelines_first_3">\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.</string>
+	<string name="contact_sickness_guidelines_second">Rufen Sie die </string>
+	<string name="contact_sickness_guidelines_second_2">Corona-Hotline</string>
+	<string name="contact_sickness_guidelines_second_3">1450</string>
+	<string name="contact_sickness_guidelines_second_4">an und melden Sie, dass Sie am</string>
+	<string name="contact_sickness_guidelines_second_5">Kontakt mit einer infizierten Person hatten. Erwähnen Sie die Identifikation über die</string>
+	<string name="contact_sickness_guidelines_second_6">Stopp Corona App</string>
+	<string name="contact_sickness_guidelines_second_7">und dass Sie eine Kontaktperson über die App sind (</string>
+	<string name="contact_sickness_guidelines_second_8">Kontaktperson 4</string>
+	<string name="contact_sickness_guidelines_third">Sie erhalten nach ca. 5 Tagen einen <b>behördlichen COVID-19-Test</b>. Wenn dieser negativ ist, können Sie die Quarantäne beenden.</string>
+	<string name="contact_sickness_guidelines_fourth"><b>Halten Sie räumlich Abstand</b> von gesunden MitbewohnerInnen.</string>
+	<string name="contact_sickness_guidelines_fifth">Überwachen Sie Ihren Gesundheitszustand und <b>kontrollieren Sie täglich 2x Ihre Körpertemperatur</b>.</string>
+	<string name="contact_sickness_guidelines_sixth">Bitten Sie Nachbarn oder Angehörige Ihre Versorgung zu übernehmen. Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter</string>
+	<string name="contact_sickness_guidelines_sixth_2">0800 600 600</string>
 
 	<!-- Contact Sickness_Guidelines for people with probably sick contact -->
-	<string name="infection_info_warning_title">Achtung</string>
-	<string name="infection_info_suspicion_headline">Coronavirus Verdacht</string>
+	<string name="infection_info_warning_title">Was soll ich tun?</string>
+	<string name="infection_info_suspicion_headline">Verhalten bei Risiko-Verdacht</string>
 	<string name="infection_info_warning_headline_single">1 Kontakt mit Coronavirus-Verdacht</string>
 	<string name="infection_info_warning_headline_many">%d Kontakte mit Coronavirus-Verdacht</string>
 	<string name="infection_info_suspicion_description_1">Bei einem oder mehrerer Ihrer Kontakte\nwurde der </string>
-	<string name="infection_info_suspicion_description_2">Verdacht auf eine Corona-Infektion\nfestgestellt.</string>
+	<string name="infection_info_suspicion_description_2">Verdacht auf eine Corona-Infektion</string>
+	<string name="infection_info_suspicion_description_3">festgestellt. Daher besteht auch für Sie selbst ein hohes Risiko infiziert zu sein.</string>
 	<string name="infection_info_warning_description1_single">Bei einer Ihrer registrierten Begegnungen %s.</string>
 	<string name="infection_info_warning_explanation">gibt es den Verdacht auf eine Corona-Infektion</string>
 	<string name="infection_info_warning_description1_many">Bei %d Ihrer registrierten Begegnungen %s.</string>
@@ -245,6 +268,16 @@
 	<string name="sickness_certificate_confirmation_description3">Wir wünschen Ihnen eine gute Besserung!</string>
 	<string name="sickness_certificate_confirmation_secondary_button">Quarantäne Guidelines</string>
 	<string name="sickness_certificate_confirmation_primary_button">Zurück zur Startseite</string>
+	<string name="sickness_certificate_quarantine_guidelines_title">Was soll ich tun?</string>
+	<string name="sickness_certificate_quarantine_guidelines_headline">Verhalten im Krankheitsfall</string>
+	<string name="sickness_certificate_quarantine_guideline_description">Sie haben Ihre ärztlich bestätigte Corona-Infektion gemeldet.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first">Bitte begeben Sie sich umgehend und bis zum</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first_2">in Quarantäne.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first_3">\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_second"><b>Halten Sie räumlichen Abstand</b> von gesunden MitbewohnerInnen.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_third">Überwachen Sie Ihren Gesundheitszustand und <b>kontrollieren Sie täglich 2x Ihre Körpertemperatur</b>.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_fourth">Bitten Sie Ihre Nachbarn oder Angehörige Ihre Versorgung zu übernehmen. Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_fourth_phone">0800 600 600</string>
 	<string name="sickness_certificate_guidelines_title">Achtung</string>
 	<string name="sickness_certificate_guidelines_top_headline">Offiziell erkrankt</string>
 	<string name="sickness_certificate_guidelines_top_description">Sie haben sich am %s offiziell mit Coronavirus erkrankt gemeldet.</string>
@@ -252,10 +285,17 @@
 	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Ihr Arzt entscheidet, wann Sie die Quarantäne beenden können.</string>
 	<string name="sickness_certificate_guidelines_content_description">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 	<string name="sickness_certificate_guidelines_headline">Begeben Sie sich in Quarantäne</string>
-	<string name="sickness_certificate_guidelines_first">Halten Sie räumlich Abstand von gesunden Mitbewohnern.</string>
-	<string name="sickness_certificate_guidelines_second">Überwachen Sie Ihren Gesundheitszustand: Messen Sie 2x täglich Fieber und führen ein Tagebuch über Symptome.</string>
-	<string name="sickness_certificate_guidelines_third">Nachbarn oder Angehörige übernehmen die Versorgung.</string>
-	<string name="sickness_certificate_guidelines_fourth">Wenn das nicht möglich ist, hilft Ihnen gerne das %s unter:</string>
+	<string name="sickness_certificate_guidelines_first">Bitte beobachten Sie Ihren Gesundheitszustand in den nächsten Tagen</string>
+	<string name="sickness_certificate_guidelines_first_2">bis zum</string>
+	<string name="sickness_certificate_guidelines_first_3">besonders gründlich und</string>
+	<string name="sickness_certificate_guidelines_first_4">kontrollieren Sie täglich Ihre Körpertemperatur.</string>
+	<string name="sickness_certificate_guidelines_second"><b>Reduzieren Sie persönliche Kontakte</b> in ihrem privaten Umfeld auf ein Minimum und führen Sie ein Kontakttagebuch.</string>
+	<string name="sickness_certificate_guidelines_third">Halten Sie <b>ausreichend Abstand zu anderen Personen</b> und tragen Sie einen Mund-Nasen-Schutz, besonders in Innenräumen.</string>
+	<string name="sickness_certificate_guidelines_fourth">Wenn Sie Fieber, Husten oder Atembeschwerden bekommen, rufen Sie bitte umgehend die</string>
+	<string name="sickness_certificate_guidelines_fourth_2">Corona Hotline</string>
+	<string name="sickness_certificate_guidelines_fourth_3">unter</string>
+	<string name="sickness_certificate_guidelines_fourth_4">1450</string>
+	<string name="sickness_certificate_guidelines_fourth_5">oder Ihre/n Hausarzt/Hausärztin an.</string>
 	<string name="sickness_certificate_guidelines_fourth_team">Team Österreich</string>
 	<string name="sickness_certificate_guidelines_fourth_phone">0800 600 600</string>
 	<string name="sickness_certificate_urgent_help_headline">Benötigen Sie dringend Hilfe?</string>
@@ -274,10 +314,13 @@
 	<string name="sickness_certificate_guidelines_consulting_third_phone">142</string>
 
 	<!-- Start Screen Notification (user is infected) -->
-	<string name="sickness_certificate_attest_headline">Erkrankt gemeldet</string>
-	<string name="sickness_certificate_attest_description">Bitte bleiben Sie in Quarantäne. Sie haben sich offiziell als am Coronavirus erkrankt gemeldet.</string>
-	<string name="sickness_certificate_attest_button">Begeben Sie sich in Quarantäne</string>
-	<string name="sickness_certificate_attest_revoke">Krankmeldung zurückziehen</string>
+	<string name="sickness_certificate_attest_headline">Achtung</string>
+	<string name="sickness_certificate_attest_description">Sie haben Ihre ärztliche bestätigte Corona-Infektion gemeldet.</string>
+	<string name="sickness_certificate_attest_description_2">Bitte begeben Sie sich </string>
+	<string name="sickness_certificate_attest_description_3">bis zum</string>
+	<string name="sickness_certificate_attest_description_4">in Quarantäne.</string>
+	<string name="sickness_certificate_attest_button">Was soll ich tun?</string>
+	<string name="sickness_certificate_attest_revoke">Gesund melden</string>
 	<string name="sickness_certificate_attest_info_update">Benachrichtigen Sie Personen, mit denen Sie am Tag Ihrer Meldung einen digitalen Handshake ausgetauscht haben.</string>
 	<string name="sickness_certificate_attest_update">Weitere Kontakte benachrichtigen</string>
 
@@ -378,9 +421,12 @@
 	<string name="questionnaire_report_success_back_to_home_page_button">Zurück zur Startseite</string>
 
 	<!-- Start Screen Notification (user did the self test) -->
-	<string name="self_testing_suspicion_headline">Verdachtsfall</string>
-	<string name="self_testing_suspicion_description">Sie haben den Fragebogen ausgefüllt und es besteht ein Verdacht auf eine Corona-Infektion.</string>
-	<string name="self_testing_suspicion_button">Begeben Sie sich in Quarantäne</string>
+	<string name="self_testing_suspicion_headline">Achtung</string>
+	<string name="self_testing_suspicion_description">Aufgrund Ihrer Angaben besteht bei Ihnen der Verdacht einer Corona-Infektion.</string>
+	<string name="self_testing_suspicion_description_2">Bitte begeben Sie sich</string>
+	<string name="self_testing_suspicion_description_3">bis zur Abklärung</string>
+	<string name="self_testing_suspicion_description_4">in Quarantäne.</string>
+	<string name="self_testing_suspicion_button">Was soll ich tun?</string>
 	<string name="self_testing_suspicion_button_revoke">Entwarnung geben</string>
 	<string name="self_testing_suspicion_secondary_button">Ärztliche Bestätigung melden</string>
 	<string name="self_testing_symptoms_headline">Symptome in Beobachtung</string>
@@ -391,9 +437,9 @@
 	<string name="self_testing_symptoms_warning_button_update">Weitere Kontakte benachrichtigen</string>
 
 	<!-- Self Testing (Detail screens) -->
-	<string name="questionnaire_guideline_title">Verdacht</string>
-	<string name="questionnaire_guideline_headline">Verdacht auf eine Corona-Infektion</string>
-	<string name="questionnaire_guideline_description">Sie haben den Fragebogen ausgefüllt und <b>es besteht ein Verdacht auf eine Corona-Infektion.</b></string>
+	<string name="questionnaire_guideline_title">Was soll ich tun?</string>
+	<string name="questionnaire_guideline_headline">Verhalten im Verdachtsfall</string>
+	<string name="questionnaire_guideline_description">Aufgrund Ihrer Angaben besteht bei Ihnen der Verdacht einer Corona-Infektion.</string>
 	<string name="questionnaire_guideline_inform_doctor_headline">Sprechen Sie mit Ihrem Arzt, falls Sie das noch nicht getan haben</string>
 	<string name="questionnaire_guideline_inform_doctor_content">Bitte informieren Sie Ihren Arzt, oder das Krankenhaus telefonisch, damit Sie\n• Medizinisch behandelt werden \n• Auf das Coronavirus getestet werden können</string>
 	<string name="questionnaire_guideline_contact_info1">Wenn Sie älter als 65 Jahre sind und / oder an zumindest einer der folgenden Erkankungen leiden, dann rufen Sie bitte jedenfalls </string>
@@ -401,11 +447,17 @@
 	<string name="questionnaire_guideline_contact_info3">Wenn das nicht möglich ist, rufen Sie dazu  diese Nummer an: </string>
 	<string name="questionnaire_guideline_contact_phone">1450</string>
 	<string name="questionnaire_guideline_precaution_headline">Begeben Sie sich vorsichtshalber in Quarantäne</string>
-	<string name="questionnaire_guideline_precaution_number_1">Halten Sie räumlich Abstand von gesunden Mitbewohnern.</string>
-	<string name="questionnaire_guideline_precaution_number_2">Überwachen Sie Ihren Gesundheitszustand: Messen Sie 2x täglich Fieber und führen ein Tagebuch über Symptome.</string>
-	<string name="questionnaire_guideline_precaution_number_3">Nachbarn oder Angehörige übernehmen die Versorgung.</string>
-	<string name="questionnaire_guideline_precaution_number_4">Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter:</string>
-	<string name="questionnaire_guideline_precaution_number_4_phone">0800 600 600</string>
+	<string name="questionnaire_guideline_precaution_number_1"><b>Bitte begeben Sie sich bis zur Abklärung in Quarantäne.</b>\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.
+</string>
+	<string name="questionnaire_guideline_precaution_number_2_1">Rufen Sie die </string>
+	<string name="questionnaire_guideline_precaution_number_2_hotline">Corona-Hotline </string>
+	<string name="questionnaire_guideline_precaution_number_2_phone">1450</string>
+	<string name="questionnaire_guideline_precaution_number_2_2"> oder Ihre/n Hausarzt/Hausärztin an und melden Sie Ihren Verdacht.</string>
+	<string name="questionnaire_guideline_precaution_number_3">Folgen Sie den <b>ärztlichen Anweisungen</b>.</string>
+	<string name="questionnaire_guideline_precaution_number_4"><b>Halten Sie räumlich Abstand</b> von gesunden MitbewohnerInnen.</string>
+	<string name="questionnaire_guideline_precaution_number_5">Überwachen Sie Ihren Gesundheitszustand und <b>kontrollieren Sie täglich 2x Ihre Körpertemperatur</b>.</string>
+	<string name="questionnaire_guideline_precaution_number_6">Bitten Sie Nachbarn oder Angehörige Ihre Versorgung zu übernehmen. Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter:</string>
+	<string name="questionnaire_guideline_precaution_number_6_phone">0800 600 600</string>
 	<string name="questionnaire_guideline_urgent_help_headline">Benötigen Sie dringend Hilfe?</string>
 	<string name="questionnaire_guideline_urgent_help_content">Wenn Sie das Gefühl haben, dass Sie zuhause nicht zurecht kommen, Sie keine Luft mehr bekommen oder schwer krank sind, kontaktieren Sie bitte, mit dem Hinweis auf den Verdacht auf eine Corona-Infektion, folgende Nummern:</string>
 	<string name="questionnaire_guideline_urgent_help_emergency_label">Ärztenotdienst</string>
@@ -455,20 +507,24 @@
 
 	<!-- Contacts Health Status Info -->
 	<string name="contacts_confirmed_one_case_headline">Achtung</string>
-	<string name="contacts_confirmed_one_case_description">Bei Ihren Kontakten wurde eine oder mehrere Corona-Infektionen gemeldet. </string>
-	<string name="contacts_suspicion_one_case_headline">Hinweis</string>
-	<string name="contacts_suspicion_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde der Verdacht auf eine Corona-Infektion gemeldet.</string>
+	<string name="contacts_confirmed_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde eine</string>
+	<string name="contacts_confirmed_one_case_description_2">Corona-Infektion</string>
+	<string name="contacts_confirmed_one_case_description_3">festgestellt.</string>
+	<string name="contacts_suspicion_one_case_headline">Achtung</string>
+	<string name="contacts_suspicion_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde der</string>
+	<string name="contacts_suspicion_one_case_description_2">Verdacht auf eine Corona-Infektion</string>
+	<string name="contacts_suspicion_one_case_description_3">festgestellt.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Achtung</string>
 	<string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>
 	<string name="contacts_confirmed_multiple_case_description_2">Infektion</string>
 	<string name="contacts_confirmed_multiple_case_description_3">bestätigt.</string>
-	<string name="contacts_suspicion_multiple_case_headline">Hinweis</string>
+	<string name="contacts_suspicion_multiple_case_headline">Achtung</string>
 	<string name="contacts_suspicion_multiple_case_description_1">Bei %d Ihrer Kontakte gibt es den</string>
 	<string name="contacts_suspicion_multiple_case_description_2">Verdacht</string>
 	<string name="contacts_suspicion_multiple_case_description_3">auf eine Corona-Infektion.</string>
-	<string name="contacts_quarantine_day_single">Quarantänetag</string>
-	<string name="contacts_quarantine_day_many">Quarantäne-Tage</string>
+	<string name="contacts_quarantine_day_single">Was soll ich tun?</string>
+	<string name="contacts_quarantine_day_many">Was soll ich tun?</string>
 	<string name="health_status_contacts_confirmed_one_or_more_cases_headline">Achtung</string>
 	<string name="health_status_contacts_confirmed_one_or_more_cases_description">Bei Ihren Kontakten wurden eine oder mehrere Corona Infektionen gemeldet. </string>
 	<string name="health_status_contacts_suspicion_one_or_more_cases_headline">Hinweis</string>

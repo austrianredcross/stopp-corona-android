@@ -60,24 +60,24 @@ fun List<ExposureInformation>.extractLatestRedAndYellowContactDate(dailyRiskThre
                 it.day
             }
 
-    val firstRedDay = infectionMessagesDays
+    val lastRedDay = infectionMessagesDays
         .filter { it.warningType == WarningType.RED }
-        .minBy { it.day }
+        .maxBy { it.day }
         ?.day
 
-    val firstYellowDay = infectionMessagesDays
+    val lastYellowDay = infectionMessagesDays
         .filter { it.warningType == WarningType.YELLOW }
-        .minBy { it.day }
+        .maxBy { it.day }
         ?.day
-    return ExposureDates(firstRedDay = firstRedDay, firstYellowDay = firstYellowDay)
+    return ExposureDates(lastRedDay = lastRedDay, lastYellowDay = lastYellowDay)
 }
 
 data class ExposureDates(
-    val firstRedDay: Instant?,
-    val firstYellowDay: Instant?
+    val lastRedDay: Instant?,
+    val lastYellowDay: Instant?
 ) {
     fun noDates(): Boolean {
-        return firstRedDay == null && firstYellowDay == null
+        return lastRedDay == null && lastYellowDay == null
     }
 }
 

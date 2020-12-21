@@ -148,6 +148,11 @@ interface QuarantineRepository {
      * the red and yellow contacts.
      */
     fun observeCombinedWarningType(): Observable<CombinedWarningType>
+
+    /**
+     * Observe date of last red contact
+     */
+    fun observeLastRedContactDate(): Observable<Optional<Instant>>
 }
 
 class QuarantineRepositoryImpl(
@@ -276,7 +281,8 @@ class QuarantineRepositoryImpl(
                 val nextUpdateNeeded = listOfNotNull(
                     newState.byRedWarning,
                     newState.byYellowWarning,
-                    newState.bySelfDiagnosis
+                    newState.bySelfYellowDiagnosis,
+                    newState.bySelfRedDiagnosis
                 ).min()
                 // Schedule recalculation of quarantine state
                 quarantineStateNeedsTimeBasedUpdateEventSubject.setNextEvent(nextUpdateNeeded)
@@ -293,13 +299,6 @@ class QuarantineRepositoryImpl(
      * Logic of making quarantine status by prerequisites.
      */
     private fun QuarantinePrerequisitesHolder.toQuarantineStatus(): QuarantineStatus {
-        /**
-         * Own health state is Red.
-         * Quarantine never ends.
-         */
-        if (medicalConfirmationFirstDateTime != null) {
-            return QuarantineStatus.Jailed.Forever
-        }
 
         val redWarningQuarantinedHours = configuration.redWarningQuarantine?.toLong()
             .safeMap("redWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(14L))
@@ -319,9 +318,12 @@ class QuarantineRepositoryImpl(
             ZonedDateTime.ofInstant(it, ZoneId.systemDefault()).plusHours(yellowWarningQuarantinedHours).afterOrNull(now)
         }
         // Quarantine end in diagnose time + 7 days
-        val selfDiagnoseQuarantineUntil = selfDiagnoseLastDateTime?.plusHours(selfDiagnoseQuarantinedHours)?.afterOrNull(now)
+        val selfYellowDiagnoseQuarantineUntil = selfDiagnoseLastDateTime?.plusHours(selfDiagnoseQuarantinedHours)?.afterOrNull(now)
 
-        val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfDiagnoseQuarantineUntil)
+        // Quarantine end in diagnose time + 14 days
+        val selfRedDiagnoseQuarantineUntil = medicalConfirmationFirstDateTime?.plusHours(redWarningQuarantinedHours)?.afterOrNull(now)
+
+        val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfYellowDiagnoseQuarantineUntil, selfRedDiagnoseQuarantineUntil)
             .max()
 
         /**
@@ -330,7 +332,8 @@ class QuarantineRepositoryImpl(
         return if (quarantinedUntil != null) {
             QuarantineStatus.Jailed.Limited(
                 end = quarantinedUntil,
-                bySelfDiagnosis = selfDiagnoseQuarantineUntil,
+                bySelfYellowDiagnosis = selfYellowDiagnoseQuarantineUntil,
+                bySelfRedDiagnosis = selfRedDiagnoseQuarantineUntil,
                 byRedWarning = redWarningQuarantineUntil,
                 byYellowWarning = yellowWarningQuarantineUntil
             )
@@ -473,6 +476,10 @@ class QuarantineRepositoryImpl(
             }
     }
 
+    override fun observeLastRedContactDate(): Observable<Optional<Instant>> {
+        return dateOfLastRedContactObservable
+    }
+
     override fun quarantineEndSeen() {
         showQuarantineEnd = false
     }
@@ -548,7 +555,7 @@ sealed class QuarantineStatus {
          * Quarantine ends at [end] time.
          * After this time user's state is [Free].
          */
-        data class Limited(val end: ZonedDateTime, val bySelfDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
+        data class Limited(val end: ZonedDateTime, val bySelfYellowDiagnosis: ZonedDateTime?, val bySelfRedDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
             val byYellowWarning: ZonedDateTime?) :
             Jailed() {
 
