@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.commonexposure
 
 import android.content.Context
+import android.content.Intent
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
@@ -43,4 +44,6 @@ interface CommonExposureClient {
     fun getServiceStatus(): ExposureServiceStatus
 
     fun getServiceVersion(context: Context) : String
+
+    fun getFrameworkExposureNotificationSettingIntent(context: Context) : Intent
 }

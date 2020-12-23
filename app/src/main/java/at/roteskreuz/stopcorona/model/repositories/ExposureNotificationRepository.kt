@@ -77,7 +77,7 @@ interface ExposureNotificationRepository {
     /**
      * Get an Intent to the Exposure notification Setting in the system.
      */
-    fun getExposureSettingsIntent(): Intent
+    fun getExposureSettingsIntent(context: Context): Intent
 
     /**
      * Get a pending Intent to the Exposure notification Setting in the system.
@@ -231,10 +231,10 @@ class ExposureNotificationRepositoryImpl(
 
     }
 
-    override fun getExposureSettingsIntent(): Intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
+    override fun getExposureSettingsIntent(context: Context): Intent = exposureNotificationClient.getFrameworkExposureNotificationSettingIntent(context)
 
     override fun getExposureSettingsPendingIntent(context: Context): PendingIntent {
-        val settingsIntent = getExposureSettingsIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val settingsIntent = getExposureSettingsIntent(context).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return PendingIntent.getActivity(context, 0, settingsIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 

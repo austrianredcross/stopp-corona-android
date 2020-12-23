@@ -3,16 +3,14 @@ package at.roteskreuz.stopcorona.screens.debug.diagnosis_keys
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
+import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import at.roteskreuz.stopcorona.model.repositories.ExposureNotificationRepository
 import at.roteskreuz.stopcorona.model.repositories.FilesRepository
-import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
 import at.roteskreuz.stopcorona.model.repositories.other.ContextInteractor
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.ResolutionType
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -20,7 +18,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
@@ -28,7 +25,7 @@ import io.reactivex.Observable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.UUID
+import java.util.*
 
 class DebugDiagnosisKeysViewModel(
     appDispatchers: AppDispatchers,
@@ -127,7 +124,7 @@ class DebugDiagnosisKeysViewModel(
     }
 
     fun jumpToSystemSettings() {
-        val intent = exposureNotificationRepository.getExposureSettingsIntent()
+        val intent = exposureNotificationRepository.getExposureSettingsIntent(contextInteractor.applicationContext)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         contextInteractor.applicationContext.startActivity(intent)
     }

@@ -3,9 +3,7 @@ package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.util.Base64
-import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
@@ -19,7 +17,6 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
@@ -141,7 +138,7 @@ class DebugExposureNotificationsViewModel(
     }
 
     fun jumpToSystemSettings() {
-        val intent = exposureNotificationRepository.getExposureSettingsIntent()
+        val intent = exposureNotificationRepository.getExposureSettingsIntent(contextInteractor.applicationContext)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         contextInteractor.applicationContext.startActivity(intent)
     }

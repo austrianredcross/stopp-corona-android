@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.core.content.edit
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
@@ -17,6 +18,7 @@ import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.contactshield.*
+import com.huawei.hms.utils.HMSPackageManager
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset.UTC
 import timber.log.Timber
@@ -125,7 +127,13 @@ class HuaweiExposureClient(
     }
 
     override fun getServiceVersion(context : Context): String {
-        return "Huawei Mobile Services: ${huaweiMobileServicesVersion(context)}";
+        return "Huawei Mobile Services: ${huaweiMobileServicesVersion(context)}"
+    }
+
+    override fun getFrameworkExposureNotificationSettingIntent(context: Context) : Intent {
+        return Intent(Intent.ACTION_VIEW, Uri.parse("https://nearby.link.cloud.huawei.com/nearby/CSMenuActivity"))
+                .setPackage(HMSPackageManager.getInstance(context).hmsPackageName)
+                .putExtra("link_kit_name", "nearby")
     }
 
     private fun huaweiMobileServicesVersion(context: Context): String {

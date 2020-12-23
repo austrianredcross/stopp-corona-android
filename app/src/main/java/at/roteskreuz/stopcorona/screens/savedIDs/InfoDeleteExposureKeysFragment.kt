@@ -5,14 +5,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
-import at.roteskreuz.stopcorona.utils.isGmsAvailable
 import kotlinx.android.synthetic.main.info_delete_exposure_keys_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -33,11 +31,6 @@ class InfoDeleteExposureKeysFragment : BaseFragment(R.layout.info_delete_exposur
             displayExposureNotificationsSettings()
         }
 
-        if(!requireContext().isGmsAvailable()) {
-            btnDisplayExposureNotificationsSettings.isVisible = false
-            txtSavedIDsDeleteSubtitle.isVisible = false
-            txtSavedIDsDeleteDescription.isVisible = false
-        }
         txtSavedIDsTitle.contentDescription = context?.getString(R.string.info_delete_exposure_keys_subtitle) + context?.getString(R.string.accessibility_heading_1)
         txtSavedIDsDeleteSubtitle.contentDescription = context?.getString(R.string.info_delete_exposure_keys_delete_subtitle) + context?.getString(R.string.accessibility_heading_1)
     }
@@ -54,7 +47,7 @@ class InfoDeleteExposureKeysFragment : BaseFragment(R.layout.info_delete_exposur
     }
 
     private fun displayExposureNotificationsSettings() {
-        val notificationsSettingsIntent = viewModel.getExposureNotificationsSettingsIntent()
+        val notificationsSettingsIntent = viewModel.getExposureNotificationsSettingsIntent(requireContext())
         if (notificationsSettingsIntent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(notificationsSettingsIntent)
         } else {

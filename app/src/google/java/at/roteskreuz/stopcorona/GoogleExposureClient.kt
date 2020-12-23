@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.commonexposure.ExposureServiceStatus
@@ -72,6 +73,10 @@ class GoogleExposureClient(
 
     override fun getServiceVersion(context : Context): String {
         return "Google Mobile Services: ${googleMobileServicesVersion(context)}";
+    }
+
+    override fun getFrameworkExposureNotificationSettingIntent(context: Context): Intent {
+        return Intent(ExposureNotificationClient.ACTION_EXPOSURE_NOTIFICATION_SETTINGS)
     }
 
     private fun googleMobileServicesVersion(context: Context): String {
