@@ -9,10 +9,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
-import android.text.style.URLSpan
+import android.text.style.*
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.*
@@ -175,13 +172,49 @@ fun Context.getClickableBoldSpan(
 /**
  * Created a clickable span with a given [textRes]
  *
+ * @param drawableRes inserts a image behind the span
  * @param insertLeadingSpace inserts a leading space in front of the span
  * @param insertTrailingSpace inserts a trailing space behind the span
  */
 fun Context.getClickableSpan(
+        @StringRes textRes: Int,
+        onClick: () -> Unit,
+        @DrawableRes drawableRes: Int? = null,
+        underline: Boolean = true,
+        insertLeadingSpace: Boolean = true,
+        insertTrailingSpace: Boolean = true
+): SpannableString {
+    val clickableSpan = object : ClickableSpan() {
+
+        override fun updateDrawState(ds: TextPaint) {
+            ds.isUnderlineText = underline
+        }
+
+        override fun onClick(widget: View) {
+            onClick()
+        }
+    }
+    val spannable = SpannableString("${getSpace(insertLeadingSpace)}${getString(textRes)}${getSpace(insertTrailingSpace)}")
+    spannable.setSpan(clickableSpan, 0, spannable.length, 0)
+
+    drawableRes?.let {
+        insertImageAfterSpan(this, drawableRes, spannable)
+    }
+
+    return spannable
+}
+
+/**
+ * Created a clickable url span with a given [textRes] and [url]
+ *
+ * @param insertLeadingSpace inserts a leading space in front of the span
+ * @param insertTrailingSpace inserts a trailing space behind the span
+ */
+fun Context.getClickableUrlSpan(
     @StringRes textRes: Int,
     insertLeadingSpace: Boolean = true,
     insertTrailingSpace: Boolean = true,
+    underline: Boolean = false,
     url: String
 ): SpannableString {
 
@@ -190,7 +223,13 @@ fun Context.getClickableSpan(
 
     val spannable = SpannableString(getString(textRes))
 
-    val clickableSpan = URLSpan(url)
+    val clickableSpan = object : URLSpan(url) {
+
+        override fun updateDrawState(ds: TextPaint) {
+            ds.isUnderlineText = underline
+        }
+
+    }
 
     spannable.setSpan(clickableSpan, 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     spannable.setSpan(
@@ -204,6 +243,66 @@ fun Context.getClickableSpan(
     builder.append(getSpace(insertTrailingSpace))
 
     return SpannableString.valueOf(builder)
+}
+
+/**
+ * Created a clickable url span with a given [textRes] and [url]
+ *
+ * @param drawableRes inserts a image behind the span
+ * @param insertLeadingSpace inserts a leading space in front of the span
+ * @param insertTrailingSpace inserts a trailing space behind the span
+ */
+fun Context.getClickableBoldUrlSpan(
+        @StringRes textRes: Int,
+        @DrawableRes drawableRes: Int? = null,
+        insertLeadingSpace: Boolean = true,
+        insertTrailingSpace: Boolean = true,
+        underline: Boolean = false,
+        colored: Boolean = false,
+        url: String
+): SpannableString {
+
+    val builder = SpannableStringBuilder()
+    builder.append(getSpace(insertLeadingSpace))
+
+    val spannable = SpannableString(getString(textRes))
+
+    val clickableSpan = object : URLSpan(url) {
+
+        override fun updateDrawState(ds: TextPaint) {
+            ds.isUnderlineText = underline
+        }
+
+    }
+
+    spannable.setSpan(clickableSpan, 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, 0)
+    spannable.setSpan(
+            ForegroundColorSpan(color(R.color.black)),
+            0,
+            spannable.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+
+    if (colored) {
+        spannable.setSpan(ForegroundColorSpan(color(R.color.rouge)), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+
+    drawableRes?.let {
+        insertImageAfterSpan(this, drawableRes, spannable)
+    }
+
+    builder.append(spannable)
+    builder.append(getSpace(insertTrailingSpace))
+
+    return SpannableString.valueOf(builder)
+}
+
+private fun insertImageAfterSpan(context: Context, @DrawableRes drawableRes: Int, spannable: SpannableString) {
+    val drawable = ContextCompat.getDrawable(context, drawableRes)
+    drawable?.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+    val imageSpan = drawable?.let { ImageSpan(it, ImageSpan.ALIGN_BOTTOM) }
+    spannable.setSpan(imageSpan, spannable.length -1, spannable.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
 }
 
 private fun getSpace(insertSpace: Boolean): String {

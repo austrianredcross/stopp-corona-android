@@ -295,6 +295,22 @@ fun Instant.plusDays(days: Long): Instant = plus(days, ChronoUnit.DAYS)
  */
 fun Instant.minusDays(days: Long): Instant = minus(days, ChronoUnit.DAYS)
 
+/**
+ * Format the [Instant]
+ */
+fun Instant?.format(pattern: String): String? {
+    val localDateFormatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.systemDefault())
+    return localDateFormatter.format(this)
+}
+
+/**
+ * Format the [LocalDate]
+ */
+fun LocalDate?.format(pattern: String): String? {
+    val localDateFormatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.systemDefault())
+    return localDateFormatter.format(this)
+}
+
 fun ZonedDateTime.millisToNextUtcDay(): Long {
     val nextDay = this.plusDays(1)
     val startOfTheNextUtcDay = nextDay.startOfTheUtcDay()
