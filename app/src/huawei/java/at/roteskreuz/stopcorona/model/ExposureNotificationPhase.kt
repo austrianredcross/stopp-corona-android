@@ -69,10 +69,10 @@ fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError
 
     moveToNextState(
         when (exception.statusCode) {
-            StatusCode.STATUS_FAILURE -> {
+            StatusCode.STATUS_UNAUTHORIZED -> {
                 HMS.ContactShieldDeclined(dependencyHolder, register)
             }
-            StatusCode.STATUS_INTERNAL_ERROR -> {
+            StatusCode.STATUS_MISSING_PERMISSION_LOCATION -> {
                 HMS.LocationPermissionNotAllowedAllTheTime(dependencyHolder, register)
             }
             else -> ExposureNotificationPhase.FrameworkError.Critical.Unknown(
