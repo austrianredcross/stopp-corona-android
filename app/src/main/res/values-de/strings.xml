@@ -11,6 +11,7 @@
 	<string name="general_self_quarantine_channel_name">Quarantänemitteilungen</string>
 	<string name="general_automatic_bt_detection_channel_name">Automatische Benachrichtigungen zur Erkennung von Bluetooth-Geräten</string>
 	<string name="general_uploading_keys_channel_name">Hinweise zur Hochladen der eigenen Schlüssel</string>
+	<string name="general_today">Heute</string>
 	<string name="general_continue">Weiter</string>
 	<string name="general_additional_information">Weitere Informationen</string>
 	<string name="general_back">Zurück</string>
@@ -75,11 +76,12 @@
 	<string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
 	<string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
 	<string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
-	<string name="main_body_feeling_title">Wie fühlen Sie sich heute?</string>
-	<string name="main_body_feeling_description">Erhalten Sie eine Einschätzung zu Ihrem Gesundheitszustand.</string>
-	<string name="main_button_feel_today_button">Symptome abprüfen</string>
-	<string name="main_body_report_title">Corona-Infektion melden</string>
-	<string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen.</string>
+	<string name="main_body_feeling_title">Sie fühlen sich nicht gesund?</string>
+	<string name="main_body_feeling_description">Überprüfen Sie Ihre Symptome auf eine mögliche Corona-Infektion.</string>
+	<string name="main_button_feel_today_button">Symptome prüfen</string>
+	<string name="main_button_suspicion_button">Corona-Verdacht melden</string>
+	<string name="main_body_report_title">Sie sind selbst mit COVID-19 infiziert?</string>
+	<string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen. Ihre Kontakte werden über einen anonymen Risiko-Kontakt benachrichtigt.</string>
 	<string name="main_body_report_button">Ärztliche Bestätigung melden</string>
 	<string name="main_play_services_not_available_dialog_title">Gerät unterstützt Google PlayServices nicht</string>
 	<string name="main_play_services_not_available_dialog_message">Für die Funktion von Nearby werden die Google PlayServices benötigt. Derzeit funktioniert der Digitale Handshake leider nicht ohne Google PlayServices. Wir arbeiten an Alternativen.</string>
@@ -419,6 +421,15 @@
 	<string name="questionnaire_report_success_phone_ambulance_number">144</string>
 	<string name="questionnaire_report_success_health_wish"><b>Wir wünschen Ihnen eine gute Besserung!</b></string>
 	<string name="questionnaire_report_success_back_to_home_page_button">Zurück zur Startseite</string>
+	<string name="questionnaire_report_suspicion_title">Corona-Verdacht melden</string>
+	<string name="questionnaire_report_suspicion_headline">Melden Sie Ihren Status, um andere zu schützen</string>
+	<string name="questionnaire_report_suspicion_description">Ihre anonyme Meldung hilft, die Infektionskette zu unterbrechen. Ihre Kontakte können sich unbemerkt angesteckt haben und das Virus bereits weitergeben. Warnen Sie diese Menschen schnellstmöglich, damit Sie sich von anderen Menschen fernhalten.</string>
+	<string name="questionnaire_report_suspicion_date_headline">Seit wann haben Sie Symptome oder ein positives Testergebnis?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_headline">Warnen Sie Ihre Kontakte</string>
+	<string name="questionnaire_report_suspicion_report_contacts_confirmed">Sie haben bereits ein positives Testergebnis?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_confirmed_button">Ärztliche Bestätigung melden</string>
+	<string name="questionnaire_report_suspicion_report_contacts_not_confirmed">Sie haben noch keinen Test gemacht oder warten noch auf ihr Testergebnis?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_not_confirmed_button">Verdacht melden</string>
 
 	<!-- Start Screen Notification (user did the self test) -->
 	<string name="self_testing_suspicion_headline">Achtung</string>
