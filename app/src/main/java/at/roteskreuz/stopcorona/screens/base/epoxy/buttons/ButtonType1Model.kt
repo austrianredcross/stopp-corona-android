@@ -21,9 +21,13 @@ abstract class ButtonType1Model(
     @EpoxyAttribute
     var enabled: Boolean = true
 
+    @EpoxyAttribute
+    var contentDescription: String? = null
+
     override fun Holder.onBind() {
         btnType1.text = text
         btnType1.isEnabled = enabled
+        btnType1.contentDescription = contentDescription
         btnType1.setOnClickListener { onClick() }
     }
 
