@@ -18,6 +18,12 @@
 	<string name="general_date_format">d. MMMM</string>
 	<string name="accessibility_heading_1">Überschrift 1</string>
 	<string name="accessibility_heading_2">Überschrift 2</string>
+	<string name="accessibility_onboarding_finish_button_disabled_description">Fertig Schaltfläche: Einwilligungserklärung nicht zugestimmt</string>
+	<string name="accessibility_self_testing_next_button_disabled_description">Weiter Schaltfläche: Frage nicht beantwortet</string>
+	<string name="accessibility_certificate_report_status_button_disabled_description">Infektion bestätigen Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
+	<string name="accessibility_revoke_sickness_button_disabled_description">Entwarnung bestätigen Schaltfläce: Bitte bestätigen Sie Ihren Widerruf Ihrer Krankmeldung</string>
+	<string name="accessibility_self_testing_report_status_button_disabled_description">Verdacht melden Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
+	<string name="accessibility_revokation_report_status_button_disabled_description">Infektions-Meldung zurückziehen Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
 
 	<!-- General Error Information -->
 	<string name="error_no_internet_title">Keine Internetverbindung</string>

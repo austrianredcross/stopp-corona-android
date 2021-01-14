@@ -18,6 +18,12 @@
 	<string name="general_date_format">d. MMMM</string>
 	<string name="accessibility_heading_1">Heading 1</string>
 	<string name="accessibility_heading_2">Heading 2</string>
+	<string name="accessibility_onboarding_finish_button_disabled_description">Finished button: Declaration of consent not agreed</string>
+	<string name="accessibility_self_testing_next_button_disabled_description">Next button: Question not answered</string>
+	<string name="accessibility_certificate_report_status_button_disabled_description">Report infection button: Please confirm that you have provided all information truthfully</string>
+	<string name="accessibility_revoke_sickness_button_disabled_description">confirm all-clear button: Please confirm your revocation of your sick note</string>
+	<string name="accessibility_self_testing_report_status_button_disabled_description">Report a suspected infection button: Please confirm that you have provided all information truthfully</string>
+	<string name="accessibility_revokation_report_status_button_disabled_description">Revoke infection message button: Please confirm that you have provided all information truthfully</string>
 
 	<!-- General Error Information -->
 	<string name="error_no_internet_title">No internet connection</string>
