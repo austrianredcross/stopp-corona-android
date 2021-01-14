@@ -60,14 +60,14 @@ class DebugViewModel(
     fun reportMedicalConfirmation() {
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
-            quarantineRepository.reportMedicalConfirmation()
+            quarantineRepository.reportMedicalConfirmation(null)
         }
     }
 
     fun reportPositiveSelfDiagnose() {
         launch {
             // Only set the sickness report date. Does not store keys in the saved-TEK data base
-            quarantineRepository.reportPositiveSelfDiagnose()
+            quarantineRepository.reportPositiveSelfDiagnose(null)
         }
     }
 

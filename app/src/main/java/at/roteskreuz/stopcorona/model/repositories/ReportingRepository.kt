@@ -50,6 +50,11 @@ interface ReportingRepository {
     fun setDateWithMissingExposureKeys(dateWithMissingExposureKeys: ZonedDateTime?)
 
     /**
+     * Sets the date of the self-reported suspicion or case of infection
+     */
+    fun setDateOfInfection(date: ZonedDateTime)
+
+    /**
      * Request a TAN for authentication.
      */
     suspend fun requestTan(mobileNumber: String)
@@ -84,6 +89,11 @@ interface ReportingRepository {
     fun goBackFromTanEntryScreen()
 
     /**
+     * Navigate back from the reporting suspicion screen.
+     */
+    fun goBackFromReportingSuspicionScreen()
+
+    /**
      * Navigate back from the reporting agreement screen.
      */
     fun goBackFromReportingAgreementScreen()
@@ -113,6 +123,11 @@ interface ReportingRepository {
      * @throws [InvalidConfigurationException]
      */
     fun observeMessageType(): Observable<MessageType>
+
+    /**
+     * Observe the data related to date of infection.
+     */
+    fun observeDateOfInfection(): Observable<DateOfInfectionData>
 }
 
 class ReportingRepositoryImpl(
@@ -139,6 +154,7 @@ class ReportingRepositoryImpl(
 
     private val agreementDataSubject = NonNullableBehaviorSubject(AgreementData())
     private val messageTypeSubject = BehaviorSubject.create<MessageType>()
+    private val dateOfInfectionSubject = BehaviorSubject.create<DateOfInfectionData>()
 
     private var tanUuid: String? = null
 
@@ -150,6 +166,10 @@ class ReportingRepositoryImpl(
 
     override fun setDateWithMissingExposureKeys(dateWithMissingExposureKeys: ZonedDateTime?) {
         this.dateWithMissingExposureKeys = dateWithMissingExposureKeys
+    }
+
+    override fun setDateOfInfection(date: ZonedDateTime) {
+        dateOfInfectionSubject.onNext(DateOfInfectionData(date))
     }
 
     override suspend fun requestTan(mobileNumber: String) {
@@ -173,7 +193,9 @@ class ReportingRepositoryImpl(
                 ?: throw InvalidConfigurationException.ConfigurationNotPresent
             val uploadKeysDays = configuration.uploadKeysDays
                 ?: throw InvalidConfigurationException.NullNumberOfDaysToUpload
-            val uploadStartIntervalNumberFromConfig = now
+
+            val startDate = dateOfInfectionSubject.value?.dateOfInfection ?: now
+            val uploadStartIntervalNumberFromConfig = startDate
                 .minusDays(uploadKeysDays.toLong())
                 .toRollingStartIntervalNumber()
 
@@ -217,12 +239,12 @@ class ReportingRepositoryImpl(
 
                 when (infectionLevel) {
                     MessageType.InfectionLevel.Red -> {
-                        quarantineRepository.reportMedicalConfirmation()
+                        quarantineRepository.reportMedicalConfirmation(dateOfInfectionSubject.value?.dateOfInfection)
                         quarantineRepository.revokePositiveSelfDiagnose(backup = true)
                         quarantineRepository.revokeSelfMonitoring()
                     }
                     MessageType.InfectionLevel.Yellow -> {
-                        quarantineRepository.reportPositiveSelfDiagnose()
+                        quarantineRepository.reportPositiveSelfDiagnose(dateOfInfectionSubject.value?.dateOfInfection)
                         quarantineRepository.revokeSelfMonitoring()
                     }
                 }
@@ -403,6 +425,10 @@ class ReportingRepositoryImpl(
         agreementDataSubject.onNext(agreementDataSubject.value.copy(userHasAgreed = false))
     }
 
+    override fun goBackFromReportingSuspicionScreen() {
+        dateOfInfectionSubject.onNext(DateOfInfectionData(null))
+    }
+
     override fun observePersonalData(): Observable<PersonalData> {
         return personalDataSubject
     }
@@ -418,6 +444,10 @@ class ReportingRepositoryImpl(
     override fun observeMessageType(): Observable<MessageType> {
         return messageTypeSubject
     }
+
+    override fun observeDateOfInfection(): Observable<DateOfInfectionData> {
+        return dateOfInfectionSubject
+    }
 }
 
 data class AgreementData(val userHasAgreed: Boolean = false)
@@ -428,6 +458,8 @@ data class PersonalData(
     val mobileNumber: String = EMPTY_STRING,
     val tanSuccessfullyRequested: Boolean = false
 )
+
+data class DateOfInfectionData(val dateOfInfection: ZonedDateTime? = null)
 
 /**
  * Validity of a TEK.

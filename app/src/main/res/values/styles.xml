@@ -93,4 +93,24 @@
     <style name="RoundedCornersBottomSheet" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/shape_changelog_bottom_sheet_background</item>
     </style>
+
+    <style name="AppTheme.DateSelector" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">left</item>
+        <item name="android:background">@drawable/selector_background</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/button_type2_text_color_selector</item>
+    </style>
+
+    <style name="DatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:datePickerStyle">@style/DatePickerStyle</item>
+        <item name="android:colorAccent">@color/rouge</item>
+    </style>
+
+    <style name="DatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
 </resources>

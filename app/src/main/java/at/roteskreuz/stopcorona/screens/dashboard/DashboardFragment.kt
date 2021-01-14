@@ -17,6 +17,7 @@ import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomS
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
+import at.roteskreuz.stopcorona.screens.questionnaire.report.startReportSuspicionFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuestionnaireSelfMonitoringWithSubmissionDataFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCertificateReportGuidelinesFragment
@@ -66,6 +67,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                     Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
                 } else {
                     startQuestionnaireFragment()
+                }
+            },
+            onReportSuspicionClick = { disabled ->
+                if (disabled) {
+                    Snackbar.make(requireView(), R.string.main_reporting_disable_btn, Snackbar.LENGTH_LONG).show()
+                } else {
+                    startReportSuspicionFragment()
                 }
             },
             onReportClick = { disabled ->

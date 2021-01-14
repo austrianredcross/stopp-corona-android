@@ -9,6 +9,8 @@ import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Get minutes difference between two times.
@@ -315,4 +317,11 @@ fun ZonedDateTime.millisToNextUtcDay(): Long {
     val nextDay = this.plusDays(1)
     val startOfTheNextUtcDay = nextDay.startOfTheUtcDay()
     return this.millisTo(startOfTheNextUtcDay)
+}
+/**
+ * Format the [Date] to String
+ */
+fun Date.toString(format: String): String {
+    val dateFormatter = SimpleDateFormat(format)
+    return dateFormatter.format(this)
 }
