@@ -14,6 +14,7 @@ import at.roteskreuz.stopcorona.utils.view.safeMap
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Handles the user interaction and provides data for [ReportingPersonalDataFragment].
@@ -31,6 +32,9 @@ class ReportingPersonalDataViewModel(
     fun setMobileNumber(mobileNumber: String?) {
         this.mobileNumber = mobileNumber
     }
+
+    val dateOfInfection: ZonedDateTime?
+        get() = reportingRepository.dateOfInfection
 
     fun validate() {
         val mobileNumber = this.mobileNumber

@@ -325,3 +325,10 @@ fun Date.toString(format: String): String {
     val dateFormatter = SimpleDateFormat(format)
     return dateFormatter.format(this)
 }
+
+/**
+ * Get days difference between two times.
+ */
+fun ZonedDateTime.daysTo(other: ZonedDateTime): Long {
+    return Duration.between(this, other).toDays()
+}

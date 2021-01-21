@@ -21,12 +21,14 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.onViewReady
+import at.roteskreuz.stopcorona.utils.daysTo
 import at.roteskreuz.stopcorona.utils.view.applyText
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_reporting_personal_data.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Screen for entering personal data, part of the flow for reporting a medical certificate or
@@ -80,7 +82,13 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
                     else -> {
                         setTitle(R.string.certificate_personal_data_title)
                         txtTitle.text = getString(R.string.certificate_personal_data_title)
-                        txtDescription.text = getString(R.string.certificate_personal_data_description)
+                        txtDescription.text = if (viewModel.dateOfInfection != null){
+                            val reportContactsDate = viewModel.dateOfInfection!!.minusDays(2)
+                            val days = reportContactsDate.daysTo(ZonedDateTime.now())
+                            getString(R.string.certificate_personal_data_description, days.toString())
+                        } else {
+                            getString(R.string.certificate_personal_data_description, "2")
+                        }
                     }
                 }
             }

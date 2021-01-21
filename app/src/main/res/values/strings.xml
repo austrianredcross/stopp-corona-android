@@ -235,7 +235,7 @@
 	<!-- Sickness Certificate -->
 	<string name="certificate_personal_data_headline">Please enter your data</string>
 	<string name="certificate_personal_data_title">Report status</string>
-	<string name="certificate_personal_data_description">In the next step, we will anonymously inform your direct contacts of the last 2 days.\nWith the mobile number, we ensure that the app is not misused and that infection reports contribute to the common good.</string>
+	<string name="certificate_personal_data_description">In the next step, we will anonymously inform your direct contacts of the last %s days.\nWith the mobile number, we ensure that the app is not misused and that infection reports contribute to the common good.</string>
 	<string name="certificate_personal_data_mobile_number_label">Mobile number (+43...)</string>
 	<string name="certificate_personal_data_next_button">Next</string>
 	<string name="certificate_personal_data_input_error">Mobile number</string>
