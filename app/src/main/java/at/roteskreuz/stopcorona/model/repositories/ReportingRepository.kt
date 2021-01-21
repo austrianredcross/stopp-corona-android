@@ -38,6 +38,11 @@ interface ReportingRepository {
     }
 
     /**
+     * Get date of infection.
+     */
+    val dateOfInfection: ZonedDateTime?
+
+    /**
      * Sets the messageType that will be reported to authorities at the end of the reporting flow.
      */
     fun setMessageType(messageType: MessageType)
@@ -159,6 +164,9 @@ class ReportingRepositoryImpl(
     private var tanUuid: String? = null
 
     private var dateWithMissingExposureKeys: ZonedDateTime? = null
+
+    override val dateOfInfection: ZonedDateTime?
+        get() = dateOfInfectionSubject.value?.dateOfInfection
 
     override fun setMessageType(messageType: MessageType) {
         messageTypeSubject.onNext(messageType)
