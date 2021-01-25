@@ -92,6 +92,20 @@ class OnboardingController(
         onboardingPage(onEnterLastPage) {
             id("onboarding_page_5")
             pageNumber(4)
+            title(context.getString(R.string.onboarding_headline_7))
+            heroImageRes(R.drawable.ic_onboarding_hero_5)
+            heroImageDesc(context.getString(R.string.onboarding_copy_7_img))
+
+            val builder = SpannableStringBuilder()
+            builder.append(context.getString(R.string.onboarding_copy_7_1))
+            builder.append(context.getBoldSpan(R.string.onboarding_copy_7_2))
+            builder.append(context.getString(R.string.onboarding_copy_7_3))
+            description(builder)
+        }
+
+        onboardingPage(onEnterLastPage) {
+            id("onboarding_page_6")
+            pageNumber(5)
             title(context.getString(R.string.onboarding_headline_5))
             heroImageVisible(false)
 
@@ -118,8 +132,8 @@ class OnboardingController(
 
         if (dataPrivacyAccepted.not()) {
             onboardingDataPrivacy(onEnterLastPage, onDataPrivacyCheckBoxChanged) {
-                id("onboarding_page_6")
-                pageNumber(5)
+                id("onboarding_page_7")
+                pageNumber(6)
                 title(context.getString(R.string.onboarding_headline_6))
                 checkBoxDescription(context.getString(R.string.onboarding_dataprivacy_approval))
                 firstDescription(SpannableString(context.getString(R.string.onboarding_dataprivacy_description_1)))
