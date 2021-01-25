@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.model.repositories
 import android.content.SharedPreferences
 import at.roteskreuz.stopcorona.constants.Constants.Prefs.DATA_PRIVACY_REPOSITORY_PREFIX
 import at.roteskreuz.stopcorona.model.api.ApiError
+import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.nullableZonedDateTimeSharedPreferencesProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeNullableZonedDateTime
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -25,6 +26,16 @@ interface DataPrivacyRepository {
     fun setDataPrivacyAccepted()
 
     /**
+     * Indicated if new data privacy was fully accepted.
+     */
+    val newDataPrivacyAccepted: Boolean
+
+    /**
+     * New data privacy was seen and accepted so we don't want to show it anymore.
+     */
+    fun setNewDataPrivacyAccepted()
+
+    /**
      * Check if data privacy is accepted.
      * If not, error is thrown.
      * @throws [ApiError.Critical.DataPrivacyNotAcceptedYet]
@@ -45,6 +56,7 @@ class DataPrivacyRepositoryImpl(
     companion object {
         private const val PREF_DATA_PRIVACY_ACCEPTED_TIMESTAMP = DATA_PRIVACY_REPOSITORY_PREFIX + "_data_privacy_timestamp"
         private const val PREF_DATA_PRIVACY_ACCEPTED_TIMESTAMP_V1_1 = DATA_PRIVACY_REPOSITORY_PREFIX + "data_privacy_timestamp_v1.1"
+        private const val PREF_NEW_DATA_PRIVACY_ACCEPTED = DATA_PRIVACY_REPOSITORY_PREFIX + "new_data_privacy_accepted"
     }
 
     private var dataPrivacyAcceptedTimestamp: ZonedDateTime?
@@ -53,6 +65,9 @@ class DataPrivacyRepositoryImpl(
     @Suppress("PrivatePropertyName")
     private var dataPrivacyAcceptedTimestampV1_1: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATA_PRIVACY_ACCEPTED_TIMESTAMP_V1_1)
+
+    private var hasAcceptedNewPrivacy: Boolean
+            by preferences.booleanSharedPreferencesProperty(PREF_NEW_DATA_PRIVACY_ACCEPTED, false)
 
     override val dataPrivacyAccepted: Boolean
         get() = dataPrivacyAcceptedTimestamp != null && dataPrivacyAcceptedTimestampV1_1 != null
@@ -66,6 +81,13 @@ class DataPrivacyRepositoryImpl(
         }
 
         dataPrivacyAcceptedTimestampV1_1 = ZonedDateTime.now()
+    }
+
+    override val newDataPrivacyAccepted: Boolean
+        get() = hasAcceptedNewPrivacy
+
+    override fun setNewDataPrivacyAccepted() {
+        hasAcceptedNewPrivacy = true
     }
 
     override fun assertDataPrivacyAccepted() {

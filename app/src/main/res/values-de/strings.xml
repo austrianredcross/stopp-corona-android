@@ -593,6 +593,12 @@
 	<string name="upload_keys_from_yesterday_title">Kontakte von gestern über ihre Krankmeldung informieren</string>
 	<string name="upload_keys_from_yesterday_message">Benachrichtigen Sie jetzt Kontakte von gestern. Teilen Sie dafür jetzt die IDs aus dem Kontaktprotokoll Ihres Gerätes mit der Stopp Corona App\n\nDas Melden ist weiterhin freiwillig.</string>
 	<string name="upload_keys_from_yesterday_button_title">Jetzt IDs teilen</string>
+	<string name="interoperability_title">Grenzüberschreitende Nutzung</string>
+	<string name="interoperability_info_content_1">Die Stopp Corona App kann künftig auch EU-weit genutzt werden. Damit ist eine Infektionswarnung über Grenzen hinweg möglich.\n \nDie Datenschutzinformationen wurden dementsprechend angepasst.\n \nMit einem Klick auf dem Button \"Ich bin einverstanden\" stimmen Sie den neuen</string>
+	<string name="interoperability_info_content_2">Datenschutzinformationen</string>
+	<string name="interoperability_info_content_3">zu.\n \nSie haben noch Fragen? Lesen Sie mehr in </string>
+	<string name="interoperability_info_content_4">FAQs</string>
+	<string name="interoperability_button_title">Ich bin einverstanden</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>

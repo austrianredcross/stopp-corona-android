@@ -21,7 +21,8 @@ class DashboardViewModel(
     private val diagnosisKeysRepository: DiagnosisKeysRepository,
     private val quarantineRepository: QuarantineRepository,
     private val changelogManager: ChangelogManager,
-    private val exposureNotificationManager: ExposureNotificationManager
+    private val exposureNotificationManager: ExposureNotificationManager,
+    private val dataPrivacyRepository: DataPrivacyRepository
 ) : ScopedViewModel(appDispatchers) {
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
@@ -40,6 +41,12 @@ class DashboardViewModel(
      */
     val shouldDisplayWhatsNew
         get() = changelogManager.shouldDisplayChangelog
+
+    /**
+     * If true, privacy update should be displayed.
+     */
+    val hasAcceptedPrivacyUpdate
+        get() = dataPrivacyRepository.newDataPrivacyAccepted
 
     var userWantsToRegisterAppForExposureNotifications: Boolean
         get() = exposureNotificationManager.userWantsToRegisterAppForExposureNotifications
