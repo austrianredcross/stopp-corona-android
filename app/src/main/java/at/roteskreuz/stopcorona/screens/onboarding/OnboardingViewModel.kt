@@ -62,6 +62,7 @@ class OnboardingViewModel(
 
         if (currentPage == INDEX_LAST_PAGE_WITH_TERMS_AND_CONDITIONS && dataPrivacyCheckedSubject.value) {
             dataPrivacyRepository.setDataPrivacyAccepted()
+            dataPrivacyRepository.setNewDataPrivacyAccepted()
         }
     }
 

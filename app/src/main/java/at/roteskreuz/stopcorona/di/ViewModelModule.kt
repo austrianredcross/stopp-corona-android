@@ -11,6 +11,7 @@ import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposu
 import at.roteskreuz.stopcorona.screens.debug.scheduling.SchedulingObserverViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
+import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.PrivacyUpdateViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.QuestionnaireGuidelineViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.QuestionnaireHintViewModel
@@ -80,7 +81,8 @@ val viewModelModule = module {
             diagnosisKeysRepository = get(),
             quarantineRepository = get(),
             changelogManager = get(),
-            exposureNotificationManager = get()
+            exposureNotificationManager = get(),
+            dataPrivacyRepository = get()
         )
     }
 
@@ -259,6 +261,13 @@ val viewModelModule = module {
         DatePickerFragmentDialogViewModel(
             appDispatchers = get(),
             reportingRepository = get()
+        )
+    }
+
+    viewModel {
+        PrivacyUpdateViewModel(
+            appDispatchers = get(),
+            dataPrivacyRepository = get()
         )
     }
 }

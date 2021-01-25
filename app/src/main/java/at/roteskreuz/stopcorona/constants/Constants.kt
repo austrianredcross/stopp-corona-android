@@ -128,6 +128,7 @@ object Constants {
         const val SCHEDULED_WORKERS_MIGRATION_MANAGER_PREFIX = PREFIX + "scheduled_workers_migration_manager_"
         const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
         const val EXPOSURE_NOTIFICATION_MANAGER_PREFIX = PREFIX + "exposure_notification_manager_"
+        const val PRIVACY_UPDATE_PREFIX = PREFIX + "privacy_update_manager_"
     }
 
     /**
