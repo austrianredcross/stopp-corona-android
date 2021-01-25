@@ -65,6 +65,11 @@
 	<string name="onboarding_copy_5_2">terms of use</string>
 	<string name="onboarding_copy_5_3">.\n \nDo you have any questions? Read more in the</string>
 	<string name="onboarding_copy_5_4">FAQs</string>
+	<string name="onboarding_headline_7">Cross-border use</string>
+	<string name="onboarding_copy_7_1">In the case of a confirmed infection,</string>
+	<string name="onboarding_copy_7_2">warning across borders</string>
+	<string name="onboarding_copy_7_3">is possible.\nContacts from other EU countries can be warned or warn you anonymously in the event of an infection using the app.</string>
+	<string name="onboarding_copy_7_img">Image: Notifications and warnings from contacts across Europe</string>
 	<string name="onboarding_next_button">Continue</string>
 	<string name="onboarding_finish_button">Finished</string>
 	<string name="onboarding_headline_6">Declaration of consent</string>

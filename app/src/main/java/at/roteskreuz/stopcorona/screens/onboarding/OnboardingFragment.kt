@@ -116,14 +116,12 @@ class OnboardingFragment : BaseFragment(R.layout.fragment_onboarding) {
                     true -> {
                         with(contentRecyclerView) {
                             removeItemDecoration(pagerIndicator)
-                            setHeight(ConstraintLayout.LayoutParams.MATCH_PARENT)
                         }
                     }
                     false -> {
                         with(contentRecyclerView) {
                             if (itemDecorationCount == 1) {
                                 addItemDecoration(pagerIndicator)
-                                setHeight(requireContext().dip(512))
                             }
                         }
                     }
