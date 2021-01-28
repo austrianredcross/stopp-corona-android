@@ -10,5 +10,5 @@
     <string name="main_exposure_error_hms_unavailable_action">Try again</string>
     <string name="main_exposure_error_hms_location_permission_not_always_allowed">Standort Zugriff für HMS Core ist nicht immer erlaubt.</string>
 
-    <string name="mandatory_update_store">Go to AppGallery</string>
+    <string name="mandatory_update_store">Zur AppGallery</string>
 </resources>

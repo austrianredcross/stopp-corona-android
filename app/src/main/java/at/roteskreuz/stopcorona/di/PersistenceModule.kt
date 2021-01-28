@@ -46,6 +46,10 @@ internal val persistenceModule = module {
         )
     }
 
+    single<MandatoryUpdateManager> {
+        MandatoryUpdateManagerImpl()
+    }
+
     // DAOs
 
     single {

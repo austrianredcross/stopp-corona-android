@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.di
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogViewModel
@@ -78,7 +79,8 @@ val viewModelModule = module {
             diagnosisKeysRepository = get(),
             quarantineRepository = get(),
             changelogManager = get(),
-            exposureNotificationManager = get()
+            exposureNotificationManager = get(),
+            mandatoryUpdateManager = get()
         )
     }
 

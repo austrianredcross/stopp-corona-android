@@ -14,6 +14,7 @@ import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
+import at.roteskreuz.stopcorona.screens.mandatory_update.showMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.startQuestionnaireGuidelineFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuestionnaireSelfMonitoringWithSubmissionDataFragment
@@ -259,6 +260,14 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
         if (viewModel.shouldDisplayWhatsNew) {
             showChangelogBottomSheetFragment()
         }
+
+        disposables += viewModel.observeDisplayMandatoryUpdate()
+            .observeOnMainThread()
+            .subscribe { displayMandatoryUpdate ->
+                if (displayMandatoryUpdate) {
+                    showMandatoryUpdateFragment()
+                }
+            }
 
         controller.requestModelBuild()
     }
