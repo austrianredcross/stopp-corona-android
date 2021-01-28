@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.api.ApiError
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
-import at.roteskreuz.stopcorona.screens.mandatory_update.startMandatoryUpdateFragment
+import at.roteskreuz.stopcorona.screens.mandatory_update.showMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.GeneralServerException
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.NoInternetConnectionException
 import at.roteskreuz.stopcorona.skeleton.core.model.exceptions.UnexpectedError
@@ -38,7 +38,7 @@ fun Fragment.handleBaseCoronaErrors(error: Throwable) {
         }
         is ApiError.Critical.ForceUpdate -> {
             Timber.w(error, "Force update exception")
-            startMandatoryUpdateFragment()
+            showMandatoryUpdateFragment()
         }
         else -> {
             Timber.e(error, "Unhandled else exception")

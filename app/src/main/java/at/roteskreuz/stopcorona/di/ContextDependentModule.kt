@@ -58,7 +58,8 @@ internal val contextDependentModule = module {
             processLifecycleOwner = ProcessLifecycleOwner.get(),
             configurationRepository = get(),
             dataPrivacyRepository = get(),
-            diagnosisKeysRepository = get()
+            diagnosisKeysRepository = get(),
+            mandatoryUpdateManager = get()
         )
     }
 
