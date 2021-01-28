@@ -4,6 +4,7 @@ import android.app.Activity
 import at.roteskreuz.stopcorona.model.managers.ChangelogManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
@@ -22,7 +23,8 @@ class DashboardViewModel(
     private val quarantineRepository: QuarantineRepository,
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager,
-    private val dataPrivacyRepository: DataPrivacyRepository
+    private val dataPrivacyRepository: DataPrivacyRepository,
+    private val mandatoryUpdateManager: MandatoryUpdateManager
 ) : ScopedViewModel(appDispatchers) {
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
@@ -68,6 +70,10 @@ class DashboardViewModel(
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
+    }
+
+    fun observeDisplayMandatoryUpdate(): Observable<Boolean>{
+        return mandatoryUpdateManager.observeDisplayMandatoryUpdate()
     }
 
     fun observeDateOfFirstMedicalConfirmation(): Observable<Optional<ZonedDateTime>> {
