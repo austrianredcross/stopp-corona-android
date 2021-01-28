@@ -141,8 +141,9 @@ class OnboardingController(
                 val builder = SpannableStringBuilder()
                 builder.append(context.getString(R.string.onboarding_dataprivacy_description_2_1))
                 builder.append(
-                    context.getClickableUrlSpan(
+                    context.getClickableBoldUrlSpan(
                         R.string.onboarding_dataprivacy_description_2_2,
+                        colored = true,
                         url = WebViewWithAssetsResourcesFragment.DEEP_LINK_PRIVACY
                     )
                 )
