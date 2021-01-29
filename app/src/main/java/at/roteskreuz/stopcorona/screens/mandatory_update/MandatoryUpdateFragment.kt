@@ -8,7 +8,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
-import at.roteskreuz.stopcorona.utils.startGooglePlayStore
+import at.roteskreuz.stopcorona.utils.startPlatformAppStore
 import kotlinx.android.synthetic.main.fragment_mandatory_update.*
 
 class MandatoryUpdateFragment : BaseFragment(R.layout.fragment_mandatory_update) {
@@ -20,7 +20,7 @@ class MandatoryUpdateFragment : BaseFragment(R.layout.fragment_mandatory_update)
 
         btnGoToPlaystore.setOnClickListener {
             val appPackageName = requireContext().packageName
-            startGooglePlayStore(appPackageName)
+            startPlatformAppStore(appPackageName)
         }
     }
 }

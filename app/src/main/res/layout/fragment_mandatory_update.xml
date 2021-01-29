@@ -28,5 +28,5 @@
         style="@style/AppTheme.ButtonLargeType1"
         android:layout_width="match_parent"
         android:layout_marginTop="24dp"
-        android:text="@string/mandatory_update_playstore" />
+        android:text="@string/mandatory_update_store" />
 </LinearLayout>

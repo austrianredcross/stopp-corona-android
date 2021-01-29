@@ -126,7 +126,6 @@
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Aktuelle Version herunterladen</string>
 	<string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
-	<string name="mandatory_update_playstore">Zum Play Store</string>
 
 	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
 	<string name="infection_info_title">Was soll ich tun?</string>
