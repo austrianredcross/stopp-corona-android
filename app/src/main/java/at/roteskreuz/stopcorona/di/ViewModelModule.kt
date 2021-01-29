@@ -2,7 +2,9 @@ package at.roteskreuz.stopcorona.di
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
+import at.roteskreuz.stopcorona.screens.base.dialog.datepicker.DatePickerFragmentDialogViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogViewModel
 import at.roteskreuz.stopcorona.screens.debug.diagnosis_keys.DebugDiagnosisKeysViewModel
@@ -10,9 +12,11 @@ import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposu
 import at.roteskreuz.stopcorona.screens.debug.scheduling.SchedulingObserverViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
+import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.PrivacyUpdateViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.QuestionnaireGuidelineViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.QuestionnaireHintViewModel
+import at.roteskreuz.stopcorona.screens.questionnaire.report.QuestionnaireReportViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.QuestionnaireSelfMonitoringViewModel
 import at.roteskreuz.stopcorona.screens.reporting.ReportingViewModel
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataViewModel
@@ -78,7 +82,9 @@ val viewModelModule = module {
             diagnosisKeysRepository = get(),
             quarantineRepository = get(),
             changelogManager = get(),
-            exposureNotificationManager = get()
+            exposureNotificationManager = get(),
+            dataPrivacyRepository = get(),
+            mandatoryUpdateManager = get()
         )
     }
 
@@ -226,6 +232,44 @@ val viewModelModule = module {
         InfoDeleteExposureKeysViewModel(
             appDispatchers = get(),
             exposureNotificationRepository = get()
+        )
+    }
+
+    /**
+     * The fragment which implements this viewModel needs to call
+     * ```
+     * override fun onCreate(savedInstanceState: Bundle?) {
+     *     connectToScope(ReportingRepository.SCOPE_NAME)
+     *     super.onCreate(savedInstanceState)
+     * }
+     * ```
+     */
+    viewModel {
+        QuestionnaireReportViewModel(
+            appDispatchers = get(),
+            reportingRepository = get()
+        )
+    }
+
+    /**
+     * The fragment which implements this viewModel needs to call
+     * ```
+     * override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+     *     connectToScope(ReportingRepository.SCOPE_NAME)
+     * }
+     * ```
+     */
+    viewModel {
+        DatePickerFragmentDialogViewModel(
+            appDispatchers = get(),
+            reportingRepository = get()
+        )
+    }
+
+    viewModel {
+        PrivacyUpdateViewModel(
+            appDispatchers = get(),
+            dataPrivacyRepository = get()
         )
     }
 }

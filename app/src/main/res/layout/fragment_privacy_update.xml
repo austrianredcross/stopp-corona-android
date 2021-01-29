@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,9 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginBottom="120dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnToAccept">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -29,14 +29,12 @@
                     style="@style/AppTheme.Heading1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/onboarding_headline_top_margin"
+                    android:layout_marginTop="12dp"
                     android:gravity="center"
-                    android:textColor="@color/onboarding_headline"
-                    android:textSize="@dimen/onboarding_headline"
+                    android:text="@string/interoperability_title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/onboarding_headline_2" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txtDescription"
@@ -47,26 +45,29 @@
                     android:layout_marginTop="@dimen/onboarding_content_margin_top"
                     android:layout_marginEnd="@dimen/onboarding_content_margin_horizontal"
                     android:layout_marginBottom="@dimen/onboarding_content_margin_bottom"
+                    android:paddingBottom="10dp"
                     android:textSize="@dimen/onboarding_body"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtTitle"
-                    tools:text="@string/onboarding_copy_2_3" />
+                    tools:text="@string/interoperability_info_content_1" />
 
-                <ImageView
-                    android:id="@+id/imgHero"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/onboarding_image_margin_bottom"
-                    android:layout_marginTop="@dimen/onboarding_image_margin_bottom"
-                    android:scaleType="centerInside"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/txtDescription"
-                    app:layout_constraintStart_toStartOf="@id/txtDescription"
-                    app:layout_constraintTop_toBottomOf="@id/txtDescription"
-                    app:layout_constraintVertical_bias="1"
-                    tools:src="@drawable/onboarding_hero_1" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.cardview.widget.CardView>
+
+
+    <Button
+        android:id="@+id/btnToAccept"
+        style="@style/AppTheme.ButtonLargeType1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="36dp"
+        android:text="@string/interoperability_button_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

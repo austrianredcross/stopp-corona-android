@@ -11,12 +11,19 @@
 	<string name="general_self_quarantine_channel_name">Quarantine notices</string>
 	<string name="general_automatic_bt_detection_channel_name">Automatic Bluetooth device detection notices</string>
 	<string name="general_uploading_keys_channel_name">Notices regarding the uploading of your own keys</string>
+	<string name="general_today">Today</string>
 	<string name="general_continue">Continue</string>
 	<string name="general_additional_information">Further information</string>
 	<string name="general_back">Back</string>
 	<string name="general_date_format">d. MMMM</string>
 	<string name="accessibility_heading_1">Heading 1</string>
 	<string name="accessibility_heading_2">Heading 2</string>
+	<string name="accessibility_onboarding_finish_button_disabled_description">Finished button: Declaration of consent not agreed</string>
+	<string name="accessibility_self_testing_next_button_disabled_description">Next button: Question not answered</string>
+	<string name="accessibility_certificate_report_status_button_disabled_description">Report infection button: Please confirm that you have provided all information truthfully</string>
+	<string name="accessibility_revoke_sickness_button_disabled_description">confirm all-clear button: Please confirm your revocation of your sick note</string>
+	<string name="accessibility_self_testing_report_status_button_disabled_description">Report a suspected infection button: Please confirm that you have provided all information truthfully</string>
+	<string name="accessibility_revokation_report_status_button_disabled_description">Revoke infection message button: Please confirm that you have provided all information truthfully</string>
 
 	<!-- General Error Information -->
 	<string name="error_no_internet_title">No internet connection</string>
@@ -58,6 +65,11 @@
 	<string name="onboarding_copy_5_2">terms of use</string>
 	<string name="onboarding_copy_5_3">.\n \nDo you have any questions? Read more in the</string>
 	<string name="onboarding_copy_5_4">FAQs</string>
+	<string name="onboarding_headline_7">Cross-border use</string>
+	<string name="onboarding_copy_7_1">In the case of a confirmed infection,</string>
+	<string name="onboarding_copy_7_2">warning across borders</string>
+	<string name="onboarding_copy_7_3">is possible.\nContacts from other EU countries can be warned or warn you anonymously in the event of an infection using the app.</string>
+	<string name="onboarding_copy_7_img">Image: Notifications and warnings from contacts across Europe</string>
 	<string name="onboarding_next_button">Continue</string>
 	<string name="onboarding_finish_button">Finished</string>
 	<string name="onboarding_headline_6">Declaration of consent</string>
@@ -75,11 +87,13 @@
 	<string name="main_automatic_handshake_description_disabled">Please note, in quarantine you should reduce your contacts to a minimum, therefore the handshake is no longer possible.</string>
 	<string name="main_button_start_handshake_button">Start manual handshake</string>
 	<string name="main_body_saved_encounters">Saved Encounters (%,d)</string>
-	<string name="main_body_feeling_title">How do you feel today?</string>
-	<string name="main_body_feeling_description">Get an assessment of your health.</string>
+	<string name="main_body_feeling_title">Are you not feeling well?</string>
+	<string name="main_body_feeling_description">Check your symptoms for a possible corona infection.</string>
 	<string name="main_button_feel_today_button">Check symptoms</string>
-	<string name="main_body_report_title">Report corona infection</string>
-	<string name="main_body_report_description">Report a medically confirmed infection to protect your contacts.</string>
+	<string name="main_button_suspicion_button">Report suspected corona
+</string>
+	<string name="main_body_report_title">Are you infected with COVID-19 yourself?</string>
+	<string name="main_body_report_description">Report a medically confirmed infection to protect your contacts. Your contacts will be notified about an anonymous risk contact.</string>
 	<string name="main_body_report_button">Report medical confirmation</string>
 	<string name="main_play_services_not_available_dialog_title">Device does not support Google PlayServices</string>
 	<string name="main_play_services_not_available_dialog_message">Google PlayServices are needed to use the feature Nearby. At the moment the digital handshake only works with Google PlayServices. We are working on alternative methods. </string>
@@ -226,7 +240,7 @@
 	<!-- Sickness Certificate -->
 	<string name="certificate_personal_data_headline">Please enter your data</string>
 	<string name="certificate_personal_data_title">Report status</string>
-	<string name="certificate_personal_data_description">In the next step, we will anonymously inform your direct contacts of the last 2 days.\nWith the mobile number, we ensure that the app is not misused and that infection reports contribute to the common good.</string>
+	<string name="certificate_personal_data_description">In the next step, we will anonymously inform your direct contacts of the last %s days.\nWith the mobile number, we ensure that the app is not misused and that infection reports contribute to the common good.</string>
 	<string name="certificate_personal_data_mobile_number_label">Mobile number (+43...)</string>
 	<string name="certificate_personal_data_next_button">Next</string>
 	<string name="certificate_personal_data_input_error">Mobile number</string>
@@ -419,6 +433,15 @@
 	<string name="questionnaire_report_success_phone_ambulance_number">144</string>
 	<string name="questionnaire_report_success_health_wish">We wish you a speedy recovery!</string>
 	<string name="questionnaire_report_success_back_to_home_page_button">Back to the home page</string>
+	<string name="questionnaire_report_suspicion_title">Report suspected corona</string>
+	<string name="questionnaire_report_suspicion_headline">Report your status to protect others</string>
+	<string name="questionnaire_report_suspicion_description">Your anonymous report helps to break the chain of infection. Your contacts may have been infected unnoticed and have already passed the virus on. Warn these people as soon as possible so that you stay away from other people.</string>
+	<string name="questionnaire_report_suspicion_date_headline">How long have you had symptoms or a positive test result?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_headline">Warn your contacts</string>
+	<string name="questionnaire_report_suspicion_report_contacts_confirmed">Do you already have a positive test result?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_confirmed_button">Report medical confirmation</string>
+	<string name="questionnaire_report_suspicion_report_contacts_not_confirmed">You haven\'t taken a test yet or are you still waiting for your test result?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_not_confirmed_button">Report suspicion</string>
 
 	<!-- Start Screen Notification (user did the self test) -->
 	<string name="self_testing_suspicion_headline">Attention</string>
@@ -576,6 +599,12 @@
 	<string name="upload_keys_from_yesterday_title">Notify contacts that occured yesterday</string>
 	<string name="upload_keys_from_yesterday_message">Please upload your ID from yesterday. Sharing this ID is still voluntarely.</string>
 	<string name="upload_keys_from_yesterday_button_title">Share IDs now</string>
+	<string name="interoperability_title">Cross-border use</string>
+	<string name="interoperability_info_content_1">The Stopp Corona App can also be used across the EU in the future. This enables an infection warning across borders.\n \nThe data protection information has been adapted accordingly.\n \nIf you click on button \"I agree\" you agree to the new</string>
+	<string name="interoperability_info_content_2">data protection information</string>
+	<string name="interoperability_info_content_3">.\n \nDo you have any questions? Read more in the</string>
+	<string name="interoperability_info_content_4">FAQs</string>
+	<string name="interoperability_button_title">I agree</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>

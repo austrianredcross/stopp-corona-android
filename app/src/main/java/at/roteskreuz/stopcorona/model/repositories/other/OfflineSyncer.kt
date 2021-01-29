@@ -11,10 +11,10 @@ import at.roteskreuz.stopcorona.model.api.ApiError
 import at.roteskreuz.stopcorona.model.exceptions.DataFetchFailedException
 import at.roteskreuz.stopcorona.model.exceptions.DataPopulationFailedException
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
 import at.roteskreuz.stopcorona.model.repositories.ConfigurationRepository
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
 import at.roteskreuz.stopcorona.model.repositories.DiagnosisKeysRepository
-import at.roteskreuz.stopcorona.screens.mandatory_update.startMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.screens.routing.RouterActivity
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.utils.putAndApply
@@ -45,7 +45,8 @@ class OfflineSyncerImpl(
     private val processLifecycleOwner: LifecycleOwner,
     private val configurationRepository: ConfigurationRepository,
     private val dataPrivacyRepository: DataPrivacyRepository,
-    private val diagnosisKeysRepository: DiagnosisKeysRepository
+    private val diagnosisKeysRepository: DiagnosisKeysRepository,
+    private val mandatoryUpdateManager: MandatoryUpdateManager
 ) : OfflineSyncer {
 
     companion object {
@@ -171,7 +172,7 @@ class OfflineSyncerImpl(
         } catch (e: CancellationException) {
             throw e // needs to be rethrown to coroutine subsystem to accept it
         } catch (_: ApiError.Critical.ForceUpdate) {
-            contextInteractor.applicationContext.startMandatoryUpdateFragment()
+            mandatoryUpdateManager.setDisplayMandatoryUpdate()
         } catch (e: Exception) {
             Timber.e(SilentError(DataFetchFailedException(e)))
         }
