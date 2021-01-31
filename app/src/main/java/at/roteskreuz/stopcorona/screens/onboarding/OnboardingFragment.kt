@@ -102,6 +102,11 @@ class OnboardingFragment : BaseFragment(R.layout.fragment_onboarding) {
             .observeOnMainThread()
             .subscribe { buttonEnabled ->
                 btnNext.isEnabled = buttonEnabled
+                btnNext.contentDescription = if (viewModel.isLastPage(viewModel.currentPage) && !btnNext.isEnabled) {
+                    getString(R.string.accessibility_self_testing_next_button_disabled_description)
+                } else {
+                    ""
+                }
             }
 
         disposables += viewModel.observeDataPrivacyPageShown()
@@ -111,14 +116,12 @@ class OnboardingFragment : BaseFragment(R.layout.fragment_onboarding) {
                     true -> {
                         with(contentRecyclerView) {
                             removeItemDecoration(pagerIndicator)
-                            setHeight(ConstraintLayout.LayoutParams.MATCH_PARENT)
                         }
                     }
                     false -> {
                         with(contentRecyclerView) {
                             if (itemDecorationCount == 1) {
                                 addItemDecoration(pagerIndicator)
-                                setHeight(requireContext().dip(512))
                             }
                         }
                     }

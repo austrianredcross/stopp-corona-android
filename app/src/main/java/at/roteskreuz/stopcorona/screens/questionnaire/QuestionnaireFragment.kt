@@ -107,6 +107,11 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
             .observeOnMainThread()
             .subscribe { buttonEnabled ->
                 btnNext.isEnabled = buttonEnabled
+                btnNext.contentDescription = if (btnNext.isEnabled) {
+                    ""
+                } else {
+                    getString(R.string.accessibility_self_testing_next_button_disabled_description)
+                }
             }
 
         disposables += viewModel.observeDecision()

@@ -32,7 +32,7 @@ class ExposureMatchingWorker(
         private const val TAG = "PeriodicExposureMatchingWorker"
 
         /**
-         * 7:15
+         * 6:15
          */
         private val firstAvailableTime =
             EXPOSURE_MATCHING_START_TIME.minusMinutes(EXPOSURE_MATCHING_FLEX_DURATION.toMinutes() / 2)
@@ -48,7 +48,7 @@ class ExposureMatchingWorker(
                 .build()
             val millisUntilNextRun = computeMillisUntilNextRun()
             val date = LocalDateTime.now() + Duration.ofMillis(millisUntilNextRun)
-            Timber.d("Scheduling hourly exeposure matchings every hour from ${date}")
+            Timber.d("Scheduling every three hours exeposure matchings every three hours from ${date}")
             val request = PeriodicWorkRequestBuilder<ExposureMatchingWorker>(
                 repeatInterval = EXPOSURE_MATCHING_INTERVAL.toMillis(),
                 repeatIntervalTimeUnit = TimeUnit.MILLISECONDS,
@@ -80,7 +80,7 @@ class ExposureMatchingWorker(
                 .truncatedTo(ChronoUnit.MINUTES) // ignore seconds, milliseconds, nanoseconds
 
             // set correct hour if nextRunTime is in the past
-            firstRunTime = if (firstRunTime > now) firstRunTime else firstRunTime.plusHours(1)
+            firstRunTime = if (firstRunTime > now) firstRunTime else firstRunTime.plusHours(3)
 
             val millisTillFirstRun = now.millisTo(firstRunTime).coerceAtLeast(0)
             Timber.d(

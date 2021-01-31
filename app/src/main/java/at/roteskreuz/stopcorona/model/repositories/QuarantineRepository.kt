@@ -57,12 +57,12 @@ interface QuarantineRepository {
     /**
      * User has reported himself as red case.
      */
-    fun reportMedicalConfirmation(timeOfReport: ZonedDateTime = ZonedDateTime.now())
+    fun reportMedicalConfirmation(timeOfReport: ZonedDateTime?)
 
     /**
      * User has reported himself as yellow case.
      */
-    fun reportPositiveSelfDiagnose(timeOfReport: ZonedDateTime = ZonedDateTime.now())
+    fun reportPositiveSelfDiagnose(timeOfReport: ZonedDateTime?)
 
     /**
      * User has revoked his official sickness status and goes back to yellow case.
@@ -381,15 +381,26 @@ class QuarantineRepositoryImpl(
         return quarantineStateObservable
     }
 
-    override fun reportMedicalConfirmation(timeOfReport: ZonedDateTime) {
-        dateOfFirstMedicalConfirmation = timeOfReport
+    override fun reportMedicalConfirmation(timeOfReport: ZonedDateTime?) {
+        timeOfReport?.let {
+            dateOfFirstMedicalConfirmation = timeOfReport
+        } ?: run {
+            dateOfFirstMedicalConfirmation = ZonedDateTime.now()
+        }
     }
 
-    override fun reportPositiveSelfDiagnose(timeOfReport: ZonedDateTime) {
-        if (dateOfFirstSelfDiagnose == null) {
-            dateOfFirstSelfDiagnose = timeOfReport
+    override fun reportPositiveSelfDiagnose(timeOfReport: ZonedDateTime?) {
+        timeOfReport?.let {
+            if (dateOfFirstSelfDiagnose == null) {
+                dateOfFirstSelfDiagnose = timeOfReport
+            }
+            dateOfLastSelfDiagnose = timeOfReport
+        } ?: run {
+            if (dateOfFirstSelfDiagnose == null) {
+                dateOfFirstSelfDiagnose = ZonedDateTime.now()
+            }
+            dateOfLastSelfDiagnose = ZonedDateTime.now()
         }
-        dateOfLastSelfDiagnose = timeOfReport
     }
 
     override fun reportPositiveSelfDiagnoseFromBackup() {

@@ -85,6 +85,7 @@ class ReportingStatusController(
             id("button_report_infection")
             text(context.string(R.string.certificate_report_status_button))
             enabled(agreementData?.userHasAgreed ?: false)
+            contentDescription(if (agreementData?.userHasAgreed!!) "" else context.getString(R.string.accessibility_certificate_report_status_button_disabled_description))
         }
     }
 
@@ -123,6 +124,7 @@ class ReportingStatusController(
             id("button_report_infection")
             text(context.string(R.string.questionnaire_report_status_button))
             enabled(agreementData?.userHasAgreed ?: false)
+            contentDescription(if (agreementData?.userHasAgreed!!) "" else context.getString(R.string.accessibility_self_testing_report_status_button_disabled_description))
         }
     }
 
@@ -158,6 +160,7 @@ class ReportingStatusController(
             id("button_revoke_suspicion")
             text(context.string(R.string.revoke_suspicion_action))
             enabled(agreementData?.userHasAgreed ?: false)
+            contentDescription(if (agreementData?.userHasAgreed!!) "" else context.getString(R.string.accessibility_revoke_sickness_button_disabled_description))
         }
     }
 
@@ -200,6 +203,7 @@ class ReportingStatusController(
             id("button_revoke_suspicion")
             text(context.string(R.string.revoke_sickness_report_action))
             enabled(agreementData?.userHasAgreed ?: false)
+            contentDescription(if (agreementData?.userHasAgreed!!) "" else context.getString(R.string.accessibility_revokation_report_status_button_disabled_description))
         }
     }
 }

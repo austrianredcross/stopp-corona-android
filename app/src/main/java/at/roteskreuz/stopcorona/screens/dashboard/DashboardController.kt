@@ -28,6 +28,7 @@ class DashboardController(
     private val context: Context,
     private val onAutomaticHandshakeInformationClick: () -> Unit,
     private val onStartQuestionnaireClick: (disabled: Boolean) -> Unit,
+    private val onReportSuspicionClick: (disabled: Boolean) -> Unit,
     private val onReportClick: (disabled: Boolean) -> Unit,
     private val onHealthStatusClick: (data: HealthStatusData) -> Unit,
     private val onRevokeSuspicionClick: (disabled: Boolean) -> Unit,
@@ -212,6 +213,14 @@ class DashboardController(
                         .text(context.string(R.string.main_button_feel_today_button))
                         .enabled(exposureNotificationPhase.isReportingEnabled())
                         .onDisabledClick { onStartQuestionnaireClick(true) },
+                    EmptySpaceModel_()
+                        .id(modelCountBuiltSoFar)
+                        .height(16),
+                    ButtonType2Model_ { onReportSuspicionClick(false) }
+                        .id("feel_button")
+                        .text(context.string(R.string.main_button_suspicion_button))
+                        .enabled(exposureNotificationPhase.isReportingEnabled())
+                        .onDisabledClick { onReportSuspicionClick(true) },
                     EmptySpaceModel_()
                         .id(modelCountBuiltSoFar)
                         .height(40)

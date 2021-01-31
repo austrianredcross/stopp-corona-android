@@ -31,7 +31,7 @@ object Constants {
         val OFFLINE_SYNC_INTERVAL: Duration = if (isDebug) {
             Duration.ofMinutes(5)
         } else {
-            Duration.ofHours(1)
+            Duration.ofHours(3)
         }
 
         /**
@@ -42,12 +42,12 @@ object Constants {
         /**
          * Frequency of how often device can check infection possibility.
          */
-        val EXPOSURE_MATCHING_INTERVAL: Duration = Duration.ofHours(1)
+        val EXPOSURE_MATCHING_INTERVAL: Duration = Duration.ofHours(3)
 
         /**
          * Exposure matching is able to be run after this time.
          */
-        val EXPOSURE_MATCHING_START_TIME: LocalTime = LocalTime.of(7, 30)
+        val EXPOSURE_MATCHING_START_TIME: LocalTime = LocalTime.of(6, 30)
 
         /**
          * The minute of each [EXPOSURE_MATCHING_INTERVAL] when the exposure matching should be run around.
@@ -57,7 +57,7 @@ object Constants {
         /**
          * Time range around [EXPOSURE_MATCHING_TARGET_MINUTE] of each [EXPOSURE_MATCHING_INTERVAL] to be run.
          * As example target minute is 30 and flex duration is 30. It means the exposure matching is able to be run
-         * between xx:15 and xx:45 of each hour.
+         * between xx:15 and xx:45 every three hours.
          */
         val EXPOSURE_MATCHING_FLEX_DURATION: Duration = Duration.ofMinutes(30)
 
@@ -128,6 +128,7 @@ object Constants {
         const val SCHEDULED_WORKERS_MIGRATION_MANAGER_PREFIX = PREFIX + "scheduled_workers_migration_manager_"
         const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
         const val EXPOSURE_NOTIFICATION_MANAGER_PREFIX = PREFIX + "exposure_notification_manager_"
+        const val PRIVACY_UPDATE_PREFIX = PREFIX + "privacy_update_manager_"
     }
 
     /**

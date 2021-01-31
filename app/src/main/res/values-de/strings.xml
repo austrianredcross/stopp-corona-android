@@ -11,12 +11,19 @@
 	<string name="general_self_quarantine_channel_name">Quarantänemitteilungen</string>
 	<string name="general_automatic_bt_detection_channel_name">Automatische Benachrichtigungen zur Erkennung von Bluetooth-Geräten</string>
 	<string name="general_uploading_keys_channel_name">Hinweise zur Hochladen der eigenen Schlüssel</string>
+	<string name="general_today">Heute</string>
 	<string name="general_continue">Weiter</string>
 	<string name="general_additional_information">Weitere Informationen</string>
 	<string name="general_back">Zurück</string>
 	<string name="general_date_format">d. MMMM</string>
 	<string name="accessibility_heading_1">Überschrift 1</string>
 	<string name="accessibility_heading_2">Überschrift 2</string>
+	<string name="accessibility_onboarding_finish_button_disabled_description">Fertig Schaltfläche: Einwilligungserklärung nicht zugestimmt</string>
+	<string name="accessibility_self_testing_next_button_disabled_description">Weiter Schaltfläche: Frage nicht beantwortet</string>
+	<string name="accessibility_certificate_report_status_button_disabled_description">Infektion bestätigen Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
+	<string name="accessibility_revoke_sickness_button_disabled_description">Entwarnung bestätigen Schaltfläce: Bitte bestätigen Sie Ihren Widerruf Ihrer Krankmeldung</string>
+	<string name="accessibility_self_testing_report_status_button_disabled_description">Verdacht melden Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
+	<string name="accessibility_revokation_report_status_button_disabled_description">Infektions-Meldung zurückziehen Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
 
 	<!-- General Error Information -->
 	<string name="error_no_internet_title">Keine Internetverbindung</string>
@@ -58,12 +65,17 @@
 	<string name="onboarding_copy_5_2">Nutzungsbedingungen</string>
 	<string name="onboarding_copy_5_3">zu.\n \nSie haben noch Fragen? Lesen Sie mehr in den</string>
 	<string name="onboarding_copy_5_4">FAQs</string>
+	<string name="onboarding_headline_7">Grenzüberschreitende Nutzung</string>
+	<string name="onboarding_copy_7_1">Im Fall einer bestätigten Infektion ist die</string>
+	<string name="onboarding_copy_7_2">Warnung über Grenzen hinweg</string>
+	<string name="onboarding_copy_7_3">möglich.\nKontakte aus anderen EU-Ländern können anonym über die App gewarnt werden beziehungsweise Sie im Infetionsfall warnen.</string>
+	<string name="onboarding_copy_7_img">Bild: Benachrichtigungen und Warnungen von Kontakten in ganz Europa</string>
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
 	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (zufällige Kennzahlen [=“zufalls-IDs“], Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet.</string>
 	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
-	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer\n</string>
+	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer</string>
 	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
 	<string name="onboarding_headline_terms_of_use">Nutzungsbedingungen</string>
 	<string name="onboarding_headline_data_privacy">Datenschutzinformation</string>
@@ -75,11 +87,12 @@
 	<string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
 	<string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
 	<string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
-	<string name="main_body_feeling_title">Wie fühlen Sie sich heute?</string>
-	<string name="main_body_feeling_description">Erhalten Sie eine Einschätzung zu Ihrem Gesundheitszustand.</string>
-	<string name="main_button_feel_today_button">Symptome abprüfen</string>
-	<string name="main_body_report_title">Corona-Infektion melden</string>
-	<string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen.</string>
+	<string name="main_body_feeling_title">Sie fühlen sich nicht gesund?</string>
+	<string name="main_body_feeling_description">Überprüfen Sie Ihre Symptome auf eine mögliche Corona-Infektion.</string>
+	<string name="main_button_feel_today_button">Symptome prüfen</string>
+	<string name="main_button_suspicion_button">Corona-Verdacht melden</string>
+	<string name="main_body_report_title">Sie sind selbst mit COVID-19 infiziert?</string>
+	<string name="main_body_report_description">Melden Sie eine ärztlich bestätigte Infektion, um Ihre Kontakte zu schützen. Ihre Kontakte werden über einen anonymen Risiko-Kontakt benachrichtigt.</string>
 	<string name="main_body_report_button">Ärztliche Bestätigung melden</string>
 	<string name="main_play_services_not_available_dialog_title">Gerät unterstützt Google PlayServices nicht</string>
 	<string name="main_play_services_not_available_dialog_message">Für die Funktion von Nearby werden die Google PlayServices benötigt. Derzeit funktioniert der Digitale Handshake leider nicht ohne Google PlayServices. Wir arbeiten an Alternativen.</string>
@@ -225,7 +238,7 @@
 	<!-- Sickness Certificate -->
 	<string name="certificate_personal_data_headline">Bitte geben Sie Ihre Daten ein</string>
 	<string name="certificate_personal_data_title">Status melden</string>
-	<string name="certificate_personal_data_description">Wir werden nach dem nächsten Schritt Ihre engen Kontakte der letzten beiden Tage anonym informieren. Wir validieren Ihre Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
+	<string name="certificate_personal_data_description">Wir werden nach dem nächsten Schritt Ihre engen Kontakte der letzten %s Tage anonym informieren. Wir validieren Ihre Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
 	<string name="certificate_personal_data_mobile_number_label">Mobilfunknummer (+43...)</string>
 	<string name="certificate_personal_data_next_button">Weiter</string>
 	<string name="certificate_personal_data_input_error">Mobilfunknummer</string>
@@ -418,6 +431,15 @@
 	<string name="questionnaire_report_success_phone_ambulance_number">144</string>
 	<string name="questionnaire_report_success_health_wish"><b>Wir wünschen Ihnen eine gute Besserung!</b></string>
 	<string name="questionnaire_report_success_back_to_home_page_button">Zurück zur Startseite</string>
+	<string name="questionnaire_report_suspicion_title">Corona-Verdacht melden</string>
+	<string name="questionnaire_report_suspicion_headline">Melden Sie Ihren Status, um andere zu schützen</string>
+	<string name="questionnaire_report_suspicion_description">Ihre anonyme Meldung hilft, die Infektionskette zu unterbrechen. Ihre Kontakte können sich unbemerkt angesteckt haben und das Virus bereits weitergeben. Warnen Sie diese Menschen schnellstmöglich, damit Sie sich von anderen Menschen fernhalten.</string>
+	<string name="questionnaire_report_suspicion_date_headline">Seit wann haben Sie Symptome oder ein positives Testergebnis?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_headline">Warnen Sie Ihre Kontakte</string>
+	<string name="questionnaire_report_suspicion_report_contacts_confirmed">Sie haben bereits ein positives Testergebnis?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_confirmed_button">Ärztliche Bestätigung melden</string>
+	<string name="questionnaire_report_suspicion_report_contacts_not_confirmed">Sie haben noch keinen Test gemacht oder warten noch auf ihr Testergebnis?</string>
+	<string name="questionnaire_report_suspicion_report_contacts_not_confirmed_button">Verdacht melden</string>
 
 	<!-- Start Screen Notification (user did the self test) -->
 	<string name="self_testing_suspicion_headline">Achtung</string>
@@ -575,6 +597,12 @@
 	<string name="upload_keys_from_yesterday_title">Kontakte von gestern über ihre Krankmeldung informieren</string>
 	<string name="upload_keys_from_yesterday_message">Benachrichtigen Sie jetzt Kontakte von gestern. Teilen Sie dafür jetzt die IDs aus dem Kontaktprotokoll Ihres Gerätes mit der Stopp Corona App\n\nDas Melden ist weiterhin freiwillig.</string>
 	<string name="upload_keys_from_yesterday_button_title">Jetzt IDs teilen</string>
+	<string name="interoperability_title">Grenzüberschreitende Nutzung</string>
+	<string name="interoperability_info_content_1">Die Stopp Corona App kann künftig auch EU-weit genutzt werden. Damit ist eine Infektionswarnung über Grenzen hinweg möglich.\n \nDie Datenschutzinformationen wurden dementsprechend angepasst.\n \nMit einem Klick auf dem Button \"Ich bin einverstanden\" stimmen Sie den neuen</string>
+	<string name="interoperability_info_content_2">Datenschutzinformationen</string>
+	<string name="interoperability_info_content_3">zu.\n \nSie haben noch Fragen? Lesen Sie mehr in </string>
+	<string name="interoperability_info_content_4">FAQs</string>
+	<string name="interoperability_button_title">Ich bin einverstanden</string>
 	<string name="handshake_code_00">Meise</string>
 	<string name="handshake_code_01">Tukan</string>
 	<string name="handshake_code_02">Gämse</string>
