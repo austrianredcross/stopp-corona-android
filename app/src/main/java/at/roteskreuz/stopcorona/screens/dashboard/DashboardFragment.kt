@@ -11,6 +11,7 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
+import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.showPrivacyUpdateFragment
@@ -27,6 +28,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.shareApp
+import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
 import at.roteskreuz.stopcorona.utils.startDialogToEnableBluetooth
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
@@ -129,6 +131,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 }
 
                 when (exposureNotificationPhase) {
+                    is ExposureNotificationPhase.PrerequisitesError.BatteryOptimizationsNotIgnored -> {
+                        startBatteryOptimisationSettingsForResult(REQUEST_BATTERY_OPTIMISATION_ENABLE_DIALOG)
+                    }
                     is FrameworkError.NotCritical.BluetoothNotEnabled -> {
                         startDialogToEnableBluetooth()
                     }

@@ -80,6 +80,9 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
                     bluetoothRepository.bluetoothSupported.not() -> {
                         PrerequisitesError.BluetoothNotSupported(dependencyHolder)
                     }
+                    dependencyHolder.contextInteractor.isBatteryOptimizationIgnored().not() -> {
+                        PrerequisitesError.BatteryOptimizationsNotIgnored(dependencyHolder)
+                    }
                     else -> {
                         RegisterToFramework(dependencyHolder, true)
                     }
@@ -168,6 +171,13 @@ sealed class ExposureNotificationPhase : ExposureServiceStatus {
          */
         data class BluetoothNotSupported(
             override val dependencyHolder: DependencyHolder
+        ) : PrerequisitesError()
+
+        /**
+         * Battery optimizations are not ignored.
+         */
+        data class BatteryOptimizationsNotIgnored(
+                override val dependencyHolder: DependencyHolder
         ) : PrerequisitesError()
     }
 
