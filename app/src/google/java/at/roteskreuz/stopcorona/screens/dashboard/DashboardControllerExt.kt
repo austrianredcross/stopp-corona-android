@@ -1,8 +1,9 @@
-package at.roteskreuz.stopcorona.screens.dashboard.epoxy
+package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.content.Context
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
+import at.roteskreuz.stopcorona.screens.dashboard.epoxy.exposureNotificationError
 import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyController
 

@@ -12,7 +12,6 @@ import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
 import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
-import at.roteskreuz.stopcorona.screens.dashboard.epoxy.buildFrameWorkSpecificPrerequisitesErrorCard
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.startOfTheDay

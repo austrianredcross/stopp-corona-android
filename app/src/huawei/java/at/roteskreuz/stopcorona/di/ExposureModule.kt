@@ -5,6 +5,7 @@ import at.roteskreuz.stopcorona.HuaweiExposureClient
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.contactshield.ContactShield
+import com.huawei.hms.contactshield.ContactShieldEngine
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module.module
 
@@ -14,7 +15,10 @@ val exposureModule = module {
     single { ContactShield.getContactShieldEngine(androidApplication()) }
 
     single<CommonExposureClient> {
-        HuaweiExposureClient(androidApplication(), get(), get(), androidApplication().getSharedPreferences(PREFS_HMS_DEBUG, Context.MODE_PRIVATE))
+        HuaweiExposureClient(androidApplication(),
+            get<HuaweiApiAvailability>(),
+            get<ContactShieldEngine>(),
+            androidApplication().getSharedPreferences(PREFS_HMS_DEBUG, Context.MODE_PRIVATE))
     }
 }
 

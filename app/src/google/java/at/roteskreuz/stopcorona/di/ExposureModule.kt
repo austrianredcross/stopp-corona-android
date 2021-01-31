@@ -4,6 +4,7 @@ import at.roteskreuz.stopcorona.GoogleExposureClient
 import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module.module
 
@@ -13,6 +14,9 @@ val exposureModule = module {
     single { Nearby.getExposureNotificationClient(androidApplication()) }
 
     single<CommonExposureClient> {
-        GoogleExposureClient(androidApplication(), get(), get())
+        GoogleExposureClient(androidApplication(),
+            get<GoogleApiAvailability>(),
+            get<ExposureNotificationClient>()
+        )
     }
 }
