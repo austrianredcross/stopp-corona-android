@@ -2,7 +2,7 @@ package at.roteskreuz.stopcorona.screens.dashboard
 
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
-import at.roteskreuz.stopcorona.utils.startGooglePlayStore
+import at.roteskreuz.stopcorona.utils.startPlatformAppStore
 
 fun DashboardFragment.exposureNotificationFrameSpecificErrorOnClick(exposureNotificationPhase : ExposureNotificationPhase) : Boolean {
     return when(exposureNotificationPhase) {
@@ -15,7 +15,7 @@ fun DashboardFragment.exposureNotificationFrameSpecificErrorOnClick(exposureNoti
             true
         }
         is ExposureNotificationPhase.PrerequisitesError.InvalidVersionOfGooglePlayServices -> {
-            startGooglePlayStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
+            startPlatformAppStore(Constants.ExposureNotification.GOOGLE_PLAY_SERVICES_PACKAGE_NAME)
             true
         }
         else -> false
