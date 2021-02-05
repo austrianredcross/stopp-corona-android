@@ -6,6 +6,7 @@
 
     <color name="transparent">@android:color/transparent</color>
     <color name="white">#ffffff</color>
+    <color name="white_50">#80ffffff</color>
     <color name="rouge">#b9131b</color>
     <color name="red">#fe0000</color>
     <color name="black">#000000</color>

@@ -6,20 +6,18 @@
     android:id="@+id/cardViewContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
+    android:layout_marginHorizontal="24dp"
     app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/btnClose"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="14dp"
             android:clickable="true"
             android:focusable="true"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -31,38 +29,55 @@
             android:id="@+id/imgHealthStatusIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_checkmark_white_green"
+            android:src="@drawable/ic_heart"
             app:layout_constraintBottom_toBottomOf="@id/txtTitle"
+            app:layout_constraintTop_toTopOf="@+id/txtTitle"
             app:layout_constraintEnd_toStartOf="@id/txtTitle"
-            app:layout_constraintStart_toStartOf="@id/txtDescription"
-            app:layout_constraintTop_toTopOf="@id/txtTitle" />
+            app:layout_constraintStart_toStartOf="@id/txtDescription" />
 
         <TextView
             android:id="@+id/txtTitle"
             style="@style/AppTheme.Heading2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
             android:text="@string/main_status_update_headline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imgHealthStatusIcon"
-            app:layout_constraintTop_toBottomOf="@id/btnClose" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgHealthStatusIcon" />
 
         <TextView
             android:id="@+id/txtDescription"
             style="@style/AppTheme.Copy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txtTitle"
             tools:text="Description" />
+
+        <LinearLayout
+            android:id="@+id/txtDescription2Container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/txtDescription">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="@color/white_50"/>
+
+            <TextView
+                android:id="@+id/txtDescription2"
+                style="@style/AppTheme.Copy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="@string/local_notification_quarantine_end_message_2"/>
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

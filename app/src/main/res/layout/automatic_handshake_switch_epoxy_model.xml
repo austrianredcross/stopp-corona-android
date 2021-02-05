@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:elevation="2dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:padding="16dp"
+    android:background="@drawable/shape_handshake_switch_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,12 +16,12 @@
         style="@style/AppTheme.ListTime.Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:text="@string/main_automatic_handshake_switch_title"
         app:layout_constraintEnd_toStartOf="@id/switchAutomaticHandshake"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
         android:id="@+id/txtState"
@@ -24,16 +29,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/automatic_handshake_switch_state_text_color_selector"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/txtTitle"
-        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintStart_toEndOf="@+id/txtTitle"
+        android:layout_marginStart="6dp"
         tools:text="Active" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switchAutomaticHandshake"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
         android:background="@drawable/shape_switch_background"
         android:minHeight="32dp"
         android:paddingStart="2dp"

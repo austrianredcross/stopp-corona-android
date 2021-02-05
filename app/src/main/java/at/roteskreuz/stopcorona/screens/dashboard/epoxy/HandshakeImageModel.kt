@@ -2,6 +2,7 @@ package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
 import android.widget.ImageView
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.screens.dashboard.HealthStatusData
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
@@ -18,9 +19,29 @@ abstract class HandshakeImageModel : BaseEpoxyModel<HandshakeImageModel.Holder>(
     @EpoxyAttribute
     var active: Boolean = false
 
+    @EpoxyAttribute
+    var data: HealthStatusData = HealthStatusData.NoHealthStatus
+
     override fun Holder.onBind() {
+        val healthStatusData: HealthStatusData = data
+
         imgActive.visible = active
         imgInactive.visible = !active
+
+        if (active){
+            when(healthStatusData) {
+                is HealthStatusData.SicknessCertificate -> imgActive.setAnimation(R.raw.handshake_animation_sickness)
+                is HealthStatusData.SelfTestingSuspicionOfSickness -> imgActive.setAnimation(R.raw.handshake_animation_suspicion_sickness)
+                is HealthStatusData.ContactsSicknessInfo -> {
+                    if (healthStatusData.warningType.redContactsDetected){
+                        imgActive.setAnimation(R.raw.handshake_animation_contacts_sickness_red)
+                    } else {
+                        imgActive.setAnimation(R.raw.handshake_animation_contacts_sickness_yellow)
+                    }
+                }
+                else -> imgActive.setAnimation(R.raw.handshake_animation_blue)
+            }
+        }
     }
 
     override fun onViewAttachedToWindow(holder: Holder) {

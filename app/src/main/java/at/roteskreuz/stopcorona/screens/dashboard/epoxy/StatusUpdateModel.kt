@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import at.roteskreuz.stopcorona.R
@@ -49,6 +50,7 @@ abstract class StatusUpdateModel(
 
             CardUpdateStatus.EndOfQuarantine -> {
                 imgHealthStatusIcon.visible = true
+                txtDescription2Container.visible = true
                 txtTitle.setTextColor(color(R.color.white))
                 txtDescription.setTextColor(color(R.color.white))
                 cardViewContainer.setCardBackgroundColor(color(R.color.mediumGreen))
@@ -67,5 +69,6 @@ abstract class StatusUpdateModel(
         val btnClose by bind<ImageView>(R.id.btnClose)
         val imgHealthStatusIcon by bind<ImageView>(R.id.imgHealthStatusIcon)
         val cardViewContainer by bind<CardView>(R.id.cardViewContainer)
+        val txtDescription2Container by bind<LinearLayout>(R.id.txtDescription2Container)
     }
 }

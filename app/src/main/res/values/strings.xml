@@ -227,7 +227,7 @@
 	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
 	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 1 meter.</string>
 	<string name="main_automatic_handshake_information_hint">How does it work?</string>
-	<string name="main_automatic_handshake_switch_title">Automatic handshake:</string>
+	<string name="main_automatic_handshake_switch_title">Risk assessment</string>
 	<string name="main_automatic_handshake_switch_on">active</string>
 	<string name="main_automatic_handshake_switch_off">inactive</string>
 	<string name="main_automatic_handshake_switch_paused">paused</string>
@@ -236,6 +236,16 @@
 	<string name="main_start_manual_handshake">Start manual handshake</string>
 	<string name="main_automatic_handshake_img_active">Image: automatic handshake active</string>
 	<string name="main_automatic_handshake_img_inactive">Image: automatic handshake inactive</string>
+	<string name="main_automatic_handshake_no_risk_headline">No risky contact found</string>
+	<string name="main_automatic_handshake_suspicion_risk_headline">Suspicion risk found</string>
+	<string name="main_automatic_handshake_contact_risk_headline">Risky contact found</string>
+	<string name="main_automatic_handshake_self_suspicion_headline">Suspicion reported</string>
+	<string name="main_automatic_handshake_self_infection_headline">Infection reported</string>
+	<string name="main_automatic_handshake_disabled_info">Please activate the digital handshake to identify risky contacts</string>
+	<string name="main_automatic_handshake_contact_checks">%s comparisons in the past 14 days</string>
+	<string name="main_automatic_handshake_last_update">Latest update: %s</string>
+	<string name="main_automatic_handshake_last_contact_days">%s days have passed since your latest risk contact</string>
+	<string name="main_automatic_handshake_self_reported_info">Your contacts have been anonymously notified regarding the risk of an infection.</string>
 
 	<!-- Sickness Certificate -->
 	<string name="certificate_personal_data_headline">Please enter your data</string>
@@ -517,8 +527,9 @@
 	<string name="local_notification_suspected_sick_contact_message">Self-quarantine as a precaution. Keep a safe distance from your healthy environment.</string>
 	<string name="local_notification_self_retest_headline">How do you feel today?</string>
 	<string name="local_notification_someone_has_recovered_headline">Someone has recovered.</string>
-	<string name="local_notification_quarantine_end_headline">You may terminate the quarantine!</string>
-	<string name="local_notification_quarantine_end_message">Thank you for quarantining yourself. You may terminate the quarantine.</string>
+	<string name="local_notification_quarantine_end_headline">Thank you for your help!</string>
+	<string name="local_notification_quarantine_end_message">Thank you for putting yourself into quarantine, to stop the spread of the virus.</string>
+	<string name="local_notification_quarantine_end_message_2"><b>You may now quit your quarantine.</b></string>
 	<string name="local_notification_automatic_handshake_title">The automatic handshake is carried out.</string>
 	<string name="local_notification_bluetooth_is_off_title">The automatic handshake was stopped.</string>
 	<string name="local_notification_bluetooth_is_off_message">Please switch on the Bluetooth function and restart the handshake in the app.</string>

@@ -277,6 +277,33 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 }
             }
 
+        disposables += viewModel.observeLastContactDate()
+            .observeOnMainThread()
+            .subscribe { lastContactDates ->
+                controller.dateOfLastContact = when {
+                    lastContactDates.lastRedContactDate.isPresent && lastContactDates.lastYellowContactDate.isPresent -> {
+                        if (lastContactDates.lastRedContactDate.get().isAfter(lastContactDates.lastYellowContactDate.get())){
+                            lastContactDates.lastRedContactDate.get()
+                        } else {
+                            lastContactDates.lastYellowContactDate.get()
+                        }
+                    }
+                    lastContactDates.lastRedContactDate.isPresent -> lastContactDates.lastRedContactDate.get()
+                    lastContactDates.lastYellowContactDate.isPresent -> lastContactDates.lastYellowContactDate.get()
+                    else -> null
+                }
+            }
+
+        disposables += viewModel.observeLastKeyRequestDate()
+            .observeOnMainThread()
+            .subscribe { lastKeyRequestDate ->
+                controller.dateOfLastKeyRequest = lastKeyRequestDate.orElse(null)
+
+                val keyRequestCountLastWeek = viewModel.getKeyRequestCountLastWeek()
+                controller.keyRequestCountLastWeek = keyRequestCountLastWeek
+            }
+        
+
         if (viewModel.shouldDisplayWhatsNew) {
             showChangelogBottomSheetFragment()
         }

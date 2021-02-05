@@ -308,6 +308,24 @@ fun SharedPreferences.observeNullableInt(key: String, defaultValue: Int? = null)
     }
 }
 
+fun SharedPreferences.observeLong(key: String, defaultValue: Long): Observable<Long> {
+    return observe(
+        key,
+        defaultValue
+    ) { _key: String, _defValue: Long? ->
+        getLong(_key, _defValue!!)
+    }.map { it.get() }
+}
+
+fun SharedPreferences.observeNullableLong(key: String, defaultValue: Long? = null): Observable<Optional<Long>> {
+    return observe(
+        key,
+        defaultValue
+    ) { _key, _defValue ->
+        getLong(_key, _defValue ?: -1).let { if (it == (_defValue ?: -1)) null else it }
+    }
+}
+
 fun SharedPreferences.observeBoolean(key: String, defaultValue: Boolean = false): Observable<Boolean> {
     return observe(
         key,
