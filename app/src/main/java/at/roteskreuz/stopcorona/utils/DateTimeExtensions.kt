@@ -38,6 +38,13 @@ fun LocalDateTime.millisTo(other: LocalDateTime): Long {
 }
 
 /**
+ * Get days difference between two times.
+ */
+fun Instant.daysTo(other: Instant): Long {
+    return Duration.between(this, other).toDays()
+}
+
+/**
  * Get [Duration] to other time.
  */
 infix operator fun ZonedDateTime.minus(other: ZonedDateTime): Duration {

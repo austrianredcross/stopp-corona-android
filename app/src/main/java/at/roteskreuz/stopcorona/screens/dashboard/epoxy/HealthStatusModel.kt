@@ -5,7 +5,9 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.View
+import android.view.View.VISIBLE
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import at.roteskreuz.stopcorona.R
@@ -51,6 +53,7 @@ abstract class HealthStatusModel(
 
             when (healthStatusData) {
                 is HealthStatusData.SicknessCertificate -> {
+                    txtDescription2Container.visibility = VISIBLE
                     txtTitle.text = context.string(R.string.sickness_certificate_attest_headline)
                     txtTitle.contentDescription = context.string(R.string.sickness_certificate_attest_headline) + context.getString(R.string.accessibility_heading_2)
                     txtDescription.text = context.string(R.string.sickness_certificate_attest_description)
@@ -58,9 +61,8 @@ abstract class HealthStatusModel(
                     val quarantinedSpannable = SpannableString(quarantinedUntil)
                     quarantinedSpannable.setSpan(StyleSpan(Typeface.BOLD), 0, quarantinedSpannable.length, 0)
 
-                    txtDescription.text = SpannableStringBuilder().apply {
-                        append(context.getString(R.string.sickness_certificate_attest_description))
-                        append("\n")
+                    txtDescription.text = context.getString(R.string.sickness_certificate_attest_description)
+                    txtDescription2.text = SpannableStringBuilder().apply {
                         append(context.getString(R.string.sickness_certificate_attest_description_2))
                         append(context.getBoldSpan(R.string.sickness_certificate_attest_description_3))
                         append(quarantinedSpannable)
@@ -73,16 +75,17 @@ abstract class HealthStatusModel(
                     cardViewContainer.setCardBackgroundColor(color(R.color.red))
                 }
                 is HealthStatusData.SelfTestingSuspicionOfSickness -> {
+                    txtDescription2Container.visibility = VISIBLE
                     val days = healthStatusData.quarantineStatus.daysUntilEnd()
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
                     txtTitle.contentDescription = context.string(R.string.self_testing_suspicion_headline) + context.getString(R.string.accessibility_heading_2)
-                    txtDescription.text = SpannableStringBuilder().apply {
-                        append(context.getString(R.string.self_testing_suspicion_description))
-                        append("\n")
+                    txtDescription.text = context.getString(R.string.self_testing_suspicion_description)
+                    txtDescription2.text = SpannableStringBuilder().apply {
                         append(context.getString(R.string.self_testing_suspicion_description_2))
                         append(context.getBoldSpan(R.string.self_testing_suspicion_description_3))
                         append(context.getString(R.string.self_testing_suspicion_description_4))
                     }
+
                     txtActionButton.text = when (days) {
                         1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
@@ -111,6 +114,7 @@ abstract class HealthStatusModel(
                     }
                     when {
                         healthStatusData.warningType.redContactsDetected && healthStatusData.warningType.yellowContactsDetected.not() -> {
+                            txtDescription2Container.visibility = VISIBLE
                             txtTitle.text = context.string(R.string.contacts_confirmed_one_case_headline)
                             txtTitle.contentDescription = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline) + context.getString(R.string.accessibility_heading_2)
 
@@ -125,13 +129,15 @@ abstract class HealthStatusModel(
                                 append(context.getString(R.string.contacts_confirmed_one_case_description))
                                 append(context.getBoldSpan(R.string.contacts_confirmed_one_case_description_2))
                                 append(context.getString(R.string.contacts_confirmed_one_case_description_3))
-                                append("\n")
+                            }
+                            txtDescription2.text = SpannableStringBuilder().apply {
                                 append(context.getString(R.string.sickness_certificate_attest_description_2))
                                 append(context.getBoldSpan(R.string.sickness_certificate_attest_description_3))
                                 append(quarantinedSpannable)
                                 append(" ")
                                 append(context.getString(R.string.sickness_certificate_attest_description_4))
                             }
+
                             txtActionButton.text = quarantineDayActionText
                             imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                             cardViewContainer.setCardBackgroundColor(color(R.color.red))
@@ -193,5 +199,7 @@ abstract class HealthStatusModel(
         val txtActionButton by bind<TextView>(R.id.txtActionButton)
         val imgHealthStatusIcon by bind<ImageView>(R.id.imgHealthStatusIcon)
         val cardViewContainer by bind<CardView>(R.id.cardViewContainer)
+        val txtDescription2Container by bind<LinearLayout>(R.id.txtDescription2Container)
+        val txtDescription2 by bind<TextView>(R.id.txtDescription2)
     }
 }

@@ -17,10 +17,10 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
-import at.roteskreuz.stopcorona.utils.startOfTheDay
-import at.roteskreuz.stopcorona.utils.string
+import at.roteskreuz.stopcorona.utils.*
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
+import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -52,6 +52,9 @@ class DashboardController(
     var exposureNotificationPhase: ExposureNotificationPhase? by adapterProperty(null as ExposureNotificationPhase?)
     var dateOfFirstMedicalConfirmation: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
     var uploadMissingExposureKeys: UploadMissingExposureKeys? by adapterProperty(null as UploadMissingExposureKeys?)
+    var dateOfLastContact: Instant? by adapterProperty(null as Instant?)
+    var dateOfLastKeyRequest: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
+    var keyRequestCountLastWeek: Int? by adapterProperty(null as Int?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -135,40 +138,9 @@ class DashboardController(
             }
         }
 
-        handshakeHeadline {
-            id("handshake_title")
-            title(context.string(R.string.main_body_contact_title))
-        }
-
-        emptySpace(modelCountBuiltSoFar, 16)
-
-        // needed to have two caches of epoxy models because of lottie
-        if (exposureNotificationPhase is FrameworkRunning) {
-            handshakeImage {
-                id("handshake_image_active")
-                active(true)
-            }
-        } else {
-            handshakeImage {
-                id("handshake_image_inactive")
-                active(false)
-            }
-        }
-
-        emptySpace(modelCountBuiltSoFar, 16)
-
         automaticHandshakeSwitch(onAutomaticHandshakeEnabled) {
             id("automatic_handshake_switch")
             phase(exposureNotificationPhase)
-        }
-
-        if (exposureNotificationPhase is FrameworkRunning) {
-            emptySpace(modelCountBuiltSoFar, 16)
-
-            smallDescription {
-                id("framework_running_description")
-                description(context.getString(R.string.main_automatic_handshake_description_on))
-            }
         }
 
         emptySpace(modelCountBuiltSoFar, 16)
@@ -183,6 +155,100 @@ class DashboardController(
                 }
             }
         }
+
+        emptySpace(modelCountBuiltSoFar, 16)
+
+        // Prioritize by own and contact health state
+        val healthStatus = when {
+            ownHealthStatus is HealthStatusData.SicknessCertificate -> ownHealthStatus
+            contactsHealthStatus is HealthStatusData.ContactsSicknessInfo && (contactsHealthStatus as HealthStatusData.ContactsSicknessInfo).warningType.redContactsDetected -> contactsHealthStatus
+            ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness -> ownHealthStatus
+            contactsHealthStatus is HealthStatusData.ContactsSicknessInfo && (contactsHealthStatus as HealthStatusData.ContactsSicknessInfo).warningType.yellowContactsDetected -> contactsHealthStatus
+            else-> ownHealthStatus
+        }
+
+        // needed to have two caches of epoxy models because of lottie
+        if (exposureNotificationPhase is FrameworkRunning) {
+            handshakeImage {
+                id("handshake_image_active")
+                active(true)
+                data(healthStatus)
+            }
+        } else {
+            handshakeImage {
+                id("handshake_image_inactive")
+                active(false)
+            }
+        }
+
+        emptySpace(modelCountBuiltSoFar, 40)
+
+        if (exposureNotificationPhase is FrameworkRunning) {
+            riskHeadline {
+                id("risk_headline_active")
+                active(true)
+                data(healthStatus)
+            }
+        } else {
+            riskHeadline {
+                id("risk_headline_inactive")
+                active(false)
+            }
+        }
+
+        emptySpace(modelCountBuiltSoFar, 40)
+
+        separator{
+            id("separator_1")
+            color(R.color.whiteGray)
+        }
+
+        emptySpace(modelCountBuiltSoFar, 20)
+
+        dateOfLastContact?.let { dateOfLastContact ->
+            val days = dateOfLastContact.daysTo(Instant.now())
+
+            appUpdate {
+                id("app_update_last_contact")
+                imageRes(R.drawable.ic_calendar)
+                status(context.getString(R.string.main_automatic_handshake_last_contact_days, days.toString()))
+            }
+        }
+
+        keyRequestCountLastWeek?.let { keyRequestCountLastWeek ->
+            val status = if (ownHealthStatus is HealthStatusData.NoHealthStatus) {
+                context.getString(R.string.main_automatic_handshake_contact_checks, keyRequestCountLastWeek.toString())
+            } else {
+                context.getString(R.string.main_automatic_handshake_self_reported_info)
+            }
+
+            appUpdate {
+                id("app_update_count")
+                imageRes(R.drawable.ic_check)
+                status(status)
+            }
+        }
+
+        dateOfLastKeyRequest?.let { dateOfLastKeyRequest ->
+            val lastUpdate = if (dateOfLastKeyRequest.areOnTheSameDay(ZonedDateTime.now())){
+                context.getString(R.string.general_today) + ", " + dateOfLastKeyRequest.format("HH:mm")
+            } else {
+                dateOfLastKeyRequest.format("d. MMM, HH:mm")
+            }
+
+            appUpdate {
+                id("app_update_last_update")
+                imageRes(R.drawable.ic_update)
+                status(context.getString(R.string.main_automatic_handshake_last_update, lastUpdate))
+            }
+        }
+
+        separator{
+            id("separator_2")
+            color(R.color.whiteGray)
+        }
+
+        emptySpace(modelCountBuiltSoFar, 20)
 
         additionalInformation(onAutomaticHandshakeInformationClick) {
             id("handshake_additional_information")
