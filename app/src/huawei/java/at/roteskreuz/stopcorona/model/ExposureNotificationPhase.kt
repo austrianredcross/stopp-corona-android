@@ -80,7 +80,7 @@ fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError
             StatusCode.STATUS_MISSING_PERMISSION_LOCATION -> {
                 HMS.LocationPermissionNotAllowedAllTheTime(dependencyHolder, register)
             }
-            NEED_UPDATE_KIT_EXCEPTION_CODE -> {
+            NEEDS_TO_UPDATE_KIT_EXCEPTION_CODE -> {
                 HMS.NeedUpdateKit(dependencyHolder, register)
             }
             else -> ExposureNotificationPhase.FrameworkError.Critical.Unknown(
@@ -93,4 +93,4 @@ fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError
     return true
 }
 
-private const val NEED_UPDATE_KIT_EXCEPTION_CODE = 1212
+private const val NEEDS_TO_UPDATE_KIT_EXCEPTION_CODE = 1212

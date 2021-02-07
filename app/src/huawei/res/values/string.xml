@@ -9,7 +9,7 @@
     <string name="main_exposure_error_hms_unknown_error_message">An unknown HMS Core error occurred.</string>
     <string name="main_exposure_error_hms_unavailable_action">Erneut versuchen</string>
     <string name="main_exposure_error_hms_location_permission_not_always_allowed">Location permission is not allowed all the time for HMS Core.</string>
-    <string name="main_exposure_error_kit_need_updated_message">HMS Core must be updated.</string>
+    <string name="main_exposure_error_kit_needs_to_be_updated_message">HMS Core must be updated.</string>
 
     <string name="mandatory_update_store">Go to AppGallery</string>
 </resources>
