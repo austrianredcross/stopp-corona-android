@@ -71,17 +71,19 @@ fun EpoxyController.buildFrameWorkSpecificErrorCard(
     return when(phase) {
         is HMS.ContactShieldDeclined -> {
             exposureNotificationError(context.string(R.string.main_exposure_error_declined_message))
-
+            true
+        }
+        is HMS.LocationPermissionNotAllowedAllTheTime -> {
+            exposureNotificationError(context.string(R.string.main_exposure_error_hms_location_permission_not_always_allowed))
+            true
+        }
+        is HMS.NeedUpdateKit -> {
+            exposureNotificationError(context.string(R.string.main_exposure_error_kit_need_updated_message))
             try { //small hack, this function should trigger an update window if hms core has no nearby kit installed
                 ContactShield.getContactShieldEngine(context).isContactShieldRunning
             } catch (e : Exception) {
                 Timber.e(SilentError(e))
             }
-
-            true
-        }
-        is HMS.LocationPermissionNotAllowedAllTheTime -> {
-            exposureNotificationError(context.string(R.string.main_exposure_error_hms_location_permission_not_always_allowed))
             true
         }
         else -> false

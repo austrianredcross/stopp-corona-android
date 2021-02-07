@@ -57,6 +57,11 @@ sealed class HMS : ExposureNotificationPhase.FrameworkError.Critical() {
             override val dependencyHolder: DependencyHolder,
             override val register: Boolean
     ) : FrameworkError.Critical()
+
+    data class NeedUpdateKit(
+        override val dependencyHolder: DependencyHolder,
+        override val register: Boolean
+    ) : FrameworkError.Critical()
 }
 
 fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError(
@@ -75,6 +80,9 @@ fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError
             StatusCode.STATUS_MISSING_PERMISSION_LOCATION -> {
                 HMS.LocationPermissionNotAllowedAllTheTime(dependencyHolder, register)
             }
+            NEED_UPDATE_KIT_EXCEPTION_CODE -> {
+                HMS.NeedUpdateKit(dependencyHolder, register)
+            }
             else -> ExposureNotificationPhase.FrameworkError.Critical.Unknown(
                 dependencyHolder,
                 exception, register
@@ -84,3 +92,5 @@ fun ExposureNotificationPhase.CheckingFrameworkError.checkFrameWorkSpecificError
 
     return true
 }
+
+private const val NEED_UPDATE_KIT_EXCEPTION_CODE = 1212
