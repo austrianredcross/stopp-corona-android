@@ -80,7 +80,9 @@ fun EpoxyController.buildFrameWorkSpecificErrorCard(
         is HMS.NeedUpdateKit -> {
             exposureNotificationError(context.string(R.string.main_exposure_error_kit_needs_to_be_updated_message))
             try { //small hack, this function should trigger an update window if hms core has no nearby kit installed
-                ContactShield.getContactShieldEngine(context).isContactShieldRunning
+                ContactShield.getContactShieldEngine(context).isContactShieldRunning.addOnSuccessListener {
+                    phase.refresh()
+                }
             } catch (e : Exception) {
                 Timber.e(SilentError(e))
             }
