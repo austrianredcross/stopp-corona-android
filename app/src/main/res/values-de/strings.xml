@@ -68,7 +68,7 @@
 	<string name="onboarding_headline_7">Grenzüberschreitende Nutzung</string>
 	<string name="onboarding_copy_7_1">Im Fall einer bestätigten Infektion ist die</string>
 	<string name="onboarding_copy_7_2">Warnung über Grenzen hinweg</string>
-	<string name="onboarding_copy_7_3">möglich.\nKontakte aus anderen EU-Ländern können anonym über die App gewarnt werden beziehungsweise Sie im Infetionsfall warnen.</string>
+	<string name="onboarding_copy_7_3">möglich.\nKontakte aus anderen EU-Ländern können anonym über die App gewarnt werden beziehungsweise Sie im Infektionsfall warnen.</string>
 	<string name="onboarding_copy_7_img">Bild: Benachrichtigungen und Warnungen von Kontakten in ganz Europa</string>
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
