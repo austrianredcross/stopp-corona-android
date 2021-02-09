@@ -20,17 +20,19 @@ import at.roteskreuz.stopcorona.model.workers.DelayedExposureBroadcastReceiverCa
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
-import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeBoolean
+import at.roteskreuz.stopcorona.skeleton.core.utils.*
 import at.roteskreuz.stopcorona.utils.endOfTheUtcDay
 import at.roteskreuz.stopcorona.utils.extractLatestRedAndYellowContactDate
 import at.roteskreuz.stopcorona.utils.minusDays
+import at.roteskreuz.stopcorona.utils.shareReplayLast
+import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Instant
+import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -83,6 +85,17 @@ interface DiagnosisKeysRepository {
      * will be displayed in the UI.
      */
     suspend fun processKeysBasedOnToken(token: String)
+
+    /**
+     * Observe date of the last key request.
+     */
+    fun observeDateOfLastKeyRequest(): Observable<Optional<ZonedDateTime>>
+
+    /**
+     * Returns the number of key requests for the last 7 days.
+     */
+    fun getKeyRequestCountLastWeek(): Int?
+
 }
 
 class DiagnosisKeysRepositoryImpl(
@@ -102,6 +115,8 @@ class DiagnosisKeysRepositoryImpl(
 
     companion object {
         private const val PREF_SOMEONE_HAS_RECOVERED = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "someone_has_recovered"
+        private const val PREF_DATE_OF_LAST_KEY_REQUEST = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "date_of_last_key_request"
+        private const val PREF_DATES_OF_KEY_REQUESTS = Constants.Prefs.INFECTION_MESSENGER_REPOSITORY_PREFIX + "count_of_key_requests"
     }
 
     private val downloadMessagesStateObserver = StateObserver()
@@ -113,6 +128,14 @@ class DiagnosisKeysRepositoryImpl(
         PREF_SOMEONE_HAS_RECOVERED,
         false
     )
+
+    private var dateOfLastKeyRequest: ZonedDateTime? by preferences.nullableZonedDateTimeSharedPreferencesProperty(
+        PREF_DATE_OF_LAST_KEY_REQUEST
+    )
+
+    private var dateOfLastKeyRequestObservable = preferences.observeNullableZonedDateTime(
+        PREF_DATE_OF_LAST_KEY_REQUEST
+    ).shareReplayLast()
 
     override suspend fun storeSentTemporaryExposureKeys(temporaryExposureKeys: List<TekMetadata>) {
         temporaryExposureKeysDao.insertSentTemporaryExposureKeys(temporaryExposureKeys)
@@ -157,6 +180,15 @@ class DiagnosisKeysRepositoryImpl(
                 cleanUpSession(fullSession)
             }
         }
+    }
+
+    override fun observeDateOfLastKeyRequest(): Observable<Optional<ZonedDateTime>> {
+        return dateOfLastKeyRequestObservable
+    }
+
+    override fun getKeyRequestCountLastWeek(): Int? {
+        val datesOfKeyRequests = preferences.getStringSet(PREF_DATES_OF_KEY_REQUESTS, mutableSetOf())
+        return datesOfKeyRequests?.size
     }
 
     private suspend fun cleanUpSession(fullSession: DbFullSession) {
@@ -345,6 +377,26 @@ class DiagnosisKeysRepositoryImpl(
                 )
 
                 sessionDao.insertFullSession(fullSession)
+
+                // Save the date of the request to calculate the number of requests in the last week and remove older dates
+                // Get string set, remove older dates, add a new date string and apply the set in preferences
+                // Workaround to add a value and not override it
+                val datesOfKeyRequest = preferences.getStringSet(PREF_DATES_OF_KEY_REQUESTS, mutableSetOf())
+
+                datesOfKeyRequest?.let {
+                    datesOfKeyRequest.forEach {date ->
+                        val time = Instant.ofEpochMilli(date.toLong())
+                        if (time.isBefore(Instant.now().minusDays(7))) {
+                            datesOfKeyRequest.remove(date)
+                        }
+                    }
+
+                    datesOfKeyRequest.add(Instant.now().toEpochMilli().toString())
+                    preferences.putAndApply(PREF_DATES_OF_KEY_REQUESTS, datesOfKeyRequest)
+                }
+
+                dateOfLastKeyRequest = ZonedDateTime.now()
+
                 startDiagnosisKeyMatching(fullBatchParts, token)
             } catch (e: Exception) {
                 Timber.e(e, "Downloading new diagnosis keys failed")

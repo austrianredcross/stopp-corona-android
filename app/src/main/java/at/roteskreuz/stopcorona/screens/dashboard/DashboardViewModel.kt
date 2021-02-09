@@ -11,6 +11,8 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewM
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -175,7 +177,32 @@ class DashboardViewModel(
                 }
             }
     }
+
+    fun observeLastContactDate(): Observable<LastContactDateData> {
+        return Observables.combineLatest(
+            quarantineRepository.observeLastYellowContactDate(),
+            quarantineRepository.observeLastRedContactDate()
+        ).map { (lastYellowContactDate, lastRedContactDate) ->
+            LastContactDateData(
+                lastYellowContactDate = lastYellowContactDate,
+                lastRedContactDate = lastRedContactDate
+            )
+        }
+    }
+
+    fun observeLastKeyRequestDate(): Observable<Optional<ZonedDateTime>> {
+        return diagnosisKeysRepository.observeDateOfLastKeyRequest()
+    }
+
+    fun getKeyRequestCountLastWeek(): Int? {
+        return diagnosisKeysRepository.getKeyRequestCountLastWeek()
+    }
 }
+
+data class LastContactDateData(
+    val lastYellowContactDate: Optional<Instant>,
+    val lastRedContactDate: Optional<Instant>
+)
 
 sealed class ChangelogState {
     /**
