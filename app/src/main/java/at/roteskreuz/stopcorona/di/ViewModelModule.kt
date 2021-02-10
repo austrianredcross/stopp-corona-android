@@ -13,6 +13,7 @@ import at.roteskreuz.stopcorona.screens.debug.scheduling.SchedulingObserverViewM
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.PrivacyUpdateViewModel
+import at.roteskreuz.stopcorona.screens.dashboard.report_healthy.ReportHealthyViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.QuestionnaireGuidelineViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.QuestionnaireHintViewModel
@@ -270,6 +271,13 @@ val viewModelModule = module {
         PrivacyUpdateViewModel(
             appDispatchers = get(),
             dataPrivacyRepository = get()
+        )
+    }
+
+    viewModel {
+        ReportHealthyViewModel(
+            appDispatchers = get(),
+            quarantineRepository = get()
         )
     }
 }

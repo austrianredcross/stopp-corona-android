@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_style"
+        android:padding="36dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtHeadline"
+            style="@style/AppTheme.Heading1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:gravity="center"
+            android:text="@string/sickness_certificate_attest_report_healthy_dialog_headline" />
+
+        <TextView
+            android:id="@+id/txtDescription"
+            style="@style/AppTheme.Copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:layout_marginBottom="60dp"
+            android:text="@string/sickness_certificate_attest_report_healthy_dialog_description" />
+
+        <Button
+            android:id="@+id/btnEndQuarantine"
+            style="@style/AppTheme.ButtonLargeType1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/sickness_certificate_attest_report_healthy_dialog_button" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="@style/AppTheme.ButtonLargeType2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/general_cancel" />
+    </LinearLayout>
+</LinearLayout>

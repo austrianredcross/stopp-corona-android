@@ -41,6 +41,7 @@ class DashboardController(
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
     private val onExposureNotificationErrorActionClick: (ExposureNotificationPhase) -> Unit,
     private val onRevokeSicknessClick: (disabled: Boolean) -> Unit,
+    private val onReportHealthySicknessClick: () -> Unit,
     private val onUploadMissingExposureKeysClick: (disabled: Boolean, uploadMissingExposureKeys: UploadMissingExposureKeys) -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
@@ -533,6 +534,18 @@ class DashboardController(
                 .text(context.string(R.string.sickness_certificate_attest_revoke))
                 .enabled(exposureNotificationPhase.isReportingEnabled())
                 .onDisabledClick { onRevokeSicknessClick(true) }
+                .addTo(modelList)
+        }
+
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate && !isRedRevokingEnabled) {
+            EmptySpaceModel_()
+                .id(modelCountBuiltSoFar)
+                .height(16)
+                .addTo(modelList)
+
+            ButtonType2Model_ { onReportHealthySicknessClick() }
+                .id("own_health_status_report_healthy")
+                .text(context.string(R.string.sickness_certificate_attest_report_healthy))
                 .addTo(modelList)
         }
 
