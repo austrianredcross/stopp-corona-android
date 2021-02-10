@@ -217,7 +217,7 @@
 	<string name="handshake_dialog_disclaimer">If you have further questions about the manual handshake, you can find more information in the FAQs.</string>
 	<string name="handshake_dialog_faq">Go to the FAQs</string>
 	<string name="handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 1 meter distance.</string>
+	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 2 meter distance.</string>
 	<string name="automatic_handshake_dialog_title">Here’s how it works</string>
 	<string name="automatic_handshake_dialog_description_1">Activate the automatic handshake in the app and enable Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_2">Your device can exchange random IDs with other app users via Bluetooth.</string>
@@ -226,7 +226,7 @@
 	<string name="automatic_handshake_dialog_disclaimer">Please make sure that Bluetooth is activated.</string>
 	<string name="automatic_handshake_dialog_faq">To the FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 1 meter.</string>
+	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 2 meter.</string>
 	<string name="main_automatic_handshake_information_hint">How does it work?</string>
 	<string name="main_automatic_handshake_switch_title">Risk assessment</string>
 	<string name="main_automatic_handshake_switch_on">active</string>
@@ -407,7 +407,7 @@
 	<string name="questionnaire_hint_headline_2">Stay healthy and help to protect others.</string>
 	<string name="questionnaire_hint_description">In the current situation it is important to follow a few basic rules. <bred>Care for you, care for me.</bred></string>
 	<string name="questionnaire_hint_recommendation_1">Wash your hands regularly: with soap, warm water and for at least 20 seconds.</string>
-	<string name="questionnaire_hint_recommendation_2">Keep at least 1-2 meters distance to other people.</string>
+	<string name="questionnaire_hint_recommendation_2">Keep at least 2 meters distance to other people.</string>
 	<string name="questionnaire_hint_recommendation_3">Keep in touch via electronic media.</string>
 	<string name="questionnaire_hint_recommendation_4">If you feel ill, please stay home.</string>
 	<string name="questionnaire_examine_title">Check symptoms</string>
