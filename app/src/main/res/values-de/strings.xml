@@ -251,6 +251,7 @@
 	<string name="certificate_personal_data_headline">Bitte geben Sie Ihre Daten ein</string>
 	<string name="certificate_personal_data_title">Status melden</string>
 	<string name="certificate_personal_data_description">Wir werden nach dem nächsten Schritt Ihre engen Kontakte der letzten %s Tage anonym informieren. Wir validieren Ihre Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
+	<string name="certificate_personal_data_date_headline">Seit wann haben Sie ein positives Testergebnis?</string>
 	<string name="certificate_personal_data_mobile_number_label">Mobilfunknummer (+43...)</string>
 	<string name="certificate_personal_data_next_button">Weiter</string>
 	<string name="certificate_personal_data_input_error">Mobilfunknummer</string>
