@@ -1,7 +1,6 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
 import android.graphics.Typeface
-import android.opengl.Visibility
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
@@ -19,7 +18,6 @@ import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.screens.dashboard.HealthStatusData
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
-import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.format
 import at.roteskreuz.stopcorona.utils.color
 import at.roteskreuz.stopcorona.utils.getBoldSpan
@@ -64,22 +62,21 @@ abstract class HealthStatusModel(
                 is HealthStatusData.SicknessCertificate -> {
                     txtDescription2Container.visibility = VISIBLE
                     txtTitle.text = context.string(R.string.sickness_certificate_attest_headline)
-                    txtTitle.contentDescription = context.string(R.string.sickness_certificate_attest_headline) + context.getString(R.string.accessibility_heading_2)
-
-                    val quarantinedUntil = healthStatusData.quarantineStatus.end.format(context.getString(R.string.general_date_format))
-                    val quarantinedSpannable = SpannableString(quarantinedUntil)
-                    quarantinedSpannable.setSpan(StyleSpan(Typeface.BOLD), 0, quarantinedSpannable.length, 0)
-
-                    txtDescription.text = context.getString(R.string.sickness_certificate_attest_description)
+                    txtTitle.contentDescription =
+                        context.string(R.string.sickness_certificate_attest_headline) + context.getString(
+                            R.string.accessibility_heading_2
+                        )
+                    txtDescription.text =
+                        context.getString(R.string.sickness_certificate_attest_description)
                     txtDescription2.text = SpannableStringBuilder().apply {
                         append(context.getString(R.string.sickness_certificate_attest_description_2))
                         append(context.getBoldSpan(R.string.sickness_certificate_attest_description_3))
-                        append(quarantinedSpannable)
                         append(" ")
                         append(context.getString(R.string.sickness_certificate_attest_description_4))
                     }
 
-                    txtActionButton.text = context.string(R.string.sickness_certificate_attest_button)
+                    txtActionButton.text =
+                        context.string(R.string.sickness_certificate_attest_button)
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     cardViewContainer.setCardBackgroundColor(color(R.color.red))
                 }
@@ -87,8 +84,12 @@ abstract class HealthStatusModel(
                     txtDescription2Container.visibility = VISIBLE
                     val days = healthStatusData.quarantineStatus.daysUntilEnd()
                     txtTitle.text = context.string(R.string.self_testing_suspicion_headline)
-                    txtTitle.contentDescription = context.string(R.string.self_testing_suspicion_headline) + context.getString(R.string.accessibility_heading_2)
-                    txtDescription.text = context.getString(R.string.self_testing_suspicion_description)
+                    txtTitle.contentDescription =
+                        context.string(R.string.self_testing_suspicion_headline) + context.getString(
+                            R.string.accessibility_heading_2
+                        )
+                    txtDescription.text =
+                        context.getString(R.string.self_testing_suspicion_description)
                     txtDescription2.text = SpannableStringBuilder().apply {
                         append(context.getString(R.string.self_testing_suspicion_description_2))
                         append(context.getBoldSpan(R.string.self_testing_suspicion_description_3))
@@ -103,34 +104,48 @@ abstract class HealthStatusModel(
                 }
                 HealthStatusData.SelfTestingSymptomsMonitoring -> {
                     txtTitle.text = context.string(R.string.self_testing_symptoms_headline)
-                    txtTitle.contentDescription = context.string(R.string.self_testing_symptoms_headline) + context.getString(R.string.accessibility_heading_2)
+                    txtTitle.contentDescription =
+                        context.string(R.string.self_testing_symptoms_headline) + context.getString(
+                            R.string.accessibility_heading_2
+                        )
                     txtDescription.text = context.string(R.string.self_testing_symptoms_description)
                     txtActionButton.text = context.string(R.string.self_testing_symptoms_button)
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
                 }
                 is HealthStatusData.ContactsSicknessInfo -> {
-                    val days = if (healthStatusData.quarantineStatus is QuarantineStatus.Jailed.Limited) {
-                        healthStatusData.quarantineStatus.daysUntilEnd()
-                    } else {
-                        Timber.e(SilentError("HealthStatusData.ContactsSicknessInfo must have QuarantineStatus.Jailed.Limited"))
-                        0L
-                    }
+                    val days =
+                        if (healthStatusData.quarantineStatus is QuarantineStatus.Jailed.Limited) {
+                            healthStatusData.quarantineStatus.daysUntilEnd()
+                        } else {
+                            Timber.e(SilentError("HealthStatusData.ContactsSicknessInfo must have QuarantineStatus.Jailed.Limited"))
+                            0L
+                        }
                     val quarantineDayActionText = when (days) {
                         1L -> string(R.string.contacts_quarantine_day_single)
                         else -> string(R.string.contacts_quarantine_day_many)
                     }
                     var quarantinedUntil: String? = null
                     if (healthStatusData.quarantineStatus is QuarantineStatus.Jailed.Limited) {
-                        quarantinedUntil = healthStatusData.quarantineStatus.end.format(context.getString(R.string.general_date_format))
+                        quarantinedUntil =
+                            healthStatusData.quarantineStatus.end.format(context.getString(R.string.general_date_format))
                     }
                     val quarantinedSpannable = SpannableString(quarantinedUntil)
-                    quarantinedSpannable.setSpan(StyleSpan(Typeface.BOLD), 0, quarantinedSpannable.length, 0)
+                    quarantinedSpannable.setSpan(
+                        StyleSpan(Typeface.BOLD),
+                        0,
+                        quarantinedSpannable.length,
+                        0
+                    )
 
-                    if (redContactsDetected){
+                    if (redContactsDetected) {
                         txtDescription2Container.visibility = VISIBLE
-                        txtTitle.text = context.string(R.string.contacts_confirmed_one_case_headline)
-                        txtTitle.contentDescription = context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline) + context.getString(R.string.accessibility_heading_2)
+                        txtTitle.text =
+                            context.string(R.string.contacts_confirmed_one_case_headline)
+                        txtTitle.contentDescription =
+                            context.string(R.string.health_status_contacts_confirmed_one_or_more_cases_headline) + context.getString(
+                                R.string.accessibility_heading_2
+                            )
 
                         txtDescription.text = SpannableStringBuilder().apply {
                             append(context.getString(R.string.contacts_confirmed_one_case_description))
@@ -149,16 +164,20 @@ abstract class HealthStatusModel(
                         cardViewContainer.setCardBackgroundColor(color(R.color.red))
                     }
 
-                    if (yellowContactsDetected){
-                        txtTitle.text = context.string(R.string.contacts_suspicion_one_case_headline)
-                        txtTitle.contentDescription = context.string(R.string.contacts_suspicion_one_case_headline) + context.getString(R.string.accessibility_heading_2)
+                    if (yellowContactsDetected) {
+                        txtTitle.text =
+                            context.string(R.string.contacts_suspicion_one_case_headline)
+                        txtTitle.contentDescription =
+                            context.string(R.string.contacts_suspicion_one_case_headline) + context.getString(
+                                R.string.accessibility_heading_2
+                            )
 
                         txtDescription.text = SpannableStringBuilder().apply {
                             append(context.getString(R.string.contacts_suspicion_one_case_description))
                             append(context.getBoldSpan(R.string.contacts_suspicion_one_case_description_2))
                             append(context.getString(R.string.contacts_suspicion_one_case_description_3))
                         }
-                        if (healthStatusData.warningType.redContactsDetected.not()){
+                        if (healthStatusData.warningType.redContactsDetected.not()) {
                             txtDescription2Container.visibility = VISIBLE
                             txtDescription2.text = SpannableStringBuilder().apply {
                                 append(context.getString(R.string.contacts_suspicion_one_case_description_4))
@@ -182,14 +201,21 @@ abstract class HealthStatusModel(
                 }
             }
 
-            if(healthStatusData is HealthStatusData.ContactsSicknessInfo && healthStatusData.warningType.redContactsDetected && yellowContactsDetected) {
+            if (healthStatusData is HealthStatusData.ContactsSicknessInfo && healthStatusData.warningType.redContactsDetected && yellowContactsDetected) {
                 view.setOnClickListener(null)
             } else {
                 view.setOnClickListener {
 
+                    /**
+                     * When the own health status is [SicknessCertificate] we override the status of [data]
+                     */
                     onClick(
-                        healthStatusData
+                        when (ownHealthStatus) {
+                            is HealthStatusData.SicknessCertificate -> HealthStatusData.SicknessCertificate
+                            else -> healthStatusData
+                        }
                     )
+
                 }
             }
 

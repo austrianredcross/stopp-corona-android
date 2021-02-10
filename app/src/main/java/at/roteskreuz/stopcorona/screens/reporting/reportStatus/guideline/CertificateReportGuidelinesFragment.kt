@@ -58,26 +58,6 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
             }
         }
 
-        txtDescription1.visible = false
-        disposables += viewModel.observeQuarantineStatus()
-            .observeOnMainThread()
-            .subscribe { quarantineStatus ->
-                context?.let {context ->
-                    if (quarantineStatus is QuarantineStatus.Jailed.Limited) {
-                        val date = quarantineStatus.end.format(context.getString(R.string.general_date_format))
-                        txtDescription1.visible = true
-                        val quarantinedSpannable = SpannableString(date)
-                        quarantinedSpannable.setSpan(StyleSpan(Typeface.BOLD), 0, quarantinedSpannable.length, 0)
-                        txtDescription1.text = SpannableStringBuilder().apply {
-                            append(context.getBoldSpan(R.string.sickness_certificate_quarantine_guidelines_steps_first, false, false))
-                            append(quarantinedSpannable)
-                            append(context.getBoldSpan(R.string.sickness_certificate_quarantine_guidelines_steps_first_2))
-                            append(context.getString(R.string.sickness_certificate_quarantine_guidelines_steps_first_3))
-                        }
-                    }
-                }
-            }
-
         txtDescription4Phone.text  = SpannableStringBuilder().apply {
             context?.let {context->
                 append(context.getClickableBoldSpan(R.string.sickness_certificate_quarantine_guidelines_steps_fourth_phone,
