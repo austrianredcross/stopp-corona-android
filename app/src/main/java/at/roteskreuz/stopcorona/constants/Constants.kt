@@ -37,7 +37,17 @@ object Constants {
         /**
          * Minimum delay between self retest notifications.
          */
-        val SELF_RETEST_NOTIFICATION_INTERVAL: Duration = Duration.ofHours(6)
+        val SELF_RETEST_NOTIFICATION_INTERVAL: Duration = Duration.ofHours(5)
+
+        /**
+         * Self retest notifications is able to be run after this time.
+         */
+        val SELF_RETEST_START_TIME: LocalTime = LocalTime.of(8, 15)
+
+        /**
+         * Self retest notifications is able not to be run after this time.
+         */
+        val SELF_RETEST_END_TIME: LocalTime = LocalTime.of(19, 45)
 
         /**
          * Frequency of how often device can check infection possibility.
