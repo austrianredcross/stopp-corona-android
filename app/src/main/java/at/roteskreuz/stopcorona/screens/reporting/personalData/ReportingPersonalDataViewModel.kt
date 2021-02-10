@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants.Misc.EMPTY_STRING
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.repositories.DateOfInfectionData
 import at.roteskreuz.stopcorona.model.repositories.PersonalData
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -95,6 +96,18 @@ class ReportingPersonalDataViewModel(
 
     fun observeMessageType(): Observable<MessageType> {
         return reportingRepository.observeMessageType()
+    }
+
+    fun setDateOfInfection(date: ZonedDateTime) {
+        reportingRepository.setDateOfInfection(date)
+    }
+
+    fun goBack(){
+        reportingRepository.goBackFromReportingInfectionScreen()
+    }
+
+    fun observeDateOfInfection(): Observable<DateOfInfectionData> {
+        return reportingRepository.observeDateOfInfection()
     }
 }
 

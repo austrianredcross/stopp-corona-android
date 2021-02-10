@@ -99,6 +99,11 @@ interface ReportingRepository {
     fun goBackFromReportingSuspicionScreen()
 
     /**
+     * Navigate back from the reporting infection screen.
+     */
+    fun goBackFromReportingInfectionScreen()
+
+    /**
      * Navigate back from the reporting agreement screen.
      */
     fun goBackFromReportingAgreementScreen()
@@ -434,6 +439,10 @@ class ReportingRepositoryImpl(
     }
 
     override fun goBackFromReportingSuspicionScreen() {
+        dateOfInfectionSubject.onNext(DateOfInfectionData(null))
+    }
+
+    override fun goBackFromReportingInfectionScreen() {
         dateOfInfectionSubject.onNext(DateOfInfectionData(null))
     }
 

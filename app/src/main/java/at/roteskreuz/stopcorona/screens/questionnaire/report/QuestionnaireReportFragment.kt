@@ -47,9 +47,6 @@ class QuestionnaireReportFragment : BaseFragment(R.layout.fragment_questionnaire
             startReportingActivity(MessageType.InfectionLevel.Red)
         }
 
-        // init date of infection with today
-        viewModel.setDateOfInfection(ZonedDateTime.now())
-
         disposables += viewModel.observeDateOfInfection()
             .observeOnMainThread()
             .subscribe { date ->
@@ -59,6 +56,9 @@ class QuestionnaireReportFragment : BaseFragment(R.layout.fragment_questionnaire
                     } else {
                         date.dateOfInfection.format("EEEE, d. MMM y")
                     }
+                } ?: run {
+                    // init date of infection with today
+                    viewModel.setDateOfInfection(ZonedDateTime.now())
                 }
             }
 
