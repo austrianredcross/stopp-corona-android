@@ -376,6 +376,7 @@
 	<string name="start_menu_item_3_1">Handshake manuell starten</string>
 	<string name="start_menu_item_3_2">Symptome abprüfen</string>
 	<string name="start_menu_item_3_3">Ärztliche Bestätigung melden</string>
+	<string name="start_menu_item_3_4">Corona-Verdacht melden</string>
 	<string name="start_menu_item_revoke_sickness">Krankmeldung zurückziehen</string>
 
 	<!-- History -->

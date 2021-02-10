@@ -13,6 +13,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.startOnboardingFragment
+import at.roteskreuz.stopcorona.screens.questionnaire.report.startReportSuspicionFragment
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
 import at.roteskreuz.stopcorona.screens.savedIDs.startInfoDeleteExposureKeysFragment
@@ -77,6 +78,9 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
             },
             onCheckSymptomsClick = {
                 startQuestionnaireFragment()
+            },
+            onReportSuspectedClick = {
+                startReportSuspicionFragment()
             },
             onReportOfficialSicknessClick = {
                 startReportingActivity(MessageType.InfectionLevel.Red)
