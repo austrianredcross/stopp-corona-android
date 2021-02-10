@@ -216,7 +216,7 @@
 	<string name="handshake_dialog_disclaimer">Haben Sie noch weitere Fragen zum manuellen Handshake haben, finden Sie in den FAQs weitere Informationen.</string>
 	<string name="handshake_dialog_faq">Zu den FAQs</string>
 	<string name="handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
+	<string name="handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 2 Meter Abstand.</string>
 	<string name="automatic_handshake_dialog_title">So funktioniert es</string>
 	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und aktivieren Sie Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_2">Ihr Gerät kann über Bluetooth Zufalls-IDs mit anderen App-Nutzern austauschen.</string>
@@ -225,7 +225,7 @@
 	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Bluetooth aktiviert ist.</string>
 	<string name="automatic_handshake_dialog_faq">Zu den FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="automatic_handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
+	<string name="automatic_handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 2 Meter Abstand.</string>
 	<string name="main_automatic_handshake_information_hint">Wie funktioniert es?</string>
 	<string name="main_automatic_handshake_switch_title">Risiko-Ermittlung</string>
 	<string name="main_automatic_handshake_switch_on">aktiv</string>
@@ -406,7 +406,7 @@
 	<string name="questionnaire_hint_headline_2">Bleiben Sie gesund und helfen Sie, andere zu schützen.</string>
 	<string name="questionnaire_hint_description">In der aktuellen Situation ist es wichtig, einige Grundregeln zu befolgen. <bred>Schau auf dich, schau auf mich.</bred></string>
 	<string name="questionnaire_hint_recommendation_1">Regelmäßig Hände waschen: mit Seife, lauwarmem Wasser und mindestens 20 Sekunden lang.</string>
-	<string name="questionnaire_hint_recommendation_2">Halten Sie mindestens 1-2 Meter Abstand zu anderen Menschen.</string>
+	<string name="questionnaire_hint_recommendation_2">Halten Sie mindestens 2 Meter Abstand zu anderen Menschen.</string>
 	<string name="questionnaire_hint_recommendation_3">Halten Sie Kontakt über elektronische Medien.</string>
 	<string name="questionnaire_hint_recommendation_4">Wenn Sie sich krank fühlen, bleiben Sie bitte zuhause.</string>
 	<string name="questionnaire_examine_title">Symptome prüfen</string>
