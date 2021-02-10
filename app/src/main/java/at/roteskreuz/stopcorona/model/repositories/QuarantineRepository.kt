@@ -35,6 +35,16 @@ interface QuarantineRepository {
     val dateOfFirstMedicalConfirmation: ZonedDateTime?
 
     /**
+     * Get date of last red contact.
+     */
+    val dateOfLastRedContact: Instant?
+
+    /**
+     * Get date of last yellow contact.
+     */
+    val dateOfLastYellowContact: Instant?
+
+    /**
      * Indicator if the user was in yellow state before turning red.
      */
     val hasSelfDiagnoseBackup: Boolean
@@ -201,14 +211,14 @@ class QuarantineRepositoryImpl(
     private var dateOfLastSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
 
-    private var dateOfLastRedContact: Instant?
+    override var dateOfLastRedContact: Instant?
         by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_RED_CONTACT
         )
 
     private val dateOfLastRedContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT).shareReplayLast()
 
-    private var dateOfLastYellowContact: Instant?
+    override var dateOfLastYellowContact: Instant?
         by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_YELLOW_CONTACT
         )
