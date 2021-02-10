@@ -311,7 +311,7 @@
 	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Your doctor will decide when you can end the quarantine.</string>
 	<string name="sickness_certificate_guidelines_content_description">If possible, do not use public transport on the way and avoid contact with other people.</string>
 	<string name="sickness_certificate_guidelines_headline">Self-quarantine</string>
-	<string name="sickness_certificate_guidelines_first">Please monitor your health within the next days</string>
+	<string name="sickness_certificate_guidelines_first">Please go into self-quarantine and monitor your health within the next days</string>
 	<string name="sickness_certificate_guidelines_first_2">until the</string>
 	<string name="sickness_certificate_guidelines_first_3">particularly thorough and</string>
 	<string name="sickness_certificate_guidelines_first_4">check your body temperature daily.</string>
@@ -557,6 +557,9 @@
 	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a</string>
 	<string name="contacts_suspicion_one_case_description_2">suspected corona infection</string>
 	<string name="contacts_suspicion_one_case_description_3">.</string>
+	<string name="contacts_suspicion_one_case_description_4">Please go into quarantine</string>
+	<string name="contacts_suspicion_one_case_description_5">until</string>
+	<string name="contacts_suspicion_one_case_description_6"></string>
 	<string name="contacts_confirmed_multiple_case_headline">Attention</string>
 	<string name="contacts_confirmed_multiple_case_description">In %d of your contacts a corona infection was confirmed.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">%d of your contacts are</string>

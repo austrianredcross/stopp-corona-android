@@ -89,7 +89,24 @@ class DashboardController(
              * Build card for contacts health status if available
              */
             if (contactsHealthStatus != HealthStatusData.NoHealthStatus) {
-                buildContactHealthStatus()
+                if (contactsHealthStatus is HealthStatusData.ContactsSicknessInfo) {
+                    val healthStatusData = contactsHealthStatus as HealthStatusData.ContactsSicknessInfo
+                    if (healthStatusData.warningType.redContactsDetected) {
+                        buildContactHealthStatus(
+                            redContactsDetected = true,
+                            yellowContactsDetected = false
+                        )
+                        if (healthStatusData.warningType.yellowContactsDetected) {
+                            emptySpace(modelCountBuiltSoFar, 16)
+                        }
+                    }
+                    if (healthStatusData.warningType.yellowContactsDetected) {
+                        buildContactHealthStatus(
+                            redContactsDetected = false,
+                            yellowContactsDetected = true
+                        )
+                    }
+                }
             }
 
             /**
@@ -602,7 +619,7 @@ class DashboardController(
     /**
      * Build card for contacts health status
      */
-    private fun buildContactHealthStatus() {
+    private fun buildContactHealthStatus(redContactsDetected: Boolean, yellowContactsDetected: Boolean) {
         val modelList = arrayListOf<EpoxyModel<out Any>>()
 
         EmptySpaceModel_()
@@ -614,6 +631,8 @@ class DashboardController(
             .id("contacts_health_status")
             .data(contactsHealthStatus)
             .ownHealthStatus(ownHealthStatus)
+            .redContactsDetected(redContactsDetected)
+            .yellowContactsDetected(yellowContactsDetected)
             .addTo(modelList)
 
         EmptySpaceModel_()
