@@ -16,6 +16,7 @@
 	<string name="general_additional_information">Weitere Informationen</string>
 	<string name="general_back">Zurück</string>
 	<string name="general_date_format">d. MMMM</string>
+	<string name="general_cancel">Abbrechen</string>
 	<string name="accessibility_heading_1">Überschrift 1</string>
 	<string name="accessibility_heading_2">Überschrift 2</string>
 	<string name="accessibility_onboarding_finish_button_disabled_description">Fertig Schaltfläche: Einwilligungserklärung nicht zugestimmt</string>
@@ -343,11 +344,15 @@
 	<string name="sickness_certificate_attest_description_3">bis zum</string>
 	<string name="sickness_certificate_attest_description_4">in Quarantäne.</string>
 	<string name="sickness_certificate_attest_button">Was soll ich tun?</string>
-	<string name="sickness_certificate_attest_revoke">Gesund melden</string>
+	<string name="sickness_certificate_attest_revoke">Krankmeldung zurückziehen</string>
 	<string name="sickness_certificate_attest_info_update">Benachrichtigen Sie Personen, mit denen Sie am Tag Ihrer Meldung einen digitalen Handshake ausgetauscht haben.</string>
 	<string name="sickness_certificate_attest_update">Weitere Kontakte benachrichtigen</string>
 
 	<!-- Start Menu -->
+	<string name="sickness_certificate_attest_report_healthy">Gesund melden</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_headline">Quarantäne beenden</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_description">Wenn Sie gesund sind und Ihr Quarantäne-Bescheid abgelaufen ist, können Sie die Quarantäne in der App über den Button unten beenden.</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_button">Quarantäne beenden</string>
 	<string name="start_menu">Menü öffnen</string>
 	<string name="start_menu_close">Menü schließen</string>
 	<string name="start_menu_headline_1">Info</string>

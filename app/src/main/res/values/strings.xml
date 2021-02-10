@@ -16,6 +16,7 @@
 	<string name="general_additional_information">Further information</string>
 	<string name="general_back">Back</string>
 	<string name="general_date_format">d. MMMM</string>
+	<string name="general_cancel">Cancel</string>
 	<string name="accessibility_heading_1">Heading 1</string>
 	<string name="accessibility_heading_2">Heading 2</string>
 	<string name="accessibility_onboarding_finish_button_disabled_description">Finished button: Declaration of consent not agreed</string>
@@ -344,11 +345,15 @@
 	<string name="sickness_certificate_attest_description_3">until</string>
 	<string name="sickness_certificate_attest_description_4"></string>
 	<string name="sickness_certificate_attest_button">What should I do?</string>
-	<string name="sickness_certificate_attest_revoke">Report healthy</string>
+	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>
 	<string name="sickness_certificate_attest_info_update">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 	<string name="sickness_certificate_attest_update">Notify other contacts</string>
 
 	<!-- Start Menu -->
+	<string name="sickness_certificate_attest_report_healthy">Report healthy</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_headline">End quarantine</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_description">If you are healthy and your quarantine notice has expired, you can end the quarantine in the app using the button below.</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_button">End quarantine</string>
 	<string name="start_menu">Open menu</string>
 	<string name="start_menu_close">Close menu</string>
 	<string name="start_menu_headline_1">Info</string>
