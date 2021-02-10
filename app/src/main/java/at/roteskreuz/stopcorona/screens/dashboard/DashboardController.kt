@@ -38,6 +38,7 @@ class DashboardController(
     private val onAutomaticHandshakeEnabled: (isEnabled: Boolean) -> Unit,
     private val onExposureNotificationErrorActionClick: (ExposureNotificationPhase) -> Unit,
     private val onRevokeSicknessClick: (disabled: Boolean) -> Unit,
+    private val onReportHealthySicknessClick: () -> Unit,
     private val onUploadMissingExposureKeysClick: (disabled: Boolean, uploadMissingExposureKeys: UploadMissingExposureKeys) -> Unit,
     private val onShareAppClick: () -> Unit
 ) : EpoxyController() {
@@ -85,7 +86,24 @@ class DashboardController(
              * Build card for contacts health status if available
              */
             if (contactsHealthStatus != HealthStatusData.NoHealthStatus) {
-                buildContactHealthStatus()
+                if (contactsHealthStatus is HealthStatusData.ContactsSicknessInfo) {
+                    val healthStatusData = contactsHealthStatus as HealthStatusData.ContactsSicknessInfo
+                    if (healthStatusData.warningType.redContactsDetected) {
+                        buildContactHealthStatus(
+                            redContactsDetected = true,
+                            yellowContactsDetected = false
+                        )
+                        if (healthStatusData.warningType.yellowContactsDetected) {
+                            emptySpace(modelCountBuiltSoFar, 16)
+                        }
+                    }
+                    if (healthStatusData.warningType.yellowContactsDetected) {
+                        buildContactHealthStatus(
+                            redContactsDetected = false,
+                            yellowContactsDetected = true
+                        )
+                    }
+                }
             }
 
             /**
@@ -460,6 +478,18 @@ class DashboardController(
                 .addTo(modelList)
         }
 
+        if (ownHealthStatus is HealthStatusData.SicknessCertificate && !isRedRevokingEnabled) {
+            EmptySpaceModel_()
+                .id(modelCountBuiltSoFar)
+                .height(16)
+                .addTo(modelList)
+
+            ButtonType2Model_ { onReportHealthySicknessClick() }
+                .id("own_health_status_report_healthy")
+                .text(context.string(R.string.sickness_certificate_attest_report_healthy))
+                .addTo(modelList)
+        }
+
         val healthStatusDataMatches =
             ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
                     ownHealthStatus is HealthStatusData.SicknessCertificate
@@ -513,7 +543,7 @@ class DashboardController(
     /**
      * Build card for contacts health status
      */
-    private fun buildContactHealthStatus() {
+    private fun buildContactHealthStatus(redContactsDetected: Boolean, yellowContactsDetected: Boolean) {
         val modelList = arrayListOf<EpoxyModel<out Any>>()
 
         EmptySpaceModel_()
@@ -525,6 +555,8 @@ class DashboardController(
             .id("contacts_health_status")
             .data(contactsHealthStatus)
             .ownHealthStatus(ownHealthStatus)
+            .redContactsDetected(redContactsDetected)
+            .yellowContactsDetected(yellowContactsDetected)
             .addTo(modelList)
 
         EmptySpaceModel_()

@@ -2,10 +2,14 @@ package at.roteskreuz.stopcorona.model.workers
 
 import android.content.Context
 import androidx.work.*
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.SELF_RETEST_END_TIME
 import at.roteskreuz.stopcorona.constants.Constants.Behavior.SELF_RETEST_NOTIFICATION_INTERVAL
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.SELF_RETEST_START_TIME
 import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
+import at.roteskreuz.stopcorona.utils.isInBetween
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
+import org.threeten.bp.LocalTime
 import java.util.concurrent.TimeUnit
 
 /**
@@ -20,7 +24,18 @@ class SelfRetestNotifierWorker(
         private const val TAG = "SelfRetestNotifierWorker"
 
         /**
-         * Enqueue displaying notification each 6 hours to do self testing.
+         * 8:15
+         */
+        private val firstAvailableTime = SELF_RETEST_START_TIME
+
+        /**
+         * 19:45
+         */
+        private val lastAvailableTime = SELF_RETEST_END_TIME
+
+
+        /**
+         * Enqueue displaying notification each 5 hours to do self testing.
          */
         fun enqueueSelfRetestingReminder(workManager: WorkManager) {
             val request =
@@ -48,7 +63,9 @@ class SelfRetestNotifierWorker(
 
     override suspend fun doWork(): Result {
 
-        notificationsRepository.displaySelfRetestNotification()
+        if (LocalTime.now().isInBetween(firstAvailableTime, lastAvailableTime)){
+            notificationsRepository.displaySelfRetestNotification()
+        }
 
         return Result.success()
     }

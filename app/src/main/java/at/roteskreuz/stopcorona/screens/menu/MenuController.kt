@@ -33,6 +33,7 @@ class MenuController(
     private val onImprintClick: () -> Unit,
     private val onVersionClick: () -> Unit,
     private val onCheckSymptomsClick: () -> Unit,
+    private val onReportSuspectedClick: () -> Unit,
     private val onReportOfficialSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit,
     private val onRevokeSicknessClick: () -> Unit
@@ -146,6 +147,11 @@ class MenuController(
             MenuItemModel_(onCheckSymptomsClick)
                 .id("check_symptoms")
                 .title(context.string(R.string.start_menu_item_3_2))
+                .addTo(modelList)
+
+            MenuItemModel_(onReportSuspectedClick)
+                .id("report_suspected")
+                .title(context.string(R.string.start_menu_item_3_4))
                 .addTo(modelList)
         }
 

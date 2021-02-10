@@ -16,6 +16,7 @@
 	<string name="general_additional_information">Further information</string>
 	<string name="general_back">Back</string>
 	<string name="general_date_format">d. MMMM</string>
+	<string name="general_cancel">Cancel</string>
 	<string name="accessibility_heading_1">Heading 1</string>
 	<string name="accessibility_heading_2">Heading 2</string>
 	<string name="accessibility_onboarding_finish_button_disabled_description">Finished button: Declaration of consent not agreed</string>
@@ -215,7 +216,7 @@
 	<string name="handshake_dialog_disclaimer">If you have further questions about the manual handshake, you can find more information in the FAQs.</string>
 	<string name="handshake_dialog_faq">Go to the FAQs</string>
 	<string name="handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 1 meter distance.</string>
+	<string name="handshake_dialog_disclaimer2">For medical reasons: This app also works remotely. Please keep at least 2 meter distance.</string>
 	<string name="automatic_handshake_dialog_title">Here’s how it works</string>
 	<string name="automatic_handshake_dialog_description_1">Activate the automatic handshake in the app and enable Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_2">Your device can exchange random IDs with other app users via Bluetooth.</string>
@@ -224,7 +225,7 @@
 	<string name="automatic_handshake_dialog_disclaimer">Please make sure that Bluetooth is activated.</string>
 	<string name="automatic_handshake_dialog_faq">To the FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 1 meter.</string>
+	<string name="automatic_handshake_dialog_disclaimer2">For medical reasons: This app also works at a distance. Please keep a distance of at least 2 meter.</string>
 	<string name="main_automatic_handshake_information_hint">How does it work?</string>
 	<string name="main_automatic_handshake_switch_title">Risk assessment</string>
 	<string name="main_automatic_handshake_switch_on">active</string>
@@ -250,6 +251,7 @@
 	<string name="certificate_personal_data_headline">Please enter your data</string>
 	<string name="certificate_personal_data_title">Report status</string>
 	<string name="certificate_personal_data_description">In the next step, we will anonymously inform your direct contacts of the last %s days.\nWith the mobile number, we ensure that the app is not misused and that infection reports contribute to the common good.</string>
+	<string name="certificate_personal_data_date_headline">When did you receive your positive test result?</string>
 	<string name="certificate_personal_data_mobile_number_label">Mobile number (+43...)</string>
 	<string name="certificate_personal_data_next_button">Next</string>
 	<string name="certificate_personal_data_input_error">Mobile number</string>
@@ -294,9 +296,7 @@
 	<string name="sickness_certificate_quarantine_guidelines_title">What should I do?</string>
 	<string name="sickness_certificate_quarantine_guidelines_headline">Behaviour in case of illness</string>
 	<string name="sickness_certificate_quarantine_guideline_description">You have reported your medically confirmed corona infection.</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first">Please go to quarantine immediately and until</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_2"></string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_3">\n\nAvoid public transport and contact with other people on the way home.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first"><b>Please quarantine yourself immediately until you are healthy again.</b>\n\nAvoid public transport and contact with other people on the way home.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_second"><b>Keep a physical distance</b> from healthy roommates.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_third">Monitor your health and <b>check your body temperature twice a day</b>.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_fourth">Ask your neighbors or relatives to take care of you. If that is not possible, the <b>Team Österreich</b> will be happy to help you on</string>
@@ -308,7 +308,7 @@
 	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Your doctor will decide when you can end the quarantine.</string>
 	<string name="sickness_certificate_guidelines_content_description">If possible, do not use public transport on the way and avoid contact with other people.</string>
 	<string name="sickness_certificate_guidelines_headline">Self-quarantine</string>
-	<string name="sickness_certificate_guidelines_first">Please monitor your health within the next days</string>
+	<string name="sickness_certificate_guidelines_first">Please go into self-quarantine and monitor your health within the next days</string>
 	<string name="sickness_certificate_guidelines_first_2">until the</string>
 	<string name="sickness_certificate_guidelines_first_3">particularly thorough and</string>
 	<string name="sickness_certificate_guidelines_first_4">check your body temperature daily.</string>
@@ -340,14 +340,19 @@
 	<string name="sickness_certificate_attest_headline">Attention</string>
 	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection..</string>
 	<string name="sickness_certificate_attest_description_2">Please go into qurantine</string>
-	<string name="sickness_certificate_attest_description_3">until</string>
+	<string name="sickness_certificate_attest_description_3">until you are healthy</string>
+	<string name="sickness_certificate_attest_description_5">until</string>
 	<string name="sickness_certificate_attest_description_4"></string>
 	<string name="sickness_certificate_attest_button">What should I do?</string>
-	<string name="sickness_certificate_attest_revoke">Report healthy</string>
+	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>
 	<string name="sickness_certificate_attest_info_update">Notify people with whom you exchanged a digital handshake on the day you reported sick.</string>
 	<string name="sickness_certificate_attest_update">Notify other contacts</string>
 
 	<!-- Start Menu -->
+	<string name="sickness_certificate_attest_report_healthy">Report healthy</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_headline">End quarantine</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_description">If you are healthy and your quarantine notice has expired, you can end the quarantine in the app using the button below.</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_button">End quarantine</string>
 	<string name="start_menu">Open menu</string>
 	<string name="start_menu_close">Close menu</string>
 	<string name="start_menu_headline_1">Info</string>
@@ -371,6 +376,7 @@
 	<string name="start_menu_item_3_1">Start handshake manually</string>
 	<string name="start_menu_item_3_2">Examine symptoms</string>
 	<string name="start_menu_item_3_3">Report medical confirmation</string>
+	<string name="start_menu_item_3_4">Report suspected corona</string>
 	<string name="start_menu_item_revoke_sickness">Revoke sick note</string>
 
 	<!-- History -->
@@ -384,6 +390,8 @@
 	<string name="contact_history_number_format">#%d</string>
 	<string name="contact_history_no_records">No encounters saved.</string>
 	<string name="contact_history_time_interval">%s - %s</string>
+	<string name="self_testing_symptoms_source_text">Source</string>
+	<string name="self_testing_symptoms_source_link">https://www.sozialministerium.at/Themen/Gesundheit/Uebertragbare-Krankheiten/Infektionskrankheiten-A-Z/Neuartiges-Coronavirus.html</string>
 	<string name="questionnaire_compliance_headline">Declaration of consent</string>
 	<string name="questionnaire_compliance_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification number [ID], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of achieving a rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning of a potential danger of infection, as well as a subsequent all-clear notification or a confirmation of such infection. </string>
 	<string name="questionnaire_compliance_approval">Yes, I consent to the processing of data.</string>
@@ -398,7 +406,7 @@
 	<string name="questionnaire_hint_headline_2">Stay healthy and help to protect others.</string>
 	<string name="questionnaire_hint_description">In the current situation it is important to follow a few basic rules. <bred>Care for you, care for me.</bred></string>
 	<string name="questionnaire_hint_recommendation_1">Wash your hands regularly: with soap, warm water and for at least 20 seconds.</string>
-	<string name="questionnaire_hint_recommendation_2">Keep at least 1-2 meters distance to other people.</string>
+	<string name="questionnaire_hint_recommendation_2">Keep at least 2 meters distance to other people.</string>
 	<string name="questionnaire_hint_recommendation_3">Keep in touch via electronic media.</string>
 	<string name="questionnaire_hint_recommendation_4">If you feel ill, please stay home.</string>
 	<string name="questionnaire_examine_title">Check symptoms</string>
@@ -547,6 +555,9 @@
 	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a</string>
 	<string name="contacts_suspicion_one_case_description_2">suspected corona infection</string>
 	<string name="contacts_suspicion_one_case_description_3">.</string>
+	<string name="contacts_suspicion_one_case_description_4">Please go into quarantine</string>
+	<string name="contacts_suspicion_one_case_description_5">until</string>
+	<string name="contacts_suspicion_one_case_description_6"></string>
 	<string name="contacts_confirmed_multiple_case_headline">Attention</string>
 	<string name="contacts_confirmed_multiple_case_description">In %d of your contacts a corona infection was confirmed.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">%d of your contacts are</string>

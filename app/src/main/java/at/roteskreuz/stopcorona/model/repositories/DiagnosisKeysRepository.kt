@@ -258,6 +258,9 @@ class DiagnosisKeysRepositoryImpl(
             WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
             WarningType.YELLOW, WarningType.RED -> {
                 if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
+                    if (quarantineRepository.dateOfLastRedContact != null || quarantineRepository.dateOfLastYellowContact != null){
+                        notificationsRepository.displayEndQuarantineNotification()
+                    }
                     quarantineRepository.revokeLastRedContactDate()
                     quarantineRepository.revokeLastYellowContactDate()
                     return true // Processing done

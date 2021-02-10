@@ -114,6 +114,36 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtTitle" />
 
+                <LinearLayout
+                    android:id="@+id/dateContainer"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtDescription">
+
+                    <TextView
+                        android:id="@+id/txtDateHeadline"
+                        style="@style/AppTheme.Heading2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="40dp"
+                        android:text="@string/certificate_personal_data_date_headline" />
+
+                    <Button
+                        android:id="@+id/datePicker"
+                        style="@style/AppTheme.DateSelector"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/general_today"/>
+
+                </LinearLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayoutMobileNumber"
                     android:layout_width="match_parent"
@@ -125,7 +155,7 @@
                     android:theme="@style/AppTheme.EditText"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtDescription">
+                    app:layout_constraintTop_toBottomOf="@id/dateContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/textInputEditTextMobileNumber"

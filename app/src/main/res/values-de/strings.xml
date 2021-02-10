@@ -16,6 +16,7 @@
 	<string name="general_additional_information">Weitere Informationen</string>
 	<string name="general_back">Zurück</string>
 	<string name="general_date_format">d. MMMM</string>
+	<string name="general_cancel">Abbrechen</string>
 	<string name="accessibility_heading_1">Überschrift 1</string>
 	<string name="accessibility_heading_2">Überschrift 2</string>
 	<string name="accessibility_onboarding_finish_button_disabled_description">Fertig Schaltfläche: Einwilligungserklärung nicht zugestimmt</string>
@@ -68,7 +69,7 @@
 	<string name="onboarding_headline_7">Grenzüberschreitende Nutzung</string>
 	<string name="onboarding_copy_7_1">Im Fall einer bestätigten Infektion ist die</string>
 	<string name="onboarding_copy_7_2">Warnung über Grenzen hinweg</string>
-	<string name="onboarding_copy_7_3">möglich.\nKontakte aus anderen EU-Ländern können anonym über die App gewarnt werden beziehungsweise Sie im Infetionsfall warnen.</string>
+	<string name="onboarding_copy_7_3">möglich.\nKontakte aus anderen EU-Ländern können anonym über die App gewarnt werden beziehungsweise Sie im Infektionsfall warnen.</string>
 	<string name="onboarding_copy_7_img">Bild: Benachrichtigungen und Warnungen von Kontakten in ganz Europa</string>
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
@@ -214,7 +215,7 @@
 	<string name="handshake_dialog_disclaimer">Haben Sie noch weitere Fragen zum manuellen Handshake haben, finden Sie in den FAQs weitere Informationen.</string>
 	<string name="handshake_dialog_faq">Zu den FAQs</string>
 	<string name="handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
+	<string name="handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 2 Meter Abstand.</string>
 	<string name="automatic_handshake_dialog_title">So funktioniert es</string>
 	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und aktivieren Sie Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_2">Ihr Gerät kann über Bluetooth Zufalls-IDs mit anderen App-Nutzern austauschen.</string>
@@ -223,7 +224,7 @@
 	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Bluetooth aktiviert ist.</string>
 	<string name="automatic_handshake_dialog_faq">Zu den FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
-	<string name="automatic_handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 1 Meter Abstand.</string>
+	<string name="automatic_handshake_dialog_disclaimer2">Aus medizinischen Gründen: Diese App funktioniert auch auf Distanz. Bitte halten Sie mindestens 2 Meter Abstand.</string>
 	<string name="main_automatic_handshake_information_hint">Wie funktioniert es?</string>
 	<string name="main_automatic_handshake_switch_title">Risiko-Ermittlung</string>
 	<string name="main_automatic_handshake_switch_on">aktiv</string>
@@ -249,6 +250,7 @@
 	<string name="certificate_personal_data_headline">Bitte geben Sie Ihre Daten ein</string>
 	<string name="certificate_personal_data_title">Status melden</string>
 	<string name="certificate_personal_data_description">Wir werden nach dem nächsten Schritt Ihre engen Kontakte der letzten %s Tage anonym informieren. Wir validieren Ihre Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
+	<string name="certificate_personal_data_date_headline">Seit wann haben Sie ein positives Testergebnis?</string>
 	<string name="certificate_personal_data_mobile_number_label">Mobilfunknummer (+43...)</string>
 	<string name="certificate_personal_data_next_button">Weiter</string>
 	<string name="certificate_personal_data_input_error">Mobilfunknummer</string>
@@ -293,9 +295,7 @@
 	<string name="sickness_certificate_quarantine_guidelines_title">Was soll ich tun?</string>
 	<string name="sickness_certificate_quarantine_guidelines_headline">Verhalten im Krankheitsfall</string>
 	<string name="sickness_certificate_quarantine_guideline_description">Sie haben Ihre ärztlich bestätigte Corona-Infektion gemeldet.</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first">Bitte begeben Sie sich umgehend und bis zum</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_2">in Quarantäne.</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_3">\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first"><b>Bitte begeben Sie sich umgehend in Quarantäne bis Sie wieder gesund sind.</b>\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_second"><b>Halten Sie räumlichen Abstand</b> von gesunden MitbewohnerInnen.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_third">Überwachen Sie Ihren Gesundheitszustand und <b>kontrollieren Sie täglich 2x Ihre Körpertemperatur</b>.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_fourth">Bitten Sie Ihre Nachbarn oder Angehörige Ihre Versorgung zu übernehmen. Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter</string>
@@ -307,7 +307,7 @@
 	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Ihr Arzt entscheidet, wann Sie die Quarantäne beenden können.</string>
 	<string name="sickness_certificate_guidelines_content_description">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 	<string name="sickness_certificate_guidelines_headline">Begeben Sie sich in Quarantäne</string>
-	<string name="sickness_certificate_guidelines_first">Bitte beobachten Sie Ihren Gesundheitszustand in den nächsten Tagen</string>
+	<string name="sickness_certificate_guidelines_first">Bitte begeben Sie sich in Quarantäne und beobachten Sie Ihren Gesundheitszustand in den nächsten Tagen</string>
 	<string name="sickness_certificate_guidelines_first_2">bis zum</string>
 	<string name="sickness_certificate_guidelines_first_3">besonders gründlich und</string>
 	<string name="sickness_certificate_guidelines_first_4">kontrollieren Sie täglich Ihre Körpertemperatur.</string>
@@ -338,15 +338,20 @@
 	<!-- Start Screen Notification (user is infected) -->
 	<string name="sickness_certificate_attest_headline">Achtung</string>
 	<string name="sickness_certificate_attest_description">Sie haben Ihre ärztliche bestätigte Corona-Infektion gemeldet.</string>
-	<string name="sickness_certificate_attest_description_2">Bitte begeben Sie sich </string>
-	<string name="sickness_certificate_attest_description_3">bis zum</string>
+	<string name="sickness_certificate_attest_description_2">Bitte begeben Sie sich,</string>
+	<string name="sickness_certificate_attest_description_3">bis Sie gesund sind,</string>
+	<string name="sickness_certificate_attest_description_5">bis zum</string>
 	<string name="sickness_certificate_attest_description_4">in Quarantäne.</string>
 	<string name="sickness_certificate_attest_button">Was soll ich tun?</string>
-	<string name="sickness_certificate_attest_revoke">Gesund melden</string>
+	<string name="sickness_certificate_attest_revoke">Krankmeldung zurückziehen</string>
 	<string name="sickness_certificate_attest_info_update">Benachrichtigen Sie Personen, mit denen Sie am Tag Ihrer Meldung einen digitalen Handshake ausgetauscht haben.</string>
 	<string name="sickness_certificate_attest_update">Weitere Kontakte benachrichtigen</string>
 
 	<!-- Start Menu -->
+	<string name="sickness_certificate_attest_report_healthy">Gesund melden</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_headline">Quarantäne beenden</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_description">Wenn Sie gesund sind und Ihr Quarantäne-Bescheid abgelaufen ist, können Sie die Quarantäne in der App über den Button unten beenden.</string>
+	<string name="sickness_certificate_attest_report_healthy_dialog_button">Quarantäne beenden</string>
 	<string name="start_menu">Menü öffnen</string>
 	<string name="start_menu_close">Menü schließen</string>
 	<string name="start_menu_headline_1">Info</string>
@@ -370,6 +375,7 @@
 	<string name="start_menu_item_3_1">Handshake manuell starten</string>
 	<string name="start_menu_item_3_2">Symptome abprüfen</string>
 	<string name="start_menu_item_3_3">Ärztliche Bestätigung melden</string>
+	<string name="start_menu_item_3_4">Corona-Verdacht melden</string>
 	<string name="start_menu_item_revoke_sickness">Krankmeldung zurückziehen</string>
 
 	<!-- History -->
@@ -383,6 +389,8 @@
 	<string name="contact_history_number_format">#%d</string>
 	<string name="contact_history_no_records">Keine Begegnungen gespeichert.</string>
 	<string name="contact_history_time_interval">%s – %s</string>
+	<string name="self_testing_symptoms_source_text">Quelle</string>
+	<string name="self_testing_symptoms_source_link">https://www.sozialministerium.at/Themen/Gesundheit/Uebertragbare-Krankheiten/Infektionskrankheiten-A-Z/Neuartiges-Coronavirus.html</string>
 	<string name="questionnaire_compliance_headline">Einwilligungserklärung </string>
 	<string name="questionnaire_compliance_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (eindeutige Kennzahl [ID], meine Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet. Darüber hinaus wird mein öffentlicher Schlüssel mit meinen Intensiv-Kontakte zum Zweck der Warnung vor einer Infektionsgefährdung sowie zur späteren Entwarnung oder Bestätigung der Infektion ausgetauscht. </string>
 	<string name="questionnaire_compliance_approval">Ja, ich stimme der Datenverarbeitung zu.</string>
@@ -397,7 +405,7 @@
 	<string name="questionnaire_hint_headline_2">Bleiben Sie gesund und helfen Sie, andere zu schützen.</string>
 	<string name="questionnaire_hint_description">In der aktuellen Situation ist es wichtig, einige Grundregeln zu befolgen. <bred>Schau auf dich, schau auf mich.</bred></string>
 	<string name="questionnaire_hint_recommendation_1">Regelmäßig Hände waschen: mit Seife, lauwarmem Wasser und mindestens 20 Sekunden lang.</string>
-	<string name="questionnaire_hint_recommendation_2">Halten Sie mindestens 1-2 Meter Abstand zu anderen Menschen.</string>
+	<string name="questionnaire_hint_recommendation_2">Halten Sie mindestens 2 Meter Abstand zu anderen Menschen.</string>
 	<string name="questionnaire_hint_recommendation_3">Halten Sie Kontakt über elektronische Medien.</string>
 	<string name="questionnaire_hint_recommendation_4">Wenn Sie sich krank fühlen, bleiben Sie bitte zuhause.</string>
 	<string name="questionnaire_examine_title">Symptome prüfen</string>
@@ -546,6 +554,9 @@
 	<string name="contacts_suspicion_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde der</string>
 	<string name="contacts_suspicion_one_case_description_2">Verdacht auf eine Corona-Infektion</string>
 	<string name="contacts_suspicion_one_case_description_3">festgestellt.</string>
+	<string name="contacts_suspicion_one_case_description_4">Bitte begeben Sie sich </string>
+	<string name="contacts_suspicion_one_case_description_5">bis zum</string>
+	<string name="contacts_suspicion_one_case_description_6">in Quarantäne.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Achtung</string>
 	<string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>

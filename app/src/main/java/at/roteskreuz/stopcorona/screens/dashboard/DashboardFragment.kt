@@ -15,6 +15,7 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.showPrivacyUpdateFragment
+import at.roteskreuz.stopcorona.screens.dashboard.report_healthy.showReportHealthyFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.mandatory_update.showMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -155,6 +156,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 } else {
                     startReportingActivity(MessageType.Revoke.Sickness)
                 }
+            },
+            onReportHealthySicknessClick = {
+                showReportHealthyFragment()
             },
             onUploadMissingExposureKeysClick = { disabled, uploadMissingExposureKeys ->
                 if (disabled) {

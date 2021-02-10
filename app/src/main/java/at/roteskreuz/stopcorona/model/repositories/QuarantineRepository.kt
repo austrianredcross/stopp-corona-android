@@ -35,6 +35,16 @@ interface QuarantineRepository {
     val dateOfFirstMedicalConfirmation: ZonedDateTime?
 
     /**
+     * Get date of last red contact.
+     */
+    val dateOfLastRedContact: Instant?
+
+    /**
+     * Get date of last yellow contact.
+     */
+    val dateOfLastYellowContact: Instant?
+
+    /**
      * Indicator if the user was in yellow state before turning red.
      */
     val hasSelfDiagnoseBackup: Boolean
@@ -201,14 +211,14 @@ class QuarantineRepositoryImpl(
     private var dateOfLastSelfDiagnoseBackup: ZonedDateTime?
         by preferences.nullableZonedDateTimeSharedPreferencesProperty(PREF_DATE_OF_LAST_SELF_DIAGNOSE_BACKUP)
 
-    private var dateOfLastRedContact: Instant?
+    override var dateOfLastRedContact: Instant?
         by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_RED_CONTACT
         )
 
     private val dateOfLastRedContactObservable = preferences.observeNullableInstant(PREF_DATE_OF_LAST_RED_CONTACT).shareReplayLast()
 
-    private var dateOfLastYellowContact: Instant?
+    override var dateOfLastYellowContact: Instant?
         by preferences.nullableInstantSharedPreferencesProperty(
             PREF_DATE_OF_LAST_YELLOW_CONTACT
         )
@@ -286,8 +296,7 @@ class QuarantineRepositoryImpl(
                 val nextUpdateNeeded = listOfNotNull(
                     newState.byRedWarning,
                     newState.byYellowWarning,
-                    newState.bySelfYellowDiagnosis,
-                    newState.bySelfRedDiagnosis
+                    newState.bySelfYellowDiagnosis
                 ).min()
                 // Schedule recalculation of quarantine state
                 quarantineStateNeedsTimeBasedUpdateEventSubject.setNextEvent(nextUpdateNeeded)
@@ -304,6 +313,13 @@ class QuarantineRepositoryImpl(
      * Logic of making quarantine status by prerequisites.
      */
     private fun QuarantinePrerequisitesHolder.toQuarantineStatus(): QuarantineStatus {
+        /**
+         * Own health state is Red.
+         * Quarantine never ends.
+         */
+        if (medicalConfirmationFirstDateTime != null) {
+            return QuarantineStatus.Jailed.Forever
+        }
 
         val redWarningQuarantinedHours = configuration.redWarningQuarantine?.toLong()
             .safeMap("redWarningQuarantine is null", defaultValue = TimeUnit.DAYS.toHours(14L))
@@ -325,10 +341,7 @@ class QuarantineRepositoryImpl(
         // Quarantine end in diagnose time + 7 days
         val selfYellowDiagnoseQuarantineUntil = selfDiagnoseLastDateTime?.plusHours(selfDiagnoseQuarantinedHours)?.afterOrNull(now)
 
-        // Quarantine end in diagnose time + 14 days
-        val selfRedDiagnoseQuarantineUntil = medicalConfirmationFirstDateTime?.plusHours(redWarningQuarantinedHours)?.afterOrNull(now)
-
-        val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfYellowDiagnoseQuarantineUntil, selfRedDiagnoseQuarantineUntil)
+        val quarantinedUntil = listOfNotNull(redWarningQuarantineUntil, yellowWarningQuarantineUntil, selfYellowDiagnoseQuarantineUntil)
             .max()
 
         /**
@@ -338,7 +351,6 @@ class QuarantineRepositoryImpl(
             QuarantineStatus.Jailed.Limited(
                 end = quarantinedUntil,
                 bySelfYellowDiagnosis = selfYellowDiagnoseQuarantineUntil,
-                bySelfRedDiagnosis = selfRedDiagnoseQuarantineUntil,
                 byRedWarning = redWarningQuarantineUntil,
                 byYellowWarning = yellowWarningQuarantineUntil
             )
@@ -575,7 +587,7 @@ sealed class QuarantineStatus {
          * Quarantine ends at [end] time.
          * After this time user's state is [Free].
          */
-        data class Limited(val end: ZonedDateTime, val bySelfYellowDiagnosis: ZonedDateTime?, val bySelfRedDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
+        data class Limited(val end: ZonedDateTime, val bySelfYellowDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
             val byYellowWarning: ZonedDateTime?) :
             Jailed() {
 

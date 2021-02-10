@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
@@ -14,6 +16,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.base.dialog.GeneralErrorDialog
+import at.roteskreuz.stopcorona.screens.base.dialog.datepicker.DatePickerFragmentDialog
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -22,11 +25,17 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.onViewReady
 import at.roteskreuz.stopcorona.utils.daysTo
+import at.roteskreuz.stopcorona.utils.format
 import at.roteskreuz.stopcorona.utils.view.applyText
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.android.synthetic.main.fragment_questionnaire_report.*
 import kotlinx.android.synthetic.main.fragment_reporting_personal_data.*
+import kotlinx.android.synthetic.main.fragment_reporting_personal_data.datePicker
+import kotlinx.android.synthetic.main.fragment_reporting_personal_data.scrollViewContainer
+import kotlinx.android.synthetic.main.fragment_reporting_personal_data.transparentAppBar
+import kotlinx.android.synthetic.main.fragment_reporting_personal_data.txtDescription
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.threeten.bp.ZonedDateTime
 
@@ -70,6 +79,14 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
         txtTitle.contentDescription = getString(R.string.certificate_personal_data_title) + getString(R.string.accessibility_heading_1)
         txtProgress.text = getString(R.string.certificate_personal_progress_label, CURRENT_SCREEN, TOTAL_NUMBER_OF_SCREENS)
 
+
+
+        datePicker.setOnClickListener{
+            val newFragment =
+                DatePickerFragmentDialog()
+            fragmentManager?.let { newFragment.show(it, DatePickerFragmentDialog::class.java.name) }
+        }
+
         disposables += viewModel.observeMessageType()
             .observeOnMainThread()
             .subscribe { messageType ->
@@ -88,6 +105,29 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
                             getString(R.string.certificate_personal_data_description, days.toString())
                         } else {
                             getString(R.string.certificate_personal_data_description, "2")
+                        }
+                        if (messageType is MessageType.InfectionLevel.Red) {
+                            dateContainer.visibility = VISIBLE
+
+                            disposables += viewModel.observeDateOfInfection()
+                                .observeOnMainThread()
+                                .subscribe { date ->
+                                    date.dateOfInfection?.let {
+                                        datePicker.text = if (date.dateOfInfection.dayOfMonth == ZonedDateTime.now().dayOfMonth) {
+                                            getString(R.string.general_today)
+                                        } else {
+                                            date.dateOfInfection.format("EEEE, d. MMM y")
+                                        }
+                                        val reportContactsDate = date.dateOfInfection.minusDays(2)
+                                        val days = reportContactsDate.daysTo(ZonedDateTime.now())
+                                        txtDescription.text = getString(R.string.certificate_personal_data_description, days.toString())
+                                    } ?: run {
+                                        // init date of infection with today
+                                        viewModel.setDateOfInfection(ZonedDateTime.now())
+                                    }
+                                }
+                        } else {
+                            dateContainer.visibility = GONE
                         }
                     }
                 }
@@ -191,6 +231,7 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
     }
 
     override fun overrideOnBackPressed(): Boolean {
+        viewModel.goBack()
         activity?.finish()
         return true // the changing of fragments is managing parent activity
     }
