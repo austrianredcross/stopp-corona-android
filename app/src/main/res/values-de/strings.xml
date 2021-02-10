@@ -296,9 +296,7 @@
 	<string name="sickness_certificate_quarantine_guidelines_title">Was soll ich tun?</string>
 	<string name="sickness_certificate_quarantine_guidelines_headline">Verhalten im Krankheitsfall</string>
 	<string name="sickness_certificate_quarantine_guideline_description">Sie haben Ihre ärztlich bestätigte Corona-Infektion gemeldet.</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first">Bitte begeben Sie sich umgehend und bis zum</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_2">in Quarantäne.</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_3">\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first"><b>Bitte begeben Sie sich umgehend in Quarantäne bis Sie wieder gesund sind.</b>\n\nMeiden Sie auf dem Weg nach Hause möglichst öffentliche Verkehrsmittel und den Kontakt zu anderen Menschen.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_second"><b>Halten Sie räumlichen Abstand</b> von gesunden MitbewohnerInnen.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_third">Überwachen Sie Ihren Gesundheitszustand und <b>kontrollieren Sie täglich 2x Ihre Körpertemperatur</b>.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_fourth">Bitten Sie Ihre Nachbarn oder Angehörige Ihre Versorgung zu übernehmen. Wenn das nicht möglich ist, hilft Ihnen gerne das <b>Team Österreich</b> unter</string>
@@ -341,8 +339,9 @@
 	<!-- Start Screen Notification (user is infected) -->
 	<string name="sickness_certificate_attest_headline">Achtung</string>
 	<string name="sickness_certificate_attest_description">Sie haben Ihre ärztliche bestätigte Corona-Infektion gemeldet.</string>
-	<string name="sickness_certificate_attest_description_2">Bitte begeben Sie sich </string>
-	<string name="sickness_certificate_attest_description_3">bis zum</string>
+	<string name="sickness_certificate_attest_description_2">Bitte begeben Sie sich,</string>
+	<string name="sickness_certificate_attest_description_3">bis Sie gesund sind,</string>
+	<string name="sickness_certificate_attest_description_5">bis zum</string>
 	<string name="sickness_certificate_attest_description_4">in Quarantäne.</string>
 	<string name="sickness_certificate_attest_button">Was soll ich tun?</string>
 	<string name="sickness_certificate_attest_revoke">Krankmeldung zurückziehen</string>

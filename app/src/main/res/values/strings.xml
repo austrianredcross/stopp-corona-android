@@ -297,9 +297,7 @@
 	<string name="sickness_certificate_quarantine_guidelines_title">What should I do?</string>
 	<string name="sickness_certificate_quarantine_guidelines_headline">Behaviour in case of illness</string>
 	<string name="sickness_certificate_quarantine_guideline_description">You have reported your medically confirmed corona infection.</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first">Please go to quarantine immediately and until</string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_2"></string>
-	<string name="sickness_certificate_quarantine_guidelines_steps_first_3">\n\nAvoid public transport and contact with other people on the way home.</string>
+	<string name="sickness_certificate_quarantine_guidelines_steps_first"><b>Please quarantine yourself immediately until you are healthy again.</b>\n\nAvoid public transport and contact with other people on the way home.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_second"><b>Keep a physical distance</b> from healthy roommates.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_third">Monitor your health and <b>check your body temperature twice a day</b>.</string>
 	<string name="sickness_certificate_quarantine_guidelines_steps_fourth">Ask your neighbors or relatives to take care of you. If that is not possible, the <b>Team Österreich</b> will be happy to help you on</string>
@@ -343,7 +341,8 @@
 	<string name="sickness_certificate_attest_headline">Attention</string>
 	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection..</string>
 	<string name="sickness_certificate_attest_description_2">Please go into qurantine</string>
-	<string name="sickness_certificate_attest_description_3">until</string>
+	<string name="sickness_certificate_attest_description_3">until you are healthy</string>
+	<string name="sickness_certificate_attest_description_5">until</string>
 	<string name="sickness_certificate_attest_description_4"></string>
 	<string name="sickness_certificate_attest_button">What should I do?</string>
 	<string name="sickness_certificate_attest_revoke">Revoke sick note</string>

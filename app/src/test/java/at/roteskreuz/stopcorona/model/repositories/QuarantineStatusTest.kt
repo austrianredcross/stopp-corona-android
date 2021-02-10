@@ -20,7 +20,7 @@ class QuarantineStatusTest {
     @Test
     fun `days until end of quarantine today needs to be 1`() {
         val endsToday = ZonedDateTime.now().plusHours(1)
-        val limited = QuarantineStatus.Jailed.Limited(end = endsToday, bySelfYellowDiagnosis = null, bySelfRedDiagnosis = null, byRedWarning = null, byYellowWarning = endsToday)
+        val limited = QuarantineStatus.Jailed.Limited(end = endsToday, bySelfYellowDiagnosis = null, byRedWarning = null, byYellowWarning = endsToday)
 
         assertEquals(limited.daysUntilEnd(), 1)
     }
@@ -28,7 +28,7 @@ class QuarantineStatusTest {
     @Test
     fun `7 days of quarantine actually show as 8 days`() {
         val endsToday = ZonedDateTime.now().plusDays(7)
-        val limited = QuarantineStatus.Jailed.Limited(end = endsToday, bySelfYellowDiagnosis = null, bySelfRedDiagnosis = null, byRedWarning = null, byYellowWarning = endsToday)
+        val limited = QuarantineStatus.Jailed.Limited(end = endsToday, bySelfYellowDiagnosis = null, byRedWarning = null, byYellowWarning = endsToday)
 
         assertEquals(limited.daysUntilEnd(), 8)
     }
