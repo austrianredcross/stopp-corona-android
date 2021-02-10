@@ -385,6 +385,8 @@
 	<string name="contact_history_number_format">#%d</string>
 	<string name="contact_history_no_records">No encounters saved.</string>
 	<string name="contact_history_time_interval">%s - %s</string>
+	<string name="self_testing_symptoms_source_text">Source</string>
+	<string name="self_testing_symptoms_source_link">https://www.sozialministerium.at/Themen/Gesundheit/Uebertragbare-Krankheiten/Infektionskrankheiten-A-Z/Neuartiges-Coronavirus.html</string>
 	<string name="questionnaire_compliance_headline">Declaration of consent</string>
 	<string name="questionnaire_compliance_description_1">I agree that the Austrian Red Cross (ÖRK) may process my personal data (unique identification number [ID], my telephone number, and any suspicion and reporting of my COVID-19 condition [= health data]) for the purpose of achieving a rapid interruption of the corona infection chain. In addition, my public key will be shared with my intensive contacts for the purpose of issuing a warning of a potential danger of infection, as well as a subsequent all-clear notification or a confirmation of such infection. </string>
 	<string name="questionnaire_compliance_approval">Yes, I consent to the processing of data.</string>

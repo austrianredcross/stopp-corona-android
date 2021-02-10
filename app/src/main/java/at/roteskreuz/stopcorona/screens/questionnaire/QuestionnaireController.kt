@@ -1,18 +1,21 @@
 package at.roteskreuz.stopcorona.screens.questionnaire
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.view.Gravity
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
 import at.roteskreuz.stopcorona.model.entities.configuration.Decision
-import at.roteskreuz.stopcorona.screens.base.epoxy.EmptySpaceModel_
-import at.roteskreuz.stopcorona.screens.base.epoxy.HeadlineH1Model_
-import at.roteskreuz.stopcorona.screens.base.epoxy.HeadlineH2Model_
+import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.QuestionnaireAnswerModel_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.QuestionnaireRadioGroupModel_
 import at.roteskreuz.stopcorona.screens.questionnaire.epoxy.questionnairePage
+import at.roteskreuz.stopcorona.screens.webView.WebViewWithAssetsResourcesFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.skeleton.core.utils.rawDimen
+import at.roteskreuz.stopcorona.utils.getClickableBoldUrlSpan
+import at.roteskreuz.stopcorona.utils.string
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 
@@ -71,16 +74,31 @@ class QuestionnaireController(
                 }
             }
 
-            if(answerList.isNotEmpty()) {
+            if (answerList.isNotEmpty()) {
                 QuestionnaireRadioGroupModel_(answerList)
                     .id("question_answer_group_$questionIndex")
                     .addTo(questionPageContent)
             }
 
-            EmptySpaceModel_()
-                .id(modelCountBuiltSoFar)
-                .height(32)
-                .addTo(questionPageContent)
+            if (questionIndex == 1) {
+                LinkModel_()
+                    .id("question_source")
+                    .text(R.string.self_testing_symptoms_source_text)
+                    .link(context.getString(R.string.self_testing_symptoms_source_link))
+                    .imageRes(R.drawable.ic_external_link)
+                    .imageDesc(context.getString(R.string.start_menu_item_external_link))
+                    .addTo(questionPageContent)
+
+                EmptySpaceModel_()
+                    .id(modelCountBuiltSoFar)
+                    .height(16)
+                    .addTo(questionPageContent)
+            } else {
+                EmptySpaceModel_()
+                    .id(modelCountBuiltSoFar)
+                    .height(32)
+                    .addTo(questionPageContent)
+            }
 
             questionnairePage(onEnterPage, questionPageContent) {
                 id("question_group_$questionIndex")
