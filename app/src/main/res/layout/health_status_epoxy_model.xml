@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardViewContainer"
@@ -80,28 +81,39 @@
             android:layout_height="1dp"
             android:layout_marginVertical="16dp"
             android:background="@color/white_50"
-            app:layout_constraintBottom_toTopOf="@+id/txtActionButton"
+            app:layout_constraintBottom_toTopOf="@+id/actionButtonContainer"
             app:layout_constraintTop_toBottomOf="@id/txtDescription2Container" />
 
-        <TextView
-            android:id="@+id/txtActionButton"
-            style="@style/AppTheme.Copy"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/actionButtonContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/separator"
-            tools:text="Begeben Sie sich in Quarantäne" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/separator">
 
-        <ImageView
-            android:id="@+id/imgChevron"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:rotation="180"
-            android:src="@drawable/ic_back_white"
-            app:layout_constraintBottom_toBottomOf="@id/txtActionButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/txtActionButton" />
+            <TextView
+                android:id="@+id/txtActionButton"
+                style="@style/AppTheme.Copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Begeben Sie sich in Quarantäne" />
+
+            <ImageView
+                android:id="@+id/imgChevron"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:rotation="180"
+                app:layout_constraintBottom_toBottomOf="@id/txtActionButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/txtActionButton"
+                android:src="@drawable/ic_back_white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

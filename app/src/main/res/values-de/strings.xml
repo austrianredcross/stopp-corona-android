@@ -310,7 +310,7 @@
 	<string name="sickness_certificate_guidelines_content_stay_by_doctor">Ihr Arzt entscheidet, wann Sie die Quarantäne beenden können.</string>
 	<string name="sickness_certificate_guidelines_content_description">Nutzen Sie auf dem Weg möglichst keine öffentlichen Verkehrsmittel und meiden Sie Kontakt mit Mitmenschen.</string>
 	<string name="sickness_certificate_guidelines_headline">Begeben Sie sich in Quarantäne</string>
-	<string name="sickness_certificate_guidelines_first">Bitte beobachten Sie Ihren Gesundheitszustand in den nächsten Tagen</string>
+	<string name="sickness_certificate_guidelines_first">Bitte begeben Sie sich in Quarantäne und beobachten Sie Ihren Gesundheitszustand in den nächsten Tagen</string>
 	<string name="sickness_certificate_guidelines_first_2">bis zum</string>
 	<string name="sickness_certificate_guidelines_first_3">besonders gründlich und</string>
 	<string name="sickness_certificate_guidelines_first_4">kontrollieren Sie täglich Ihre Körpertemperatur.</string>
@@ -556,6 +556,9 @@
 	<string name="contacts_suspicion_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde der</string>
 	<string name="contacts_suspicion_one_case_description_2">Verdacht auf eine Corona-Infektion</string>
 	<string name="contacts_suspicion_one_case_description_3">festgestellt.</string>
+	<string name="contacts_suspicion_one_case_description_4">Bitte begeben Sie sich </string>
+	<string name="contacts_suspicion_one_case_description_5">bis zum</string>
+	<string name="contacts_suspicion_one_case_description_6">in Quarantäne.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Achtung</string>
 	<string name="contacts_confirmed_multiple_case_description">Bei %d Ihrer Kontakte wurde eine Corona-Infektion bestätigt.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">Bei %d Ihrer Kontakte wurde eine Corona-</string>
