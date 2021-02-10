@@ -211,17 +211,17 @@ fun Context.getClickableSpan(
  * @param insertTrailingSpace inserts a trailing space behind the span
  */
 fun Context.getClickableUrlSpan(
-    @StringRes textRes: Int,
+    @StringRes textRes: Int?,
     insertLeadingSpace: Boolean = true,
     insertTrailingSpace: Boolean = true,
     underline: Boolean = false,
-    url: String
+    url: String?
 ): SpannableString {
 
     val builder = SpannableStringBuilder()
     builder.append(getSpace(insertLeadingSpace))
 
-    val spannable = SpannableString(getString(textRes))
+    val spannable = SpannableString(textRes?.let { getString(it) })
 
     val clickableSpan = object : URLSpan(url) {
 

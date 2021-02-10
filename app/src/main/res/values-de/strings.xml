@@ -384,6 +384,8 @@
 	<string name="contact_history_number_format">#%d</string>
 	<string name="contact_history_no_records">Keine Begegnungen gespeichert.</string>
 	<string name="contact_history_time_interval">%s – %s</string>
+	<string name="self_testing_symptoms_source_text">Quelle</string>
+	<string name="self_testing_symptoms_source_link">https://www.sozialministerium.at/Themen/Gesundheit/Uebertragbare-Krankheiten/Infektionskrankheiten-A-Z/Neuartiges-Coronavirus.html</string>
 	<string name="questionnaire_compliance_headline">Einwilligungserklärung </string>
 	<string name="questionnaire_compliance_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (eindeutige Kennzahl [ID], meine Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet. Darüber hinaus wird mein öffentlicher Schlüssel mit meinen Intensiv-Kontakte zum Zweck der Warnung vor einer Infektionsgefährdung sowie zur späteren Entwarnung oder Bestätigung der Infektion ausgetauscht. </string>
 	<string name="questionnaire_compliance_approval">Ja, ich stimme der Datenverarbeitung zu.</string>
