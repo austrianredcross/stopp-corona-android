@@ -10,7 +10,7 @@
 	<string name="general_self_recovered_channel_name">Einige haben Bekanntmachungen wiederhergestellt</string>
 	<string name="general_self_quarantine_channel_name">Quarantänemitteilungen</string>
 	<string name="general_automatic_bt_detection_channel_name">Automatische Benachrichtigungen zur Erkennung von Bluetooth-Geräten</string>
-	<string name="general_uploading_keys_channel_name">Hinweise zur Hochladen der eigenen Schlüssel</string>
+	<string name="general_uploading_keys_channel_name">Hinweise zum Hochladen der eigenen Schlüssel</string>
 	<string name="general_today">Heute</string>
 	<string name="general_continue">Weiter</string>
 	<string name="general_additional_information">Weitere Informationen</string>
@@ -22,7 +22,7 @@
 	<string name="accessibility_onboarding_finish_button_disabled_description">Fertig Schaltfläche: Einwilligungserklärung nicht zugestimmt</string>
 	<string name="accessibility_self_testing_next_button_disabled_description">Weiter Schaltfläche: Frage nicht beantwortet</string>
 	<string name="accessibility_certificate_report_status_button_disabled_description">Infektion bestätigen Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
-	<string name="accessibility_revoke_sickness_button_disabled_description">Entwarnung bestätigen Schaltfläce: Bitte bestätigen Sie Ihren Widerruf Ihrer Krankmeldung</string>
+	<string name="accessibility_revoke_sickness_button_disabled_description">Entwarnung bestätigen Schaltfläche: Bitte bestätigen Sie Ihren Widerruf Ihrer Krankmeldung</string>
 	<string name="accessibility_self_testing_report_status_button_disabled_description">Verdacht melden Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
 	<string name="accessibility_revokation_report_status_button_disabled_description">Infektions-Meldung zurückziehen Schaltfläche: Bitte bestätigen Sie, dass Sie die Angaben wahrheitsgemäß getätigt haben</string>
 
@@ -30,9 +30,9 @@
 	<string name="error_no_internet_title">Keine Internetverbindung</string>
 	<string name="error_no_internet_message">Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
 	<string name="error_server_title">Serverfehler</string>
-	<string name="error_server_message">Es ist etwas schief gegangen. Bitte versuche es später erneut.</string>
+	<string name="error_server_message">Es ist etwas schief gegangen. Bitte versuchen Sie es später erneut.</string>
 	<string name="error_unknown_title">Unbekannter Fehler</string>
-	<string name="error_unknown_message">Es ist ein unbekannter Fehler aufgetreten. Bitte versuche es später erneut.</string>
+	<string name="error_unknown_message">Es ist ein unbekannter Fehler aufgetreten. Bitte versuchen Sie es später erneut.</string>
 
 	<!-- Onboarding -->
 	<string name="onboarding_headline_1">Willkommen</string>
@@ -74,7 +74,7 @@
 	<string name="onboarding_next_button">Weiter</string>
 	<string name="onboarding_finish_button">Fertig</string>
 	<string name="onboarding_headline_6">Einwilligungserklärung </string>
-	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (zufällige Kennzahlen [=“zufalls-IDs“], Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet.</string>
+	<string name="onboarding_dataprivacy_description_1">Ich willige ein, dass das Österreichische Rote Kreuz (ÖRK) meine personenbezogenen Daten (zufällige Kennzahlen [=“Zufalls-IDs“], Telefonnummer, Verdachtserhebung und Meldung meiner COVID-19 Erkrankung [=Gesundheitsdaten]) zum Zweck der schnellen Unterbrechung der Corona-Infektionskette verarbeitet.</string>
 	<string name="onboarding_dataprivacy_approval">Ich stimme zu</string>
 	<string name="onboarding_dataprivacy_description_2_1">Meine Einwilligung kann ich jederzeit widerrufen, die automatische Kontaktaufnahme kann ich in der App ausschalten. Ein Widerruf lässt die Rechtmäßigkeit der Verarbeitung bis zum Widerruf unberührt.\n\nWeitere Informationen finden Sie in unserer</string>
 	<string name="onboarding_dataprivacy_description_2_2">Datenschutzinformation.</string>
@@ -105,7 +105,7 @@
 	<string name="main_microphone_explanation_dialog_description">Für den Digitalen Handshake wird geprüft, ob auch andere Smartphones in der Gegend den Handshake ausgelöst haben. Das funktioniert über Ultraschall. Deshalb kann es sein, dass Ihr Smartphone einen hörbaren Ton von sich gibt. Der Ton wird von anderen Smartphones mit dem Mikrofon aufgezeichnet und andersherum nutzt auch Ihr Smartphone das Mikrofon, um Töne der anderen Geräte wahrzunehmen. Aus diesem Grund wird der Zugriff auf das Mikrofon benötigt.</string>
 	<string name="main_microphone_explanation_dialog_do_not_show_again">Nicht wieder anzeigen</string>
 	<string name="main_status_update_headline">Status Update</string>
-	<string name="main_status_update_contact_sickness_not_confirmed_message">Bei Ihren Kontakten wurden eine oder mehrere Corona Infektionen gemeldet. \n\nBei Ihren Kontakten wurden ein oder mehrere Verdachte auf eine Corona-Infektion gemeldet.</string>
+	<string name="main_status_update_contact_sickness_not_confirmed_message">Bei Ihren Kontakten wurden eine oder mehrere Corona Infektionen gemeldet. \n\nBei Ihren Kontakten wurden ein oder mehrere Verdachtsfälle auf eine Corona-Infektion gemeldet.</string>
 	<string name="main_exposure_error_google_play_unavailable_title">Google Play Services ist nicht verfügbar</string>
 	<string name="main_exposure_error_google_play_unavailable_missing_message">Der Service fehlt.</string>
 	<string name="main_exposure_error_google_play_unavailable_updating_message">Der Service wird gerade aktualisiert.</string>
@@ -120,7 +120,7 @@
 	<string name="main_exposure_error_google_play_wrong_version_action_btn">Gehe zum Play Store</string>
 	<string name="main_exposure_error_bluetooth_not_supported_title">Bluetooth wird nicht unterstützt</string>
 	<string name="main_exposure_error_bluetooth_not_supported_message">Der Bluetooth-Adapter in diesem Gerät wird vom COVID-19-Framework für Kontaktbenachrichtigungen nicht unterstützt.</string>
-	<string name="main_exposure_error_battery_optimizations_not_ignored_title">Batterie-Einstellungen blockiert die Anwendung</string>
+	<string name="main_exposure_error_battery_optimizations_not_ignored_title">Batterie-Einstellungen blockieren die Anwendung</string>
 	<string name="main_exposure_error_battery_optimizations_not_ignored_message">Um sicherzustellen, dass das COVID-19-Framework nicht durch das System blockiert wird, muss die Anwendung auf der Liste der nicht batterieoptimierten Anwendungen stehen.</string>
 	<string name="main_exposure_error_battery_optimizations_not_ignored_action_btn">Weiter</string>
 	<string name="main_exposure_error_title">Fehler mit dem COVID-19-Framework für Expositionsbenachrichtigungen</string>
