@@ -194,6 +194,8 @@ class DebugDiagnosisKeysViewModel(
 
                 delay(1000)
 
+                diagnosisKeysRepository.addAndUpdateKeyRequestData()
+
                 exposureNotificationClient.provideDiagnosisKeys(arrayListOf(downloadedFile), exposureConfiguration, token)
                     .addOnCompleteListener {
                         exposureNotificationsTextSubject.onNext(
