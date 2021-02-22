@@ -552,6 +552,9 @@
 	<string name="contacts_confirmed_one_case_description">A</string>
 	<string name="contacts_confirmed_one_case_description_2">corona infection</string>
 	<string name="contacts_confirmed_one_case_description_3">has been detected in one or more of your contacts.</string>
+	<string name="contacts_confirmed_one_case_description_4">Please go into quarantine</string>
+	<string name="contacts_confirmed_one_case_description_5">until</string>
+	<string name="contacts_confirmed_one_case_description_6"></string>
 	<string name="contacts_suspicion_one_case_headline">Attention</string>
 	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a</string>
 	<string name="contacts_suspicion_one_case_description_2">suspected corona infection</string>

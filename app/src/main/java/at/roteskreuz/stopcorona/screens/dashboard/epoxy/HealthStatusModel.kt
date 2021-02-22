@@ -140,6 +140,8 @@ abstract class HealthStatusModel(
 
                     if (redContactsDetected) {
                         txtDescription2Container.visibility = VISIBLE
+                        actionButtonContainer.visibility = VISIBLE
+                        separator.visibility = VISIBLE
                         txtTitle.text =
                             context.string(R.string.contacts_confirmed_one_case_headline)
                         txtTitle.contentDescription =
@@ -153,11 +155,11 @@ abstract class HealthStatusModel(
                             append(context.getString(R.string.contacts_confirmed_one_case_description_3))
                         }
                         txtDescription2.text = SpannableStringBuilder().apply {
-                            append(context.getString(R.string.sickness_certificate_attest_description_2))
-                            append(context.getBoldSpan(R.string.sickness_certificate_attest_description_3))
+                            append(context.getString(R.string.contacts_confirmed_one_case_description_4))
+                            append(context.getBoldSpan(R.string.contacts_confirmed_one_case_description_5))
                             append(quarantinedSpannable)
                             append(" ")
-                            append(context.getString(R.string.sickness_certificate_attest_description_4))
+                            append(context.getString(R.string.contacts_confirmed_one_case_description_6))
                         }
                         txtActionButton.text = quarantineDayActionText
                         imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
@@ -179,6 +181,9 @@ abstract class HealthStatusModel(
                         }
                         if (healthStatusData.warningType.redContactsDetected.not()) {
                             txtDescription2Container.visibility = VISIBLE
+                            actionButtonContainer.visibility = VISIBLE
+                            separator.visibility = VISIBLE
+
                             txtDescription2.text = SpannableStringBuilder().apply {
                                 append(context.getString(R.string.contacts_suspicion_one_case_description_4))
                                 append(context.getBoldSpan(R.string.contacts_suspicion_one_case_description_5))
@@ -187,6 +192,7 @@ abstract class HealthStatusModel(
                                 append(context.getString(R.string.contacts_suspicion_one_case_description_6))
                             }
                         } else {
+                            txtDescription2Container.visibility = GONE
                             actionButtonContainer.visibility = GONE
                             separator.visibility = GONE
                         }
