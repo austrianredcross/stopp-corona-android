@@ -91,5 +91,10 @@
                 <action android:name="com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".model.services.ExposureMatchingService"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 </manifest>
