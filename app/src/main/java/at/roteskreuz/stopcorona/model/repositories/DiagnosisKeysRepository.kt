@@ -96,6 +96,11 @@ interface DiagnosisKeysRepository {
      */
     fun getKeyRequestCountLastWeek(): Int?
 
+    /**
+     * Adds the date of last key request and the number for updating the dashboard key request data.
+     */
+    fun addAndUpdateKeyRequestData()
+
 }
 
 class DiagnosisKeysRepositoryImpl(
@@ -381,24 +386,7 @@ class DiagnosisKeysRepositoryImpl(
 
                 sessionDao.insertFullSession(fullSession)
 
-                // Save the date of the request to calculate the number of requests in the last week and remove older dates
-                // Get string set, remove older dates, add a new date string and apply the set in preferences
-                // Workaround to add a value and not override it
-                val datesOfKeyRequest = preferences.getStringSet(PREF_DATES_OF_KEY_REQUESTS, mutableSetOf())
-
-                datesOfKeyRequest?.let {
-                    datesOfKeyRequest.forEach {date ->
-                        val time = Instant.ofEpochMilli(date.toLong())
-                        if (time.isBefore(Instant.now().minusDays(7))) {
-                            datesOfKeyRequest.remove(date)
-                        }
-                    }
-
-                    datesOfKeyRequest.add(Instant.now().toEpochMilli().toString())
-                    preferences.putAndApply(PREF_DATES_OF_KEY_REQUESTS, datesOfKeyRequest)
-                }
-
-                dateOfLastKeyRequest = ZonedDateTime.now()
+                addAndUpdateKeyRequestData()
 
                 startDiagnosisKeyMatching(fullBatchParts, token)
             } catch (e: Exception) {
@@ -408,6 +396,25 @@ class DiagnosisKeysRepositoryImpl(
                 downloadMessagesStateObserver.idle()
             }
         }
+    }
+
+    override fun addAndUpdateKeyRequestData() {
+        // Updated the last key request date and the number of key requests in the last week for the dashboard
+        val datesOfKeyRequest = preferences.getStringSet(PREF_DATES_OF_KEY_REQUESTS, mutableSetOf())
+
+        datesOfKeyRequest?.let {
+            datesOfKeyRequest.forEach {date ->
+                val time = Instant.ofEpochMilli(date.toLong())
+                if (time.isBefore(Instant.now().minusDays(7))) {
+                    datesOfKeyRequest.remove(date)
+                }
+            }
+
+            datesOfKeyRequest.add(Instant.now().toEpochMilli().toString())
+            preferences.putAndApply(PREF_DATES_OF_KEY_REQUESTS, datesOfKeyRequest)
+        }
+
+        dateOfLastKeyRequest = ZonedDateTime.now()
     }
 
     private suspend fun startDiagnosisKeyMatching(

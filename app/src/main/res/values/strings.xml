@@ -242,7 +242,7 @@
 	<string name="main_automatic_handshake_self_suspicion_headline">Suspicion reported</string>
 	<string name="main_automatic_handshake_self_infection_headline">Infection reported</string>
 	<string name="main_automatic_handshake_disabled_info">Please activate the digital handshake to identify risky contacts</string>
-	<string name="main_automatic_handshake_contact_checks">%s comparisons in the past 14 days</string>
+	<string name="main_automatic_handshake_contact_checks">%s comparisons in the past 7 days</string>
 	<string name="main_automatic_handshake_last_update">Latest update: %s</string>
 	<string name="main_automatic_handshake_last_contact_days">%s days have passed since your latest risk contact</string>
 	<string name="main_automatic_handshake_self_reported_info">Your contacts have been anonymously notified regarding the risk of an infection.</string>
@@ -551,6 +551,9 @@
 	<string name="contacts_confirmed_one_case_description">A</string>
 	<string name="contacts_confirmed_one_case_description_2">corona infection</string>
 	<string name="contacts_confirmed_one_case_description_3">has been detected in one or more of your contacts.</string>
+	<string name="contacts_confirmed_one_case_description_4">Please go into quarantine</string>
+	<string name="contacts_confirmed_one_case_description_5">until</string>
+	<string name="contacts_confirmed_one_case_description_6"></string>
 	<string name="contacts_suspicion_one_case_headline">Attention</string>
 	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a</string>
 	<string name="contacts_suspicion_one_case_description_2">suspected corona infection</string>

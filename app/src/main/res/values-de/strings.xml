@@ -550,6 +550,9 @@
 	<string name="contacts_confirmed_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde eine</string>
 	<string name="contacts_confirmed_one_case_description_2">Corona-Infektion</string>
 	<string name="contacts_confirmed_one_case_description_3">festgestellt.</string>
+	<string name="contacts_confirmed_one_case_description_4">Bitte begeben Sie sich </string>
+	<string name="contacts_confirmed_one_case_description_5">bis zum</string>
+	<string name="contacts_confirmed_one_case_description_6">in Quarantäne.</string>
 	<string name="contacts_suspicion_one_case_headline">Achtung</string>
 	<string name="contacts_suspicion_one_case_description">Bei einem oder mehrerer Ihrer Kontakte wurde der</string>
 	<string name="contacts_suspicion_one_case_description_2">Verdacht auf eine Corona-Infektion</string>

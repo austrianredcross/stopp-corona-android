@@ -178,6 +178,7 @@ class DebugDiagnosisKeysViewModel(
 
                 delay(1000)
 
+                diagnosisKeysRepository.addAndUpdateKeyRequestData()
                 try {
                     commonExposureClient.provideDiagnosisKeys(arrayListOf(downloadedFile), exposureConfiguration, token)
                     exposureNotificationsTextSubject.onNext("provided diagnosis keys successful with token $token")

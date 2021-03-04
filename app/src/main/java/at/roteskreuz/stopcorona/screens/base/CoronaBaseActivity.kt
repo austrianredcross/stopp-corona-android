@@ -10,7 +10,6 @@ import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.screens.debug.diagnosis_keys.startDebugDiagnosisKeysFragment
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.startDebugExposureNotificationsFragment
-import at.roteskreuz.stopcorona.screens.debug.scheduling.startDebugSchedulingObserverFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -93,10 +92,6 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
             }
             R.id.debugZeroDaysOfYellowQuarantine -> {
                 debugViewModel.quarantineYellowForZeroDays()
-                true
-            }
-            R.id.debugSchedulingObserver -> {
-                startDebugSchedulingObserverFragment()
                 true
             }
             else -> super.onOptionsItemSelected(item)
