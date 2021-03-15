@@ -289,7 +289,7 @@ class QuarantineRepositoryImpl(
         // Ignore dispoasable. We are a singleton.
         @Suppress("UNUSED_VARIABLE")
         val ignoredDisposable = quarantineStateObservable.subscribe { newState ->
-            if (oldState is QuarantineStatus.Jailed.Limited && newState is QuarantineStatus.Free) {
+            if ((oldState is QuarantineStatus.Jailed.Limited || oldState is QuarantineStatus.Jailed.Forever) && newState is QuarantineStatus.Free) {
                 setShowQuarantineEnd()
             }
             if (newState is QuarantineStatus.Jailed.Limited) {
