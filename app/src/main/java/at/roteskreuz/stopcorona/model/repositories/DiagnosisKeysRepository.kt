@@ -402,13 +402,15 @@ class DiagnosisKeysRepositoryImpl(
         val datesOfKeyRequest = preferences.getStringSet(PREF_DATES_OF_KEY_REQUESTS, mutableSetOf())
 
         datesOfKeyRequest?.let {
-            datesOfKeyRequest.forEach {date ->
+            val itr = datesOfKeyRequest.iterator()
+
+            while (itr.hasNext()) {
+                val date = itr.next()
                 val time = Instant.ofEpochMilli(date.toLong())
                 if (time.isBefore(Instant.now().minusDays(7))) {
-                    datesOfKeyRequest.remove(date)
+                    itr.remove()
                 }
             }
-
             datesOfKeyRequest.add(Instant.now().toEpochMilli().toString())
             preferences.putAndApply(PREF_DATES_OF_KEY_REQUESTS, datesOfKeyRequest)
         }
