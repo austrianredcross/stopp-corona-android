@@ -62,7 +62,7 @@
 
     <TextView
         android:id="@+id/txtUrgentNumber1"
-        style="@style/AppTheme.Copy.Accented"
+        style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -98,7 +98,7 @@
 
     <TextView
         android:id="@+id/txtUrgentNumber2"
-        style="@style/AppTheme.Copy.Accented"
+        style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -177,7 +177,7 @@
 
     <TextView
         android:id="@+id/txtConsultingFirstPhone"
-        style="@style/AppTheme.Copy.Accented"
+        style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -215,7 +215,7 @@
 
     <TextView
         android:id="@+id/txtConsultingSecondPhone"
-        style="@style/AppTheme.Copy.Accented"
+        style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -263,7 +263,7 @@
 
     <TextView
         android:id="@+id/txtConsultingThirdPhone"
-        style="@style/AppTheme.Copy.Accented"
+        style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"

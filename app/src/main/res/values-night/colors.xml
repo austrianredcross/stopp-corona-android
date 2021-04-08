@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary" override="true">@color/white</color>
-    <color name="primaryDark" override="true">@color/white</color>
+    <color name="primary" override="true">@color/black</color>
+    <color name="primaryDark" override="true">@color/black</color>
     <color name="accent" override="true">@color/rouge</color>
 
     <color name="transparent">@android:color/transparent</color>
     <color name="white">#ffffff</color>
-    <color name="white_50">#80ffffff</color>
-    <color name="rouge">#b9131b</color>
-    <color name="red">#fe0000</color>
+    <color name="rouge">#ff000b</color>
+    <color name="red">#d90009</color>
     <color name="black">#000000</color>
     <color name="brownGrey">#797979</color>
     <color name="gray_2">#979797</color>
@@ -22,24 +21,24 @@
     <color name="blue">#097ABF</color>
 
     <!-- General -->
-    <color name="text_link">@color/rouge</color>
+    <color name="text_link">@color/blue</color>
     <color name="text_default_heading1">@color/rouge</color>
-    <color name="text_default_heading2">@color/black</color>
-    <color name="text_circle_number">@color/rouge</color>
+    <color name="text_default_heading2">@color/rouge</color>
+    <color name="text_circle_number">@color/black</color>
     <color name="text_number">@color/rouge</color>
-    <color name="text_default_copy">@color/black</color>
+    <color name="text_default_copy">@color/white</color>
     <color name="text_default_input">@color/brownGrey</color>
-    <color name="text_default">@color/black</color>
+    <color name="text_default">@color/white</color>
     <color name="edit_text_hint">@color/brownGrey</color>
-    <color name="background">@color/white</color>
-    <color name="background_gray">@color/whiteGray</color>
+    <color name="background">@color/black</color>
+    <color name="background_gray">@color/black</color>
     <color name="dialog_stroke">#e5e5e5</color>
     <color name="bottom_sheet_stroke">#e5e5e5</color>
-    <color name="checkbox_tint">@color/black</color>
+    <color name="checkbox_tint">@color/white</color>
 
     <!-- Dashboard -->
-    <color name="dashboard_exposure_notification_error_card_background">@color/gray_3</color>
-    <color name="dashboard_separator">@color/white</color>
+    <color name="dashboard_exposure_notification_error_card_background">@color/darkGray</color>
+    <color name="dashboard_separator">@color/gray_4</color>
 
     <!-- Gallery -->
     <color name="gallery_indicator_active">@color/rouge</color>
@@ -52,27 +51,27 @@
 
     <!-- Button Type 1 -->
     <color name="button_type1_background_default">@color/rouge</color>
-    <color name="button_type1_background_pressed">@color/rouge</color>
+    <color name="button_type1_background_pressed">@color/white</color>
     <color name="button_type1_background_disabled">@color/gray_2</color>
-    <color name="button_type1_text_default">@color/whiteGray</color>
-    <color name="button_type1_text_pressed">@color/whiteGray</color>
-    <color name="button_type1_text_disabled">@color/whiteGray</color>
+    <color name="button_type1_text_default">@color/white</color>
+    <color name="button_type1_text_pressed">@color/black</color>
+    <color name="button_type1_text_disabled">@color/black</color>
 
     <!-- Button Type 2 -->
     <color name="button_type2_stroke">@color/rouge</color>
-    <color name="button_type2_background_default">@color/white</color>
-    <color name="button_type2_background_pressed">@color/white</color>
-    <color name="button_type2_background_disabled">@color/whiteGray</color>
+    <color name="button_type2_background_default">@color/black</color>
+    <color name="button_type2_background_pressed">@color/black</color>
+    <color name="button_type2_background_disabled">@color/black</color>
     <color name="button_type2_text_default">@color/rouge</color>
     <color name="button_type2_text_pressed">@color/rouge</color>
     <color name="button_type2_text_disabled">@color/brownGrey</color>
 
     <!-- Toolbar -->
-    <color name="toolbar_text">@color/black</color>
+    <color name="toolbar_text">@color/white</color>
 
     <!-- Headline 1 -->
-    <color name="headline1">@color/rouge</color>
-    <color name="headline2">@color/black</color>
+    <color name="headline1">@color/white</color>
+    <color name="headline2">@color/white</color>
 
     <!-- Provide certificate screens -->
     <color name="certificate_progress_complete_step">@color/rouge</color>
@@ -82,8 +81,8 @@
     <color name="questionnaire_self_monitoring_container">@color/whiteGray</color>
     <color name="questionnaire_self_monitoring_circle_tint">@color/white</color>
 
-    <color name="questionnaire_headline1">@color/black</color>
-    <color name="questionnaire_headline2">@color/rouge</color>
+    <color name="questionnaire_headline1">@color/white</color>
+    <color name="questionnaire_headline2">@color/white</color>
 
     <color name="switch_background_enabled">@color/blue</color>
     <color name="switch_background_paused">@color/tangerine</color>

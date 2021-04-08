@@ -24,7 +24,7 @@ abstract class HeadlineH1Model : BaseEpoxyModel<HeadlineH1Model.Holder>() {
 
     @ColorRes
     @EpoxyAttribute
-    var textColor: Int = R.color.rouge
+    var textColor: Int = R.color.headline1
 
     @EpoxyAttribute
     var marginHorizontal: Float = 24f // in dp

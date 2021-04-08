@@ -1,5 +1,6 @@
 package at.roteskreuz.stopcorona.screens.webView
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
@@ -8,6 +9,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import at.roteskreuz.stopcorona.BuildConfig
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
@@ -73,6 +76,15 @@ open class WebViewWithAssetsResourcesFragment : BaseFragment(R.layout.webview_fr
         super.onViewCreated(view, savedInstanceState)
 
         activity?.darkTextInStatusBar()
+
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    WebSettingsCompat.setForceDark(webView.settings,
+                        WebSettingsCompat.FORCE_DARK_ON)
+                }
+            }
+        }
 
         val language = getString(R.string.current_language)
         with(webView) {

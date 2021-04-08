@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
-                    android:background="@color/whiteGray"
+                    android:background="@color/background_gray"
                     app:layout_constraintTop_toBottomOf="@+id/txtDescription1">
 
                     <ImageView
@@ -397,7 +397,7 @@
 
                     <TextView
                         android:id="@+id/txtDescription6Phone"
-                        style="@style/AppTheme.Copy.Accented"
+                        style="@style/AppTheme.Copy.Accented2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
@@ -488,7 +488,7 @@
 
                 <TextView
                     android:id="@+id/txtConsultingFirstPhone"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -524,7 +524,7 @@
 
                 <TextView
                     android:id="@+id/txtConsultingSecondPhone"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -624,7 +624,7 @@
 
                 <TextView
                     android:id="@+id/txtAdvicePhone1Number"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -669,7 +669,7 @@
 
                 <TextView
                     android:id="@+id/txtAdvicePhone2Number"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -705,7 +705,7 @@
 
                 <TextView
                     android:id="@+id/txtAdvicePhone3Number"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
