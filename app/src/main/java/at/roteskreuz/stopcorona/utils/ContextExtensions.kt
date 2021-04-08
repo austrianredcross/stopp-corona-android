@@ -215,6 +215,7 @@ fun Context.getClickableUrlSpan(
     insertLeadingSpace: Boolean = true,
     insertTrailingSpace: Boolean = true,
     underline: Boolean = false,
+    color: Int = R.color.black,
     url: String?
 ): SpannableString {
 
@@ -233,7 +234,7 @@ fun Context.getClickableUrlSpan(
 
     spannable.setSpan(clickableSpan, 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     spannable.setSpan(
-        ForegroundColorSpan(color(R.color.black)),
+        ForegroundColorSpan(color(color)),
         0,
         spannable.length,
         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -285,7 +286,7 @@ fun Context.getClickableBoldUrlSpan(
     )
 
     if (colored) {
-        spannable.setSpan(ForegroundColorSpan(color(R.color.rouge)), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(ForegroundColorSpan(color(R.color.text_link)), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
 
     drawableRes?.let {

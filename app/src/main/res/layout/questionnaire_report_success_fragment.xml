@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:background="@color/whiteGray"
+                    android:background="@color/background_gray"
                     app:layout_constraintTop_toBottomOf="@+id/txtDescription1">
 
                     <TextView
@@ -219,7 +219,7 @@
 
                 <TextView
                     android:id="@+id/txtConsultingFirstPhone"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -255,7 +255,7 @@
 
                 <TextView
                     android:id="@+id/txtConsultingSecondPhone"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Copy.Accented2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"

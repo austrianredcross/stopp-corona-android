@@ -217,8 +217,8 @@ class DashboardController(
         emptySpace(modelCountBuiltSoFar, 40)
 
         separator{
-            id("separator_1")
-            color(R.color.whiteGray)
+            id(modelCountBuiltSoFar)
+            color(R.color.gray_4)
         }
 
         emptySpace(modelCountBuiltSoFar, 20)
@@ -262,8 +262,8 @@ class DashboardController(
         }
 
         separator{
-            id("separator_2")
-            color(R.color.whiteGray)
+            id(modelCountBuiltSoFar)
+            color(R.color.gray_4)
         }
 
         emptySpace(modelCountBuiltSoFar, 20)
@@ -275,7 +275,17 @@ class DashboardController(
 
         emptySpace(modelCountBuiltSoFar, 16)
 
+        separator{
+            id(modelCountBuiltSoFar)
+            color(R.color.dashboard_separator)
+        }
+
         buildShareAppCard()
+
+        separator{
+            id(modelCountBuiltSoFar)
+            color(R.color.dashboard_separator)
+        }
 
         if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness).not()
             && (ownHealthStatus is HealthStatusData.SicknessCertificate).not()
@@ -312,11 +322,16 @@ class DashboardController(
                         .height(40)
                 )
             ) {
-                backgroundColor(R.color.white)
+                backgroundColor(R.color.primary)
             }
         }
 
         if ((ownHealthStatus is HealthStatusData.SicknessCertificate).not()) {
+
+            separator{
+                id(modelCountBuiltSoFar)
+                color(R.color.dashboard_separator)
+            }
 
             emptySpace(modelCountBuiltSoFar, 24)
 

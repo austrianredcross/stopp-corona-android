@@ -68,7 +68,7 @@ class MenuController(
                 if (isNotEmpty()) {
                     verticalBackgroundModelGroup(this) {
                         id("vertical_model_group_functionality")
-                        backgroundColor(R.color.white)
+                        backgroundColor(R.color.primary)
                     }
                 }
             }
