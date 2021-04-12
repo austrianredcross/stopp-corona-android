@@ -221,7 +221,7 @@
 	<string name="automatic_handshake_dialog_description_1">Aktivieren Sie den automatischen Handshake in der App und aktivieren Sie Bluetooth.</string>
 	<string name="automatic_handshake_dialog_description_2">Ihr Gerät kann über Bluetooth Zufalls-IDs mit anderen App-Nutzern austauschen.</string>
 	<string name="automatic_handshake_dialog_description_3">Die Zufalls-IDs werden im COVID-19 Kontaktprotokoll Ihres Geräts gespeichert.</string>
-	<string name="automatic_handshake_dialog_description_4"><b>Kontakte sind erkrankt</b> \nMithilfe des Kontaktprotokolls können Sie benachrichtig werden, wenn Sie einen möglichen Kontakt mit dem Coronavirus hatten. Es wird eine Empfehlung in einem Algorithmus kalkuliert, wie lange Sie als Vorsichtsmaßnahme in Quarantäne bleiben sollten.\n<b>Sie sind erkrankt</b> \nEbenso können die Zufalls-IDs genutzt werden, um andere Nutzer zu benachrichtigen, sollten Sie eine mögliche Infektion melden.</string>
+	<string name="automatic_handshake_dialog_description_4"><b>Kontakte sind erkrankt</b> \nMithilfe des Kontaktprotokolls können Sie benachrichtigt werden, wenn Sie einen möglichen Kontakt mit dem Coronavirus hatten. Es wird eine Empfehlung in einem Algorithmus kalkuliert, wie lange Sie als Vorsichtsmaßnahme in Quarantäne bleiben sollten.\n<b>Sie sind erkrankt</b> \nEbenso können die Zufalls-IDs genutzt werden, um andere Nutzer zu benachrichtigen, sollten Sie eine mögliche Infektion melden.</string>
 	<string name="automatic_handshake_dialog_disclaimer">Bitte stellen Sie sicher, dass Bluetooth aktiviert ist.</string>
 	<string name="automatic_handshake_dialog_faq">Zu den FAQs</string>
 	<string name="automatic_handshake_dialog_faq_link">https://www.stopp-corona.at/faq_stopp_corona_app/</string>
