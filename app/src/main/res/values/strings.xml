@@ -339,9 +339,10 @@
 
 	<!-- Start Screen Notification (user is infected) -->
 	<string name="sickness_certificate_attest_headline">Attention</string>
-	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection..</string>
+	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection.</string>
+	<string name="sickness_certificate_attest_date_text">Please go into quarantine <b>until you are healthy</b>.</string>
 	<string name="sickness_certificate_attest_description_2">Please go into qurantine</string>
-	<string name="sickness_certificate_attest_description_3">until you are healthy</string>
+	<string name="sickness_certificate_attest_description_3">until you are healthy.</string>
 	<string name="sickness_certificate_attest_description_5">until</string>
 	<string name="sickness_certificate_attest_description_4"></string>
 	<string name="sickness_certificate_attest_button">What should I do?</string>
