@@ -1,11 +1,13 @@
 package at.roteskreuz.stopcorona.screens.base.epoxy
 
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
+import at.roteskreuz.stopcorona.utils.color
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 
@@ -22,8 +24,14 @@ abstract class AdditionalInformationModel(private val onClick: () -> Unit) : Bas
     @EpoxyAttribute
     var iconRes: Int = R.drawable.ic_info
 
+    @ColorRes
+    @EpoxyAttribute
+    var textColor: Int = R.color.darkGray
+
     override fun Holder.onBind() {
         txtTitle.text = title
+        txtTitle.setTextColor(color(textColor))
+
         imgIcon.setImageResource(iconRes)
 
         view.setOnClickListener { onClick() }

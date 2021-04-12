@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/options"
+        android:icon="@drawable/ic_options"
+        app:showAsAction="always"
+        android:title="@string/diary_overview_options">
+        <menu>
+            <item
+                android:id="@+id/diaryPdfExport"
+                android:title="@string/diary_overview_export_pdf" />
+            <item
+                android:id="@+id/diaryShare"
+                android:title="@string/diary_overview_share" />
+        </menu>
+    </item>
+</menu>

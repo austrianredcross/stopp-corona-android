@@ -190,6 +190,7 @@ object Constants {
 
         const val REQUEST_DASHBOARD = APP_BASE_REQUEST + (1 shl OFFSET)
         const val REQUEST_REPORTING_STATUS_FRAGMENT = APP_BASE_REQUEST + (2 shl OFFSET)
+        const val REQUEST_DIARY_FRAGMENT = APP_BASE_REQUEST + (3 shl OFFSET)
     }
 
     /**

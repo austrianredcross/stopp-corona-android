@@ -13,6 +13,7 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.Prerequ
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError.UnavailableGooglePlayServices.*
 import at.roteskreuz.stopcorona.model.repositories.UploadMissingExposureKeys
 import at.roteskreuz.stopcorona.screens.base.epoxy.*
+import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType1Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
@@ -43,7 +44,9 @@ class DashboardController(
     private val onRevokeSicknessClick: (disabled: Boolean) -> Unit,
     private val onReportHealthySicknessClick: () -> Unit,
     private val onUploadMissingExposureKeysClick: (disabled: Boolean, uploadMissingExposureKeys: UploadMissingExposureKeys) -> Unit,
-    private val onShareAppClick: () -> Unit
+    private val onShareAppClick: () -> Unit,
+    private val onDiaryClick: () -> Unit,
+    private val onAdditionalInformationClick: () -> Unit
 ) : EpoxyController() {
 
     var ownHealthStatus: HealthStatusData by adapterProperty(HealthStatusData.NoHealthStatus)
@@ -273,15 +276,15 @@ class DashboardController(
             title(context.string(R.string.main_automatic_handshake_information_hint))
         }
 
-        emptySpace(modelCountBuiltSoFar, 16)
+        emptySpace(modelCountBuiltSoFar, 20)
 
-        separator{
+        emptySpace {
             id(modelCountBuiltSoFar)
-            color(R.color.dashboard_separator)
+            height(24)
+            backgroundColor(R.color.background_gray)
         }
 
-        buildShareAppCard()
-
+        buildDiaryCard()
         separator{
             id(modelCountBuiltSoFar)
             color(R.color.dashboard_separator)
@@ -290,7 +293,11 @@ class DashboardController(
         if ((ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness).not()
             && (ownHealthStatus is HealthStatusData.SicknessCertificate).not()
         ) {
-            emptySpace(modelCountBuiltSoFar, 16)
+            emptySpace {
+                id(modelCountBuiltSoFar)
+                height(24)
+                backgroundColor(R.color.background_gray)
+            }
 
             verticalBackgroundModelGroup(
                 listOf(
@@ -328,6 +335,11 @@ class DashboardController(
 
         if ((ownHealthStatus is HealthStatusData.SicknessCertificate).not()) {
 
+            emptySpace {
+                id(modelCountBuiltSoFar)
+                height(24)
+                backgroundColor(R.color.background_gray)
+            }
             separator{
                 id(modelCountBuiltSoFar)
                 color(R.color.dashboard_separator)
@@ -357,11 +369,13 @@ class DashboardController(
                         .height(40)
                 )
             ) {
-                backgroundColor(R.color.background_gray)
+                backgroundColor(R.color.white)
             }
         } else {
             emptySpace(modelCountBuiltSoFar, 40)
         }
+
+        buildShareAppCard()
     }
 
     /**
@@ -717,6 +731,72 @@ class DashboardController(
             id("vertical_model_group_end_of_quarantine")
             backgroundColor(R.color.background_gray)
         }
+    }
+
+    private fun buildDiaryCard() {
+        val modelList = arrayListOf<EpoxyModel<out Any>>()
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        TitleModel_()
+            .id("diary_title")
+            .title(context.string(R.string.diary_main_title))
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(24)
+            .addTo(modelList)
+
+        ImageModel_()
+            .id("diary_img")
+            .imageRes(R.drawable.ic_diary)
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(24)
+            .addTo(modelList)
+
+        CopyTextModel_()
+            .id("diary_description")
+            .text(SpannableString(context.string(R.string.diary_main_description)))
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(16)
+            .addTo(modelList)
+
+        AdditionalInformationModel_(onAdditionalInformationClick)
+            .id("diary_additional_information")
+            .title(context.string(R.string.diary_main_link))
+            .textColor(R.color.blue)
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(16)
+            .addTo(modelList)
+
+        ButtonType1Model_(onDiaryClick)
+            .id("diary_edit_button")
+            .text(context.string(R.string.diary_main_button))
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        verticalBackgroundModelGroup(modelList) {
+            id("vertical_model_group_diary")
+            backgroundColor(R.color.white)
+        }
+
     }
 
     /**

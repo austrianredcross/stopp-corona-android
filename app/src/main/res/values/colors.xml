@@ -20,6 +20,7 @@
     <color name="tangerine">#f39100</color>
     <color name="orange">#ff5a00</color>
     <color name="blue">#097ABF</color>
+    <color name="blue_light">#ECF8FF</color>
 
     <!-- General -->
     <color name="text_link">@color/rouge</color>

@@ -1,4 +1,4 @@
-package at.roteskreuz.stopcorona.screens.dashboard.epoxy
+package at.roteskreuz.stopcorona.screens.base.epoxy
 
 import android.widget.TextView
 import at.roteskreuz.stopcorona.R
@@ -10,7 +10,7 @@ import com.airbnb.epoxy.EpoxyModelClass
 /**
  * Model with one title and one description text below.
  */
-@EpoxyModelClass(layout = R.layout.dashboard_description_block_epoxy_model)
+@EpoxyModelClass(layout = R.layout.base_description_block_epoxy_model)
 abstract class DescriptionBlockModel : BaseEpoxyModel<DescriptionBlockModel.Holder>() {
 
     @EpoxyAttribute

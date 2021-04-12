@@ -11,8 +11,6 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.screens.reporting.personalData.ReportingPersonalDataFragment
-import at.roteskreuz.stopcorona.screens.reporting.personalData.displayFieldInlineError
-import at.roteskreuz.stopcorona.screens.reporting.personalData.listenForTextChanges
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.scope.connectToScope
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -21,6 +19,8 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.KeyboardHelper
+import at.roteskreuz.stopcorona.utils.displayFieldInlineError
+import at.roteskreuz.stopcorona.utils.listenForTextChanges
 import at.roteskreuz.stopcorona.utils.view.applyText
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_reporting_tan_check.*

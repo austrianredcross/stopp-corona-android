@@ -16,6 +16,8 @@ import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.Prerequ
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.showChangelogBottomSheetFragment
 import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.showPrivacyUpdateFragment
 import at.roteskreuz.stopcorona.screens.dashboard.report_healthy.showReportHealthyFragment
+import at.roteskreuz.stopcorona.screens.diary.startDiaryExplanationFragment
+import at.roteskreuz.stopcorona.screens.diary.startDiaryFragment
 import at.roteskreuz.stopcorona.screens.infection_info.startInfectionInfoFragment
 import at.roteskreuz.stopcorona.screens.mandatory_update.showMandatoryUpdateFragment
 import at.roteskreuz.stopcorona.screens.menu.startMenuFragment
@@ -152,6 +154,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             onShareAppClick = {
                 shareApp()
             },
+            onDiaryClick = {
+                startDiaryFragment()
+            },
             onRevokeSicknessClick = { disabled ->
                 if (disabled) {
                     Snackbar.make(
@@ -180,6 +185,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                         displayUploadMissingExposureKeysExplanation = true
                     )
                 }
+            },
+            onAdditionalInformationClick = {
+                startDiaryExplanationFragment()
             }
         )
     }
