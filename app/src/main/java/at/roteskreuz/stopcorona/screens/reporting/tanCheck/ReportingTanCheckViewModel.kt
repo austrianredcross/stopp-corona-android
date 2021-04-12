@@ -5,12 +5,12 @@ import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
 import at.roteskreuz.stopcorona.model.repositories.PersonalData
 import at.roteskreuz.stopcorona.model.repositories.ReportingRepository
 import at.roteskreuz.stopcorona.model.repositories.TanData
-import at.roteskreuz.stopcorona.screens.reporting.personalData.ValidationError
-import at.roteskreuz.stopcorona.screens.reporting.personalData.validateNotEmpty
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.utils.ValidationError
+import at.roteskreuz.stopcorona.utils.validateNotEmpty
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject

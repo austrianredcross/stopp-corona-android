@@ -27,7 +27,7 @@ class DatePickerFragmentDialog: DialogFragment(), DatePickerDialog.OnDateSetList
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         // Create a new instance of DatePickerDialog and return it
-        val datePickerDialog = DatePickerDialog(requireContext(), R.style.DatePickerDialogTheme, this, year, month, day)
+        val datePickerDialog = DatePickerDialog(requireContext(), R.style.PickerDialogTheme, this, year, month, day)
         datePickerDialog.datePicker.maxDate = calendar.timeInMillis
 
         // Subtract 5 days from Calendar

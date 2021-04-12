@@ -176,6 +176,7 @@ dependencies {
 
     implementation "com.airbnb.android:lottie:3.4.0"
 
+    implementation 'com.itextpdf:itextg:5.5.10'
     implementation "androidx.webkit:webkit:1.4.0"
 
 

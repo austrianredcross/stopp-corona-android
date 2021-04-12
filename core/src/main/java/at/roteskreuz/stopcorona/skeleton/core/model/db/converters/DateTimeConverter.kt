@@ -27,4 +27,11 @@ class DateTimeConverter {
 
     @TypeConverter
     fun dateToTimestamp(date: LocalDate?): Int? = date?.run { year * 10000 + monthValue * 100 + dayOfMonth }
+
+    @TypeConverter
+    fun timestampToTime(timestamp: Int?): LocalTime? =
+        timestamp?.let { LocalTime.of(it / (1000 * 60 * 60), (it / (1000 * 60)) % 60, (it / 1000) % 60) }
+
+    @TypeConverter
+    fun timeToTimestamp(time: LocalTime?): Int? = time?.run { hour * 1000 * 60 * 60 + minute * 1000 * 60 + second * 1000}
 }

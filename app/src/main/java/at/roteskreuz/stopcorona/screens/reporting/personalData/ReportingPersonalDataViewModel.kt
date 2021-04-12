@@ -11,6 +11,9 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.StateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.utils.ValidationError
+import at.roteskreuz.stopcorona.utils.validateNotEmpty
+import at.roteskreuz.stopcorona.utils.validatePhoneNumber
 import at.roteskreuz.stopcorona.utils.view.safeMap
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -111,24 +114,6 @@ class ReportingPersonalDataViewModel(
     }
 }
 
-fun validateNotEmpty(text: String?): ValidationError? {
-    return if (text?.isNotEmpty() == true) {
-        null
-    } else {
-        return ValidationError.FieldEmpty
-    }
-}
-
-fun validatePhoneNumber(text: String): ValidationError? {
-    val pattern = "^\\+[0-9]+".toRegex()
-
-    return if (pattern.matches(text).not()) {
-        ValidationError.InvalidPhoneNumber
-    } else {
-        null
-    }
-}
-
 /**
  * Describes the result of the personal data form validation.
  */
@@ -141,18 +126,3 @@ data class ValidationResult(
     }
 }
 
-/**
- * Describes the errors that can appear in the form.
- */
-sealed class ValidationError(@StringRes val error: Int) {
-
-    /**
-     * A mandatory field is empty.
-     */
-    object FieldEmpty : ValidationError(R.string.certificate_personal_data_field_mandatory)
-
-    /**
-     * Invalid phone number.
-     */
-    object InvalidPhoneNumber : ValidationError(R.string.certificate_personal_data_phone_field_invalid)
-}
