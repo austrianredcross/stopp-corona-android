@@ -14,16 +14,20 @@
     <color name="gray_2">#979797</color>
     <color name="whiteGray">#f4f4f4</color>
     <color name="gray_3">#e8e8e8</color>
+    <color name="gray_4">#cecece</color>
     <color name="darkGray">#383838</color>
     <color name="mediumGreen">#3bb54a</color>
     <color name="tangerine">#f39100</color>
     <color name="orange">#ff5a00</color>
     <color name="blue">#097ABF</color>
+    <color name="blue_light">#ECF8FF</color>
 
     <!-- General -->
+    <color name="text_link">@color/rouge</color>
     <color name="text_default_heading1">@color/rouge</color>
     <color name="text_default_heading2">@color/black</color>
     <color name="text_circle_number">@color/rouge</color>
+    <color name="text_number">@color/rouge</color>
     <color name="text_default_copy">@color/black</color>
     <color name="text_default_input">@color/brownGrey</color>
     <color name="text_default">@color/black</color>
@@ -32,9 +36,11 @@
     <color name="background_gray">@color/whiteGray</color>
     <color name="dialog_stroke">#e5e5e5</color>
     <color name="bottom_sheet_stroke">#e5e5e5</color>
+    <color name="checkbox_tint">@color/black</color>
 
     <!-- Dashboard -->
     <color name="dashboard_exposure_notification_error_card_background">@color/gray_3</color>
+    <color name="dashboard_separator">@color/white</color>
 
     <!-- Gallery -->
     <color name="gallery_indicator_active">@color/rouge</color>
@@ -67,6 +73,7 @@
 
     <!-- Headline 1 -->
     <color name="headline1">@color/rouge</color>
+    <color name="headline2">@color/black</color>
 
     <!-- Provide certificate screens -->
     <color name="certificate_progress_complete_step">@color/rouge</color>
@@ -75,6 +82,9 @@
     <!-- Questionnaire self monitoring -->
     <color name="questionnaire_self_monitoring_container">@color/whiteGray</color>
     <color name="questionnaire_self_monitoring_circle_tint">@color/white</color>
+
+    <color name="questionnaire_headline1">@color/black</color>
+    <color name="questionnaire_headline2">@color/rouge</color>
 
     <color name="switch_background_enabled">@color/blue</color>
     <color name="switch_background_paused">@color/tangerine</color>

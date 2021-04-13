@@ -24,8 +24,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.onViewReady
-import at.roteskreuz.stopcorona.utils.daysTo
-import at.roteskreuz.stopcorona.utils.format
+import at.roteskreuz.stopcorona.utils.*
 import at.roteskreuz.stopcorona.utils.view.applyText
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -241,35 +240,3 @@ class ReportingPersonalDataFragment : BaseFragment(R.layout.fragment_reporting_p
         super.onDestroyView()
     }
 }
-
-fun listenForTextChanges(
-    textInputLayout: TextInputLayout,
-    textInputEditText: TextInputEditText,
-    saveToViewModel: (String?) -> Unit
-): TextWatcher {
-    val textWatcher = object : TextWatcher {
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            saveToViewModel(s.toString())
-            textInputLayout.error = null
-        }
-
-        override fun afterTextChanged(s: Editable?) {
-            // Do nothing.
-        }
-
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            // Do nothing.
-        }
-    }
-    textInputEditText.addTextChangedListener(textWatcher)
-    return textWatcher
-}
-
-fun displayFieldInlineError(validationError: ValidationError?, textInputLayout: TextInputLayout, context: Context) {
-    validationError?.let {
-        textInputLayout.error = context.getString(it.error)
-    } ?: run {
-        textInputLayout.error = null
-    }
-}
-

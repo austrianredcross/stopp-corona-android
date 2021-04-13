@@ -12,6 +12,10 @@ import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.PrivacyUpdateViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.report_healthy.ReportHealthyViewModel
+import at.roteskreuz.stopcorona.screens.diary.DiaryViewModel
+import at.roteskreuz.stopcorona.screens.diary.day.DiaryDayViewModel
+import at.roteskreuz.stopcorona.screens.diary.delete_entry.DiaryDeleteEntryViewModel
+import at.roteskreuz.stopcorona.screens.diary.new_entry.DiaryNewEntryViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.QuestionnaireViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.guideline.QuestionnaireGuidelineViewModel
 import at.roteskreuz.stopcorona.screens.questionnaire.hint.QuestionnaireHintViewModel
@@ -269,6 +273,34 @@ val viewModelModule = module {
         ReportHealthyViewModel(
             appDispatchers = get(),
             quarantineRepository = get()
+        )
+    }
+
+    viewModel {
+        DiaryViewModel(
+            appDispatchers = get(),
+            diaryRepository = get()
+        )
+    }
+
+    viewModel {
+        DiaryDayViewModel(
+            appDispatchers = get(),
+            diaryRepository = get()
+        )
+    }
+
+    viewModel {
+        DiaryNewEntryViewModel(
+            appDispatchers = get(),
+            diaryRepository = get()
+        )
+    }
+
+    viewModel {
+        DiaryDeleteEntryViewModel(
+            appDispatchers = get(),
+            diaryRepository = get()
         )
     }
 }

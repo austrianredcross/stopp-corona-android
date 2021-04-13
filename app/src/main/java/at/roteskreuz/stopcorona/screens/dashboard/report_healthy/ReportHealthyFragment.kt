@@ -12,13 +12,14 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.screens.base.dialog.FullWidthDialog
 import kotlinx.android.synthetic.main.fragment_report_healthy.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Dialog to end quarantine.
  */
-class ReportHealthyFragment : DialogFragment() {
+class ReportHealthyFragment : FullWidthDialog() {
 
     private val viewModel: ReportHealthyViewModel by viewModel()
 
@@ -38,31 +39,6 @@ class ReportHealthyFragment : DialogFragment() {
             viewModel.revokeMedicalConfirmation()
             dismiss()
         }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // for a full width dialog
-        val root = RelativeLayout(activity)
-        root.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        context?.let {context ->
-            val dialog = Dialog(context)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(root)
-            dialog.window?.let { window ->
-                window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                window.setLayout(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            }
-            return dialog
-        }
-
-        return dialog!!
     }
 }
 

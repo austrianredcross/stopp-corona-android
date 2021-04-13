@@ -63,4 +63,8 @@ internal val persistenceModule = module {
     single {
         get<DefaultDatabase>().temporaryExposureKeysDao()
     }
+
+    single {
+        get<DefaultDatabase>().diaryDao()
+    }
 }

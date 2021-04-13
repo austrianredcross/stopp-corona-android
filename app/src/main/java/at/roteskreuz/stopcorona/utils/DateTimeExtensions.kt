@@ -5,12 +5,15 @@ import android.text.format.DateUtils
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.exceptions.SilentError
+import com.airbnb.epoxy.EpoxyModel
 import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.stream.Stream
+import kotlin.collections.ArrayList
 
 /**
  * Get minutes difference between two times.
@@ -338,4 +341,26 @@ fun Date.toString(format: String): String {
  */
 fun ZonedDateTime.daysTo(other: ZonedDateTime): Long {
     return Duration.between(this, other).toDays()
+}
+
+/**
+ * Get the list of dates between two dates.
+ */
+fun LocalDate.datesTo(other: LocalDate) : List<LocalDate> {
+    val dates = arrayListOf<LocalDate>()
+    var current = this
+    while (current.isBefore(other)) {
+        dates.add(current)
+        current = current.plusDays(1)
+    }
+    dates.add(other)
+    return dates
+}
+
+/**
+ * Format the [LocalTime]
+ */
+fun LocalTime.format(pattern: String) : String {
+    val localDateFormatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.systemDefault())
+    return localDateFormatter.format(this)
 }

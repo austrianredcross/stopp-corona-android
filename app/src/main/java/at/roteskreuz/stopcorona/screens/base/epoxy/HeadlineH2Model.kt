@@ -24,7 +24,7 @@ abstract class HeadlineH2Model : BaseEpoxyModel<HeadlineH2Model.Holder>() {
 
     @ColorRes
     @EpoxyAttribute
-    var textColor: Int = R.color.black
+    var textColor: Int = R.color.headline2
 
     override fun Holder.onBind() {
         txtTitle.gravity = gravity

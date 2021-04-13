@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_style"
+        android:padding="36dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtHeadline"
+            style="@style/AppTheme.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/diary_delete_title" />
+
+        <TextView
+            android:id="@+id/txtDescription"
+            style="@style/AppTheme.Copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:layout_marginBottom="60dp"
+            android:text="@string/diary_delete_description" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            style="@style/AppTheme.ButtonLargeType1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/diary_delete_delete_button" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="@style/AppTheme.ButtonLargeType2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/diary_delete_cancel_button" />
+    </LinearLayout>
+</LinearLayout>

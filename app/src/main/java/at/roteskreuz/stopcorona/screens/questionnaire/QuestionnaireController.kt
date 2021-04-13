@@ -37,7 +37,7 @@ class QuestionnaireController(
             HeadlineH1Model_()
                 .id("question_${questionIndex}_headline")
                 .text(context.getString(R.string.questionnaire_headline_1, (questionIndex + 1)))
-                .textColor(R.color.black)
+                .textColor(R.color.questionnaire_headline1)
                 .textSize(context.rawDimen(R.dimen.questionnaire_headline))
                 .marginHorizontal(0f)
                 .addTo(questionPageContent)
@@ -45,7 +45,7 @@ class QuestionnaireController(
             HeadlineH2Model_()
                 .id("question_${questionIndex}")
                 .title(questionWithAnswer.question.questionText)
-                .textColor(R.color.rouge)
+                .textColor(R.color.questionnaire_headline2)
                 .gravity(Gravity.START)
                 .addTo(questionPageContent)
 
@@ -87,6 +87,7 @@ class QuestionnaireController(
                     .link(context.getString(R.string.self_testing_symptoms_source_link))
                     .imageRes(R.drawable.ic_external_link)
                     .imageDesc(context.getString(R.string.start_menu_item_external_link))
+                    .textColor(R.color.text_link)
                     .addTo(questionPageContent)
 
                 EmptySpaceModel_()

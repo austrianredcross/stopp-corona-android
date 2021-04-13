@@ -6,9 +6,11 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import at.roteskreuz.stopcorona.model.db.dao.ConfigurationDao
+import at.roteskreuz.stopcorona.model.db.dao.DiaryDao
 import at.roteskreuz.stopcorona.model.db.dao.SessionDao
 import at.roteskreuz.stopcorona.model.db.dao.TemporaryExposureKeysDao
 import at.roteskreuz.stopcorona.model.entities.configuration.*
+import at.roteskreuz.stopcorona.model.entities.diary.*
 import at.roteskreuz.stopcorona.model.entities.exposure.DbSentTemporaryExposureKeys
 import at.roteskreuz.stopcorona.model.entities.exposure.MessageTypeConverter
 import at.roteskreuz.stopcorona.model.entities.exposure.UUIDConverter
@@ -29,9 +31,14 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
         DbQuestionnaireAnswer::class,
         DbPageContent::class,
         DbSentTemporaryExposureKeys::class,
-        DbScheduledSession::class
+        DbScheduledSession::class,
+        DbDiaryPerson::class,
+        DbDiaryLocation::class,
+        DbDiaryEvent::class,
+        DbDiaryPublicTransport::class,
+        DbDiaryEntry::class
     ],
-    version = 24,
+    version = 25,
     exportSchema = true
 )
 @TypeConverters(
@@ -41,6 +48,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.db.converters.DateTimeConver
     ProcessingPhaseConverter::class,
     UUIDConverter::class,
     DecisionConverter::class,
+    DiaryEntryTypeConverter::class,
     ArrayOfIntegerConverter::class,
     MessageTypeConverter::class
 )
@@ -429,6 +437,63 @@ abstract class DefaultDatabase : RoomDatabase() {
                 execSQL("DROP TABLE `sent_temporary_exposure_keys`")
                 // rename temp to original
                 execSQL("ALTER TABLE `sent_temporary_exposure_keys_temp` RENAME TO `sent_temporary_exposure_keys`")
+            },
+            /**
+             * Add new tables for contact diary.
+             */
+            migration(24, 25) {
+                execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `diary_entry` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `date` INTEGER NOT NULL,
+                        `eventId` INTEGER,
+                        `locationId` INTEGER,
+                        `personId` INTEGER,
+                        `publicTransportId` INTEGER,
+                        `type` TEXT NOT NULL
+                    )
+                    """
+                )
+                execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `diary_person` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `fullName` TEXT NOT NULL,
+                        `notes` TEXT
+                    )
+                    """
+                )
+                execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `diary_location` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `locationName` TEXT NOT NULL,
+                        `timeOfDay` TEXT
+                    )
+                    """
+                )
+                execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `diary_event` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `description` TEXT NOT NULL,
+                        `startTime` INTEGER,
+                        `endTime` INTEGER
+                    )
+                    """
+                )
+                execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `diary_public_transport` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `description` TEXT NOT NULL,
+                        `startLocation` TEXT,
+                        `endLocation` TEXT,
+                        `startTime` INTEGER
+                    )
+                    """
+                )
             }
         )
     }
@@ -438,6 +503,8 @@ abstract class DefaultDatabase : RoomDatabase() {
     abstract fun sessionDao(): SessionDao
 
     abstract fun temporaryExposureKeysDao(): TemporaryExposureKeysDao
+
+    abstract fun diaryDao(): DiaryDao
 }
 
 /**

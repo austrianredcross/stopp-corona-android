@@ -6,7 +6,7 @@ apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$rootDir/gradle/base.gradle"
 
 def apiVersion = "2.1"
-def minorVersion = "1"
+def minorVersion = "2"
 def versionString = apiVersion + "." + minorVersion
 def buildCode = getBuildCode()
 def buildName = versionString + "." + buildCode.toString() + "-" + getGitDescribe()
@@ -210,6 +210,9 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
     implementation "com.airbnb.android:lottie:3.4.0"
+
+    implementation 'com.itextpdf:itextg:5.5.10'
+    implementation "androidx.webkit:webkit:1.4.0"
 
 
     testImplementation "junit:junit:4.13"

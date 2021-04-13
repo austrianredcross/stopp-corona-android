@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.Copy">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.Copy.Bold">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.Copy.Accented">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/text_circle_number</item>
+    </style>
+
+    <style name="AppTheme.Heading1">
+        <item name="android:textSize">32sp</item>
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/text_default_heading1</item>
+    </style>
+
+    <style name="AppTheme.Heading2" parent="AppTheme.Heading1">
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.Label">
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingExtra">9dp</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.InputDefault" parent="AppTheme.Label">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/edit_text_hint</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlActivated">@color/black</item>
+        <item name="colorControlHighlight">@color/black</item>
+    </style>
+
+    <style name="AppTheme.InputLabel" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ListHeader">
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="AppTheme.ListDate">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ListTime">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ListTime.Small" parent="AppTheme.ListTime">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ListTime.Bold" parent="AppTheme.ListTime">
+        <item name="fontFamily">@font/roboto_bold</item>
+    </style>
+
+    <style name="AppTheme.Headline1">
+        <item name="android:textSize">32sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/headline1</item>
+    </style>
+
+    <style name="AppTheme.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ToolbarTitle" parent="AppTheme.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

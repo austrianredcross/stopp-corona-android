@@ -106,4 +106,11 @@ val repositoryModule = module {
             workManager = get()
         )
     }
+
+    single<DiaryRepository> {
+        DiaryRepositoryImpl(
+            appDispatchers = get(),
+            diaryDao = get()
+        )
+    }
 }

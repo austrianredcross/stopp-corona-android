@@ -1,10 +1,7 @@
 package at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
@@ -36,6 +33,11 @@ abstract class BaseFragment(
      * Indicator if this fragment has its own toolbar.
      */
     open val isToolbarVisible: Boolean = false
+
+    /**
+     * Indicator if this fragments toolbar has a menu.
+     */
+    open val isToolbarMenuVisible: Boolean = false
 
     /**
      * Find toolbar that has to have specific id R.id.toolbar.
@@ -72,6 +74,13 @@ abstract class BaseFragment(
             baseActivity?.setSupportActionBar(providedToolbar)
         }
         onInitActionBar(baseActivity?.supportActionBar, providedToolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        if (isToolbarMenuVisible){
+            inflater.inflate(R.menu.toolbar, menu)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
