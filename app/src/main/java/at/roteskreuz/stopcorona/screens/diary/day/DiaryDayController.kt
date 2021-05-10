@@ -30,6 +30,12 @@ class DiaryDayController(
 
         buildAddDiaryEntry()
 
+        separator{
+            id(modelCountBuiltSoFar)
+            color(R.color.dashboard_separator)
+        }
+
+
         emptySpace {
             id(modelCountBuiltSoFar)
             height(24)
@@ -148,7 +154,7 @@ class DiaryDayController(
 
         verticalBackgroundModelGroup(modelList) {
             id("vertical_model_group_diary_dates")
-            backgroundColor(R.color.white)
+            backgroundColor(R.color.background)
         }
     }
 }

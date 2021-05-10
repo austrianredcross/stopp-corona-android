@@ -21,7 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
-            android:background="@drawable/shape_white_border">
+            android:background="@drawable/shape_white_border"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

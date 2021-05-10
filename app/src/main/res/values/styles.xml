@@ -63,7 +63,7 @@
 
     <style name="AppTheme.ButtonLargeType2.Activable" parent="AppTheme.ButtonLargeType2">
         <item name="android:background">@drawable/button_type2_activable_selector</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/button_type2_text_default</item>
     </style>
 
     <style name="AppTheme.Button.Toggle" parent="AppTheme.ButtonLargeType2">
@@ -120,7 +120,7 @@
         <item name="android:colorAccent">@color/rouge</item>
     </style>
 
-    <style name="PickerStyle" parent="@android:style/Widget.Material.DatePicker">
+    <style name="PickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
         <item name="android:datePickerMode">spinner</item>
     </style>
 </resources>

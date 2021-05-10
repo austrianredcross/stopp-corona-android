@@ -1,8 +1,10 @@
 package at.roteskreuz.stopcorona.screens.dashboard.epoxy
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.cardview.widget.CardView
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.dashboard.CardUpdateStatus
@@ -45,7 +47,6 @@ abstract class StatusUpdateModel(
                 txtTitle.setTextColor(color(R.color.text_default_heading2))
                 txtDescription.setTextColor(color(R.color.text_default_copy))
                 cardViewContainer.setCardBackgroundColor(color(R.color.white))
-                btnClose.tint(R.color.black)
             }
 
             CardUpdateStatus.EndOfQuarantine -> {
@@ -54,9 +55,18 @@ abstract class StatusUpdateModel(
                 txtTitle.setTextColor(color(R.color.white))
                 txtDescription.setTextColor(color(R.color.white))
                 cardViewContainer.setCardBackgroundColor(color(R.color.mediumGreen))
-                btnClose.tint(R.color.white)
+                setTextColor(R.color.dashboard_card_color)
             }
         }
+    }
+
+    private fun Holder.setTextColor(@ColorRes color:Int){
+        txtTitle.setTextColor(color(color))
+        txtDescription.setTextColor(color(color))
+        txtDescription2.setTextColor(color(color))
+        imgHealthStatusIcon.tint(color)
+        btnClose.tint(color)
+        separator.setBackgroundColor(color(color))
     }
 
     override fun Holder.onUnbind() {
@@ -66,9 +76,11 @@ abstract class StatusUpdateModel(
     class Holder : BaseEpoxyHolder() {
         val txtTitle by bind<TextView>(R.id.txtTitle)
         val txtDescription by bind<TextView>(R.id.txtDescription)
+        val txtDescription2 by bind<TextView>(R.id.txtDescription2)
         val btnClose by bind<ImageView>(R.id.btnClose)
         val imgHealthStatusIcon by bind<ImageView>(R.id.imgHealthStatusIcon)
         val cardViewContainer by bind<CardView>(R.id.cardViewContainer)
         val txtDescription2Container by bind<LinearLayout>(R.id.txtDescription2Container)
+        val separator by bind<View>(R.id.separator)
     }
 }
