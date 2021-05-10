@@ -36,6 +36,7 @@ class MenuController(
     private val onReportSuspectedClick: () -> Unit,
     private val onReportOfficialSicknessClick: () -> Unit,
     private val onShareAppClick: () -> Unit,
+    private val onContactDiaryClick: () -> Unit,
     private val onRevokeSicknessClick: () -> Unit
 ) : EpoxyController() {
 
@@ -72,6 +73,11 @@ class MenuController(
                     }
                 }
             }
+        }
+
+        menuItem(onContactDiaryClick) {
+            id("contact_diary")
+            title(context.string(R.string.diary_main_button))
         }
 
         menuItem(onShareAppClick) {

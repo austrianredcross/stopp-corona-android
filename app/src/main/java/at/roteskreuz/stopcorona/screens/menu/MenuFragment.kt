@@ -89,6 +89,9 @@ class MenuFragment : BaseFragment(R.layout.menu_fragment) {
             onShareAppClick = {
                 shareApp()
             },
+            onContactDiaryClick = {
+                startDiaryFragment()
+            },
             onRevokeSicknessClick = {
                 startReportingActivity(MessageType.Revoke.Sickness)
             }

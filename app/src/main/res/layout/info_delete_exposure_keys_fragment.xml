@@ -41,7 +41,7 @@
 
                 <TextView
                     android:id="@+id/txtSavedIDsTitle"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Heading1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
@@ -59,7 +59,7 @@
 
                 <TextView
                     android:id="@+id/txtSavedIDsDeleteSubtitle"
-                    style="@style/AppTheme.Copy.Accented"
+                    style="@style/AppTheme.Heading1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"

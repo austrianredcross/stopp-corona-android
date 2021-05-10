@@ -181,6 +181,7 @@ fun Context.getClickableSpan(
         onClick: () -> Unit,
         @DrawableRes drawableRes: Int? = null,
         underline: Boolean = true,
+        color: Int = R.color.text_link,
         insertLeadingSpace: Boolean = true,
         insertTrailingSpace: Boolean = true
 ): SpannableString {
@@ -196,6 +197,12 @@ fun Context.getClickableSpan(
     }
     val spannable = SpannableString("${getSpace(insertLeadingSpace)}${getString(textRes)}${getSpace(insertTrailingSpace)}")
     spannable.setSpan(clickableSpan, 0, spannable.length, 0)
+    spannable.setSpan(
+        ForegroundColorSpan(color(color)),
+        0,
+        spannable.length,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
 
     drawableRes?.let {
         insertImageAfterSpan(this, drawableRes, spannable)

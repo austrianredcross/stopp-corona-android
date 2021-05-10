@@ -26,7 +26,7 @@ abstract class AdditionalInformationModel(private val onClick: () -> Unit) : Bas
 
     @ColorRes
     @EpoxyAttribute
-    var textColor: Int = R.color.darkGray
+    var textColor: Int = R.color.text_link
 
     override fun Holder.onBind() {
         txtTitle.text = title
