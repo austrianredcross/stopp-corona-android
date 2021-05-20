@@ -281,7 +281,13 @@ class DashboardController(
             backgroundColor(R.color.background_gray)
         }
 
+        separator{
+            id(modelCountBuiltSoFar)
+            color(R.color.dashboard_separator)
+        }
+
         buildDiaryCard()
+
         separator{
             id(modelCountBuiltSoFar)
             color(R.color.dashboard_separator)
@@ -366,7 +372,7 @@ class DashboardController(
                         .height(40)
                 )
             ) {
-                backgroundColor(R.color.white)
+                backgroundColor(R.color.primary)
             }
         } else {
             emptySpace(modelCountBuiltSoFar, 40)
@@ -718,7 +724,7 @@ class DashboardController(
 
         verticalBackgroundModelGroup(modelList) {
             id("vertical_model_group_diary")
-            backgroundColor(R.color.white)
+            backgroundColor(R.color.background)
         }
 
     }

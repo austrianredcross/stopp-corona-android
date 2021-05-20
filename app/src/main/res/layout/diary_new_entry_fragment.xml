@@ -45,9 +45,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/edittext_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="8dp"
                 tools:text="Person" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -70,6 +73,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:maxLines="1"
+                    android:inputType="text"
                     android:paddingHorizontal="12dp"
                     android:paddingBottom="15dp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -204,6 +208,7 @@
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:maxLines="1"
+                        android:inputType="text"
                         android:paddingHorizontal="12dp"
                         android:paddingBottom="15dp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -223,6 +228,7 @@
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:maxLines="1"
+                        android:inputType="text"
                         android:paddingHorizontal="12dp"
                         android:paddingBottom="15dp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -246,6 +252,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:maxLines="1"
+                        android:inputType="text"
                         android:paddingHorizontal="12dp"
                         android:paddingBottom="15dp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -281,6 +288,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:maxLines="1"
+                        android:inputType="text"
                         android:paddingHorizontal="12dp"
                         android:paddingBottom="15dp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -304,6 +312,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:maxLines="1"
+                        android:inputType="text"
                         android:paddingHorizontal="12dp"
                         android:paddingBottom="15dp" />
                 </com.google.android.material.textfield.TextInputLayout>

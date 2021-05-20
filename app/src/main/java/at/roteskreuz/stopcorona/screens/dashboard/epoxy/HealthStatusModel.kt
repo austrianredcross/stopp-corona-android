@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import at.roteskreuz.stopcorona.R
@@ -18,10 +19,7 @@ import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.screens.dashboard.HealthStatusData
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
-import at.roteskreuz.stopcorona.utils.format
-import at.roteskreuz.stopcorona.utils.color
-import at.roteskreuz.stopcorona.utils.getBoldSpan
-import at.roteskreuz.stopcorona.utils.string
+import at.roteskreuz.stopcorona.utils.*
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 import timber.log.Timber
@@ -79,6 +77,7 @@ abstract class HealthStatusModel(
                         context.string(R.string.sickness_certificate_attest_button)
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     cardViewContainer.setCardBackgroundColor(color(R.color.red))
+                    setTextColor(R.color.dashboard_card_color_red_bg)
                 }
                 is HealthStatusData.SelfTestingSuspicionOfSickness -> {
                     txtDescription2Container.visibility = VISIBLE
@@ -101,6 +100,7 @@ abstract class HealthStatusModel(
                     }
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
+                    setTextColor(R.color.dashboard_card_color)
                 }
                 HealthStatusData.SelfTestingSymptomsMonitoring -> {
                     txtTitle.text = context.string(R.string.self_testing_symptoms_headline)
@@ -112,6 +112,7 @@ abstract class HealthStatusModel(
                     txtActionButton.text = context.string(R.string.self_testing_symptoms_button)
                     imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                     cardViewContainer.setCardBackgroundColor(color(R.color.orange))
+                    setTextColor(R.color.dashboard_card_color)
                 }
                 is HealthStatusData.ContactsSicknessInfo -> {
                     val days =
@@ -164,6 +165,7 @@ abstract class HealthStatusModel(
                         txtActionButton.text = quarantineDayActionText
                         imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                         cardViewContainer.setCardBackgroundColor(color(R.color.red))
+                        setTextColor(R.color.dashboard_card_color_red_bg)
                     }
 
                     if (yellowContactsDetected) {
@@ -200,6 +202,7 @@ abstract class HealthStatusModel(
                         txtActionButton.text = quarantineDayActionText
                         imgHealthStatusIcon.setImageResource(R.drawable.ic_alert_white)
                         cardViewContainer.setCardBackgroundColor(color(R.color.orange))
+                        setTextColor(R.color.dashboard_card_color)
                     }
                 }
                 else -> {
@@ -241,11 +244,22 @@ abstract class HealthStatusModel(
         view.setOnClickListener(null)
     }
 
+    private fun Holder.setTextColor(@ColorRes color:Int){
+        txtTitle.setTextColor(color(color))
+        txtDescription.setTextColor(color(color))
+        txtActionButton.setTextColor(color(color))
+        imgHealthStatusIcon.tint(color)
+        imgChevron.tint(color)
+        txtDescription2.setTextColor(color(color))
+        separator.setBackgroundColor(color(color))
+    }
+
     class Holder : BaseEpoxyHolder() {
         val txtTitle by bind<TextView>(R.id.txtTitle)
         val txtDescription by bind<TextView>(R.id.txtDescription)
         val txtActionButton by bind<TextView>(R.id.txtActionButton)
         val imgHealthStatusIcon by bind<ImageView>(R.id.imgHealthStatusIcon)
+        val imgChevron by bind<ImageView>(R.id.imgChevron)
         val cardViewContainer by bind<CardView>(R.id.cardViewContainer)
         val actionButtonContainer by bind<ConstraintLayout>(R.id.actionButtonContainer)
         val txtDescription2Container by bind<LinearLayout>(R.id.txtDescription2Container)
