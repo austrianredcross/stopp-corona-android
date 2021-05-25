@@ -466,7 +466,7 @@
 	<string name="self_testing_suspicion_headline">Attention</string>
 	<string name="self_testing_suspicion_description">Based on your information, you are suspected of having a corona infection.</string>
 	<string name="self_testing_suspicion_description_2">Please go into quarantine</string>
-	<string name="self_testing_suspicion_description_3">until clarification</string>
+	<string name="self_testing_suspicion_description_3">until clarification.</string>
 	<string name="self_testing_suspicion_description_4"></string>
 	<string name="self_testing_suspicion_button">What should I do?</string>
 	<string name="self_testing_suspicion_button_revoke">Give the all clear</string>
