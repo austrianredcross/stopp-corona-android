@@ -47,8 +47,8 @@
 	<string name="onboarding_copy_2_1">Activate the automatic digital handshake via Bluetooth to save contacts</string>
 	<string name="onboarding_copy_2_2">anonymously and locally</string>
 	<string name="onboarding_copy_2_3">and to determine your</string>
-	<string name="onboarding_copy_2_4">current risk of infection</string>
-	<string name="onboarding_copy_2_5">to determine.</string>
+	<string name="onboarding_copy_2_4">current risk of infection.</string>
+	<string name="onboarding_copy_2_5"></string>
 	<string name="onboarding_headline_3">Notification of risk contact</string>
 	<string name="onboarding_copy_3_img">Image: Notification of a contact\'s illness</string>
 	<string name="onboarding_copy_3_1">If one of your contacts falls ill, you will be notified of the </string>
