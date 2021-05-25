@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Stop Corona</string>
+	<string name="app_name">Stopp Corona</string>
 
 	<!-- Technical strings -->
 	<string name="current_language">en</string>
@@ -37,7 +37,7 @@
 	<!-- Onboarding -->
 	<string name="onboarding_headline_1">Welcome</string>
 	<string name="onboarding_copy_1_img">Image: Falling numbers of Corona cases</string>
-	<string name="onboarding_copy_1_1">By using the Stop Corona app, you are helping to </string>
+	<string name="onboarding_copy_1_1">By using the Stopp Corona app, you are helping to </string>
 	<string name="onboarding_copy_1_2">slow down the spread of the virus</string>
 	<string name="onboarding_copy_1_3">and save lives.</string>
 	<string name="onboarding_copy_1_4"></string>
@@ -169,7 +169,7 @@
 	<string name="contact_sickness_guidelines_second_3">1450</string>
 	<string name="contact_sickness_guidelines_second_4">and report that you have had contact with an infected person on</string>
 	<string name="contact_sickness_guidelines_second_5">. Mention the identification via the</string>
-	<string name="contact_sickness_guidelines_second_6">Stop Corona App</string>
+	<string name="contact_sickness_guidelines_second_6">Stopp Corona App</string>
 	<string name="contact_sickness_guidelines_second_7">and that you are a contact person via the app (</string>
 	<string name="contact_sickness_guidelines_second_8">Kontaktperson 4</string>
 	<string name="contact_sickness_guidelines_third">You will receive an <b>official COVID-19 test </b> after approx. 5 days. If that is negative, you can end the quarantine.</string>
@@ -287,7 +287,7 @@
 	<string name="sickness_certificate_confirmation_title">Infection reported</string>
 	<string name="sickness_certificate_confirmation_title_extra">Share IDs</string>
 	<string name="sickness_certificate_confirmation_headline">Infection reported</string>
-	<string name="sickness_certificate_confirmation_headline_extra">IDs from contact log shared with Stop Corona app</string>
+	<string name="sickness_certificate_confirmation_headline_extra">IDs from contact log shared with Stopp Corona app</string>
 	<string name="sickness_certificate_confirmation_description1_extra">Other contacts will now be notified of your sick note.</string>
 	<string name="sickness_certificate_confirmation_description1">Thank you for reporting your infection and for contributing significantly to the common good.</string>
 	<string name="sickness_certificate_confirmation_description2">Your contacts were notified anonymously.</string>
@@ -434,7 +434,7 @@
 	<string name="questionnaire_report_status_button">Report a suspected infection</string>
 	<string name="questionnaire_report_status_button_extra">Share IDs now</string>
 	<string name="questionnaire_report_success_headline">Suspected infection reported</string>
-	<string name="questionnaire_report_success_headline_extra">IDs from contact log shared with Stop Corona App</string>
+	<string name="questionnaire_report_success_headline_extra">IDs from contact log shared with Stopp Corona App</string>
 	<string name="questionnaire_report_success_description">Thank you for reporting your suspected infection and for contributing significantly to the common good.</string>
 	<string name="questionnaire_report_success_description_extra">Other contacts will now be notified of your suspicion.</string>
 	<string name="questionnaire_report_success_next_steps">Next steps</string>
