@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.onboarding
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,6 +20,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.dip
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.onViewReady
 import at.roteskreuz.stopcorona.utils.darkTextInStatusBar
+import at.roteskreuz.stopcorona.utils.lightTextInStatusBar
 import at.roteskreuz.stopcorona.utils.view.CirclePagerIndicatorDecoration
 import com.airbnb.epoxy.EpoxyVisibilityTracker
 import io.reactivex.rxkotlin.plusAssign
@@ -73,6 +75,12 @@ class OnboardingFragment : BaseFragment(R.layout.fragment_onboarding) {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.darkTextInStatusBar()
+
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                activity?.lightTextInStatusBar()
+            }
+        }
 
         with(contentRecyclerView) {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)

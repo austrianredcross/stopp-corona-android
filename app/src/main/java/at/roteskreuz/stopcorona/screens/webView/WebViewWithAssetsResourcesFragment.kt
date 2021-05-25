@@ -20,6 +20,7 @@ import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.argument
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.utils.darkTextInStatusBar
+import at.roteskreuz.stopcorona.utils.lightTextInStatusBar
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.webview_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -82,6 +83,7 @@ open class WebViewWithAssetsResourcesFragment : BaseFragment(R.layout.webview_fr
                 Configuration.UI_MODE_NIGHT_YES -> {
                     WebSettingsCompat.setForceDark(webView.settings,
                         WebSettingsCompat.FORCE_DARK_ON)
+                    activity?.lightTextInStatusBar()
                 }
             }
         }
