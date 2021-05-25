@@ -9,30 +9,36 @@ import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
+import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dip
+import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.backgroundColor
 import at.roteskreuz.stopcorona.utils.formatDayAndMonthAndYearAndTime
 import at.roteskreuz.stopcorona.utils.tint
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_questionnaire_hint.btnActionButton
 import kotlinx.android.synthetic.main.fragment_questionnaire_hint.txtHeadline1
 import kotlinx.android.synthetic.main.fragment_questionnaire_self_monitoring.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.threeten.bp.ZonedDateTime
 
 /**
  * Screen to display the information about symptoms monitoring, it's opened
  * from the health status card in dashboard.
  */
-class QuestionnaireSelfMonitoringWithSubmissionDataFragment : QuestionnaireSelfMonitoringFragment(){
-    
+class QuestionnaireSelfMonitoringWithSubmissionDataFragment : BaseFragment(R.layout.fragment_questionnaire_self_monitoring){
+
+    override val isToolbarVisible: Boolean = true
+
+    private val viewModel: QuestionnaireSelfMonitoringViewModel by viewModel()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         txtHeadline1.visible = false
         txtStepsHeadline.visible = true
         txtFormFilledDate.visible = true
-
-        val formedFilledDate = ZonedDateTime.now()
 
         txtHeadline2.text = getString(R.string.questionnaire_examine_observe_sub_headline_1)
         txtDescription1.text = getString(R.string.questionnaire_examine_observe_recommendation_1)
@@ -42,8 +48,6 @@ class QuestionnaireSelfMonitoringWithSubmissionDataFragment : QuestionnaireSelfM
         txtSubDescription.text = getString(R.string.questionnaire_examine_observe_description)
         txtStepsHeadline.text = getString(R.string.questionnaire_observe_symptoms_next_steps)
         btnActionButton.text = getString(R.string.questionnaire_observe_symptoms_button)
-        txtFormFilledDate.text =
-            getString(R.string.questionnaire_observe_symptoms_form_filled_date, formedFilledDate.formatDayAndMonthAndYearAndTime(requireContext()))
         stepsContainer.backgroundColor(R.color.questionnaire_self_monitoring_container)
         imgCircle1.tint(R.color.questionnaire_self_monitoring_circle_tint)
         imgCircle2.tint(R.color.questionnaire_self_monitoring_circle_tint)
@@ -59,6 +63,15 @@ class QuestionnaireSelfMonitoringWithSubmissionDataFragment : QuestionnaireSelfM
             startQuestionnaireFragment()
             activity?.finish()
         }
+
+        disposables += viewModel.observeDateOfLastSelfMonitoringInstruction()
+            .observeOnMainThread()
+            .subscribe { dateOfLastSelfMonitoringInstruction ->
+                if (dateOfLastSelfMonitoringInstruction.isPresent){
+                    txtFormFilledDate.text =
+                        getString(R.string.questionnaire_observe_symptoms_form_filled_date, dateOfLastSelfMonitoringInstruction.get().formatDayAndMonthAndYearAndTime(requireContext()))
+                }
+            }
     }
 
     override fun getTitle(): String? {

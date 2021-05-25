@@ -168,6 +168,11 @@ interface QuarantineRepository {
      * Observe date of last yellow contact
      */
     fun observeLastYellowContactDate(): Observable<Optional<Instant>>
+
+    /**
+     * Observe date of last self monitoring instruction
+     */
+    fun observeDateOfLastSelfMonitoringInstruction(): Observable<Optional<ZonedDateTime>>
 }
 
 class QuarantineRepositoryImpl(
@@ -510,6 +515,10 @@ class QuarantineRepositoryImpl(
 
     override fun observeLastYellowContactDate(): Observable<Optional<Instant>> {
         return dateOfLastYellowContactObservable
+    }
+
+    override fun observeDateOfLastSelfMonitoringInstruction(): Observable<Optional<ZonedDateTime>> {
+        return dateOfLastSelfMonitoringInstructionObservable
     }
 
     override fun quarantineEndSeen() {
