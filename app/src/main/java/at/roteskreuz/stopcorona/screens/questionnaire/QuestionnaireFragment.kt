@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.questionnaire
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -26,6 +27,7 @@ import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
 import at.roteskreuz.stopcorona.skeleton.core.utils.onViewReady
 import at.roteskreuz.stopcorona.utils.darkTextInStatusBar
 import at.roteskreuz.stopcorona.utils.getCurrentConfigurationLanguage
+import at.roteskreuz.stopcorona.utils.lightTextInStatusBar
 import at.roteskreuz.stopcorona.utils.view.CirclePagerIndicatorDecoration
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerWithScrollOption
 import at.roteskreuz.stopcorona.utils.view.safeRun
@@ -67,6 +69,12 @@ class QuestionnaireFragment : BaseFragment(R.layout.fragment_questionnaire) {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.darkTextInStatusBar()
+
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                activity?.lightTextInStatusBar()
+            }
+        }
 
         with(contentRecyclerView) {
             layoutManager = LinearLayoutManagerWithScrollOption(requireContext())
