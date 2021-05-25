@@ -251,7 +251,6 @@ abstract class HealthStatusModel(
         imgHealthStatusIcon.tint(color)
         imgChevron.tint(color)
         txtDescription2.setTextColor(color(color))
-        separator.setBackgroundColor(color(color))
     }
 
     class Holder : BaseEpoxyHolder() {
