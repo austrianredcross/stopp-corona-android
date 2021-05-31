@@ -42,9 +42,9 @@
 	<string name="onboarding_copy_1_3">and save lives.</string>
 	<string name="onboarding_copy_1_4"></string>
 	<string name="onboarding_copy_1_5"></string>
-	<string name="onboarding_headline_2">Digital handshake</string>
+	<string name="onboarding_headline_2">Risk assessment</string>
 	<string name="onboarding_copy_2_img">Image: Contacts are identified via Bluetooth</string>
-	<string name="onboarding_copy_2_1">Activate the automatic digital handshake via Bluetooth to save contacts</string>
+	<string name="onboarding_copy_2_1">Activate the automatic risk assessment via Bluetooth to save contacts</string>
 	<string name="onboarding_copy_2_2">anonymously and locally</string>
 	<string name="onboarding_copy_2_3">and to determine your</string>
 	<string name="onboarding_copy_2_4">current risk of infection.</string>
@@ -83,8 +83,8 @@
 
 	<!-- Dashboard -->
 	<string name="main_headline">Together against the corona virus</string>
-	<string name="main_body_contact_title">Digital Handshake</string>
-	<string name="main_body_contact_description">Start the digital handshake to save an encounter. Contacts will be notified anonymously should you fall ill.</string>
+	<string name="main_body_contact_title">Risk assessment</string>
+	<string name="main_body_contact_description">Start the risk assessment to save an encounter. Contacts will be notified anonymously should you fall ill.</string>
 	<string name="main_automatic_handshake_description_disabled">Please note, in quarantine you should reduce your contacts to a minimum, therefore the handshake is no longer possible.</string>
 	<string name="main_button_start_handshake_button">Start manual handshake</string>
 	<string name="main_body_saved_encounters">Saved Encounters (%,d)</string>
@@ -197,7 +197,7 @@
 	<string name="infection_info_confirmed_and_suspicion_headline">Coronavirus disease and suspicion</string>
 
 	<!-- Handshake -->
-	<string name="handshake_title">Digital handshake</string>
+	<string name="handshake_title">Risk assessment</string>
 	<string name="handshake_headline">Select &amp; save encounter</string>
 	<string name="handshake_information">How does it work?</string>
 	<string name="handshake_identification_prefix">You are: </string>
@@ -242,7 +242,7 @@
 	<string name="main_automatic_handshake_contact_risk_headline">Risky contact found</string>
 	<string name="main_automatic_handshake_self_suspicion_headline">Suspicion reported</string>
 	<string name="main_automatic_handshake_self_infection_headline">Infection reported</string>
-	<string name="main_automatic_handshake_disabled_info">Please activate the digital handshake to identify risky contacts</string>
+	<string name="main_automatic_handshake_disabled_info">Please activate the risk assessment to identify risky contacts</string>
 	<string name="main_automatic_handshake_contact_checks">%s comparisons in the past 7 days</string>
 	<string name="main_automatic_handshake_last_update">Latest update: %s</string>
 	<string name="main_automatic_handshake_last_contact_days">%s days have passed since your latest risk contact</string>
