@@ -357,7 +357,8 @@ class QuarantineRepositoryImpl(
                 end = quarantinedUntil,
                 bySelfYellowDiagnosis = selfYellowDiagnoseQuarantineUntil,
                 byRedWarning = redWarningQuarantineUntil,
-                byYellowWarning = yellowWarningQuarantineUntil
+                byYellowWarning = yellowWarningQuarantineUntil,
+                selfMonitoring = selfMonitoringLastDateTime != null
             )
         } else {
             QuarantineStatus.Free(selfMonitoringLastDateTime != null)
@@ -597,7 +598,7 @@ sealed class QuarantineStatus {
          * After this time user's state is [Free].
          */
         data class Limited(val end: ZonedDateTime, val bySelfYellowDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
-            val byYellowWarning: ZonedDateTime?) :
+            val byYellowWarning: ZonedDateTime?, val selfMonitoring: Boolean = false) :
             Jailed() {
 
             /**
