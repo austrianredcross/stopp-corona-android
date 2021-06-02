@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import at.roteskreuz.stopcorona.screens.webView.WebViewWithAssetsResourcesFragment
+import at.roteskreuz.stopcorona.utils.lightTextInStatusBar
 import kotlinx.android.synthetic.main.webview_fragment.*
 
 fun WebViewWithAssetsResourcesFragment.setDarkMode() {
@@ -12,6 +13,7 @@ fun WebViewWithAssetsResourcesFragment.setDarkMode() {
             Configuration.UI_MODE_NIGHT_YES -> {
                 WebSettingsCompat.setForceDark(webView.settings,
                     WebSettingsCompat.FORCE_DARK_ON)
+                activity?.lightTextInStatusBar()
             }
         }
     }

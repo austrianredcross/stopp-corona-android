@@ -103,6 +103,7 @@ class DashboardViewModel(
                     is QuarantineStatus.Jailed.Limited -> {
                         when {
                             quarantineStatus.bySelfYellowDiagnosis != null -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
+                            quarantineStatus.selfMonitoring -> HealthStatusData.SelfTestingSymptomsMonitoring
                             else -> HealthStatusData.NoHealthStatus
                         }
                     }

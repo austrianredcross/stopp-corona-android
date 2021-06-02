@@ -42,9 +42,9 @@
 	<string name="onboarding_copy_1_3">zu</string>
 	<string name="onboarding_copy_1_4">verlangsamen</string>
 	<string name="onboarding_copy_1_5">und Leben zu retten.</string>
-	<string name="onboarding_headline_2">Digitaler Handshake</string>
+	<string name="onboarding_headline_2">Risiko-Ermittlung</string>
 	<string name="onboarding_copy_2_img">Bild: Kontakte werden über Bluetooth ermittelt</string>
-	<string name="onboarding_copy_2_1">Aktivieren Sie den automatischen digitalen Handshake über Bluetooth, um Kontakte</string>
+	<string name="onboarding_copy_2_1">Aktivieren Sie die automatische Risiko-Ermittlung über Bluetooth, um Kontakte</string>
 	<string name="onboarding_copy_2_2">anonym und lokal</string>
 	<string name="onboarding_copy_2_3">zu speichern und Ihr</string>
 	<string name="onboarding_copy_2_4">aktuelles Infektions-Risiko</string>
@@ -83,8 +83,8 @@
 
 	<!-- Dashboard -->
 	<string name="main_headline">Gemeinsam gegen das Coronavirus</string>
-	<string name="main_body_contact_title">Digitaler Handshake</string>
-	<string name="main_body_contact_description">Starten Sie den digitalen Handshake um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
+	<string name="main_body_contact_title">Risiko-Ermittlung</string>
+	<string name="main_body_contact_description">Starten Sie die Risiko-Ermittlung um eine Begegnung zu speichern. Die Kontakte werden im Krankheitsfall anonym benachrichtigt.</string>
 	<string name="main_automatic_handshake_description_disabled">Bitte beachten Sie, in Quarantäne sollten Sie Ihre Kontakte auf ein Minimum reduzieren, deshalb ist der Handshake nicht mehr möglich.</string>
 	<string name="main_button_start_handshake_button">Manuellen Handshake starten</string>
 	<string name="main_body_saved_encounters">Gespeicherte Begegnungen (%,d)</string>
@@ -195,7 +195,7 @@
 	<string name="infection_info_confirmed_and_suspicion_headline">Coronavirus Erkankung und Verdacht</string>
 
 	<!-- Handshake -->
-	<string name="handshake_title">Digitaler Handshake</string>
+	<string name="handshake_title">Risiko-Ermittlung</string>
 	<string name="handshake_headline">Begegnung auswählen &amp; speichern</string>
 	<string name="handshake_information">Wie funktioniert es?</string>
 	<string name="handshake_identification_prefix">Sie sind:</string>
@@ -205,7 +205,7 @@
 	<string name="handshake_select_all_contacts">alle</string>
 	<string name="handshake_missing_permissions_title">Berechtigungen fehlen</string>
 	<string name="handshake_missing_permissions_microphone">Mikrofon</string>
-	<string name="handshake_missing_permissions_message">Für die Präzision Ihres digitalen Handshakes werden zusätzlich folgende Berechtigungen benötigt: </string>
+	<string name="handshake_missing_permissions_message">Für die Präzision Ihrer Risiko-Ermittlung werden zusätzlich folgende Berechtigungen benötigt: </string>
 	<string name="handshake_missing_permissions_message_settings">Bitte erlauben Sie diese Einstellung in den Systemeinstellungen</string>
 	<string name="handshake_missing_permissions_open_settings">Einstellungen öffnen</string>
 	<string name="handshake_dialog_title">So funktioniert’s:</string>
@@ -240,7 +240,7 @@
 	<string name="main_automatic_handshake_contact_risk_headline">Risiko-Kontakt gefunden</string>
 	<string name="main_automatic_handshake_self_suspicion_headline">Verdacht gemeldet</string>
 	<string name="main_automatic_handshake_self_infection_headline">Infektion gemeldet</string>
-	<string name="main_automatic_handshake_disabled_info">Bitte aktivieren Sie den Digitalen Handshake um Risiko-Kontakte zu ermitteln</string>
+	<string name="main_automatic_handshake_disabled_info">Bitte aktivieren Sie die Risiko-Ermittlung um Risiko-Kontakte zu ermitteln</string>
 	<string name="main_automatic_handshake_contact_checks">%s Abgleiche in den letzten 7 Tagen</string>
 	<string name="main_automatic_handshake_last_update">Letzte Aktualisierung: %s</string>
 	<string name="main_automatic_handshake_last_contact_days">%s Tage seit Ihrem letzten Risiko-Kontakt</string>
@@ -268,7 +268,7 @@
 	<string name="certificate_report_status_title_extra">IDs teilen</string>
 	<string name="certificate_report_status_headline">Wurde Ihre Infektion mit dem Coronavirus medizinisch nachgewiesen?</string>
 	<string name="certificate_report_status_headline_extra">Weitere Kontakte über Ihre Krankmeldung benachrichtigen</string>
-	<string name="certificate_report_status_description_1">Es ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden. Das Melden einer Infektion ist freiwillig.\n\nIm nächsten Schritt wird Zugriff auf die gespeicherten Zufalls-IDs angefragt. Wir werden dann alle Personen anonym benachrichtigen, mit denen Sie in den letzten beiden Tagen einen digitalen Handshake ausgetauscht haben. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt. Kontakte von heute können Sie systembedingt erst morgen benachrichtigen.\n\nErlauben Sie jetzt die Benachrichtigung Ihrer Kontakte mit Hilfe der Zufalls-IDs aus dem Kontaktprotokoll.</string>
+	<string name="certificate_report_status_description_1">Es ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden. Das Melden einer Infektion ist freiwillig.\n\nIm nächsten Schritt wird Zugriff auf die gespeicherten Zufalls-IDs angefragt. Wir werden dann alle Personen anonym benachrichtigen, mit denen Sie in den letzten beiden Tagen einen digitalen Handshake ausgetauscht haben. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt. Kontakte von heute können Sie systembedingt erst morgen benachrichtigen.(Diese Abfrage wird nur einmalig benötigt und durchgeführt)\n\nErlauben Sie jetzt die Benachrichtigung Ihrer Kontakte mit Hilfe der Zufalls-IDs aus dem Kontaktprotokoll.</string>
 	<string name="certificate_report_status_description_1_extra">Benachrichtigen Sie jetzt weitere Kontakte vom Tag der Krankmeldung über die Infektion.\nEs ist wichtig, dass nur eindeutig bestätigte Infektionen gemeldet werden. Das Melden einer Infektion ist freiwillig.\n\nIm nächsten Schritt werden alle Personen, mit denen Sie am Tag Ihrer Meldung einen digitalen Handshake ausgetauscht haben, anonym benachrichtigt. So schützen Sie andere und die weitere Ausbreitung des Virus wird verlangsamt. \n\nErlauben Sie jetzt die Benachrichtigung Ihrer Kontakte mit Hilfe der Zufalls-IDs aus dem Kontaktprotokoll.</string>
 	<string name="certificate_report_status_description_2">Die Benachrichtigung erfolgt anonym.</string>
 	<string name="certificate_report_status_description_3">Ihre persönlichen Daten werden nicht an Dritte weitergegeben.</string>
@@ -579,7 +579,7 @@
 	<string name="health_status_contacts_confirmed_and_suspicion_one_or_more_cases_description">Bei Ihren Kontakten wurden ein oder mehrere Corona Infektionen gemeldet. \n\nBei Ihren Kontakten wurden ein oder mehre Verdachte auf eine Corona-Infektion gemeldet.</string>
 	<string name="revoke_suspicion_title">Status melden</string>
 	<string name="revoke_suspicion_headline">Entwarnung geben</string>
-	<string name="revoke_suspicion_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Symptome einer Corona-Infektion bei Ihnen aufgetreten sind.\n\nWenn durch\n• einen Laborbefund oder\n• einen Arzt\nbestätigt wurde, dass Sie nicht an dem Coronavirus erkrankt sind, informieren Sie bitte umgehend Ihre Kontakte mit dieser Entwarnung.\n\nIm nächsten Schritt fragen wir dafür Zugriff auf die gespeicherten Zufalls-IDs an. Den Zugriff benötigen wir, um Ihre zuvor benachrichtigten Kontakte über die Entwarnung zu informieren.</string>
+	<string name="revoke_suspicion_description">Sie haben Ihre Kontakte am %s darüber informiert, dass Symptome einer Corona-Infektion bei Ihnen aufgetreten sind.\n\nWenn durch\n• einen Laborbefund oder\n• einen Arzt\nbestätigt wurde, dass Sie nicht an dem Coronavirus erkrankt sind, informieren Sie bitte umgehend Ihre Kontakte mit dieser Entwarnung.\n\nIm nächsten Schritt fragen wir dafür Zugriff auf die gespeicherten Zufalls-IDs an. Den Zugriff benötigen wir, um Ihre zuvor benachrichtigten Kontakte über die Entwarnung zu informieren.(Diese Abfrage wird nur einmalig benötigt und durchgeführt)</string>
 	<string name="revoke_suspicion_approval">Hiermit bestätige ich, die Angaben wahrheitsgemäß getätigt zu haben.</string>
 	<string name="revoke_suspicion_action">Entwarnung bestätigen</string>
 	<string name="revoke_suspicion_success_headline">Entwarnung bestätigt</string>

@@ -56,7 +56,7 @@ abstract class DiaryDayItemModel(
             DiaryEntryType.EVENT -> imgIcon.setImageResource(R.drawable.ic_contact_event)
         }
 
-        view.setOnClickListener {
+        btnClose.setOnClickListener {
             onClick(entry?.id)
         }
     }

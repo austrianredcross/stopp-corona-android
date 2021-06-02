@@ -168,6 +168,11 @@ interface QuarantineRepository {
      * Observe date of last yellow contact
      */
     fun observeLastYellowContactDate(): Observable<Optional<Instant>>
+
+    /**
+     * Observe date of last self monitoring instruction
+     */
+    fun observeDateOfLastSelfMonitoringInstruction(): Observable<Optional<ZonedDateTime>>
 }
 
 class QuarantineRepositoryImpl(
@@ -352,7 +357,8 @@ class QuarantineRepositoryImpl(
                 end = quarantinedUntil,
                 bySelfYellowDiagnosis = selfYellowDiagnoseQuarantineUntil,
                 byRedWarning = redWarningQuarantineUntil,
-                byYellowWarning = yellowWarningQuarantineUntil
+                byYellowWarning = yellowWarningQuarantineUntil,
+                selfMonitoring = selfMonitoringLastDateTime != null
             )
         } else {
             QuarantineStatus.Free(selfMonitoringLastDateTime != null)
@@ -512,6 +518,10 @@ class QuarantineRepositoryImpl(
         return dateOfLastYellowContactObservable
     }
 
+    override fun observeDateOfLastSelfMonitoringInstruction(): Observable<Optional<ZonedDateTime>> {
+        return dateOfLastSelfMonitoringInstructionObservable
+    }
+
     override fun quarantineEndSeen() {
         showQuarantineEnd = false
     }
@@ -588,7 +598,7 @@ sealed class QuarantineStatus {
          * After this time user's state is [Free].
          */
         data class Limited(val end: ZonedDateTime, val bySelfYellowDiagnosis: ZonedDateTime?, val byRedWarning: ZonedDateTime?,
-            val byYellowWarning: ZonedDateTime?) :
+            val byYellowWarning: ZonedDateTime?, val selfMonitoring: Boolean = false) :
             Jailed() {
 
             /**

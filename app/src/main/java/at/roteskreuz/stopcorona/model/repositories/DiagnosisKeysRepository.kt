@@ -30,6 +30,7 @@ import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
@@ -263,8 +264,11 @@ class DiagnosisKeysRepositoryImpl(
             WarningType.GREEN, // No special handling of WarningType.GREEN as the optimization is currently broken. See comment on `else` branch.
             WarningType.YELLOW, WarningType.RED -> {
                 if (summary.summationRiskScore < configuration.dailyRiskThreshold) {
-                    if (quarantineRepository.dateOfLastRedContact != null || quarantineRepository.dateOfLastYellowContact != null){
-                        notificationsRepository.displayEndQuarantineNotification()
+                    if (quarantineRepository.dateOfLastRedContact != null || quarantineRepository.dateOfLastYellowContact != null) {
+                        val quarantineStatus = quarantineRepository.observeQuarantineState().awaitFirst()
+                        if (quarantineStatus is QuarantineStatus.Free) {
+                            notificationsRepository.displayEndQuarantineNotification()
+                        }
                     }
                     quarantineRepository.revokeLastRedContactDate()
                     quarantineRepository.revokeLastYellowContactDate()

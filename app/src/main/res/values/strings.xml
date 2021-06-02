@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Stop Corona</string>
+	<string name="app_name">Stopp Corona</string>
 
 	<!-- Technical strings -->
 	<string name="current_language">en</string>
@@ -37,18 +37,18 @@
 	<!-- Onboarding -->
 	<string name="onboarding_headline_1">Welcome</string>
 	<string name="onboarding_copy_1_img">Image: Falling numbers of Corona cases</string>
-	<string name="onboarding_copy_1_1">By using the Stop Corona app, you are helping to </string>
+	<string name="onboarding_copy_1_1">By using the Stopp Corona app, you are helping to </string>
 	<string name="onboarding_copy_1_2">slow down the spread of the virus</string>
 	<string name="onboarding_copy_1_3">and save lives.</string>
 	<string name="onboarding_copy_1_4"></string>
 	<string name="onboarding_copy_1_5"></string>
-	<string name="onboarding_headline_2">Digital handshake</string>
+	<string name="onboarding_headline_2">Risk assessment</string>
 	<string name="onboarding_copy_2_img">Image: Contacts are identified via Bluetooth</string>
-	<string name="onboarding_copy_2_1">Activate the automatic digital handshake via Bluetooth to save contacts</string>
+	<string name="onboarding_copy_2_1">Activate the automatic risk assessment via Bluetooth to save contacts</string>
 	<string name="onboarding_copy_2_2">anonymously and locally</string>
 	<string name="onboarding_copy_2_3">and to determine your</string>
-	<string name="onboarding_copy_2_4">current risk of infection</string>
-	<string name="onboarding_copy_2_5">to determine.</string>
+	<string name="onboarding_copy_2_4">current risk of infection.</string>
+	<string name="onboarding_copy_2_5"></string>
 	<string name="onboarding_headline_3">Notification of risk contact</string>
 	<string name="onboarding_copy_3_img">Image: Notification of a contact\'s illness</string>
 	<string name="onboarding_copy_3_1">If one of your contacts falls ill, you will be notified of the </string>
@@ -83,8 +83,8 @@
 
 	<!-- Dashboard -->
 	<string name="main_headline">Together against the corona virus</string>
-	<string name="main_body_contact_title">Digital Handshake</string>
-	<string name="main_body_contact_description">Start the digital handshake to save an encounter. Contacts will be notified anonymously should you fall ill.</string>
+	<string name="main_body_contact_title">Risk assessment</string>
+	<string name="main_body_contact_description">Start the risk assessment to save an encounter. Contacts will be notified anonymously should you fall ill.</string>
 	<string name="main_automatic_handshake_description_disabled">Please note, in quarantine you should reduce your contacts to a minimum, therefore the handshake is no longer possible.</string>
 	<string name="main_button_start_handshake_button">Start manual handshake</string>
 	<string name="main_body_saved_encounters">Saved Encounters (%,d)</string>
@@ -168,7 +168,7 @@
 	<string name="contact_sickness_guidelines_second_3">1450</string>
 	<string name="contact_sickness_guidelines_second_4">and report that you have had contact with an infected person on</string>
 	<string name="contact_sickness_guidelines_second_5">. Mention the identification via the</string>
-	<string name="contact_sickness_guidelines_second_6">Stop Corona App</string>
+	<string name="contact_sickness_guidelines_second_6">Stopp Corona App</string>
 	<string name="contact_sickness_guidelines_second_7">and that you are a contact person via the app (</string>
 	<string name="contact_sickness_guidelines_second_8">Kontaktperson 4</string>
 	<string name="contact_sickness_guidelines_third">You will receive an <b>official COVID-19 test </b> after approx. 5 days. If that is negative, you can end the quarantine.</string>
@@ -196,7 +196,7 @@
 	<string name="infection_info_confirmed_and_suspicion_headline">Coronavirus disease and suspicion</string>
 
 	<!-- Handshake -->
-	<string name="handshake_title">Digital handshake</string>
+	<string name="handshake_title">Risk assessment</string>
 	<string name="handshake_headline">Select &amp; save encounter</string>
 	<string name="handshake_information">How does it work?</string>
 	<string name="handshake_identification_prefix">You are: </string>
@@ -241,7 +241,7 @@
 	<string name="main_automatic_handshake_contact_risk_headline">Risky contact found</string>
 	<string name="main_automatic_handshake_self_suspicion_headline">Suspicion reported</string>
 	<string name="main_automatic_handshake_self_infection_headline">Infection reported</string>
-	<string name="main_automatic_handshake_disabled_info">Please activate the digital handshake to identify risky contacts</string>
+	<string name="main_automatic_handshake_disabled_info">Please activate the risk assessment to identify risky contacts</string>
 	<string name="main_automatic_handshake_contact_checks">%s comparisons in the past 7 days</string>
 	<string name="main_automatic_handshake_last_update">Latest update: %s</string>
 	<string name="main_automatic_handshake_last_contact_days">%s days have passed since your latest risk contact</string>
@@ -269,7 +269,7 @@
 	<string name="certificate_report_status_title_extra">Share IDs</string>
 	<string name="certificate_report_status_headline">Has your corona infection been medically proven?</string>
 	<string name="certificate_report_status_headline_extra">Notify other contacts of your sick leave</string>
-	<string name="certificate_report_status_description_1">It is important that only clearly confirmed infections are reported. Reporting an infection is voluntary.\n\nThe next step is to request access to the stored random IDs. We will then anonymously notify all persons with whom you have exchanged a digital handshake in the last two days. This way you protect others and the further spread of the virus is slowed down. Due to the nature of the system, today\'s contacts can only be notified tomorrow.\n\nAllow your contacts to be notified now using the random IDs from the contact log.</string>
+	<string name="certificate_report_status_description_1">It is important that only clearly confirmed infections are reported. Reporting an infection is voluntary.\n\nThe next step is to request access to the stored random IDs. We will then anonymously notify all persons with whom you have exchanged a digital handshake in the last two days. This way you protect others and the further spread of the virus is slowed down. Due to the nature of the system, today\'s contacts can only be notified tomorrow.(This request is only required once and executed)\n\nAllow your contacts to be notified now using the random IDs from the contact log.</string>
 	<string name="certificate_report_status_description_1_extra">Now notify other contacts from the day the infection was reported.\nIt is important that only clearly confirmed infections are reported. Reporting an infection is voluntary.\n\nIn the next step, all persons with whom you exchanged a digital handshake on the day of your report will be anonymously notified. In this way you protect others and the further spread of the virus is slowed down. \n\nNow allow your contacts to be notified using the random IDs from the contact log.</string>
 	<string name="certificate_report_status_description_2">The notification is anonymous.</string>
 	<string name="certificate_report_status_description_3">Your personal data will not be passed on to third parties.</string>
@@ -286,7 +286,7 @@
 	<string name="sickness_certificate_confirmation_title">Infection reported</string>
 	<string name="sickness_certificate_confirmation_title_extra">Share IDs</string>
 	<string name="sickness_certificate_confirmation_headline">Infection reported</string>
-	<string name="sickness_certificate_confirmation_headline_extra">IDs from contact log shared with Stop Corona app</string>
+	<string name="sickness_certificate_confirmation_headline_extra">IDs from contact log shared with Stopp Corona app</string>
 	<string name="sickness_certificate_confirmation_description1_extra">Other contacts will now be notified of your sick note.</string>
 	<string name="sickness_certificate_confirmation_description1">Thank you for reporting your infection and for contributing significantly to the common good.</string>
 	<string name="sickness_certificate_confirmation_description2">Your contacts were notified anonymously.</string>
@@ -340,7 +340,7 @@
 	<string name="sickness_certificate_attest_headline">Attention</string>
 	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection.</string>
 	<string name="sickness_certificate_attest_date_text">Please go into quarantine <b>until you are healthy</b>.</string>
-	<string name="sickness_certificate_attest_description_2">Please go into qurantine</string>
+	<string name="sickness_certificate_attest_description_2">Please go into quarantine</string>
 	<string name="sickness_certificate_attest_description_3">until you are healthy.</string>
 	<string name="sickness_certificate_attest_description_5">until</string>
 	<string name="sickness_certificate_attest_description_4"></string>
@@ -433,7 +433,7 @@
 	<string name="questionnaire_report_status_button">Report a suspected infection</string>
 	<string name="questionnaire_report_status_button_extra">Share IDs now</string>
 	<string name="questionnaire_report_success_headline">Suspected infection reported</string>
-	<string name="questionnaire_report_success_headline_extra">IDs from contact log shared with Stop Corona App</string>
+	<string name="questionnaire_report_success_headline_extra">IDs from contact log shared with Stopp Corona App</string>
 	<string name="questionnaire_report_success_description">Thank you for reporting your suspected infection and for contributing significantly to the common good.</string>
 	<string name="questionnaire_report_success_description_extra">Other contacts will now be notified of your suspicion.</string>
 	<string name="questionnaire_report_success_next_steps">Next steps</string>
@@ -465,7 +465,7 @@
 	<string name="self_testing_suspicion_headline">Attention</string>
 	<string name="self_testing_suspicion_description">Based on your information, you are suspected of having a corona infection.</string>
 	<string name="self_testing_suspicion_description_2">Please go into quarantine</string>
-	<string name="self_testing_suspicion_description_3">until clarification</string>
+	<string name="self_testing_suspicion_description_3">until clarification.</string>
 	<string name="self_testing_suspicion_description_4"></string>
 	<string name="self_testing_suspicion_button">What should I do?</string>
 	<string name="self_testing_suspicion_button_revoke">Give the all clear</string>
@@ -554,14 +554,14 @@
 	<string name="contacts_confirmed_one_case_description_3">has been detected in one or more of your contacts.</string>
 	<string name="contacts_confirmed_one_case_description_4">Please go into quarantine</string>
 	<string name="contacts_confirmed_one_case_description_5">until</string>
-	<string name="contacts_confirmed_one_case_description_6"></string>
+	<string name="contacts_confirmed_one_case_description_6">.</string>
 	<string name="contacts_suspicion_one_case_headline">Attention</string>
 	<string name="contacts_suspicion_one_case_description">One or more of your contacts have reported a</string>
 	<string name="contacts_suspicion_one_case_description_2">suspected corona infection</string>
 	<string name="contacts_suspicion_one_case_description_3">.</string>
 	<string name="contacts_suspicion_one_case_description_4">Please go into quarantine</string>
 	<string name="contacts_suspicion_one_case_description_5">until</string>
-	<string name="contacts_suspicion_one_case_description_6"></string>
+	<string name="contacts_suspicion_one_case_description_6">.</string>
 	<string name="contacts_confirmed_multiple_case_headline">Attention</string>
 	<string name="contacts_confirmed_multiple_case_description">In %d of your contacts a corona infection was confirmed.</string>
 	<string name="contacts_confirmed_multiple_case_description_1">%d of your contacts are</string>
@@ -581,7 +581,7 @@
 	<string name="health_status_contacts_confirmed_and_suspicion_one_or_more_cases_description">One or more corona infections have been reported in your contacts.\n\nOne or more suspected corona infections were reported in your contacts.</string>
 	<string name="revoke_suspicion_title">Report status</string>
 	<string name="revoke_suspicion_headline">Confirm all-clear</string>
-	<string name="revoke_suspicion_description">You have informed your contacts at the %s that you have experienced symptoms of corona infection\n\nIf through\n• a laboratory report, or\n• a doctor\nhas confirmed that you are not ill with the coronavirus, please inform your contacts immediately with this all-clear.\n\nIn the next step we will request access to the stored random IDs for this purpose. We need this access to inform your previously notified contacts about the all-clear.</string>
+	<string name="revoke_suspicion_description">You have informed your contacts at the %s that you have experienced symptoms of corona infection\n\nIf through\n• a laboratory report, or\n• a doctor\nhas confirmed that you are not ill with the coronavirus, please inform your contacts immediately with this all-clear.\n\nIn the next step we will request access to the stored random IDs for this purpose. We need this access to inform your previously notified contacts about the all-clear.(This request is only required once and executed)</string>
 	<string name="revoke_suspicion_approval">I hereby confirm that the information provided is true and correct.</string>
 	<string name="revoke_suspicion_action">confirm all-clear</string>
 	<string name="revoke_suspicion_success_headline">All-clear confirmed</string>

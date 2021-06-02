@@ -74,7 +74,6 @@ open class WebViewWithAssetsResourcesFragment : BaseFragment(R.layout.webview_fr
         super.onViewCreated(view, savedInstanceState)
 
         activity?.darkTextInStatusBar()
-
         setDarkMode()
 
         val language = getString(R.string.current_language)
