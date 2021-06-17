@@ -10,6 +10,7 @@ import at.roteskreuz.stopcorona.constants.Constants.API.HOSTNAME_TAN
 import at.roteskreuz.stopcorona.constants.Constants.API.Header
 import at.roteskreuz.stopcorona.constants.isBeta
 import at.roteskreuz.stopcorona.constants.isDebug
+import at.roteskreuz.stopcorona.constants.isStageApi
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.cdnCertificatePinnerTag
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.defaultCertificatePinnerTag
 import at.roteskreuz.stopcorona.di.CertificatePinnerTag.tanCertificatePinnerTag
@@ -41,8 +42,10 @@ val remoteModule = module {
 
     single(name = defaultCertificatePinnerTag) {
         CertificatePinner.Builder().apply {
-            CERTIFICATE_CHAIN_DEFAULT.forEach { pin ->
-                add(HOSTNAME, pin)
+            if (!isStageApi) {
+                CERTIFICATE_CHAIN_DEFAULT.forEach { pin ->
+                    add(HOSTNAME, pin)
+                }
             }
         }.build()
     }
