@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.di
 
 import android.bluetooth.BluetoothAdapter
+import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManagerImpl
 import at.roteskreuz.stopcorona.model.repositories.*
@@ -78,7 +79,7 @@ val repositoryModule = module {
     }
 
     single<BluetoothRepository> {
-        BluetoothRepositoryImpl(BluetoothAdapter.getDefaultAdapter())
+        BluetoothRepositoryImpl(BluetoothAdapter.getDefaultAdapter(), get<BluetoothManager>())
     }
 
     single<ExposureNotificationRepository> {
