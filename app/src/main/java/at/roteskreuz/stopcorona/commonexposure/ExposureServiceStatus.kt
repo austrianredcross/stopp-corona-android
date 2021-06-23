@@ -1,0 +1,3 @@
+package at.roteskreuz.stopcorona.commonexposure
+
+interface ExposureServiceStatus

@@ -54,7 +54,7 @@ class ChangelogManagerImpl(
     private val changelogs = listOf(
         Changelog(
             id = 1,
-            versions = listOf("2.0.0", "2.0.3", "2.0.4", "2.0.5"),
+            versions = listOf("2.0.0", "2.0.3", "2.0.4", "2.0.5", "2.0.6"),
             title = R.string.changelog_title_v2_0_0,
             description = listOf(
                 SpanTextWrapper.NoStyle(R.string.changelog_description_1_v2_0_0),

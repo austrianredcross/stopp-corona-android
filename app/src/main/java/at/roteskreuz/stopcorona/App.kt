@@ -7,10 +7,9 @@ import android.os.Build
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.isDebug
 import at.roteskreuz.stopcorona.di.*
-import at.roteskreuz.stopcorona.model.repositories.NotificationsRepository
 import at.roteskreuz.stopcorona.skeleton.core.BaseApp
-import org.koin.android.ext.android.get
 import org.koin.dsl.module.Module
+import timber.log.Timber
 
 /**
  * Application class.
@@ -25,16 +24,23 @@ class App : BaseApp() {
         viewModelModule,
         scopeModule,
         contextDependentModule,
-        flavourDependentModule
+        flavourDependentModule,
+        platformDependentModule
     )
 
     override fun onPostCreate() {
         super.onPostCreate()
 
+        if(BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         onPostCreateFlavourDependent()
 
         // Create notification channels
         createNotificationChannels()
+
+        ActivityLifeCycleHelper.initWithApplication(this)
     }
 
     private fun createNotificationChannels() {

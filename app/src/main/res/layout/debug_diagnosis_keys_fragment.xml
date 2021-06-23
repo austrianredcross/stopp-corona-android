@@ -26,7 +26,7 @@
 
     </ScrollView>
     <TextView
-        android:id="@+id/googlePlayServicesVersionTextView"
+        android:id="@+id/servicesVersionTextView"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:textAppearance="?attr/textAppearanceBody2" />
@@ -71,11 +71,19 @@
         android:layout_height="wrap_content"
         android:text="Enable Exposure Tracing" />
 
-    <TextView
-        android:id="@+id/exposureNotificationsErrorMessage"
-        style="@style/AppTheme.Label"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        tools:text="Errors" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:paddingHorizontal="8dp"
+            android:id="@+id/exposureNotificationsErrorMessage"
+            style="@style/AppTheme.Label"
+            android:paddingBottom="32dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            tools:text="Errors" />
+
+    </ScrollView>
 </LinearLayout>

@@ -114,7 +114,8 @@ class DiagnosisKeysRepositoryImpl(
     private val workManager: WorkManager,
     private val exposureNotificationRepository: ExposureNotificationRepository,
     private val configurationRepository: ConfigurationRepository,
-    val notificationsRepository: NotificationsRepository
+    val notificationsRepository: NotificationsRepository,
+    private val isGMS : Boolean
 ) : DiagnosisKeysRepository,
     CoroutineScope {
 
@@ -152,7 +153,7 @@ class DiagnosisKeysRepositoryImpl(
             return
         }
 
-        if (configuration.scheduledProcessingIn5Min) {
+        if (isGMS && configuration.scheduledProcessingIn5Min) {
             if (sessionDao.deleteScheduledSession(token) == 0) {
                 Timber.d("ENStatusUpdates: Proceessing of $token was already triggered")
                 return
@@ -430,7 +431,7 @@ class DiagnosisKeysRepositoryImpl(
         val finished = exposureNotificationRepository.provideDiagnosisKeyBatch(fullBatchParts, token)
 
         // schedule calling [ExposureNotificationBroadcastReceiver.onExposureStateUpdated] after timeout
-        if (!finished && configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
+        if (isGMS && !finished && configurationRepository.getConfiguration()?.scheduledProcessingIn5Min != false) {
             Timber.d("ENStatusUpdates: Scheduling a timeout for the exposure status update broadcast. Token: $token")
             sessionDao.insertScheduledSession(DbScheduledSession(token))
             DelayedExposureBroadcastReceiverCallWorker.enqueueDelayedExposureReceiverCall(workManager, token)

@@ -14,9 +14,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.State
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kotlinx.coroutines.launch
@@ -57,19 +55,11 @@ class ReportingStatusViewModel(
                 val temporaryTracingKeys = exposureNotificationRepository.getTemporaryExposureKeys()
                 val reportedInfectionLevel = reportingRepository.uploadReportInformation(temporaryTracingKeys)
                 uploadReportDataStateObserver.loaded(reportedInfectionLevel)
-            } catch (apiException: ApiException) {
-                when (apiException.statusCode) {
-                    ExposureNotificationStatusCodes.RESOLUTION_REQUIRED -> {
-                        exposureNotificationsErrorState.loaded(ResolutionType.GetExposureKeys(apiException.status))
-                    }
-                    else -> {
-                        uploadReportDataStateObserver.error(apiException)
-                        return@launch
-                    }
-                }
             } catch (exception: Exception) {
-                Timber.e(exception, "Unknown error when attempting to start API")
-                uploadReportDataStateObserver.error(exception)
+                if(!handleFrameSpecificErrorOnUploadData(exception, uploadReportDataStateObserver, exposureNotificationsErrorState)) {
+                    Timber.e(exception, "Unknown error when attempting to start API")
+                    uploadReportDataStateObserver.error(exception)
+                }
             } finally {
                 uploadReportDataStateObserver.idle()
             }
