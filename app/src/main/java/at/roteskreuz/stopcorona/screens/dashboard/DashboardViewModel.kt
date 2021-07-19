@@ -1,18 +1,21 @@
 package at.roteskreuz.stopcorona.screens.dashboard
 
 import android.app.Activity
+import at.roteskreuz.stopcorona.model.entities.statistics.Bundesland
+import at.roteskreuz.stopcorona.model.entities.statistics.CovidStatistics
 import at.roteskreuz.stopcorona.model.managers.ChangelogManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
 import at.roteskreuz.stopcorona.model.repositories.*
+import at.roteskreuz.stopcorona.screens.statistics.StatisticIncidenceItem
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
+import at.roteskreuz.stopcorona.utils.*
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import org.threeten.bp.Instant
-import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 /**
@@ -26,7 +29,8 @@ class DashboardViewModel(
     private val changelogManager: ChangelogManager,
     private val exposureNotificationManager: ExposureNotificationManager,
     private val dataPrivacyRepository: DataPrivacyRepository,
-    private val mandatoryUpdateManager: MandatoryUpdateManager
+    private val mandatoryUpdateManager: MandatoryUpdateManager,
+    private val statisticsRepository: StatisticsRepository
 ) : ScopedViewModel(appDispatchers) {
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
@@ -64,6 +68,9 @@ class DashboardViewModel(
     val dateOfFirstMedicalConfirmation: ZonedDateTime?
         get() = quarantineRepository.dateOfFirstMedicalConfirmation
 
+    var statistics: CovidStatistics? = null
+    var statisticIncidenceItems = mutableListOf<StatisticIncidenceItem>()
+
     init {
         /**
          * If the user starts the app for the first time the exposure notification framework will be started automatically.
@@ -72,6 +79,7 @@ class DashboardViewModel(
             wasExposureFrameworkAutomaticallyEnabledOnFirstStart = true
             userWantsToRegisterAppForExposureNotifications = true
         }
+
     }
 
     fun observeDisplayMandatoryUpdate(): Observable<Boolean>{
@@ -197,6 +205,39 @@ class DashboardViewModel(
 
     fun getKeyRequestCountLastWeek(): Int? {
         return diagnosisKeysRepository.getKeyRequestCountLastWeek()
+    }
+
+    fun observeStatistics(): Observable<CovidStatistics> {
+        return statisticsRepository.observeStatistics()
+    }
+
+    fun addStatisticIncidenceItems() {
+        Bundesland.values().forEach { state ->
+            val lastTwoTimeLines =
+                statistics?.covidFaelleTimeline?.filter { it.bundesland == state && it.bundesland != Bundesland.Oesterreich }
+                    ?.sortedBy { it.time }?.takeLast(2)
+
+            lastTwoTimeLines?.let {
+                if (lastTwoTimeLines.isNotEmpty()) {
+
+                    // Calculate difference for seven days incidences
+                    val siebenTageInzidenzFaelleDiff =
+                        lastTwoTimeLines[1].siebenTageInzidenzFaelle - lastTwoTimeLines[0].siebenTageInzidenzFaelle
+
+                    statisticIncidenceItems.add(
+                        StatisticIncidenceItem(
+                            state.value,
+                            lastTwoTimeLines[1].siebenTageInzidenzFaelle.roundTo(
+                                1
+                            ).formatDecimal(),
+                            siebenTageInzidenzFaelleDiff.roundTo(1).formatIncidenceValue(),
+                            siebenTageInzidenzFaelleDiff.incidenceIcon(),
+                            lastTwoTimeLines[1].siebenTageInzidenzFaelle.incidenceColorMark()
+                        )
+                    )
+                }
+            }
+        }
     }
 }
 

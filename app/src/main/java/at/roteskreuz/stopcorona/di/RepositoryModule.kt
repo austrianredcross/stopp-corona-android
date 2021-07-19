@@ -110,4 +110,11 @@ val repositoryModule = module {
             diaryDao = get()
         )
     }
+
+    single<StatisticsRepository> {
+        StatisticsRepositoryImpl(
+            appDispatchers = get(),
+            apiInteractor = get()
+        )
+    }
 }

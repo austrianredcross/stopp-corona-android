@@ -23,7 +23,7 @@ open class GalleryCarousel : PrebindingCarousel {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private var decorator: LinePagerIndicatorDecoration? = null
+    private var decorator: CirclePagerIndicatorDecoration? = null
 
     /**
      * Default page snapping like viewPager.
@@ -37,7 +37,7 @@ open class GalleryCarousel : PrebindingCarousel {
     }
 
     @ModelProp(ModelProp.Option.DoNotHash)
-    fun setItemIndicator(decorator: LinePagerIndicatorDecoration?) {
+    fun setItemIndicator(decorator: CirclePagerIndicatorDecoration?) {
         clearItemDecorator()
         if (decorator != null) {
             addItemDecoration(decorator)
