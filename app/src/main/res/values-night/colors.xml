@@ -42,6 +42,11 @@
     <color name="dashboard_separator">@color/gray_4</color>
     <color name="dashboard_card_color_red_bg">@color/white</color>
     <color name="dashboard_card_color">@color/black</color>
+    <color name="dashboard_statistics_expanded_text">@color/black</color>
+    <color name="dashboard_statistics_collapsed_text">@color/white</color>
+
+    <!-- Statistics -->
+    <color name="statistics_incidence_value">@color/gray_4</color>
 
     <!-- Gallery -->
     <color name="gallery_indicator_active">@color/rouge</color>

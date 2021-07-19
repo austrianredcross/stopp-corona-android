@@ -103,6 +103,10 @@
         <item name="fontFamily">@font/roboto_bold</item>
     </style>
 
+    <style name="AppTheme.ListTime.Small.Bold" parent="AppTheme.ListTime.Small">
+        <item name="fontFamily">@font/roboto_bold</item>
+    </style>
+
     <style name="AppTheme.Headline1">
         <item name="android:textSize">32sp</item>
         <item name="android:letterSpacing">0</item>

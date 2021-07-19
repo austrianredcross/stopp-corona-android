@@ -127,6 +127,14 @@ val remoteModule = module {
         )
     }
 
+    single {
+        createApi<AGESApiDescription>(
+            baseUrl = Constants.API.AGES_URL,
+            okHttpClient = get(defaultCertificatePinnerTag),
+            moshi = get()
+        )
+    }
+
     single<ApiInteractor> {
         ApiInteractorImpl(
             appDispatchers = get(),
@@ -134,7 +142,8 @@ val remoteModule = module {
             contentDeliveryNetworkDescription = get(),
             tanApiDescription = get(),
             dataPrivacyRepository = get(),
-            filesRepository = get()
+            filesRepository = get(),
+            agesApiDescription = get()
         )
     }
 

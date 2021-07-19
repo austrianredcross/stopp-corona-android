@@ -9,6 +9,8 @@
     <color name="white_50">#80ffffff</color>
     <color name="rouge">#b9131b</color>
     <color name="red">#fe0000</color>
+    <color name="raspberry">#B72C18</color>
+    <color name="brown">#3D0D06</color>
     <color name="black">#000000</color>
     <color name="brownGrey">#797979</color>
     <color name="gray_2">#979797</color>
@@ -19,6 +21,8 @@
     <color name="mediumGreen">#3bb54a</color>
     <color name="tangerine">#f39100</color>
     <color name="orange">#ff5a00</color>
+    <color name="yellow">#FFC700</color>
+    <color name="gold">#F4A21F</color>
     <color name="blue">#097ABF</color>
     <color name="blue_light">#ECF8FF</color>
 
@@ -44,6 +48,11 @@
     <color name="dashboard_separator">@color/white</color>
     <color name="dashboard_card_color_red_bg">@color/white</color>
     <color name="dashboard_card_color">@color/white</color>
+    <color name="dashboard_statistics_expanded_text">@color/white</color>
+    <color name="dashboard_statistics_collapsed_text">@color/rouge</color>
+
+    <!-- Statistics -->
+    <color name="statistics_incidence_value">@color/black</color>
 
     <!-- Gallery -->
     <color name="gallery_indicator_active">@color/rouge</color>

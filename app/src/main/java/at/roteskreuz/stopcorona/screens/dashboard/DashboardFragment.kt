@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
+import at.roteskreuz.stopcorona.model.entities.statistics.Bundesland
 import at.roteskreuz.stopcorona.model.exceptions.handleBaseCoronaErrors
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.PrerequisitesError
@@ -27,13 +28,12 @@ import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuesti
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCertificateReportGuidelinesFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
+import at.roteskreuz.stopcorona.screens.statistics.legend.showStatisticsLegendFragment
+import at.roteskreuz.stopcorona.screens.statistics.startStatisticsFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
-import at.roteskreuz.stopcorona.utils.shareApp
-import at.roteskreuz.stopcorona.utils.startBatteryOptimisationSettingsForResult
-import at.roteskreuz.stopcorona.utils.startDialogToEnableBluetooth
-import at.roteskreuz.stopcorona.utils.startGooglePlayStore
+import at.roteskreuz.stopcorona.utils.*
 import at.roteskreuz.stopcorona.utils.view.AccurateScrollListener
 import at.roteskreuz.stopcorona.utils.view.LinearLayoutManagerAccurateOffset
 import com.google.android.material.snackbar.Snackbar
@@ -156,6 +156,15 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             },
             onDiaryClick = {
                 startDiaryFragment()
+            },
+            onStatisticsClick = {
+                startStatisticsFragment()
+            },
+            onStatisticsToggleClick = {
+                toggleStatistics()
+            },
+            onLegendClick = {
+                showStatisticsLegendFragment()
             },
             onRevokeSicknessClick = { disabled ->
                 if (disabled) {
@@ -332,6 +341,25 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 }
             }
 
+        disposables += viewModel.observeStatistics()
+            .observeOnMainThread()
+            .subscribe { statistics ->
+                viewModel.statistics = statistics
+                viewModel.addStatisticIncidenceItems()
+                controller.statistics = statistics
+                controller.statisticIncidenceItems = viewModel.statisticIncidenceItems
+                controller.statisticsCurrentDate =
+                    statistics.covidFaelleTimeline.lastTwoTimeLines(Bundesland.Oesterreich)[1].time
+                controller.statisticsCompareDate =
+                    statistics.covidFaelleTimeline.lastTwoTimeLines(Bundesland.Oesterreich)[0].time
+
+            }
+
+        controller.requestModelBuild()
+    }
+
+    private fun toggleStatistics() {
+        controller.isStatisticsExpanded = !controller.isStatisticsExpanded
         controller.requestModelBuild()
     }
 

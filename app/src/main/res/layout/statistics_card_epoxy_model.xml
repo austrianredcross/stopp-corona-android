@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_background"
+    android:elevation="3dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_white_border"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="40dp">
+
+        <TextView
+            android:id="@+id/txtTitle1"
+            style="@style/AppTheme.ListTime.Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Bestätigte aktive Fälle" />
+
+        <LinearLayout
+            android:id="@+id/containerValue1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTitle1">
+
+            <ImageView
+                android:id="@+id/imgStatisticIcon1"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="10dp"
+                tools:src="@drawable/ic_statistic_up" />
+
+            <TextView
+                android:id="@+id/txtValue1"
+                style="@style/AppTheme.Copy.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                tools:text="49.474" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtDiff1"
+            style="@style/AppTheme.ListTime.Small.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/statistics_incidence_value"
+            app:layout_constraintBottom_toBottomOf="@+id/containerValue1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTitle1"
+            tools:text="+2432" />
+
+        <TextView
+            android:id="@+id/txtTitle2"
+            style="@style/AppTheme.ListTime.Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/gray_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/containerValue1"
+            tools:text="Bestätigte aktive Fälle" />
+
+        <LinearLayout
+            android:id="@+id/containerValue2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTitle2">
+
+            <ImageView
+                android:id="@+id/imgStatisticIcon2"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="10dp"
+                tools:src="@drawable/ic_statistic_up" />
+
+            <TextView
+                android:id="@+id/txtValue2"
+                style="@style/AppTheme.Copy.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                tools:text="49.474" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtDiff2"
+            style="@style/AppTheme.ListTime.Small.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/statistics_incidence_value"
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/containerValue2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTitle2"
+            tools:text="+2432" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

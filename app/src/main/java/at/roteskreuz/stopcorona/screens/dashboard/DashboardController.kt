@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.SpannableString
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.model.entities.statistics.CovidStatistics
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.*
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.FrameworkError.Critical
@@ -16,6 +17,9 @@ import at.roteskreuz.stopcorona.screens.base.epoxy.*
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType1Model_
 import at.roteskreuz.stopcorona.screens.base.epoxy.buttons.ButtonType2Model_
 import at.roteskreuz.stopcorona.screens.dashboard.epoxy.*
+import at.roteskreuz.stopcorona.screens.statistics.StatisticIncidenceItem
+import at.roteskreuz.stopcorona.screens.statistics.expoxy.StatisticAustriaViewModel_
+import at.roteskreuz.stopcorona.screens.statistics.expoxy.StatisticsIncidenceItemModel_
 import at.roteskreuz.stopcorona.skeleton.core.utils.adapterProperty
 import at.roteskreuz.stopcorona.skeleton.core.utils.addTo
 import at.roteskreuz.stopcorona.utils.*
@@ -46,6 +50,9 @@ class DashboardController(
     private val onUploadMissingExposureKeysClick: (disabled: Boolean, uploadMissingExposureKeys: UploadMissingExposureKeys) -> Unit,
     private val onShareAppClick: () -> Unit,
     private val onDiaryClick: () -> Unit,
+    private val onStatisticsClick: () -> Unit,
+    private val onStatisticsToggleClick: () -> Unit,
+    private val onLegendClick: () -> Unit,
     private val onAdditionalInformationClick: () -> Unit
 ) : EpoxyController() {
 
@@ -59,6 +66,11 @@ class DashboardController(
     var dateOfLastContact: Instant? by adapterProperty(null as Instant?)
     var dateOfLastKeyRequest: ZonedDateTime? by adapterProperty(null as ZonedDateTime?)
     var keyRequestCountLastWeek: Int? by adapterProperty(null as Int?)
+    var statisticsCurrentDate: String? by adapterProperty(null as String?)
+    var statisticsCompareDate: String? by adapterProperty(null as String?)
+    var isStatisticsExpanded: Boolean by adapterProperty(false)
+    var statisticIncidenceItems: MutableList<StatisticIncidenceItem> by adapterProperty(mutableListOf())
+    var statistics: CovidStatistics? by adapterProperty(null as CovidStatistics?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
@@ -93,7 +105,8 @@ class DashboardController(
              */
             if (contactsHealthStatus != HealthStatusData.NoHealthStatus) {
                 if (contactsHealthStatus is HealthStatusData.ContactsSicknessInfo) {
-                    val healthStatusData = contactsHealthStatus as HealthStatusData.ContactsSicknessInfo
+                    val healthStatusData =
+                        contactsHealthStatus as HealthStatusData.ContactsSicknessInfo
                     if (healthStatusData.warningType.redContactsDetected) {
                         buildContactHealthStatus(
                             redContactsDetected = true,
@@ -116,7 +129,7 @@ class DashboardController(
              * Add single space if own OR contact health state are available AND someone has recovered
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                    contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
+                        contactsHealthStatus != HealthStatusData.NoHealthStatus) &&
                 someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -133,8 +146,8 @@ class DashboardController(
              * Add single space if own or contact health state are available or someone has recovered AND the quarantine should end
              */
             if ((ownHealthStatus != HealthStatusData.NoHealthStatus ||
-                    contactsHealthStatus != HealthStatusData.NoHealthStatus ||
-                    someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
+                        contactsHealthStatus != HealthStatusData.NoHealthStatus ||
+                        someoneHasRecoveredHealthStatus == HealthStatusData.SomeoneHasRecovered) &&
                 showQuarantineEnd
             ) {
                 emptySpace(modelCountBuiltSoFar, 16)
@@ -185,7 +198,7 @@ class DashboardController(
             contactsHealthStatus is HealthStatusData.ContactsSicknessInfo && (contactsHealthStatus as HealthStatusData.ContactsSicknessInfo).warningType.redContactsDetected -> contactsHealthStatus
             ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness -> ownHealthStatus
             contactsHealthStatus is HealthStatusData.ContactsSicknessInfo && (contactsHealthStatus as HealthStatusData.ContactsSicknessInfo).warningType.yellowContactsDetected -> contactsHealthStatus
-            else-> ownHealthStatus
+            else -> ownHealthStatus
         }
 
         // needed to have two caches of epoxy models because of lottie
@@ -219,7 +232,7 @@ class DashboardController(
 
         emptySpace(modelCountBuiltSoFar, 40)
 
-        separator{
+        separator {
             id(modelCountBuiltSoFar)
             color(R.color.gray_4)
         }
@@ -232,13 +245,21 @@ class DashboardController(
             appUpdate {
                 id("app_update_last_contact")
                 imageRes(R.drawable.ic_calendar)
-                status(context.getString(R.string.main_automatic_handshake_last_contact_days, days.toString()))
+                status(
+                    context.getString(
+                        R.string.main_automatic_handshake_last_contact_days,
+                        days.toString()
+                    )
+                )
             }
         }
 
         keyRequestCountLastWeek?.let { keyRequestCountLastWeek ->
             val status = if (ownHealthStatus is HealthStatusData.NoHealthStatus) {
-                context.getString(R.string.main_automatic_handshake_contact_checks, keyRequestCountLastWeek.toString())
+                context.getString(
+                    R.string.main_automatic_handshake_contact_checks,
+                    keyRequestCountLastWeek.toString()
+                )
             } else {
                 context.getString(R.string.main_automatic_handshake_self_reported_info)
             }
@@ -251,7 +272,7 @@ class DashboardController(
         }
 
         dateOfLastKeyRequest?.let { dateOfLastKeyRequest ->
-            val lastUpdate = if (dateOfLastKeyRequest.areOnTheSameDay(ZonedDateTime.now())){
+            val lastUpdate = if (dateOfLastKeyRequest.areOnTheSameDay(ZonedDateTime.now())) {
                 context.getString(R.string.general_today) + ", " + dateOfLastKeyRequest.format("HH:mm")
             } else {
                 dateOfLastKeyRequest.format("d. MMM, HH:mm")
@@ -264,7 +285,7 @@ class DashboardController(
             }
         }
 
-        separator{
+        separator {
             id(modelCountBuiltSoFar)
             color(R.color.gray_4)
         }
@@ -278,20 +299,33 @@ class DashboardController(
 
         emptySpace(modelCountBuiltSoFar, 20)
 
+        separator {
+            id(modelCountBuiltSoFar)
+            color(R.color.dashboard_separator)
+        }
+
         emptySpace {
             id(modelCountBuiltSoFar)
             height(24)
             backgroundColor(R.color.background_gray)
         }
 
-        separator{
+        buildStatisticsCard()
+
+        emptySpace {
+            id(modelCountBuiltSoFar)
+            height(24)
+            backgroundColor(R.color.background_gray)
+        }
+
+        separator {
             id(modelCountBuiltSoFar)
             color(R.color.dashboard_separator)
         }
 
         buildDiaryCard()
 
-        separator{
+        separator {
             id(modelCountBuiltSoFar)
             color(R.color.dashboard_separator)
         }
@@ -346,7 +380,7 @@ class DashboardController(
                 height(24)
                 backgroundColor(R.color.background_gray)
             }
-            separator{
+            separator {
                 id(modelCountBuiltSoFar)
                 color(R.color.dashboard_separator)
             }
@@ -572,7 +606,11 @@ class DashboardController(
         }
 
         val isRedRevokingEnabled = dateOfFirstMedicalConfirmation
-            ?.isAfter(ZonedDateTime.now().minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION).startOfTheDay())
+            ?.isAfter(
+                ZonedDateTime.now()
+                    .minus(Constants.Behavior.MEDICAL_CONFIRMATION_REVOKING_POSSIBLE_DURATION)
+                    .startOfTheDay()
+            )
             ?: true
 
         if (ownHealthStatus is HealthStatusData.SicknessCertificate && isRedRevokingEnabled) {
@@ -603,7 +641,7 @@ class DashboardController(
 
         val healthStatusDataMatches =
             ownHealthStatus is HealthStatusData.SelfTestingSuspicionOfSickness ||
-                ownHealthStatus is HealthStatusData.SicknessCertificate
+                    ownHealthStatus is HealthStatusData.SicknessCertificate
 
         val uploadMissingExposureKeys = uploadMissingExposureKeys
         if (healthStatusDataMatches && uploadMissingExposureKeys != null) {
@@ -654,7 +692,10 @@ class DashboardController(
     /**
      * Build card for contacts health status
      */
-    private fun buildContactHealthStatus(redContactsDetected: Boolean, yellowContactsDetected: Boolean) {
+    private fun buildContactHealthStatus(
+        redContactsDetected: Boolean,
+        yellowContactsDetected: Boolean
+    ) {
         val modelList = arrayListOf<EpoxyModel<out Any>>()
 
         EmptySpaceModel_()
@@ -800,6 +841,110 @@ class DashboardController(
 
         verticalBackgroundModelGroup(modelList) {
             id("vertical_model_group_diary")
+            backgroundColor(R.color.background)
+        }
+
+    }
+
+    private fun buildStatisticsCard() {
+        val modelList = arrayListOf<EpoxyModel<out Any>>()
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        TitleModel_()
+            .id("statistics_title")
+            .title(context.getString(R.string.main_covid_statistics_title))
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(10)
+            .addTo(modelList)
+
+        SmallDescriptionModel_()
+            .id("statistics_description")
+            .description(statisticsCurrentDate?.formatDayAndMonth(context)?.let { currentDate ->
+                statisticsCompareDate?.formatDayAndMonth(context)?.let { compareDate ->
+                    context.string(
+                        R.string.main_covid_statistics_comparison,
+                        currentDate, compareDate
+                    )
+                }
+            })
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(24)
+            .addTo(modelList)
+
+        StatisticAustriaViewModel_()
+            .id("dashboard_statistics_austria_view")
+            .statistics(statistics)
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(24)
+            .addTo(modelList)
+
+        StatisticsExpandedCollapsedButtonModel_(onStatisticsToggleClick)
+            .id("statistics_expanded_collapsed_button")
+            .expanded(isStatisticsExpanded)
+            .addTo(modelList)
+
+        val modelIncidenceItemList = arrayListOf<EpoxyModel<out Any>>()
+        statisticIncidenceItems.forEachIndexed { index, statisticIncidenceItem ->
+            StatisticsIncidenceItemModel_()
+                .id("statistic_incidence_item_$index")
+                .data(statisticIncidenceItem)
+                .addTo(modelIncidenceItemList)
+        }
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(14)
+            .addTo(modelIncidenceItemList)
+
+        AdditionalInformationModel_(onLegendClick)
+            .id("statistic_legend")
+            .title(context.string(R.string.main_covid_statistics_legend))
+            .textColor(R.color.blue)
+            .addTo(modelIncidenceItemList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(24)
+            .addTo(modelIncidenceItemList)
+
+        if (isStatisticsExpanded) {
+            VerticalBackgroundModelGroup_(modelIncidenceItemList)
+                .id("vertical_model_group_statistics_incidence")
+                .backgroundColor(R.color.white)
+                .background(R.drawable.statistics_expanded_background_wrapper)
+                .addTo(modelList)
+        }
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(24)
+            .addTo(modelList)
+
+        ButtonType2Model_(onStatisticsClick)
+            .id("statistics_overview_button")
+            .text(context.getString(R.string.main_covid_statistics_show_button))
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        verticalBackgroundModelGroup(modelList) {
+            id("vertical_model_group_statistics")
             backgroundColor(R.color.background)
         }
 
