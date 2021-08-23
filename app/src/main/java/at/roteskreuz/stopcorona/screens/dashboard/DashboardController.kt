@@ -68,7 +68,7 @@ class DashboardController(
     var keyRequestCountLastWeek: Int? by adapterProperty(null as Int?)
     var statisticsCurrentDate: String? by adapterProperty(null as String?)
     var statisticsCompareDate: String? by adapterProperty(null as String?)
-    var isStatisticsExpanded: Boolean by adapterProperty(false)
+    var isStatisticsExpanded: Boolean by adapterProperty(true)
     var statisticIncidenceItems: MutableList<StatisticIncidenceItem> by adapterProperty(mutableListOf())
     var statistics: CovidStatistics? by adapterProperty(null as CovidStatistics?)
 
