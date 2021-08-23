@@ -77,8 +77,11 @@ class StatisticsFragment : BaseFragment(R.layout.fragment_statistics) {
                     }
                 }
 
-                txtTitle.text =
-                    getString(R.string.covid_statistics_description, selectedState.value)
+                txtTitle.text = if (selectedState == Bundesland.Oesterreich) {
+                    getString(R.string.covid_statistics_description, getString(R.string.covid_statistics_state_id_austria))
+                } else {
+                    getString(R.string.covid_statistics_description, numberPicker.text)
+                }
 
                 updateStatisticCardInfo()
                 updateStatisticIncidences()
