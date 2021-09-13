@@ -44,37 +44,10 @@ class StatisticsFragment : BaseFragment(R.layout.fragment_statistics) {
             .subscribe { selectedState ->
                 viewModel.selectedState = selectedState
 
-                when (selectedState) {
-                    Bundesland.Oesterreich -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_all)
-                    }
-                    Bundesland.Wien -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_9)
-                    }
-                    Bundesland.Vorarlberg -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_8)
-                    }
-                    Bundesland.Tirol -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_7)
-                    }
-                    Bundesland.Steiermark -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_6)
-                    }
-                    Bundesland.Salzburg -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_5)
-                    }
-                    Bundesland.Oberoesterreich -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_4)
-                    }
-                    Bundesland.Niederoesterreich -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_3)
-                    }
-                    Bundesland.Kaernten -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_2)
-                    }
-                    Bundesland.Burgenland -> {
-                        numberPicker.text = getString(R.string.covid_statistics_state_id_1)
-                    }
+                numberPicker.text = if (selectedState == Bundesland.Oesterreich) {
+                    getString(R.string.covid_statistics_state_id_all)
+                } else {
+                    getString(selectedState.localize())
                 }
 
                 txtTitle.text = if (selectedState == Bundesland.Oesterreich) {
@@ -133,7 +106,7 @@ class StatisticsFragment : BaseFragment(R.layout.fragment_statistics) {
 
                         viewModel.statisticIncidenceItems.add(
                             StatisticIncidenceItem(
-                                state.value,
+                                getString(state.localize()),
                                 lastTwoTimeLines[1].siebenTageInzidenzFaelle.roundTo(
                                     1
                                 ).formatDecimal(),

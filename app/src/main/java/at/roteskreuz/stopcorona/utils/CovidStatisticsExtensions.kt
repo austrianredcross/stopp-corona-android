@@ -112,3 +112,41 @@ fun Double.incidenceColor(): Int {
         }
     }
 }
+
+fun Bundesland.localize(): Int {
+    when (this) {
+        Bundesland.Oesterreich -> {
+            return R.string.covid_statistics_state_id_austria
+        }
+        Bundesland.Wien -> {
+            return R.string.covid_statistics_state_id_9
+        }
+        Bundesland.Vorarlberg -> {
+            return R.string.covid_statistics_state_id_8
+        }
+        Bundesland.Tirol -> {
+            return R.string.covid_statistics_state_id_7
+        }
+        Bundesland.Steiermark -> {
+            return R.string.covid_statistics_state_id_6
+        }
+        Bundesland.Salzburg -> {
+            return R.string.covid_statistics_state_id_5
+        }
+        Bundesland.Oberoesterreich -> {
+            return R.string.covid_statistics_state_id_4
+        }
+        Bundesland.Niederoesterreich -> {
+            return R.string.covid_statistics_state_id_3
+        }
+        Bundesland.Kaernten -> {
+            return R.string.covid_statistics_state_id_2
+        }
+        Bundesland.Burgenland -> {
+            return R.string.covid_statistics_state_id_1
+        }
+        else -> {
+            return R.string.covid_statistics_state_id_all
+        }
+    }
+}
