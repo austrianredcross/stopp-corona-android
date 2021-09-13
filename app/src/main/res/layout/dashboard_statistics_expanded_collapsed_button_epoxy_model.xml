@@ -8,7 +8,7 @@
     android:layout_marginHorizontal="24dp"
     android:background="@drawable/statistics_collapsed_button"
     android:paddingHorizontal="35dp"
-    android:paddingVertical="10dp">
+    android:paddingVertical="15dp">
 
     <ImageView
         android:id="@+id/imgIcon"
