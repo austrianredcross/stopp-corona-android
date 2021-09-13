@@ -210,35 +210,6 @@ class DashboardViewModel(
     fun observeStatistics(): Observable<CovidStatistics> {
         return statisticsRepository.observeStatistics()
     }
-
-    fun addStatisticIncidenceItems() {
-        Bundesland.values().forEach { state ->
-            val lastTwoTimeLines =
-                statistics?.covidFaelleTimeline?.filter { it.bundesland == state && it.bundesland != Bundesland.Oesterreich }
-                    ?.sortedBy { it.time }?.takeLast(2)
-
-            lastTwoTimeLines?.let {
-                if (lastTwoTimeLines.isNotEmpty()) {
-
-                    // Calculate difference for seven days incidences
-                    val siebenTageInzidenzFaelleDiff =
-                        lastTwoTimeLines[1].siebenTageInzidenzFaelle - lastTwoTimeLines[0].siebenTageInzidenzFaelle
-
-                    statisticIncidenceItems.add(
-                        StatisticIncidenceItem(
-                            state.value,
-                            lastTwoTimeLines[1].siebenTageInzidenzFaelle.roundTo(
-                                1
-                            ).formatDecimal(),
-                            siebenTageInzidenzFaelleDiff.roundTo(1).formatIncidenceValue(),
-                            siebenTageInzidenzFaelleDiff.incidenceIcon(),
-                            lastTwoTimeLines[1].siebenTageInzidenzFaelle.incidenceColorMark()
-                        )
-                    )
-                }
-            }
-        }
-    }
 }
 
 data class LastContactDateData(

@@ -28,6 +28,7 @@ import at.roteskreuz.stopcorona.screens.questionnaire.selfmonitoring.startQuesti
 import at.roteskreuz.stopcorona.screens.questionnaire.startQuestionnaireFragment
 import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.startCertificateReportGuidelinesFragment
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
+import at.roteskreuz.stopcorona.screens.statistics.StatisticIncidenceItem
 import at.roteskreuz.stopcorona.screens.statistics.legend.showStatisticsLegendFragment
 import at.roteskreuz.stopcorona.screens.statistics.startStatisticsFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
@@ -345,7 +346,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .observeOnMainThread()
             .subscribe { statistics ->
                 viewModel.statistics = statistics
-                viewModel.addStatisticIncidenceItems()
+                addStatisticIncidenceItems()
                 controller.statistics = statistics
                 controller.statisticIncidenceItems = viewModel.statisticIncidenceItems
                 controller.statisticsCurrentDate =
@@ -356,6 +357,35 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             }
 
         controller.requestModelBuild()
+    }
+
+    private fun addStatisticIncidenceItems() {
+        Bundesland.values().forEach { state ->
+            val lastTwoTimeLines =
+                viewModel.statistics?.covidFaelleTimeline?.filter { it.bundesland == state && it.bundesland != Bundesland.Oesterreich }
+                    ?.sortedBy { it.time }?.takeLast(2)
+
+            lastTwoTimeLines?.let {
+                if (lastTwoTimeLines.isNotEmpty()) {
+
+                    // Calculate difference for seven days incidences
+                    val siebenTageInzidenzFaelleDiff =
+                        lastTwoTimeLines[1].siebenTageInzidenzFaelle - lastTwoTimeLines[0].siebenTageInzidenzFaelle
+
+                    viewModel.statisticIncidenceItems.add(
+                        StatisticIncidenceItem(
+                                getString(state.localize()),
+                                lastTwoTimeLines[1].siebenTageInzidenzFaelle.roundTo(
+                                    1
+                                ).formatDecimal(),
+                                siebenTageInzidenzFaelleDiff.roundTo(1).formatIncidenceValue(),
+                                siebenTageInzidenzFaelleDiff.incidenceIcon(),
+                                lastTwoTimeLines[1].siebenTageInzidenzFaelle.incidenceColorMark()
+                            )
+                        )
+                }
+            }
+        }
     }
 
     private fun toggleStatistics() {
