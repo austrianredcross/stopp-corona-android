@@ -70,6 +70,6 @@ You can download application from Play store.
 
 ## License
 
-This code is distributed under the Apache License 2.0. See the [LICENSE.txt](LICENSE.txt) file for more info.
+This code is distributed under the GNU Affero General Public License version 3. See the [LICENSE.txt](LICENSE.txt) file for more info.
 
 Notices for third party libraries in this repository are contained in [NOTICE.txt](NOTICE.txt).
