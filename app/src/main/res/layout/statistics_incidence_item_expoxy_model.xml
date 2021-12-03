@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:weightSum="2"
     android:layout_marginHorizontal="24dp"
-    android:layout_marginVertical="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginVertical="10dp">
 
     <LinearLayout
         android:id="@+id/txtContainer"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1.2"
-        android:gravity="center|start"
+        android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <View
             android:id="@+id/viewColor"
@@ -36,39 +33,43 @@
 
     <LinearLayout
         android:id="@+id/valueContainer"
-        android:layout_width="0dp"
+        android:layout_width="85dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:gravity="start"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imgIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginEnd="10dp"
+            android:layout_gravity="center_vertical"
             tools:src="@drawable/ic_statistic_up" />
 
-        <TextView
-            android:id="@+id/txtValue"
-            style="@style/AppTheme.ListTime.Small.Bold"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/statistics_incidence_value"
-            tools:text="165,2" />
+            android:gravity="center|end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtValue"
+                style="@style/AppTheme.ListTime.Small.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/statistics_incidence_value"
+                tools:text="1.165,2" />
+
+            <TextView
+                android:id="@+id/txtDiff"
+                style="@style/AppTheme.ListTime.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textColor="@color/statistics_incidence_value"
+                tools:text="+0,1" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtDiff"
-        style="@style/AppTheme.ListTime.Small"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:gravity="end"
-        android:textColor="@color/statistics_incidence_value"
-        tools:text="+0,1" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
