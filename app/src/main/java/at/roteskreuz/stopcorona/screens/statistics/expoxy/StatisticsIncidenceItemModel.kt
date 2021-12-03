@@ -33,21 +33,13 @@ abstract class StatisticsIncidenceItemModel : BaseEpoxyModel<StatisticsIncidence
             } ?: run {
                 txtDiff.visibility = View.GONE
             }
-            val params =
-                LayoutParams(
-                    0, LayoutParams.MATCH_PARENT
-                )
+
             data.icon?.let {
                 imgIcon.imgIcon.setImageResource(data.icon)
                 imgIcon.visibility = View.VISIBLE
-                params.weight = 0.5f
-                valueContainer.gravity = Gravity.START
             } ?: run {
                 imgIcon.visibility = View.GONE
-                params.weight = 0.8f
-                valueContainer.gravity = Gravity.END
             }
-            valueContainer.layoutParams = params
             viewColor.setBackgroundResource(data.colorDrawable)
         }
     }
@@ -58,6 +50,5 @@ abstract class StatisticsIncidenceItemModel : BaseEpoxyModel<StatisticsIncidence
         val imgIcon by bind<ImageView>(R.id.imgIcon)
         val txtValue by bind<TextView>(R.id.txtValue)
         val txtDiff by bind<TextView>(R.id.txtDiff)
-        val valueContainer by bind<LinearLayout>(R.id.valueContainer)
     }
 }
