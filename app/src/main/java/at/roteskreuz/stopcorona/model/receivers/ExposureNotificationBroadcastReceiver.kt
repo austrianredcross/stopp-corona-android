@@ -50,7 +50,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
         }
     }
 
-    fun onExposureStateUpdated(context: Context, token: String) {
+    fun onExposureStateUpdated(context: Context, token: String?) {
         if (isDebug) {
             showDebugNotificationProcessingFinished(context, token)
         }
@@ -58,7 +58,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver(), KoinComponent
         ProcessDiagnosisKeysWorker.enqueueProcessingOfDiagnosisKeys(workManager, token)
     }
 
-    private fun showDebugNotificationProcessingFinished(context: Context, token: String) {
+    private fun showDebugNotificationProcessingFinished(context: Context, token: String?) {
         val notification = NotificationCompat.Builder(context, Constants.NotificationChannels.CHANNEL_AUTOMATIC_DETECTION)
             .setContentTitle("processing done")
             .setSmallIcon(R.drawable.ic_red_cross)

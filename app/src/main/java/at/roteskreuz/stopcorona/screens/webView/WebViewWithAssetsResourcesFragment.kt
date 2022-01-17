@@ -129,7 +129,7 @@ open class WebViewWithAssetsResourcesFragment : BaseFragment(R.layout.webview_fr
     }
 
     override fun onDestroyView() {
-        viewModel.release(webView)
+        webView.destroy()
         super.onDestroyView()
     }
 

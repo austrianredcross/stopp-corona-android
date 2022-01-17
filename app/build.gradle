@@ -13,12 +13,12 @@ def buildName = versionString + "." + buildCode.toString() + "-" + getGitDescrib
 def packageName = "at.roteskreuz.stopcorona"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId packageName
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode buildCode
         versionName buildName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -145,6 +145,8 @@ dependencies {
 
     implementation project(":core")
 
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
     kapt "androidx.room:room-compiler:2.2.4"
 
