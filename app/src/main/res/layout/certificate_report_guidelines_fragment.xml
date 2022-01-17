@@ -65,15 +65,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtTitle" />
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@color/background_gray"
-                    app:layout_constraintBottom_toBottomOf="@id/barrier4"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtTopDescription"  />
-
                 <ImageView
                     android:id="@+id/imgCircle1"
                     android:layout_width="56dp"
@@ -81,22 +72,21 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="32dp"
                     android:src="@drawable/circle"
-                    android:tint="@color/white"
+                    android:tint="@color/rouge"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtTopDescription" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/txtCircle1"
-                    style="@style/AppTheme.Copy.Accented"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center"
-                    android:text="1"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_guideline_house"
                     app:layout_constraintBottom_toBottomOf="@id/imgCircle1"
                     app:layout_constraintEnd_toEndOf="@id/imgCircle1"
                     app:layout_constraintStart_toStartOf="@id/imgCircle1"
-                    app:layout_constraintTop_toTopOf="@id/imgCircle1"
-                    tools:ignore="HardcodedText" />
+                    app:layout_constraintTop_toTopOf="@id/imgCircle1" />
 
                 <TextView
                     android:id="@+id/txtDescription1"
@@ -120,17 +110,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="52dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@color/brownGrey"
-                    app:layout_constraintBottom_toTopOf="@id/imgCircle2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imgCircle1" />
-
                 <ImageView
                     android:id="@+id/imgCircle2"
                     android:layout_width="56dp"
@@ -138,22 +117,21 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="24dp"
                     android:src="@drawable/circle"
-                    android:tint="@color/white"
+                    android:tint="@color/rouge"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/barrier1" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/txtCircle2"
-                    style="@style/AppTheme.Copy.Accented"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center"
-                    android:text="2"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_guideline_distance"
                     app:layout_constraintBottom_toBottomOf="@id/imgCircle2"
                     app:layout_constraintEnd_toEndOf="@id/imgCircle2"
                     app:layout_constraintStart_toStartOf="@id/imgCircle2"
-                    app:layout_constraintTop_toTopOf="@id/imgCircle2"
-                    tools:ignore="HardcodedText" />
+                    app:layout_constraintTop_toTopOf="@id/imgCircle2" />
 
                 <TextView
                     android:id="@+id/txtDescription2"
@@ -177,17 +155,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="52dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@color/brownGrey"
-                    app:layout_constraintBottom_toTopOf="@id/imgCircle3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imgCircle2" />
-
                 <ImageView
                     android:id="@+id/imgCircle3"
                     android:layout_width="56dp"
@@ -195,22 +162,21 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="24dp"
                     android:src="@drawable/circle"
-                    android:tint="@color/white"
+                    android:tint="@color/rouge"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/barrier2" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/txtCircle3"
-                    style="@style/AppTheme.Copy.Accented"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center"
-                    android:text="3"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_guideline_temperature"
                     app:layout_constraintBottom_toBottomOf="@id/imgCircle3"
                     app:layout_constraintEnd_toEndOf="@id/imgCircle3"
                     app:layout_constraintStart_toStartOf="@id/imgCircle3"
-                    app:layout_constraintTop_toTopOf="@id/imgCircle3"
-                    tools:ignore="HardcodedText" />
+                    app:layout_constraintTop_toTopOf="@id/imgCircle3"/>
 
                 <TextView
                     android:id="@+id/txtDescription3"
@@ -234,17 +200,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="52dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@color/brownGrey"
-                    app:layout_constraintBottom_toTopOf="@id/imgCircle4"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imgCircle3" />
-
                 <ImageView
                     android:id="@+id/imgCircle4"
                     android:layout_width="56dp"
@@ -252,22 +207,21 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="24dp"
                     android:src="@drawable/circle"
-                    android:tint="@color/white"
+                    android:tint="@color/rouge"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtDescription3" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/txtCircle4"
-                    style="@style/AppTheme.Copy.Accented"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center"
-                    android:text="4"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_guideline_bag"
                     app:layout_constraintBottom_toBottomOf="@id/imgCircle4"
                     app:layout_constraintEnd_toEndOf="@id/imgCircle4"
                     app:layout_constraintStart_toStartOf="@id/imgCircle4"
-                    app:layout_constraintTop_toTopOf="@id/imgCircle4"
-                    tools:ignore="HardcodedText" />
+                    app:layout_constraintTop_toTopOf="@id/imgCircle4"/>
 
                 <TextView
                     android:id="@+id/txtDescription4"
