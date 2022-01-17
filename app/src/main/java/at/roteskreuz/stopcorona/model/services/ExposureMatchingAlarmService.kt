@@ -29,7 +29,7 @@ class ExposureMatchingAlarmService {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (3 * 60 * 60 * 1000),
+                System.currentTimeMillis() + (12 * 60 * 60 * 1000),
                 pendingIntent
             )
         }
