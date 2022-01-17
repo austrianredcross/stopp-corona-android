@@ -3,6 +3,7 @@ package at.roteskreuz.stopcorona.screens.infection_info.epoxy
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
 import android.text.style.StyleSpan
 import android.widget.TextView
 import at.roteskreuz.stopcorona.R
@@ -58,6 +59,8 @@ abstract class GuideInfoYellowModel(
                 }))
             append(context.getString(R.string.sickness_certificate_guidelines_fourth_5))
         }
+
+        txtDescription4.movementMethod = LinkMovementMethod()
 
         txtConsultingFirstPhone.startPhoneCallOnClick()
         txtConsultingSecondPhone.startPhoneCallOnClick()

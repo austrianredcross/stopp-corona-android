@@ -23,21 +23,11 @@
         style="@style/AppTheme.Copy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_margin="24dp"
         android:text="@string/sickness_certificate_urgent_help_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtUrgentHelpHeadline" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/background_gray"
-        app:layout_constraintBottom_toBottomOf="@id/spaceUrgentNumber1Second"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/spaceUrgentNumber1First" />
 
     <Space
         android:id="@+id/spaceUrgentNumber1First"
@@ -49,14 +39,12 @@
 
     <TextView
         android:id="@+id/txtUrgentNumber1Label"
-        style="@style/AppTheme.Copy"
+        style="@style/AppTheme.Copy.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/sickness_certificate_phone_emergency_label"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spaceUrgentNumber1First" />
 
@@ -65,15 +53,13 @@
         style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/sickness_certificate_phone_emergency_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtUrgentNumber1Label" />
+        app:layout_constraintStart_toEndOf="@+id/txtUrgentNumber1Label"
+        app:layout_constraintTop_toTopOf="@id/txtUrgentNumber1Label" />
 
     <Space
         android:id="@+id/spaceUrgentNumber1Second"
@@ -85,14 +71,12 @@
 
     <TextView
         android:id="@+id/txtUrgentNumber2Label"
-        style="@style/AppTheme.Copy"
+        style="@style/AppTheme.Copy.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/sickness_certificate_phone_ambulance_label"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spaceUrgentNumber1Second" />
 
@@ -101,23 +85,24 @@
         style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/sickness_certificate_phone_ambulance_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtUrgentNumber2Label" />
+        app:layout_constraintStart_toEndOf="@+id/txtUrgentNumber2Label"
+        app:layout_constraintTop_toTopOf="@id/txtUrgentNumber2Label" />
 
-    <Space
+    <View
         android:id="@+id/spaceUrgentNumber2Second"
         android:layout_width="0dp"
-        android:layout_height="16dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/background_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtUrgentNumber2" />
+
 
     <TextView
         android:id="@+id/txtConsultingTitle"
@@ -137,22 +122,11 @@
         style="@style/AppTheme.Copy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_margin="24dp"
         android:text="@string/sickness_certificate_guidelines_consulting_description_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtConsultingTitle" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/background_gray"
-        app:layout_constraintBottom_toBottomOf="@id/spaceConsultingFirst2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/spaceConsultingFirst" />
 
     <Space
         android:id="@+id/spaceConsultingFirst"
@@ -164,14 +138,12 @@
 
     <TextView
         android:id="@+id/txtConsultingFirst"
-        style="@style/AppTheme.Copy"
+        style="@style/AppTheme.Copy.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/sickness_certificate_guidelines_consulting_first"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spaceConsultingFirst" />
 
@@ -180,17 +152,13 @@
         style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/sickness_certificate_guidelines_consulting_first_phone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtConsultingFirst"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constraintStart_toEndOf="@+id/txtConsultingFirst"
+        app:layout_constraintTop_toTopOf="@id/txtConsultingFirst" />
 
     <Space
         android:id="@+id/spaceConsultingFirst2"
@@ -202,14 +170,12 @@
 
     <TextView
         android:id="@+id/txtConsultingSecond"
-        style="@style/AppTheme.Copy"
+        style="@style/AppTheme.Copy.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/sickness_certificate_guidelines_consulting_second"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spaceConsultingFirst2" />
 
@@ -218,27 +184,13 @@
         style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/sickness_certificate_guidelines_consulting_second_phone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtConsultingSecond"
-        app:layout_constraintWidth_default="wrap" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/background_gray"
-        app:layout_constraintBottom_toBottomOf="@id/spaceConsultingThird2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/spaceConsultingThird" />
+        app:layout_constraintStart_toEndOf="@+id/txtConsultingSecond"
+        app:layout_constraintTop_toTopOf="@id/txtConsultingSecond"/>
 
     <Space
         android:id="@+id/spaceConsultingThird"
@@ -250,14 +202,12 @@
 
     <TextView
         android:id="@+id/txtConsultingThird"
-        style="@style/AppTheme.Copy"
+        style="@style/AppTheme.Copy.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/sickness_certificate_guidelines_consulting_third"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spaceConsultingThird" />
 
@@ -266,17 +216,13 @@
         style="@style/AppTheme.Copy.Accented2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/sickness_certificate_guidelines_consulting_third_phone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtConsultingThird"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constraintStart_toEndOf="@+id/txtConsultingThird"
+        app:layout_constraintTop_toTopOf="@id/txtConsultingThird"/>
 
     <Space
         android:id="@+id/spaceConsultingThird2"
