@@ -36,15 +36,6 @@ open class WebViewViewModel(
     }
 
     /**
-     * Release basic web view functionality to not leak some memory.
-     */
-    open fun release(webView: WebView?) {
-        webView?.webViewClient = null
-        webView?.webChromeClient = null
-        webView?.settings?.javaScriptEnabled = false
-    }
-
-    /**
      * Can throw errors of type [WebViewError].
      */
     fun observeWebViewState(): Observable<WebViewStateObserver.State> = webViewState.observe()

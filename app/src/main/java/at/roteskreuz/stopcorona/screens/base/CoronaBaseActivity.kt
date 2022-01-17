@@ -35,8 +35,8 @@ open class CoronaBaseActivity(@LayoutRes layout: Int = R.layout.framelayout) : B
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             R.id.debugMenuNotificationInfectionRed -> {
                 debugViewModel.displayInfectionNotification(MessageType.InfectionLevel.Red)
                 true
