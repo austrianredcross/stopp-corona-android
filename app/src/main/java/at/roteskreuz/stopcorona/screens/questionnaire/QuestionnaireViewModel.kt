@@ -1,7 +1,7 @@
 package at.roteskreuz.stopcorona.screens.questionnaire
 
 import android.util.SparseArray
-import androidx.core.util.contains
+import androidx.core.util.containsKey
 import androidx.core.util.set
 import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.configuration.DbQuestionnaireWithAnswers
@@ -98,7 +98,7 @@ class QuestionnaireViewModel(
             currentPageSubject,
             decisionSubject
         ).map { (currentPage, decisionMap) ->
-            decisionMap.contains(currentPage)
+            decisionMap.containsKey(currentPage)
         }
     }
 
