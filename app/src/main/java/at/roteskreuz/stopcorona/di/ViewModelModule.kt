@@ -28,6 +28,7 @@ import at.roteskreuz.stopcorona.screens.reporting.reportStatus.guideline.Certifi
 import at.roteskreuz.stopcorona.screens.reporting.tanCheck.ReportingTanCheckViewModel
 import at.roteskreuz.stopcorona.screens.routing.RouterViewModel
 import at.roteskreuz.stopcorona.screens.savedIDs.InfoDeleteExposureKeysViewModel
+import at.roteskreuz.stopcorona.screens.statistics.StatisticsViewModel
 import at.roteskreuz.stopcorona.screens.webView.WebViewViewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -80,7 +81,8 @@ val viewModelModule = module {
             changelogManager = get(),
             exposureNotificationManager = get(),
             dataPrivacyRepository = get(),
-            mandatoryUpdateManager = get()
+            mandatoryUpdateManager = get(),
+            statisticsRepository = get()
         )
     }
 
@@ -301,6 +303,13 @@ val viewModelModule = module {
         DiaryDeleteEntryViewModel(
             appDispatchers = get(),
             diaryRepository = get()
+        )
+    }
+
+    viewModel {
+        StatisticsViewModel(
+            appDispatchers = get(),
+            statisticsRepository = get()
         )
     }
 }

@@ -24,7 +24,7 @@ class ProcessDiagnosisKeysWorker(
         /**
          * Enqueue download and processing diagnosis keys.
          */
-        fun enqueueProcessingOfDiagnosisKeys(workManager: WorkManager, token: String) {
+        fun enqueueProcessingOfDiagnosisKeys(workManager: WorkManager, token: String?) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED) // internet access
                 .build()

@@ -7,6 +7,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.ApiInfectionDataRe
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
+import at.roteskreuz.stopcorona.model.entities.statistics.CovidStatistics
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTan
 import at.roteskreuz.stopcorona.model.entities.tan.ApiRequestTanBody
 import at.roteskreuz.stopcorona.model.repositories.DataPrivacyRepository
@@ -61,6 +62,11 @@ interface ApiInteractor {
      * @return fileName
      */
     suspend fun downloadContentDeliveryFile(pathToArchive: String): String
+
+    /**
+     * Get the current AGES data from https://covid19-dashboard.ages.at/data/JsonData.json.
+     */
+    suspend fun downloadCovidStatistics(): CovidStatistics
 }
 
 class ApiInteractorImpl(
@@ -69,7 +75,8 @@ class ApiInteractorImpl(
     private val tanApiDescription: TanApiDescription,
     private val contentDeliveryNetworkDescription: ContentDeliveryNetworkDescription,
     private val dataPrivacyRepository: DataPrivacyRepository,
-    private val filesRepository: FilesRepository
+    private val filesRepository: FilesRepository,
+    private val agesApiDescription: AGESApiDescription
 ) : ApiInteractor,
     ExceptionMapperHelper {
 
@@ -180,6 +187,14 @@ class ApiInteractorImpl(
                     )
                 }
             )
+        }
+    }
+
+    override suspend fun downloadCovidStatistics(): CovidStatistics {
+        return withContext(appDispatchers.IO){
+            checkGeneralErrors {
+                agesApiDescription.requestAGESData()
+            }
         }
     }
 }

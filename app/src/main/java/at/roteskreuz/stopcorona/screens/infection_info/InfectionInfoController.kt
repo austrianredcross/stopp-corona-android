@@ -76,7 +76,7 @@ class InfectionInfoController(
                         .id("guide")
                 )
             ) {
-                backgroundColor(R.color.background_gray)
+                backgroundColor(R.color.primary)
             }
         } else {
             verticalBackgroundModelGroup(
@@ -89,7 +89,7 @@ class InfectionInfoController(
                         .id("guide")
                 )
             ) {
-                backgroundColor(R.color.background_gray)
+                backgroundColor(R.color.primary)
             }
         }
 

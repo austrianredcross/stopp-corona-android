@@ -9,15 +9,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.repositories.QuarantineStatus
 import at.roteskreuz.stopcorona.screens.base.CoronaPortraitBaseActivity
 import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.activity.startFragmentActivity
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
-import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
-import at.roteskreuz.stopcorona.skeleton.core.utils.visible
 import at.roteskreuz.stopcorona.utils.*
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.android.synthetic.main.guide_info_help.*
 import kotlinx.android.synthetic.main.questionnaire_guideline_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -40,7 +37,7 @@ class QuestionnaireGuidelineFragment : BaseFragment(R.layout.questionnaire_guide
 
         txtTitle.contentDescription = getString(R.string.questionnaire_guideline_headline) + getString(R.string.accessibility_heading_1)
         txtUrgentHelpHeadline.contentDescription = getString(R.string.questionnaire_guideline_urgent_help_headline) + getString(R.string.accessibility_heading_2)
-        txtAdviceHeadline.contentDescription = getString(R.string.questionnaire_guideline_advice_headline) + getString(R.string.accessibility_heading_2)
+        txtConsultingTitle.contentDescription = getString(R.string.questionnaire_guideline_advice_headline) + getString(R.string.accessibility_heading_2)
         txtReportSickHeadline.contentDescription = getString(R.string.questionnaire_guideline_report_sick_headline) + getString(R.string.accessibility_heading_2)
 
         txtRecommendationDescription2.text = SpannableStringBuilder().apply {
@@ -56,11 +53,11 @@ class QuestionnaireGuidelineFragment : BaseFragment(R.layout.questionnaire_guide
         }
         txtRecommendationDescription2.movementMethod = LinkMovementMethod()
         txtDescription6Phone.startPhoneCallOnClick()
+        txtUrgentNumber1.startPhoneCallOnClick()
+        txtUrgentNumber2.startPhoneCallOnClick()
         txtConsultingFirstPhone.startPhoneCallOnClick()
         txtConsultingSecondPhone.startPhoneCallOnClick()
-        txtAdvicePhone1Number.startPhoneCallOnClick()
-        txtAdvicePhone2Number.startPhoneCallOnClick()
-        txtAdvicePhone3Number.startPhoneCallOnClick()
+        txtConsultingThirdPhone.startPhoneCallOnClick()
     }
 
     override fun onInitActionBar(actionBar: ActionBar?, toolbar: Toolbar?) {

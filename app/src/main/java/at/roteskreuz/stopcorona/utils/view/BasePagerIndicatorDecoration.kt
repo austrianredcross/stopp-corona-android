@@ -296,6 +296,8 @@ class CirclePagerIndicatorDecoration(
     indicatorStrokeWidth: Float = context.dipif(2),
     private val indicatorItemDiameter: Int = context.dip(16),
     private val indicatorItemPadding: Int = context.dip(4),
+    private val indicatorInactivestyle: Paint.Style = Paint.Style.FILL,
+    private val indicatorActivestyle: Paint.Style = Paint.Style.FILL,
     // More natural interpolation.
     interpolator: Interpolator = AccelerateDecelerateInterpolator()
 ) : BasePagerIndicatorDecoration(
@@ -313,6 +315,7 @@ class CirclePagerIndicatorDecoration(
         itemCount: Int
     ) {
         paint.color = colorInactive
+        paint.style = indicatorInactivestyle
 
         // width of item indicator including padding
         val itemWidth = indicatorItemDiameter + indicatorItemPadding
@@ -339,6 +342,7 @@ class CirclePagerIndicatorDecoration(
         itemCount: Int
     ) {
         paint.color = colorActive
+        paint.style = indicatorActivestyle
 
         // width of item indicator including padding
         val itemWidth = indicatorItemDiameter + indicatorItemPadding

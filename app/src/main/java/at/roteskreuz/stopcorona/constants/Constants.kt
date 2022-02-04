@@ -155,6 +155,8 @@ object Constants {
         const val HOSTNAME_CDN = BuildConfig.HOSTNAME_CDN
         const val BASE_URL_CDN = BuildConfig.BASE_URL_CDN
 
+        const val AGES_URL = BuildConfig.AGES_URL
+
         val CERTIFICATE_CHAIN_DEFAULT: Array<String> = BuildConfig.CERTIFICATE_CHAIN
         val CERTIFICATE_CHAIN_TAN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_TAN
         val CERTIFICATE_CHAIN_CDN: Array<String> = BuildConfig.CERTIFICATE_CHAIN_CDN

@@ -103,6 +103,20 @@ fun LocalDate.formatDayAndMonth(context: Context): String {
 }
 
 /**
+ * Format string to display (day of month, month - text form if possible) based on natural locale style.
+ */
+fun String.formatDayAndMonth(context: Context): String {
+    val ISOdate = LocalDate.parse(this, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    return DateUtils.formatDateTime(
+        context,
+        ISOdate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+        DateUtils.FORMAT_ABBREV_MONTH or
+                DateUtils.FORMAT_SHOW_DATE or
+                DateUtils.FORMAT_NO_YEAR
+    )
+}
+
+/**
  * Format date to display (day of month, month - text form if possible, year) based on natural locale style.
  */
 fun LocalDate.formatDayAndMonthAndYear(context: Context): String {

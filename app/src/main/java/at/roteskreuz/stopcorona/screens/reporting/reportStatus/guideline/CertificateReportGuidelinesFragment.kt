@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
 import android.text.style.StyleSpan
 import android.view.View
 import androidx.appcompat.app.ActionBar
@@ -69,6 +70,8 @@ class CertificateReportGuidelinesFragment : BaseFragment(R.layout.certificate_re
                     }))
             }
         }
+
+        txtDescription4Phone.movementMethod = LinkMovementMethod()
 
         txtConsultingFirstPhone.startPhoneCallOnClick()
         txtConsultingSecondPhone.startPhoneCallOnClick()

@@ -1,6 +1,7 @@
 package at.roteskreuz.stopcorona.screens.base.epoxy
 
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.utils.backgroundColor
 import com.airbnb.epoxy.EpoxyAttribute
@@ -19,8 +20,15 @@ open class VerticalBackgroundModelGroup(
     @ColorRes
     var backgroundColor: Int = R.color.background_gray
 
+    @EpoxyAttribute
+    @DrawableRes
+    var background: Int? = null
+
     override fun bind(holder: ModelGroupHolder) {
         super.bind(holder)
         holder.rootView.backgroundColor(backgroundColor)
+        background?.let { background ->
+            holder.rootView.setBackgroundResource(background)
+        }
     }
 }

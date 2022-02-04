@@ -138,7 +138,7 @@ fun SharedPreferences.nullableLongSharedPreferencesProperty(
 fun SharedPreferences.stringSharedPreferencesProperty(
     key: String,
     defaultValue: String
-): ReadWriteProperty<Any?, String> {
+): ReadWriteProperty<Any?, String?> {
     return sharedPreferencesProperty(
         key,
         defaultValue,
