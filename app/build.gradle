@@ -179,8 +179,23 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation project(":play-services-nearby-exposurenotification-1.6.1-eap")
 
-    huaweiImplementation ('com.huawei.hms:contactshield:6.2.0.300')
-    huaweiImplementation 'com.huawei.hms:hianalytics:6.0.0.300'
+    huaweiImplementation ('com.huawei.hms:contactshield:6.2.0.300') {
+        exclude group: 'com.huawei.hms', module: 'network-framework-compat'
+        exclude group: 'com.huawei.hms', module: 'network-common'
+    }
+
+    huaweiImplementation ('com.huawei.hms:hianalytics:6.0.0.300')  {
+        exclude group: 'com.huawei.hms', module: 'network-framework-compat'
+        exclude group: 'com.huawei.hms', module: 'network-common'
+    }
+
+    huaweiImplementation ('com.huawei.hms:network-framework-compat:5.0.4.300') {
+        exclude group: 'com.huawei.hms', module: 'network-common'
+    }
+    huaweiImplementation ('com.huawei.hms:network-common:5.0.4.300') {
+        exclude group: 'com.huawei.hms', module: 'network-framework-compat'
+    }
+
     huaweiImplementation 'com.huawei.agconnect:agconnect-crash:1.4.2.301'
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
