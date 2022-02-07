@@ -117,4 +117,10 @@ val repositoryModule = module {
             apiInteractor = get()
         )
     }
+
+    single<SunDownerRepository> {
+        SunDownerRepositoryImpl(
+            preferences = get()
+        )
+    }
 }

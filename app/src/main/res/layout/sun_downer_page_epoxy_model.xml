@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewContainer"
+        android:background="@color/blue"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:cardBackgroundColor="@color/transparent"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="10dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:background="@drawable/shape_white_border"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtTitle"
+                    style="@style/AppTheme.Heading1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/onboarding_headline_top_margin"
+                    android:layout_marginStart="@dimen/onboarding_content_margin_horizontal"
+                    android:layout_marginEnd="@dimen/onboarding_content_margin_horizontal"
+                    android:gravity="center"
+                    android:textColor="@color/onboarding_headline"
+                    android:textSize="@dimen/onboarding_headline"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/sunDowner_first_page_title" />
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    style="@style/AppTheme.Copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/onboarding_content_margin_horizontal"
+                    android:layout_marginTop="@dimen/onboarding_content_margin_top"
+                    android:layout_marginEnd="@dimen/onboarding_content_margin_horizontal"
+                    android:layout_marginBottom="@dimen/onboarding_content_margin_bottom"
+                    android:textSize="@dimen/onboarding_body"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txtTitle"
+                    tools:text="@string/sunDowner_first_page_content" />
+
+                <ImageView
+                    android:id="@+id/imgHero"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/onboarding_image_margin_bottom"
+                    android:layout_marginTop="@dimen/onboarding_image_margin_bottom"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/txtDescription"
+                    app:layout_constraintStart_toStartOf="@id/txtDescription"
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription"
+                    app:layout_constraintBottom_toTopOf="@+id/btnNewsletter"
+                    android:src="@drawable/ic_sun_downer" />
+
+                <ImageView
+                    android:id="@+id/redCrossLogo"
+                    android:layout_width="200dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="@dimen/onboarding_image_margin_bottom"
+                    android:layout_marginTop="@dimen/onboarding_image_margin_bottom"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/txtDescription"
+                    app:layout_constraintStart_toStartOf="@id/txtDescription"
+                    app:layout_constraintTop_toBottomOf="@id/txtDescription"
+                    app:layout_constraintBottom_toTopOf="@+id/btnNewsletter"
+                    android:src="@drawable/red_cross_logo" />
+
+                <Button
+                    android:id="@+id/btnNewsletter"
+                    style="@style/AppTheme.ButtonLargeType2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="36dp"
+                    android:text="@string/sunDowner_third_page_newsletter_button"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

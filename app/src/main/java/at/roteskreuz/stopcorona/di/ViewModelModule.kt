@@ -2,17 +2,17 @@ package at.roteskreuz.stopcorona.di
 
 import at.roteskreuz.stopcorona.model.entities.configuration.ConfigurationLanguage
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
-import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
 import at.roteskreuz.stopcorona.screens.base.DebugViewModel
 import at.roteskreuz.stopcorona.screens.base.dialog.datepicker.DatePickerFragmentDialogViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.DashboardViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.changelog.ChangelogViewModel
+import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.PrivacyUpdateViewModel
 import at.roteskreuz.stopcorona.screens.debug.diagnosis_keys.DebugDiagnosisKeysViewModel
 import at.roteskreuz.stopcorona.screens.debug.exposure_notifications.DebugExposureNotificationsViewModel
 import at.roteskreuz.stopcorona.screens.infection_info.InfectionInfoViewModel
 import at.roteskreuz.stopcorona.screens.onboarding.OnboardingViewModel
-import at.roteskreuz.stopcorona.screens.dashboard.privacy_update.PrivacyUpdateViewModel
 import at.roteskreuz.stopcorona.screens.dashboard.report_healthy.ReportHealthyViewModel
+import at.roteskreuz.stopcorona.screens.sun_downer.SunDownerViewModel
 import at.roteskreuz.stopcorona.screens.diary.DiaryViewModel
 import at.roteskreuz.stopcorona.screens.diary.day.DiaryDayViewModel
 import at.roteskreuz.stopcorona.screens.diary.delete_entry.DiaryDeleteEntryViewModel
@@ -83,7 +83,8 @@ val viewModelModule = module {
             exposureNotificationManager = get(),
             dataPrivacyRepository = get(),
             mandatoryUpdateManager = get(),
-            statisticsRepository = get()
+            statisticsRepository = get(),
+            sunDownerRepository = get()
         )
     }
 
@@ -311,6 +312,13 @@ val viewModelModule = module {
         StatisticsViewModel(
             appDispatchers = get(),
             statisticsRepository = get()
+        )
+    }
+
+    viewModel {
+        SunDownerViewModel(
+            appDispatchers = get(),
+            sunDownerRepository = get()
         )
     }
 }

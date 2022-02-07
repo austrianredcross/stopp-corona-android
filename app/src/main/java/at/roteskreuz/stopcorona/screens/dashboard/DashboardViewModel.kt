@@ -3,10 +3,7 @@ package at.roteskreuz.stopcorona.screens.dashboard
 import android.app.Activity
 import at.roteskreuz.stopcorona.model.entities.statistics.Bundesland
 import at.roteskreuz.stopcorona.model.entities.statistics.CovidStatistics
-import at.roteskreuz.stopcorona.model.managers.ChangelogManager
-import at.roteskreuz.stopcorona.model.managers.ExposureNotificationManager
-import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
-import at.roteskreuz.stopcorona.model.managers.MandatoryUpdateManager
+import at.roteskreuz.stopcorona.model.managers.*
 import at.roteskreuz.stopcorona.model.repositories.*
 import at.roteskreuz.stopcorona.screens.statistics.StatisticIncidenceItem
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
@@ -30,7 +27,8 @@ class DashboardViewModel(
     private val exposureNotificationManager: ExposureNotificationManager,
     private val dataPrivacyRepository: DataPrivacyRepository,
     private val mandatoryUpdateManager: MandatoryUpdateManager,
-    private val statisticsRepository: StatisticsRepository
+    private val statisticsRepository: StatisticsRepository,
+    private val sunDownerRepository: SunDownerRepository
 ) : ScopedViewModel(appDispatchers) {
 
     var wasExposureFrameworkAutomaticallyEnabledOnFirstStart: Boolean
@@ -55,6 +53,9 @@ class DashboardViewModel(
      */
     val hasAcceptedPrivacyUpdate
         get() = dataPrivacyRepository.newDataPrivacyAccepted
+
+    val wasSunDownerShown
+        get() = sunDownerRepository.sunDownerShown
 
     var userWantsToRegisterAppForExposureNotifications: Boolean
         get() = exposureNotificationManager.userWantsToRegisterAppForExposureNotifications
@@ -82,7 +83,7 @@ class DashboardViewModel(
 
     }
 
-    fun observeDisplayMandatoryUpdate(): Observable<Boolean>{
+    fun observeDisplayMandatoryUpdate(): Observable<Boolean> {
         return mandatoryUpdateManager.observeDisplayMandatoryUpdate()
     }
 
@@ -110,7 +111,9 @@ class DashboardViewModel(
                     is QuarantineStatus.Jailed.Forever -> HealthStatusData.SicknessCertificate
                     is QuarantineStatus.Jailed.Limited -> {
                         when {
-                            quarantineStatus.bySelfYellowDiagnosis != null -> HealthStatusData.SelfTestingSuspicionOfSickness(quarantineStatus)
+                            quarantineStatus.bySelfYellowDiagnosis != null -> HealthStatusData.SelfTestingSuspicionOfSickness(
+                                quarantineStatus
+                            )
                             quarantineStatus.selfMonitoring -> HealthStatusData.SelfTestingSymptomsMonitoring
                             else -> HealthStatusData.NoHealthStatus
                         }

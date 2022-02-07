@@ -11,17 +11,16 @@ import at.roteskreuz.stopcorona.screens.dashboard.CardUpdateStatus
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyHolder
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.view.BaseEpoxyModel
 import at.roteskreuz.stopcorona.skeleton.core.utils.visible
-import at.roteskreuz.stopcorona.utils.color
-import at.roteskreuz.stopcorona.utils.tint
+import at.roteskreuz.stopcorona.utils.*
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 
 /**
- * UI component to display closable status update box.
+ * UI component to display status update box.
  */
 @EpoxyModelClass(layout = R.layout.dashboard_status_update_epoxy_model)
 abstract class StatusUpdateModel(
-    private val onCloseClick: () -> Unit
+    private val clickAction: (() -> Unit)?
 ) : BaseEpoxyModel<StatusUpdateModel.Holder>() {
 
     @EpoxyAttribute
@@ -37,9 +36,6 @@ abstract class StatusUpdateModel(
         txtTitle.text = title
         txtTitle.contentDescription = title + context.getString(R.string.accessibility_heading_2)
         txtDescription.text = description
-        btnClose.setOnClickListener {
-            onCloseClick()
-        }
 
         when (cardStatus) {
             CardUpdateStatus.ContactUpdate -> {
@@ -47,6 +43,11 @@ abstract class StatusUpdateModel(
                 txtTitle.setTextColor(color(R.color.text_default_heading2))
                 txtDescription.setTextColor(color(R.color.text_default_copy))
                 cardViewContainer.setCardBackgroundColor(color(R.color.white))
+                clickAction?.let { clickAction ->
+                    btnClose.setOnClickListener {
+                        clickAction()
+                    }
+                }
             }
 
             CardUpdateStatus.EndOfQuarantine -> {
@@ -56,6 +57,21 @@ abstract class StatusUpdateModel(
                 txtDescription.setTextColor(color(R.color.white))
                 cardViewContainer.setCardBackgroundColor(color(R.color.mediumGreen))
                 setTextColor(R.color.dashboard_card_color)
+                clickAction?.let { clickAction ->
+                    btnClose.setOnClickListener {
+                        clickAction()
+                    }
+                }
+            }
+
+            CardUpdateStatus.SunDowner -> {
+                txtDescription2Container.visible = true
+                txtDescription2.text = string(R.string.sunDowner_notification_content_2)
+                txtTitle.setTextColor(color(R.color.white))
+                txtDescription.setTextColor(color(R.color.white))
+                cardViewContainer.setCardBackgroundColor(color(R.color.mediumGreen))
+                setTextColor(R.color.dashboard_card_color)
+                btnClose.visible = false
             }
         }
     }

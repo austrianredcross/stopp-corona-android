@@ -5,6 +5,7 @@ import at.roteskreuz.stopcorona.BuildConfig.APPLICATION_ID
 import at.roteskreuz.stopcorona.skeleton.core.constants.BaseAppRequest
 import com.google.android.gms.common.GoogleApiAvailability
 import org.threeten.bp.Duration
+import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 
 /**
@@ -24,6 +25,8 @@ object Constants {
      * Constants for behavior tuning
      */
     object Behavior {
+
+        val SUN_DOWNER_DATE: LocalDate = LocalDate.of(2022, 2, 28)
 
         /**
          * Minimum time between offline syncs in ms.
@@ -139,6 +142,7 @@ object Constants {
         const val CHANGELOG_MANAGER_PREFIX = PREFIX + "changelog_manager_"
         const val EXPOSURE_NOTIFICATION_MANAGER_PREFIX = PREFIX + "exposure_notification_manager_"
         const val PRIVACY_UPDATE_PREFIX = PREFIX + "privacy_update_manager_"
+        const val SUN_DOWNER_PREFIX = PREFIX + "sun_downer_repository_"
     }
 
     /**
@@ -206,6 +210,7 @@ object Constants {
         const val CHANNEL_QUARANTINE = "channel_quarantine"
         const val CHANNEL_AUTOMATIC_DETECTION = "channel_automatic_detection"
         const val CHANNEL_UPLOAD_KEYS = "channel_upload_keys"
+        const val CHANNEL_SUN_DOWNER = "channel_sun_downer"
     }
 
     /**

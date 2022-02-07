@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.SpannableString
 import at.roteskreuz.stopcorona.R
 import at.roteskreuz.stopcorona.constants.Constants
+import at.roteskreuz.stopcorona.constants.Constants.Behavior.SUN_DOWNER_DATE
 import at.roteskreuz.stopcorona.model.entities.statistics.CovidStatistics
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase
 import at.roteskreuz.stopcorona.model.managers.ExposureNotificationPhase.*
@@ -69,11 +70,19 @@ class DashboardController(
     var statisticsCurrentDate: String? by adapterProperty(null as String?)
     var statisticsCompareDate: String? by adapterProperty(null as String?)
     var isStatisticsExpanded: Boolean by adapterProperty(true)
-    var statisticIncidenceItems: MutableList<StatisticIncidenceItem> by adapterProperty(mutableListOf())
+    var statisticIncidenceItems: MutableList<StatisticIncidenceItem> by adapterProperty(
+        mutableListOf()
+    )
     var statistics: CovidStatistics? by adapterProperty(null as CovidStatistics?)
 
     override fun buildModels() {
         emptySpace(modelCountBuiltSoFar, 16)
+
+        /**
+         * Build card for sun downer
+         */
+        buildSunDownerStatus()
+
 
         /**
          * Build all cards for own and contact health status as well as status updates
@@ -780,6 +789,37 @@ class DashboardController(
         }
     }
 
+    /**
+     * Build card for sun downer
+     */
+    private fun buildSunDownerStatus() {
+        val modelList = arrayListOf<EpoxyModel<out Any>>()
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        val downDate = SUN_DOWNER_DATE.formatDayAndMonthAndYear(context)
+
+        StatusUpdateModel_(null)
+            .id("sun_downer")
+            .title(context.string(R.string.sunDowner_notification_title))
+            .description(context.string(R.string.sunDowner_notification_content, downDate))
+            .cardStatus(CardUpdateStatus.SunDowner)
+            .addTo(modelList)
+
+        EmptySpaceModel_()
+            .id(modelCountBuiltSoFar)
+            .height(32)
+            .addTo(modelList)
+
+        verticalBackgroundModelGroup(modelList) {
+            id("vertical_model_group_sun_downer")
+            backgroundColor(R.color.background_gray)
+        }
+    }
+
     private fun buildDiaryCard() {
         val modelList = arrayListOf<EpoxyModel<out Any>>()
 
@@ -981,6 +1021,7 @@ sealed class CardUpdateStatus {
 
     object ContactUpdate : CardUpdateStatus()
     object EndOfQuarantine : CardUpdateStatus()
+    object SunDowner : CardUpdateStatus()
 }
 
 private fun ExposureNotificationPhase?.isReportingEnabled(): Boolean {

@@ -5,9 +5,11 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.constants.Constants.NotificationChannels
 import at.roteskreuz.stopcorona.model.entities.infection.info.WarningType
 import at.roteskreuz.stopcorona.model.entities.infection.message.MessageType
@@ -17,6 +19,7 @@ import at.roteskreuz.stopcorona.screens.infection_info.getInfectionInfoFragmentI
 import at.roteskreuz.stopcorona.screens.questionnaire.getQuestionnaireIntent
 import at.roteskreuz.stopcorona.screens.reporting.getReportingActivityIntent
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.AppDispatchers
+import at.roteskreuz.stopcorona.utils.formatDayAndMonthAndYear
 import at.roteskreuz.stopcorona.utils.string
 import kotlinx.coroutines.CoroutineScope
 import org.threeten.bp.ZonedDateTime
@@ -27,6 +30,10 @@ import kotlin.coroutines.CoroutineContext
  * Repository that manages the notifications.
  */
 interface NotificationsRepository {
+    /**
+     * Display notification for sunDowner.
+     */
+    fun displaySunDownerNotification(@StringRes message: Int, withDate: Boolean)
 
     /**
      * Display notification about received infection by [infectionLevel].
@@ -110,6 +117,25 @@ class NotificationsRepositoryImpl(
     private val firstActivityFlags = Intent.FLAG_ACTIVITY_SINGLE_TOP or // call onNewIntent() on running activity
         Intent.FLAG_ACTIVITY_NEW_TASK or // can open activity from service
         Intent.FLAG_ACTIVITY_CLEAR_TOP // remove stack and place this activity on top (will continue)
+
+    override fun displaySunDownerNotification(@StringRes message: Int, withDate: Boolean) {
+        val downDate = Constants.Behavior.SUN_DOWNER_DATE.formatDayAndMonthAndYear(context)
+        val title = context.string(R.string.local_notification_sundowner_title)
+        val message = if (withDate) {
+            context.string(message, downDate)
+        } else {
+            context.string(message)
+        }
+
+        buildNotification(
+            title = title,
+            message = message,
+            pendingIntent = buildPendingIntentWithActivityStack {
+                addNextIntent(context.getDashboardActivityIntent().addFlags(firstActivityFlags))
+            },
+            channelId = NotificationChannels.CHANNEL_SUN_DOWNER
+        ).show()
+    }
 
     override fun displayInfectionNotification(infectionLevel: MessageType.InfectionLevel) {
         val (title, message) = when (infectionLevel.warningType) {
