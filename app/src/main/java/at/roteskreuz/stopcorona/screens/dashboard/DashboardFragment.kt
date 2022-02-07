@@ -31,6 +31,7 @@ import at.roteskreuz.stopcorona.screens.reporting.startReportingActivity
 import at.roteskreuz.stopcorona.screens.statistics.StatisticIncidenceItem
 import at.roteskreuz.stopcorona.screens.statistics.legend.showStatisticsLegendFragment
 import at.roteskreuz.stopcorona.screens.statistics.startStatisticsFragment
+import at.roteskreuz.stopcorona.screens.sun_downer.startSunDownerFragment
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.fragment.BaseFragment
 import at.roteskreuz.stopcorona.skeleton.core.utils.dipif
 import at.roteskreuz.stopcorona.skeleton.core.utils.observeOnMainThread
@@ -225,14 +226,16 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
         with(contentRecyclerView) {
             setController(controller)
-            layoutManager = LinearLayoutManagerAccurateOffset(requireContext(), accurateScrollListener)
+            layoutManager =
+                LinearLayoutManagerAccurateOffset(requireContext(), accurateScrollListener)
             addOnScrollListener(accurateScrollListener)
         }
 
         disposables += viewModel.observeDateOfFirstMedicalConfirmation()
             .observeOnMainThread()
             .subscribe { dateOfFirstMedicalConfirmation ->
-                controller.dateOfFirstMedicalConfirmation = dateOfFirstMedicalConfirmation.orElse(null)
+                controller.dateOfFirstMedicalConfirmation =
+                    dateOfFirstMedicalConfirmation.orElse(null)
             }
 
         disposables += viewModel.observeOwnHealthStatus()
@@ -304,7 +307,9 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
             .subscribe { lastContactDates ->
                 controller.dateOfLastContact = when {
                     lastContactDates.lastRedContactDate.isPresent && lastContactDates.lastYellowContactDate.isPresent -> {
-                        if (lastContactDates.lastRedContactDate.get().isAfter(lastContactDates.lastYellowContactDate.get())){
+                        if (lastContactDates.lastRedContactDate.get()
+                                .isAfter(lastContactDates.lastYellowContactDate.get())
+                        ) {
                             lastContactDates.lastRedContactDate.get()
                         } else {
                             lastContactDates.lastYellowContactDate.get()
@@ -324,7 +329,7 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
                 val keyRequestCountLastWeek = viewModel.getKeyRequestCountLastWeek()
                 controller.keyRequestCountLastWeek = keyRequestCountLastWeek
             }
-        
+
 
         if (viewModel.shouldDisplayWhatsNew) {
             showChangelogBottomSheetFragment()
@@ -356,7 +361,13 @@ class DashboardFragment : BaseFragment(R.layout.fragment_dashboard) {
 
             }
 
+        if (!viewModel.wasSunDownerShown) {
+            activity?.startSunDownerFragment()
+        }
+
+
         controller.requestModelBuild()
+
     }
 
     private fun addStatisticIncidenceItems() {

@@ -11,6 +11,7 @@
 	<string name="general_self_quarantine_channel_name">Quarantine notices</string>
 	<string name="general_automatic_bt_detection_channel_name">Automatic Bluetooth device detection notices</string>
 	<string name="general_uploading_keys_channel_name">Notices regarding the uploading of your own keys</string>
+	<string name="general_sun_downer_channel_name">End of operation notices</string>
 	<string name="general_today">Today</string>
 	<string name="general_continue">Continue</string>
 	<string name="general_additional_information">Further information</string>
@@ -338,7 +339,6 @@
 	<!-- Start Screen Notification (user is infected) -->
 	<string name="sickness_certificate_attest_headline">Attention</string>
 	<string name="sickness_certificate_attest_description">You have reported your medically confirmed corona infection.</string>
-	<string name="sickness_certificate_attest_date_text">Please go into quarantine <b>until you are healthy</b>.</string>
 	<string name="sickness_certificate_attest_description_2">Please go into quarantine</string>
 	<string name="sickness_certificate_attest_description_3">until you are healthy.</string>
 	<string name="sickness_certificate_attest_description_5">until</string>
@@ -684,6 +684,24 @@
 	<string name="diary_export_filename">diary</string>
 	<string name="diary_time_format">HH:mm</string>
 	<string name="diary_date_format">EEEE dd.MM.yyyy</string>
+	<string name="sunDowner_notification_title">Thank you for your cooperation!</string>
+	<string name="sunDowner_notification_content">Thank you for using the app. Operation and support is stopped with %s.</string>
+	<string name="sunDowner_notification_content_2">Stay healthy!</string>
+	<string name="sunDowner_first_page_title">We say thank you!</string>
+	<string name="sunDowner_first_page_content">By using the app, you have actively contributed to protecting your health and the health of those around you!</string>
+	<string name="sunDowner_second_page_title">We end the operation on %s</string>
+	<string name="sunDowner_second_page_content">The contact tracing and the exchange of data will end on %s. Sending and receiving of risk contacts will thus be stopped. Operation and support is stopped with %s.</string>
+	<string name="sunDowner_third_page_button">Understood</string>
+	<string name="sunDowner_third_page_title">Stay in contact!</string>
+	<string name="sunDowner_third_page_content">Whether with flashing blue lights to the scene of an accident, help in the event of a disaster or supplying Austria with blood supplies: the Red Cross works tirelessly to be there when people need help. Sign up for the newsletter!</string>
+	<string name="sunDowner_third_page_newsletter_button">Sign up now</string>
+	<string name="sunDowner_newsletter_link">https://participate.roteskreuz.at/</string>
+	<string name="sunDowner_newsletter_link_accessibility">Opens the newsletter subscription page in an external link</string>
+	<string name="local_notification_sundowner_title">Thank you for using the Stopp Corona App!</string>
+	<string name="local_notification_sundowner_forced_update">Operation is ended with %s. Saving contacts and notification of risky contacts is no longer possible from this date.</string>
+	<string name="local_notification_sundowner_last_day_notification">Operation has ended. Saving contacts and notification of risky contacts is no longer possible.</string>
+	<string name="sunDowner1_img">Image: Doctor holding a heart</string>
+	<string name="sunDowner2_img">Image: Red Cross logo</string>
 	<string name="main_covid_statistics_title">7-day incidence: by thresholds</string>
 	<string name="main_covid_statistics_comparison">As of %s, compared to %s</string>
 	<string name="main_covid_statistics_expanded_collapsed_state_button">Figures from individual states</string>

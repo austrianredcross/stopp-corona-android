@@ -83,6 +83,14 @@ class App : BaseApp() {
             )
             channelUploadKeys.setShowBadge(true)
             notificationManager.createNotificationChannel(channelUploadKeys)
+
+            val channelSunDowner = NotificationChannel(
+                Constants.NotificationChannels.CHANNEL_SUN_DOWNER,
+                getString(R.string.general_sun_downer_channel_name),
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            channelSunDowner.setShowBadge(true)
+            notificationManager.createNotificationChannel(channelSunDowner)
         }
     }
 }

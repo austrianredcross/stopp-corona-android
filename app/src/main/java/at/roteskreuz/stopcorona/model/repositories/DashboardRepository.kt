@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import at.roteskreuz.stopcorona.constants.Constants
 import at.roteskreuz.stopcorona.skeleton.core.utils.booleanSharedPreferencesProperty
 
+
 /**
  * Repository for managing dashboard content.
  */
