@@ -7,6 +7,8 @@
   <br>
 </h1>
 
+**Important**: The development has stopped with **28.02.2022**
+
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona"><img src="https://img.shields.io/badge/version-1.1.4.11-success"/></a>
 </p>
