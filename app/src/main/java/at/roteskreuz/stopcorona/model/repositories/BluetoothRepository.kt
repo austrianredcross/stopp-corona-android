@@ -1,9 +1,11 @@
 package at.roteskreuz.stopcorona.model.repositories
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 
 /**
  * Wrapper for Bluetooth related functionality.
@@ -32,9 +34,21 @@ interface BluetoothRepository {
     fun updateEnabledState(enabled: Boolean)
 }
 
+@SuppressLint("CheckResult")
 class BluetoothRepositoryImpl(
-    private val bluetoothAdapter: BluetoothAdapter?
+    private val bluetoothAdapter: BluetoothAdapter?,
+    bluetoothManager: BluetoothManager
 ) : BluetoothRepository {
+
+    init {
+        bluetoothManager.listeningSubject
+            .subscribeOn(Schedulers.single())
+            .observeOn(Schedulers.single())
+            .filter { it }
+            .subscribe {
+                enabledStateSubject.onNext(bluetoothEnabled)
+            }
+    }
 
     private val enabledStateSubject = NonNullableBehaviorSubject(
         bluetoothAdapter?.isEnabled == true
