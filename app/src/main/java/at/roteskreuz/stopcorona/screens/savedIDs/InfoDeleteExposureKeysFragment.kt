@@ -47,7 +47,7 @@ class InfoDeleteExposureKeysFragment : BaseFragment(R.layout.info_delete_exposur
     }
 
     private fun displayExposureNotificationsSettings() {
-        val notificationsSettingsIntent = viewModel.getExposureNotificationsSettingsIntent()
+        val notificationsSettingsIntent = viewModel.getExposureNotificationsSettingsIntent(requireContext())
         if (notificationsSettingsIntent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(notificationsSettingsIntent)
         } else {

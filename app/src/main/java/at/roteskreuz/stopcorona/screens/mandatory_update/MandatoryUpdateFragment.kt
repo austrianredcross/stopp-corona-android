@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import at.roteskreuz.stopcorona.R
-import at.roteskreuz.stopcorona.utils.startGooglePlayStore
+import at.roteskreuz.stopcorona.utils.startPlatformAppStore
 import kotlinx.android.synthetic.main.fragment_mandatory_update.*
 
 class MandatoryUpdateFragment : DialogFragment() {
@@ -23,9 +23,9 @@ class MandatoryUpdateFragment : DialogFragment() {
 
         txtTitle.contentDescription = getString(R.string.mandatory_update_title) + getString(R.string.accessibility_heading_2)
 
-        btnGoToPlaystore.setOnClickListener {
+        btnGoToPlatformStore.setOnClickListener {
             val appPackageName = requireContext().packageName
-            startGooglePlayStore(appPackageName)
+            startPlatformAppStore(appPackageName)
         }
     }
 

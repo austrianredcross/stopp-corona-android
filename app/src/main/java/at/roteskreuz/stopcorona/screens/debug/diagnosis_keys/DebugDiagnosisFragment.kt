@@ -19,7 +19,7 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsErrorMessage
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsMasterSwitch
 import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.exposureNotificationsSettingsButton
-import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.googlePlayServicesVersionTextView
+import kotlinx.android.synthetic.main.debug_contact_tracing_fragment.servicesVersionTextView
 import kotlinx.android.synthetic.main.debug_diagnosis_keys_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -49,7 +49,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
 
         diagnosisKeysBackgroundProcessingButton.setOnClickListener { viewModel.startBackgroundDiagnosisKeysProcessing() }
 
-        googlePlayServicesVersionTextView.text = viewModel.googlePlayServicesVersion()
+        servicesVersionTextView.text = viewModel.getServicesVersion(requireContext())
 
         disposables += viewModel.observeDiagnosisKeyToken()
             .observeOnMainThread()
@@ -91,7 +91,7 @@ class DebugDiagnosisFragment : BaseFragment(R.layout.debug_diagnosis_keys_fragme
                 return@setOnCheckedChangeListener
             }
             if (isChecked) {
-                activity?.let { viewModel.startExposureNotifications(it) }
+                activity?.let { viewModel.startExposureNotifications() }
             } else {
                 viewModel.stopExposureNotifications()
             }

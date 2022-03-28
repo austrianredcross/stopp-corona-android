@@ -20,6 +20,7 @@ import at.roteskreuz.stopcorona.model.entities.infection.info.UUIDAdapter
 import at.roteskreuz.stopcorona.model.managers.BluetoothManager
 import at.roteskreuz.stopcorona.model.managers.BluetoothManagerImpl
 import at.roteskreuz.stopcorona.model.receivers.BluetoothStateReceiver
+import at.roteskreuz.stopcorona.model.repositories.BluetoothRepository
 import at.roteskreuz.stopcorona.skeleton.core.di.createApi
 import at.roteskreuz.stopcorona.skeleton.core.di.createMoshi
 import at.roteskreuz.stopcorona.skeleton.core.di.createOkHttpClient
@@ -150,7 +151,8 @@ val remoteModule = module {
     single<BluetoothManager> {
         BluetoothManagerImpl(
             contextInteractor = get(),
-            bluetoothStateReceiver = get<BluetoothStateReceiver>()
+            bluetoothStateReceiver = get<BluetoothStateReceiver>(),
+            bluetoothRepository = get<BluetoothRepository>()
         )
     }
 }

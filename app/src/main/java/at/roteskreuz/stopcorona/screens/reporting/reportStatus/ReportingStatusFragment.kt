@@ -152,15 +152,15 @@ class ReportingStatusFragment : BaseFragment(R.layout.fragment_reporting_status)
                         when (state.error) {
                             is FrameworkNotReady -> {
                                 GeneralErrorDialog(R.string.certificate_report_framework_is_not_ready_title,
-                                    R.string.certificate_report_framework_is_not_ready_message).show()
+                                    R.string.certificate_report_framework_is_not_ready_message, state.error).show()
                             }
                             is SicknessCertificateUploadException.TanInvalidException -> {
                                 GeneralErrorDialog(R.string.certificate_report_status_invalid_tan_error,
-                                    R.string.certificate_report_status_invalid_tan_error_description).show()
+                                    R.string.certificate_report_status_invalid_tan_error_description, state.error).show()
                             }
                             is SicknessCertificateUploadException.BirthdayInvalidException -> {
                                 GeneralErrorDialog(R.string.certificate_report_status_invalid_birth_date_error,
-                                    R.string.certificate_report_status_invalid_birth_date_error_description).show()
+                                    R.string.certificate_report_status_invalid_birth_date_error_description, state.error).show()
                             }
                             else -> handleBaseCoronaErrors(state.error)
                         }

@@ -141,7 +141,6 @@
 	<!-- Update Information -->
 	<string name="mandatory_update_title">Aktuelle Version herunterladen</string>
 	<string name="mandatory_update_message">Die derzeitige Version wird nicht mehr unterstützt. Laden Sie bitte eine neue Version der App herunter, damit Sie wieder auf alle Funktionen zugreifen können.</string>
-	<string name="mandatory_update_playstore">Zum Play Store</string>
 
 	<!-- Contact Sickness_Guidelines for people with proven sick contact -->
 	<string name="infection_info_title">Was soll ich tun?</string>
@@ -596,7 +595,7 @@
 	<string name="share_app_action_2">Teilen Sie die App</string>
 	<string name="share_app_menu">App teilen</string>
 	<string name="share_app_chooser">Teilen Sie die Stopp Corona App mit Ihrem Umfeld. </string>
-	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224</string>
+	<string name="share_app_content">Installieren Sie jetzt die STOPP Corona App!\nSo schützen Sie sich und Ihr Umfeld.\nGoogle Play Store\nhttps://play.google.com/store/apps/details?id=at.roteskreuz.stopcorona\n\nApple Store\nhttps://apps.apple.com/at/app/apple-store/id1503717224\n\nHuawei AppGallery\nhttps://appgallery.huawei.com/#/app/C102947193</string>
 	<string name="revoke_sickness_title">Status ändern</string>
 	<string name="revoke_sickness_headline">Bitte geben Sie Ihre Daten ein</string>
 	<string name="revoke_sickness_personal_data_description">Wir werden nach dem nächsten Schritt Ihre vorher informierten Kontakte anonym informieren, dass Sie die Krankmeldung zurückziehen. Wir validieren die Mobilnummer, damit wir einen Missbrauch dieser Funktion vermeiden können.</string>
@@ -621,7 +620,7 @@
 	<string name="changelog_img_v2.0.0">Bild: Gemeinsame Schnittstelle der Anbieter</string>
 	<string name="changelog_cta_v2.0.0">Alles klar!</string>
 	<string name="changelog_description_1_v2.0.0">Wir nutzen in dieser Version die</string>
-	<string name="changelog_description_2_v2.0.0">Apple und Google COVID-19 Schnittstelle</string>
+	<string name="changelog_description_2_v2.0.0">Apple, Google und Huawei COVID-19 Schnittstellen</string>
 	<string name="changelog_description_3_v2.0.0">. Die Benachrichtigungen werden weiterhin anonym ausgetauscht und es werden daher an ein paar Stellen die Informationen anders dargestellt.\n\nBegegnungen, die Sie vor dem Update auf diese Version als Handshake gespeichert haben, sind aus technischen Gründen nicht mehr gespeichert und können leider nicht mehr benachrichtigt werden.</string>
 	<string name="upload_keys_from_yesterday_title">Kontakte von gestern über ihre Krankmeldung informieren</string>
 	<string name="upload_keys_from_yesterday_message">Benachrichtigen Sie jetzt Kontakte von gestern. Teilen Sie dafür jetzt die IDs aus dem Kontaktprotokoll Ihres Gerätes mit der Stopp Corona App\n\nDas Melden ist weiterhin freiwillig.</string>

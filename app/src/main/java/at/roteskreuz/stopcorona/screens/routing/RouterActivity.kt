@@ -31,7 +31,7 @@ class RouterActivity : FragmentActivity(), KoinComponent {
         /**
          * Duration of how long the splashscreen must be shown at least.
          */
-        private const val SCREEN_DISPLAY_DURATION = 1_000L // ms
+        const val SCREEN_DISPLAY_DURATION = 1_000L // ms
         private const val ARGUMENT_SKIP_SPLASHSCREEN_DELAY = "skip_splashscreen_delay"
 
         fun args(skipSplashscreenDelay: Boolean): Bundle {

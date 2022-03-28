@@ -1,10 +1,10 @@
 package at.roteskreuz.stopcorona.screens.debug.exposure_notifications
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.util.Base64
-import at.roteskreuz.stopcorona.R
+import at.roteskreuz.stopcorona.commonexposure.CommonExposureClient
 import at.roteskreuz.stopcorona.model.api.ApiInteractor
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiTemporaryTracingKey
 import at.roteskreuz.stopcorona.model.entities.infection.info.ApiVerificationPayload
@@ -17,9 +17,7 @@ import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataState
 import at.roteskreuz.stopcorona.skeleton.core.model.helpers.DataStateObserver
 import at.roteskreuz.stopcorona.skeleton.core.screens.base.viewmodel.ScopedViewModel
 import at.roteskreuz.stopcorona.utils.NonNullableBehaviorSubject
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import io.reactivex.Observable
@@ -31,7 +29,7 @@ class DebugExposureNotificationsViewModel(
     private val apiInteractor: ApiInteractor,
     private val contextInteractor: ContextInteractor,
     private val exposureNotificationRepository: ExposureNotificationRepository,
-    private val exposureNotificationClient: ExposureNotificationClient
+    private val exposureNotificationClient: CommonExposureClient
 ) : ScopedViewModel(appDispatchers) {
 
     private val exposureNotificationsEnabledSubject = NonNullableBehaviorSubject(false)
@@ -41,18 +39,21 @@ class DebugExposureNotificationsViewModel(
     private val tanRequestUUIDSubject = NonNullableBehaviorSubject("no-tan")
 
     fun checkEnabledState() {
-        exposureNotificationClient.isEnabled
-            .addOnSuccessListener { enabled: Boolean ->
-                exposureNotificationsEnabledSubject.onNext(enabled)
-            }
-            .addOnFailureListener { exception: Exception? ->
-                Timber.e(
-                    exception,
-                    "could not get the current state of the exposure notifications SDK"
-                )
+
+        launch {
+            try {
+                val isServiceRunning = exposureNotificationClient.isRunning()
+                exposureNotificationsEnabledSubject.onNext(isServiceRunning)
+
+            } catch (exception: Exception) {
+                Timber.e(exception, "could not get the current state of the exposure notifications SDK")
+
                 exposureNotificationsEnabledSubject.onNext(false)
                 exposureNotificationsTextSubject.onNext("could not get the current state of the exposure notifications SDK: '${exception}'")
+
             }
+        }
+
     }
 
     fun observeEnabledState(): Observable<Boolean> {
@@ -76,19 +77,24 @@ class DebugExposureNotificationsViewModel(
      */
     fun startExposureNotifications(activity: Activity) {
         exposureNotificationsErrorState.loading()
-        exposureNotificationClient.start()
-            .addOnSuccessListener {
+
+        launch {
+
+            try {
+                exposureNotificationClient.start()
+
                 exposureNotificationsEnabledSubject.onNext(true)
                 exposureNotificationsErrorState.idle()
                 exposureNotificationsTextSubject.onNext("")
-            }
-            .addOnFailureListener { exception: Exception? ->
+            } catch (exception: Exception) {
+
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
                     exposureNotificationsEnabledSubject.onNext(false)
                     exposureNotificationsTextSubject.onNext("Unknown error when attempting to start API: '${exception}'")
-                    return@addOnFailureListener
+                    return@launch
                 }
+
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
                     Timber.e(exception, "Error, RESOLUTION_REQUIRED in result but not handled in UI")
@@ -100,47 +106,41 @@ class DebugExposureNotificationsViewModel(
                     exposureNotificationsTextSubject.onNext("No RESOLUTION_REQUIRED in result: '$exception'")
                     exposureNotificationsEnabledSubject.onNext(false)
                 }
+
             }
+
+        }
     }
 
     /**
      * Calls stop on the Exposure Notifications API.
      */
     fun stopExposureNotifications() {
-        exposureNotificationClient.stop()
-            .addOnSuccessListener {
+
+        launch {
+            try {
+                exposureNotificationClient.stop()
                 exposureNotificationsEnabledSubject.onNext(false)
                 exposureNotificationsTextSubject.onNext("app unregistered from exposure notifications")
-            }
-            .addOnFailureListener { exception: java.lang.Exception? ->
+            } catch (exception: Exception) {
                 exposureNotificationsEnabledSubject.onNext(true)
                 Timber.w(exception, "Failed to unregister")
                 exposureNotificationsTextSubject.onNext("Failed to unregister from the Exposure Notifications framework: '$exception'")
+
             }
+
+        }
+
+    }
+
+    fun getServicesVersion(context: Context): String {
+        return exposureNotificationClient.getServiceVersion(context)
     }
 
     fun jumpToSystemSettings() {
-        val intent = exposureNotificationRepository.getExposureSettingsIntent()
+        val intent = exposureNotificationRepository.getExposureSettingsIntent(contextInteractor.applicationContext)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         contextInteractor.applicationContext.startActivity(intent)
-    }
-
-    fun googlePlayServicesVersion(): String {
-        return contextInteractor.applicationContext.getString(
-            R.string.debug_version_gms,
-            getVersionNameForPackage(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE)
-        )
-    }
-
-    /** Gets the version name for a specified package. Returns a debug string if not found.  */
-    private fun getVersionNameForPackage(packageName: String): String? {
-        try {
-            return contextInteractor.applicationContext.packageManager
-                .getPackageInfo(packageName, 0).versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            Timber.e(e, "Couldn't get the app version")
-        }
-        return contextInteractor.applicationContext.getString(R.string.debug_version_not_available)
     }
 
     fun resolutionForRegistrationSucceeded(activity: Activity) {
@@ -154,23 +154,20 @@ class DebugExposureNotificationsViewModel(
     }
 
     fun getTemporaryExposureKeyHistory() {
-        exposureNotificationClient.temporaryExposureKeyHistory
-            .addOnSuccessListener {
-                Timber.d("got the list of Temporary Exposure Keys")
-                it.forEach {
-                    Timber.d("Key: ${it.rollingStartIntervalNumber}-${it.rollingPeriod}: $it")
-                }
-                exposureNotificationsTextSubject.onNext(
-                    "got the list of TemporaryExposureKeys $it"
-                )
-                lastTemporaryExposureKeysSubject.onNext(it)
-            }
-            .addOnFailureListener { exception: Exception? ->
+
+        launch {
+
+            try {
+                val keys = exposureNotificationClient.getTemporaryExposureKeys()
+                Timber.d("got the list of Temporary Exposure Keys $keys")
+                exposureNotificationsTextSubject.onNext("got the list of TemporaryExposureKeys $keys")
+                lastTemporaryExposureKeysSubject.onNext(keys)
+            } catch (exception: Exception) {
                 if (exception !is ApiException) {
                     Timber.e(exception, "Unknown error when attempting to start API")
                     exposureNotificationsEnabledSubject.onNext(false)
                     exposureNotificationsTextSubject.onNext("Unknown error when attempting to start API: '${exception}'")
-                    return@addOnFailureListener
+                    return@launch
                 }
                 val apiException = exception
                 if (apiException.statusCode == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
@@ -185,6 +182,10 @@ class DebugExposureNotificationsViewModel(
                     exposureNotificationsEnabledSubject.onNext(false)
                 }
             }
+
+        }
+
+
     }
 
     fun resolutionForExposureKeyHistoryFailed(resultCode: Int) {
